@@ -7,10 +7,10 @@ import store, { history } from "Redux/store/store";
 import "bulma/css/bulma.css";
 
 ReactDOM.render(
-  <I18nextProvider i18n={i18n}>
-    <Suspense fallback="loading">
-      <Root store={store} history={history}></Root>
-    </Suspense>
-  </I18nextProvider>,
-  document.getElementById("target")
+    <I18nextProvider i18n={i18n}>
+        <Suspense fallback="loading">
+            <Root store={store} history={history}></Root>
+        </Suspense>
+    </I18nextProvider>,
+    document.getElementById("target")
 );

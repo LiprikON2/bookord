@@ -8,14 +8,15 @@ const whitelist = require("./whitelist");
 const path = require("path");
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV === "development";
-const prependPath = isMac && !isDev ? path.join(process.resourcesPath, "..") : ".";
+const prependPath =
+    isMac && !isDev ? path.join(process.resourcesPath, "..") : ".";
 
-i18n
-  .use(backend)
-  .init({
+i18n.use(backend).init({
     backend: {
-      loadPath: prependPath + "/app/localization/locales/{{lng}}/{{ns}}.json",
-      addPath: prependPath + "/app/localization/locales/{{lng}}/{{ns}}.missing.json"
+        loadPath: prependPath + "/app/localization/locales/{{lng}}/{{ns}}.json",
+        addPath:
+            prependPath +
+            "/app/localization/locales/{{lng}}/{{ns}}.missing.json",
     },
     debug: false,
     namespace: "translation",
@@ -23,7 +24,7 @@ i18n
     saveMissingTo: "current",
     lng: "en",
     fallbackLng: false, // set to false when generating translation files locally
-    whitelist: whitelist.langs
-  });
+    whitelist: whitelist.langs,
+});
 
 module.exports = i18n;

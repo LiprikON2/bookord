@@ -6,20 +6,20 @@ import Nav from "./nav";
 import "./root.css";
 
 class Root extends React.Component {
-  render() {
-    const { store, history } = this.props;
+    render() {
+        const { store, history } = this.props;
 
-    return (
-      <React.Fragment>
-        <Provider store={store}>
-          <ConnectedRouter history={history}>
-            <Nav history={history}></Nav>
-            <Routes></Routes>
-          </ConnectedRouter>
-        </Provider>
-      </React.Fragment>
-    );
-  }
+        return (
+            <React.Fragment>
+                <Provider store={store}>
+                    <ConnectedRouter history={history}>
+                        <Nav history={history}></Nav>
+                        <Routes></Routes>
+                    </ConnectedRouter>
+                </Provider>
+            </React.Fragment>
+        );
+    }
 }
 
 export default Root;
