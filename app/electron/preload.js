@@ -18,4 +18,72 @@ contextBridge.exposeInMainWorld("api", {
     store: store.preloadBindings(ipcRenderer, fs),
     contextMenu: ContextMenu.preloadBindings(ipcRenderer),
     licenseKeys: SecureElectronLicenseKeys.preloadBindings(ipcRenderer),
+
+    send: (channel, data) => {
+        // whitelist channels
+        const validChannels = [
+            "toMain",
+            "fromMain",
+            "app:on-fs-dialog-open",
+            "app:get-files",
+            "app:delete-file",
+            "app:on-file-add",
+            "app:on-file-copy",
+            "app:on-file-delete",
+        ];
+        if (validChannels.includes(channel)) {
+            ipcRenderer.send(channel, data);
+        }
+    },
+    receive: (channel, func) => {
+        const validChannels = [
+            "toMain",
+            "fromMain",
+            "app:on-fs-dialog-open",
+            "app:get-files",
+            "app:delete-file",
+            "app:on-file-add",
+            "app:on-file-copy",
+            "app:on-file-delete",
+        ];
+        if (validChannels.includes(channel)) {
+            // Deliberately strip event as it includes `sender`
+            ipcRenderer.on(channel, (event, ...args) => func(...args));
+        }
+    },
+
+    invoke: (channel, func) => {
+        console.log("invoking... (preload.js)");
+        const validChannels = [
+            "toMain",
+            "fromMain",
+            "app:on-fs-dialog-open",
+            "app:get-files",
+            "app:delete-file",
+            "app:on-file-add",
+            "app:on-file-copy",
+            "app:on-file-delete",
+        ];
+        if (validChannels.includes(channel)) {
+            ipcRenderer.invoke(channel, func);
+            console.log("invoked! (preload.js)");
+        }
+    },
+
+    on(channel, func) {
+        const validChannels = [
+            "toMain",
+            "fromMain",
+            "app:on-fs-dialog-open",
+            "app:get-files",
+            "app:delete-file",
+            "app:on-file-add",
+            "app:on-file-copy",
+            "app:on-file-delete",
+        ];
+        if (validChannels.includes(channel)) {
+            // Deliberately strip event as it includes `sender`
+            ipcRenderer.on(channel, (event, ...args) => func(...args));
+        }
+    },
 });

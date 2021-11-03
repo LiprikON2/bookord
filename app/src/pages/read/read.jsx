@@ -5,7 +5,7 @@ import ROUTES from "Constants/routes";
 
 const Read = () => {
     const { id = 0 } = useParams();
-    console.log("here is id:", id);
+
     return (
         <>
             <h1>Lorem ipsum dolor sit amet.</h1>

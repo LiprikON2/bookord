@@ -25,6 +25,9 @@ const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 
+// local dependencies
+const io = require("./io");
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -336,4 +339,62 @@ app.on("remote-get-current-window", (event, webContents) => {
 
 app.on("remote-get-current-web-contents", (event, webContents) => {
     event.preventDefault();
+});
+
+// TEST IPC
+
+ipcMain.on("toMain", (event, args) => {
+    // fs.readFile("path/to/file", (error, data) => {
+    //     // Do something with file contents
+
+    //     // Send result back to renderer process
+    //     win.webContents.send("fromMain", responseObj);
+    // });
+    win.webContents.send("fromMain", "NEIN");
+});
+
+// FILE HANDLING
+// return list of files
+ipcMain.handle("app:get-files", () => {
+    console.log("main process invoked!!", io.getFiles());
+    return io.getFiles();
+});
+
+// listen to file(s) add event
+ipcMain.handle("app:on-file-add", (event, files = []) => {
+    io.addFiles(files);
+});
+
+// open filesystem dialog to choose files
+ipcMain.handle("app:on-fs-dialog-open", (event) => {
+    const files = dialog.showOpenDialogSync({
+        properties: ["openFile", "multiSelections"],
+    });
+
+    io.addFiles(
+        files.map((filepath) => {
+            return {
+                name: path.parse(filepath).base,
+                path: filepath,
+            };
+        })
+    );
+});
+
+// listen to file delete event
+ipcMain.on("app:on-file-delete", (event, file) => {
+    io.deleteFile(file.filepath);
+});
+
+// listen to file open event
+ipcMain.on("app:on-file-open", (event, file) => {
+    io.openFile(file.filepath);
+});
+
+// listen to file copy event
+ipcMain.on("app:on-file-copy", (event, file) => {
+    event.sender.startDrag({
+        file: file.filepath,
+        icon: path.resolve(__dirname, "./resources/paper.png"),
+    });
 });
