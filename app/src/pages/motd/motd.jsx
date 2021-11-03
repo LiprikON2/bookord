@@ -43,7 +43,7 @@ class Motd extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
+            <>
                 <section className="section">
                     <div className="container has-text-centered">
                         <h1 className="title is-1">
@@ -72,7 +72,7 @@ class Motd extends React.Component {
                         </form>
                     </div>
                 </section>
-            </React.Fragment>
+            </>
         );
     }
 }

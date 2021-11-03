@@ -4,8 +4,11 @@ import ROUTES from "Constants/routes";
 import loadable from "@loadable/component";
 
 // Load bundles asynchronously so that the initial render happens faster
-const Welcome = loadable(() =>
-    import(/* webpackChunkName: "WelcomeChunk" */ "Pages/welcome/welcome")
+const Library = loadable(() =>
+    import(/* webpackChunkName: "LibraryChunk" */ "Pages/library/library")
+);
+const Read = loadable(() =>
+    import(/* webpackChunkName: "ReadChunk" */ "Pages/read/read")
 );
 const About = loadable(() =>
     import(/* webpackChunkName: "AboutChunk" */ "Pages/about/about")
@@ -31,7 +34,9 @@ class Routes extends React.Component {
     render() {
         return (
             <Switch>
-                <Route exact path={ROUTES.WELCOME} component={Welcome}></Route>
+                <Route exact path={ROUTES.LIBRARY} component={Library}></Route>
+                <Route exact path={ROUTES.READ} component={Read}></Route>
+                <Route path={`${ROUTES.READ}/:id`} component={Read}></Route>
                 <Route path={ROUTES.ABOUT} component={About}></Route>
                 <Route path={ROUTES.MOTD} component={Motd}></Route>
                 <Route

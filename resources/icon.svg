@@ -1,0 +1,16 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" width="256" height="256">
+	<title>Bookord</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #2f3136;stroke: #2f3136;stroke-linejoin:round;stroke-width: 40 } 
+		.shp1 { fill: #2f3136;stroke: #ffffff;stroke-linecap:round;stroke-linejoin:round;stroke-width: 40 } 
+	</style>
+	<g id="Folder 1">
+		<path id="Shape 1" class="shp0" d="M764.5 451.02L476 1436.28L479.5 1589.27C479.5 1589.27 686 1538.52 863 1590.78C1040 1643.03 1175.5 1664.02 1281.5 1619.28C1387.5 1574.53 1568 725.43 1579.5 707.19C1591 688.95 1559.5 473.02 1559.5 473.02C1559.5 473.02 1432.5 554.76 1124.5 457.02C816.5 359.28 764.5 451.02 764.5 451.02ZM762 443" />
+		<path id="Shape 4" class="shp0" d="M1228 1465.54C1228.25 1471 1245.5 1636.63 1246.5 1632.04" />
+		<path id="Shape 5" class="shp1" d="M555 1517C555 1517 633 1448.24 795 1505C957 1561.76 1084 1589.24 1160 1562" />
+		<path id="Shape 2" class="shp0" d="M475 1437.59C475 1437.59 658.5 1397.74 852 1446C1045.5 1494.26 1063.63 1543.45 1221 1472C1281 1444.76 1558.5 474.09 1558.5 474.09" />
+		<path id="Shape 6" class="shp1" d="M1543 680L1289 1492.17" />
+		<path id="Shape 7" class="shp0" d="M1369 1706" />
+	</g>
+</svg>

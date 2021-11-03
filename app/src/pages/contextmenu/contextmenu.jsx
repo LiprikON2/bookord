@@ -32,7 +32,7 @@ class ContextMenu extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
+            <>
                 <section className="section">
                     <div className="container has-text-centered">
                         <h1
@@ -53,7 +53,7 @@ class ContextMenu extends React.Component {
                         <SubItem id="2"></SubItem>
                     </div>
                 </section>
-            </React.Fragment>
+            </>
         );
     }
 }

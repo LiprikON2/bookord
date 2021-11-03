@@ -10,14 +10,14 @@ class Root extends React.Component {
         const { store, history } = this.props;
 
         return (
-            <React.Fragment>
+            <>
                 <Provider store={store}>
                     <ConnectedRouter history={history}>
                         <Nav history={history}></Nav>
                         <Routes></Routes>
                     </ConnectedRouter>
                 </Provider>
-            </React.Fragment>
+            </>
         );
     }
 }

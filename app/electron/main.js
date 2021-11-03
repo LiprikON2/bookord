@@ -49,6 +49,13 @@ async function createWindow() {
         path: app.getPath("userData"),
     });
 
+    const RESOURCES_PATH = app.isPackaged
+        ? path.join(process.resourcesPath, "resources")
+        : path.join(__dirname, "../../resources");
+
+    const getAssetPath = (...paths) => {
+        return path.join(RESOURCES_PATH, ...paths);
+    };
     // Use saved config values for configuring your
     // BrowserWindow, for instance.
     // NOTE - this config is not passcode protected
@@ -57,8 +64,13 @@ async function createWindow() {
 
     // Create the browser window.
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        show: false,
+        width: 1024,
+        height: 728,
+        minHeight: 500,
+        minWidth: 500,
+        backgroundColor: "#292a2d", // todo loading bg
+        icon: getAssetPath("icon.png"), // todo fix favicon
         title: "Application is currently initializing...",
         webPreferences: {
             devTools: isDev,
@@ -73,6 +85,7 @@ async function createWindow() {
             disableBlinkFeatures: "Auxclick",
         },
     });
+    win.maximize();
 
     // Sets up main.js bindings for our i18next backend
     i18nextBackend.mainBindings(ipcMain, win, fs);
@@ -120,9 +133,7 @@ async function createWindow() {
     }
 
     win.webContents.on("did-finish-load", () => {
-        win.setTitle(
-            `Getting started with secure-electron-template (v${app.getVersion()})`
-        );
+        win.setTitle(`Bookord`);
     });
 
     // Only do these things when in development

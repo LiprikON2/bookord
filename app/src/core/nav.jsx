@@ -211,8 +211,13 @@ class Nav extends React.Component {
                     <div className="navbar-start">
                         <a
                             className="navbar-item"
-                            onClick={() => this.navigate(ROUTES.WELCOME)}>
-                            Home
+                            onClick={() => this.navigate(ROUTES.LIBRARY)}>
+                            Library
+                        </a>
+                        <a
+                            className="navbar-item"
+                            onClick={() => this.navigate(ROUTES.READ)}>
+                            Read
                         </a>
 
                         <a
@@ -252,6 +257,9 @@ class Nav extends React.Component {
                                     Custom context menu
                                 </a>
                             </div>
+                        </div>
+                        <div className="navbar-item">
+                            {window.location.href}
                         </div>
                     </div>
                     {this.renderLicenseModal()}
