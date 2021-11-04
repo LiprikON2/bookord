@@ -10,15 +10,6 @@ const LibraryUpload = ({ files, setFiles }) => {
         });
     };
 
-    const handleDelete = () => {
-        // handle file delete event
-        console.log("Huh?");
-        window.api.on("app:delete-file", (event, filename) => {
-            console.log("DELETE " + filename);
-            // document.getElementById(filename).remove();
-        });
-    };
-
     const updateFiles = () => {
         const promise = window.api.invoke("app:get-files");
         promise.then((files = []) => {
@@ -27,11 +18,12 @@ const LibraryUpload = ({ files, setFiles }) => {
     };
 
     useLayoutEffect(() => {
+        // Initial file load
         updateFiles();
     }, []);
 
     useEffect(() => {
-        // Drag and drop event litener
+        // Initial file drag and drop event litener
         dragDrop("#uploader", (files) => {
             const mappedFiles = files.map((file) => {
                 return {
@@ -43,6 +35,11 @@ const LibraryUpload = ({ files, setFiles }) => {
             window.api.invoke("app:on-file-add", mappedFiles).then(() => {
                 updateFiles();
             });
+        });
+
+        // Listen for chokidar file delete events
+        window.api.on("app:delete-file", (event, filename) => {
+            updateFiles();
         });
     }, []);
     return (

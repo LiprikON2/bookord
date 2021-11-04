@@ -138,6 +138,7 @@ async function createWindow() {
 
     win.webContents.on("did-finish-load", () => {
         win.setTitle(`Bookord`);
+        io.watchFiles(win);
     });
 
     // Only do these things when in development
@@ -410,12 +411,12 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
 
 // listen to file delete event
 ipcMain.on("app:on-file-delete", (event, file) => {
-    io.deleteFile(file.filepath);
+    io.deleteFile(file.path);
 });
 
 // listen to file open event
 ipcMain.on("app:on-file-open", (event, file) => {
-    io.openFile(file.filepath);
+    io.openFile(file.path);
 });
 
 // listen to file copy event
