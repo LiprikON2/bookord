@@ -370,6 +370,31 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
     const files =
         dialog.showOpenDialogSync({
             properties: ["openFile", "multiSelections"],
+            filters: [
+                {
+                    name: "All Files",
+                    extensions: [
+                        "epub",
+                        "fb2",
+                        "txt",
+                        "htm",
+                        "html",
+                        "xhtml",
+                        "xml",
+                        "mobi",
+                        "azw",
+                        "pdf",
+                    ],
+                },
+                { name: "ePub Files", extensions: ["epub"] },
+                { name: "FictionBook Files", extensions: ["fb2"] },
+                { name: "Text Files", extensions: ["txt"] },
+                { name: "HTML Files", extensions: ["htm", "html", "xhtml"] },
+                { name: "XML Files", extensions: ["xml"] },
+                { name: "Mobipocket eBook Files", extensions: ["mobi"] },
+                { name: "Kindle File Format Files", extensions: ["azw"] },
+                { name: "Portable Document Format Files", extensions: ["pdf"] },
+            ],
         }) || [];
 
     io.addFiles(

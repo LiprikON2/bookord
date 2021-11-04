@@ -10,6 +10,15 @@ const LibraryUpload = ({ files, setFiles }) => {
         });
     };
 
+    const handleDelete = () => {
+        // handle file delete event
+        console.log("Huh?");
+        window.api.on("app:delete-file", (event, filename) => {
+            console.log("DELETE " + filename);
+            // document.getElementById(filename).remove();
+        });
+    };
+
     const updateFiles = () => {
         const promise = window.api.invoke("app:get-files");
         promise.then((files = []) => {
@@ -22,24 +31,20 @@ const LibraryUpload = ({ files, setFiles }) => {
     }, []);
 
     useEffect(() => {
-        // handle file delete event
-        window.api.on("app:delete-file", (event, filename) => {
-            console.log("DELETE " + filename);
-            // document.getElementById(filename).remove();
-        });
+        // Drag and drop event litener
         dragDrop("#uploader", (files) => {
-            const _files = files.map((file) => {
+            const mappedFiles = files.map((file) => {
                 return {
                     name: file.name,
                     path: file.path,
                 };
             });
             // send file(s) add event to the `main` process
-            window.api.invoke("app:on-file-add", _files).then(() => {
+            window.api.invoke("app:on-file-add", mappedFiles).then(() => {
                 updateFiles();
             });
         });
-    });
+    }, []);
     return (
         <>
             <section className="section">

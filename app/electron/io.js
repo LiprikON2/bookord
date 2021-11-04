@@ -28,23 +28,27 @@ exports.getFiles = () => {
 
 // add files
 exports.addFiles = (files = []) => {
-    if (files.length === 0) {
-        return;
-    }
     // ensure `appDir` exists
     fs.ensureDirSync(appDir);
 
+    let filesNum = files.length;
     // copy `files` recursively (ignore duplicate file names)
     files.forEach((file) => {
         const filePath = path.resolve(appDir, file.name);
 
         if (!fs.existsSync(filePath)) {
             fs.copyFileSync(file.path, filePath);
+        } else {
+            filesNum--;
         }
     });
 
+    // Don't display notification if all files are duplicates
+    if (filesNum === 0) {
+        return;
+    }
     // display notification
-    notification.filesAdded(files.length);
+    notification.filesAdded(filesNum);
 };
 
 // delete a file
