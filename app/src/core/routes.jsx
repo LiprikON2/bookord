@@ -5,10 +5,10 @@ import loadable from "@loadable/component";
 
 // Load bundles asynchronously so that the initial render happens faster
 const Library = loadable(() =>
-    import(/* webpackChunkName: "LibraryChunk" */ "Pages/library/library")
+    import(/* webpackChunkName: "LibraryChunk" */ "Pages/library/Library")
 );
 const Read = loadable(() =>
-    import(/* webpackChunkName: "ReadChunk" */ "Pages/read/read")
+    import(/* webpackChunkName: "ReadChunk" */ "Pages/read/Read")
 );
 const About = loadable(() =>
     import(/* webpackChunkName: "AboutChunk" */ "Pages/about/about")

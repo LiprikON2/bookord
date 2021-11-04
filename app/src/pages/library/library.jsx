@@ -1,55 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 // import icon from "../../../resources/icon.svg";
 import ROUTES from "Constants/routes";
+import LibraryUpload from "./LibraryUpload";
+import LibraryList from "./LibraryList";
 
 const dragDrop = require("drag-drop");
 
 const Library = () => {
-    const handleUpload = () => {
-        const promise = window.api.invoke("app:on-fs-dialog-open");
-
-        promise.then(() => {
-            window.api.invoke("app:get-files").then((files = []) => {
-                console.log(files);
-                // displayFiles(files);
-            });
-        });
-    };
-
-    useEffect(() => {
-        // get list of files from the `main` process
-        const promise = window.api.invoke("app:get-files");
-        promise.then((files = []) => {
-            // dom.displayFiles(files);
-            console.log(files);
-        });
-
-        // handle file delete event
-        window.api.on("app:delete-file", (event, filename) => {
-            console.log("DELETE " + filename);
-            // document.getElementById(filename).remove();
-        });
-
-        dragDrop("#uploader", (files) => {
-            const _files = files.map((file) => {
-                return {
-                    name: file.name,
-                    path: file.path,
-                };
-            });
-
-            // send file(s) add event to the `main` process
-            window.api.invoke("app:on-file-add", _files).then(() => {
-                window.api.invoke("app:get-files").then((files = []) => {
-                    // dom.displayFiles(files);
-
-                    console.log(files);
-                });
-            });
-        });
-    });
+    const [files, setFiles] = useState([]);
     return (
         <>
             <section className="section">
@@ -77,16 +37,9 @@ const Library = () => {
                     </div>
                 </div>
             </section>
-            <section className="section">
-                <div id="uploader" className="container">
-                    <button
-                        className="bookUpload"
-                        type="button"
-                        onClick={handleUpload}>
-                        Add a book
-                    </button>
-                </div>
-            </section>
+
+            <LibraryUpload files={files} setFiles={setFiles} />
+            <LibraryList files={files} setFiles={setFiles} />
         </>
     );
 };
