@@ -5,6 +5,7 @@ const {
     session,
     ipcMain,
     Menu,
+    dialog,
 } = require("electron");
 const {
     default: installExtension,
@@ -356,7 +357,6 @@ ipcMain.on("toMain", (event, args) => {
 // FILE HANDLING
 // return list of files
 ipcMain.handle("app:get-files", () => {
-    console.log("main process invoked!!", io.getFiles());
     return io.getFiles();
 });
 
@@ -367,9 +367,10 @@ ipcMain.handle("app:on-file-add", (event, files = []) => {
 
 // open filesystem dialog to choose files
 ipcMain.handle("app:on-fs-dialog-open", (event) => {
-    const files = dialog.showOpenDialogSync({
-        properties: ["openFile", "multiSelections"],
-    });
+    const files =
+        dialog.showOpenDialogSync({
+            properties: ["openFile", "multiSelections"],
+        }) || [];
 
     io.addFiles(
         files.map((filepath) => {
@@ -379,6 +380,7 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
             };
         })
     );
+    return files;
 });
 
 // listen to file delete event

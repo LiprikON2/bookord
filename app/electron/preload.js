@@ -53,7 +53,6 @@ contextBridge.exposeInMainWorld("api", {
     },
 
     invoke: (channel, func) => {
-        console.log("invoking... (preload.js)");
         const validChannels = [
             "toMain",
             "fromMain",
@@ -65,8 +64,8 @@ contextBridge.exposeInMainWorld("api", {
             "app:on-file-delete",
         ];
         if (validChannels.includes(channel)) {
-            ipcRenderer.invoke(channel, func);
-            console.log("invoked! (preload.js)");
+            const promise = ipcRenderer.invoke(channel, func);
+            return promise;
         }
     },
 

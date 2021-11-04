@@ -8,36 +8,23 @@ const dragDrop = require("drag-drop");
 
 const Library = () => {
     const handleUpload = () => {
-        // window.api.receive("fromMain", (data) => {
-        //     console.log(`Received ${data} from main process`);
-        // });
+        const promise = window.api.invoke("app:on-fs-dialog-open");
 
-        // // Send a message to the main process
-        // window.api.send("toMain", "some data");
-
-        window.api.invoke("app:on-fs-dialog-open").then(() => {
+        promise.then(() => {
             window.api.invoke("app:get-files").then((files = []) => {
-                displayFiles(files);
+                console.log(files);
+                // displayFiles(files);
             });
         });
     };
 
     useEffect(() => {
         // get list of files from the `main` process
-
-        console.log("invoking... (library.jsx)");
-        window.api.invoke("app:get-files");
-        // .then(
-        //     (files = []) => {
-        //         console.log("invoked!... (library.jsx)");
-        //         // dom.displayFiles(files);
-
-        //         console.log(files);
-        //     },
-        //     (reason) => {
-        //         console.log(reason);
-        //     }
-        // );
+        const promise = window.api.invoke("app:get-files");
+        promise.then((files = []) => {
+            // dom.displayFiles(files);
+            console.log(files);
+        });
 
         // handle file delete event
         window.api.on("app:delete-file", (event, filename) => {
@@ -93,7 +80,7 @@ const Library = () => {
             <section className="section">
                 <div id="uploader" className="container">
                     <button
-                        className="bookUpload app__uploader__button-area__button"
+                        className="bookUpload"
                         type="button"
                         onClick={handleUpload}>
                         Add a book

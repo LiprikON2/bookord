@@ -28,6 +28,9 @@ exports.getFiles = () => {
 
 // add files
 exports.addFiles = (files = []) => {
+    if (files.length === 0) {
+        return;
+    }
     // ensure `appDir` exists
     fs.ensureDirSync(appDir);
 
