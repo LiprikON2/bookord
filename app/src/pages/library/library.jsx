@@ -16,26 +16,6 @@ const Library = () => {
             <section className="section">
                 <div className="container">
                     <h1>Library</h1>
-                    {/* <img width="100px" alt="icon" src={icon} /> */}
-                    <div>
-                        <Link to={ROUTES.READ}>Book 1</Link>
-                    </div>
-                    <div>
-                        <Link to={ROUTES.MOTD}>Using the Electron store.</Link>{" "}
-                        <br />
-                        <Link to={ROUTES.LOCALIZATION}>
-                            Changing locales.
-                        </Link>{" "}
-                        <br />
-                        <Link to={ROUTES.UNDOREDO}>
-                            Undo/redoing actions.
-                        </Link>{" "}
-                        <br />
-                        <Link to={ROUTES.CONTEXTMENU}>
-                            Custom context menu.
-                        </Link>{" "}
-                        <br />
-                    </div>
                 </div>
             </section>
 
