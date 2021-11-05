@@ -4,7 +4,6 @@ const fs = require("fs-extra");
 const os = require("os");
 const open = require("open");
 const chokidar = require("chokidar");
-
 // local dependencies
 const notification = require("./notification");
 
@@ -68,7 +67,10 @@ exports.openFile = (filename) => {
 
     // open a file using default application
     if (fs.existsSync(filePath)) {
-        open(filePath);
+        const arr = require("fs").readFileSync(filePath);
+        // const buffer = fs.readFile(filePath);
+
+        return arr;
     }
 };
 

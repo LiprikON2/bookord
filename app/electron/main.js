@@ -415,14 +415,6 @@ ipcMain.on("app:on-file-delete", (event, file) => {
 });
 
 // listen to file open event
-ipcMain.on("app:on-file-open", (event, file) => {
-    io.openFile(file.path);
-});
-
-// listen to file copy event
-ipcMain.on("app:on-file-copy", (event, file) => {
-    event.sender.startDrag({
-        file: file.filepath,
-        icon: path.resolve(__dirname, "./resources/paper.png"),
-    });
+ipcMain.handle("app:on-file-open", (event, file) => {
+    return io.openFile(file.path).buffer;
 });

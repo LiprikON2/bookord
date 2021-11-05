@@ -28,7 +28,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
-            "app:on-file-copy",
+            "app:on-file-open",
             "app:on-file-delete",
         ];
         if (validChannels.includes(channel)) {
@@ -43,7 +43,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
-            "app:on-file-copy",
+            "app:on-file-open",
             "app:on-file-delete",
         ];
         if (validChannels.includes(channel)) {
@@ -60,7 +60,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
-            "app:on-file-copy",
+            "app:on-file-open",
             "app:on-file-delete",
         ];
         if (validChannels.includes(channel)) {
@@ -77,7 +77,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
-            "app:on-file-copy",
+            "app:on-file-open",
             "app:on-file-delete",
         ];
         if (validChannels.includes(channel)) {

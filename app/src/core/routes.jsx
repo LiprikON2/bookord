@@ -35,8 +35,7 @@ class Routes extends React.Component {
         return (
             <Switch>
                 <Route exact path={ROUTES.LIBRARY} component={Library}></Route>
-                <Route exact path={ROUTES.READ} component={Read}></Route>
-                <Route path={`${ROUTES.READ}/:id`} component={Read}></Route>
+                <Route path={ROUTES.READ} component={Read}></Route>
                 <Route path={ROUTES.ABOUT} component={About}></Route>
                 <Route path={ROUTES.MOTD} component={Motd}></Route>
                 <Route

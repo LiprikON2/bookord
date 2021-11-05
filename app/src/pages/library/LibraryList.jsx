@@ -1,4 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
+import ROUTES from "Constants/routes";
 
 const LibraryList = ({ files, setFiles }) => {
     const handleDelete = (file) => {
@@ -11,9 +14,14 @@ const LibraryList = ({ files, setFiles }) => {
                 <ul>
                     {files.map((file) => (
                         <li key={file.path}>
-                            <p>
-                                {file.name} | {file.path}
-                            </p>
+                            <Link
+                                to={{
+                                    pathname: ROUTES.READ,
+                                    state: { bookFile: file },
+                                }}>
+                                {file.name}
+                            </Link>
+                            <span> | {file.path}</span>
                             <button
                                 role="button"
                                 onClick={() => handleDelete(file)}>
