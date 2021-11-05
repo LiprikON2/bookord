@@ -53,6 +53,7 @@ async function createWindow() {
         path: app.getPath("userData"),
     });
 
+    // todo
     const RESOURCES_PATH = app.isPackaged
         ? path.join(process.resourcesPath, "resources")
         : path.join(__dirname, "../../resources");

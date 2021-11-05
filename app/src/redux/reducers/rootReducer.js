@@ -6,15 +6,15 @@ import counterReducer from "../components/counter/counterSlice";
 import complexReducer from "../components/complex/complexSlice";
 
 const rootReducer = (history) =>
-  combineReducers({
-    router: connectRouter(history),
-    home: homeReducer,
-    undoable: undoable(
-      combineReducers({
-        counter: counterReducer,
-        complex: complexReducer
-      })
-    )
-  });
+    combineReducers({
+        router: connectRouter(history),
+        home: homeReducer,
+        undoable: undoable(
+            combineReducers({
+                counter: counterReducer,
+                complex: complexReducer,
+            })
+        ),
+    });
 
 export default rootReducer;
