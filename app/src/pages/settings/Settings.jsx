@@ -2,13 +2,13 @@ import React from "react";
 
 import SettingsList from "./SettingsList";
 
-const Settings = () => {
+const Settings = ({ initSettings }) => {
     return (
         <>
             <section className="section">
                 <h1>Settings</h1>
             </section>
-            <SettingsList />
+            <SettingsList initSettings={initSettings} />
         </>
     );
 };

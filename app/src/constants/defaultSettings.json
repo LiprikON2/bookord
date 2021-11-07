@@ -1,3 +1,8 @@
 {
-  "toContinueReading": true
+    "continueReading": {
+        "name": "Continue reading last book.",
+        "description": "Whether or not app will open last read book on startup.",
+        "section": "Reading",
+        "value": true
+    }
 }

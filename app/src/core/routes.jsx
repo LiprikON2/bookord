@@ -36,32 +36,32 @@ const ContextMenu = loadable(() =>
     )
 );
 
+const initStorage = window.api.store.initial();
+
+const createDefaultAppSettings = () => {
+    // Providing default values to settings without overriding existing ones
+    const mergedSettings = Object.assign(
+        {},
+        DEFAULT_SETTINGS,
+        initStorage?.settings
+    );
+
+    window.api.store.send(writeConfigRequest, "settings", mergedSettings);
+    // console.log("writing mergedSettings...", mergedSettings);
+
+    return mergedSettings;
+};
+
+const initSettings = createDefaultAppSettings();
+
+const toContinueReading = () => {
+    const lastOpenedBook = initStorage.lastOpenedBook;
+    const continueReading = initStorage?.settings?.continueReading?.value;
+
+    return lastOpenedBook !== undefined && continueReading;
+};
+
 const Routes = () => {
-    const initStorage = window.api.store.initial();
-
-    const createDefaultAppSettings = () => {
-        // Providing default values to settings without overriding existing ones
-        const mergedSettings = Object.assign(
-            {},
-            DEFAULT_SETTINGS,
-            initStorage?.settings
-        );
-
-        window.api.store.send(writeConfigRequest, "settings", mergedSettings);
-    };
-
-    const toContinueReading = () => {
-        const lastOpenedBook = initStorage.lastOpenedBook;
-        const continueReading = initStorage?.settings?.toContinueReading;
-
-        // return continueReading && lastOpenedBook !== undefined;
-        return lastOpenedBook !== undefined && continueReading;
-    };
-
-    useEffect(() => {
-        createDefaultAppSettings();
-    }, []);
-
     return (
         <Switch>
             <Route exact path="/">
@@ -71,7 +71,9 @@ const Routes = () => {
                     <Redirect to={ROUTES.LIBRARY} />
                 )}
             </Route>
-            <Route path={ROUTES.SETTINGS} component={Settings}></Route>
+            <Route path={ROUTES.SETTINGS}>
+                <Settings initSettings={initSettings} />
+            </Route>
             <Route path={ROUTES.LIBRARY} component={Library}></Route>
             <Route path={ROUTES.READ} component={Read}></Route>
             <Route path={ROUTES.ABOUT} component={About}></Route>
