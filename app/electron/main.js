@@ -48,10 +48,7 @@ async function createWindow() {
             Protocol.requestHandler
         ); /* eng-disable PROTOCOL_HANDLER_JS_CHECK */
     }
-
-    const store = new Store({
-        path: app.getPath("userData"),
-    });
+    const store = new Store({ path: app.getPath("userData") });
 
     // todo
     const RESOURCES_PATH = app.isPackaged

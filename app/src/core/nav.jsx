@@ -222,8 +222,8 @@ class Nav extends React.Component {
 
                         <a
                             className="navbar-item"
-                            onClick={() => this.navigate(ROUTES.ABOUT)}>
-                            About
+                            onClick={() => this.navigate(ROUTES.SETTINGS)}>
+                            Settings
                         </a>
 
                         <div className="navbar-item has-dropdown is-hoverable">

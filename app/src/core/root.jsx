@@ -1,9 +1,9 @@
 import React from "react";
 import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
-import Routes from "Core/routes";
-import Nav from "./nav";
-import "./root.css";
+import Routes from "Core/Routes";
+import Nav from "./Nav";
+import "./Root.css";
 
 class Root extends React.Component {
     render() {

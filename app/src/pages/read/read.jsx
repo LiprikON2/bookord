@@ -65,6 +65,7 @@ const Read = () => {
     return (
         <>
             <section className="section">
+                <h1>Read</h1>
                 <main id="book"></main>
                 <button id="test" role="button" onClick={goBack}>
                     Back
