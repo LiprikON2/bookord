@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route } from "react-router";
+import { Switch, Route, Redirect } from "react-router";
 import ROUTES from "Constants/routes";
 import loadable from "@loadable/component";
 
@@ -30,11 +30,27 @@ const ContextMenu = loadable(() =>
     )
 );
 
+const toContinueReading = () => {
+    const initStorage = window.api.store.initial();
+    const lastOpenedBook = initStorage["lastOpenedBook"];
+    // const continueReading = initStorage["settings"]["continueReading"];
+    console.log(lastOpenedBook);
+
+    // return continueReading && lastOpenedBook !== undefined;
+    return lastOpenedBook !== undefined;
+};
 class Routes extends React.Component {
     render() {
         return (
             <Switch>
-                <Route exact path={ROUTES.LIBRARY} component={Library}></Route>
+                <Route exact path="/">
+                    {!toContinueReading() ? (
+                        <Redirect to={ROUTES.LIBRARY} />
+                    ) : (
+                        <Redirect to={ROUTES.READ} />
+                    )}
+                </Route>
+                <Route path={ROUTES.LIBRARY} component={Library}></Route>
                 <Route path={ROUTES.READ} component={Read}></Route>
                 <Route path={ROUTES.ABOUT} component={About}></Route>
                 <Route path={ROUTES.MOTD} component={Motd}></Route>

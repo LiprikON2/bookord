@@ -1,5 +1,5 @@
 {
-  "LIBRARY": "/",
+  "LIBRARY": "/library",
   "READ": "/read",
   "ABOUT": "/about",
   "MOTD": "/motd",
