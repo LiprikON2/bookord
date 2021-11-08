@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { Link, useParams, useLocation } from "react-router-dom";
 import ePub from "epubjs";
 
@@ -43,8 +44,44 @@ const Read = () => {
 
     const asyncLoadBook = async (bookFile) => {
         const a = await window.api.invoke("app:on-book-import", bookFile);
-        console.log("a", a);
+
+        // EXAMPLE ++++++++++
+        const element = React.createElement(
+            "h1",
+            { className: "greeting" },
+            "Hello im child"
+        );
+        const parent = React.createElement("h1", { className: "greeting" }, [
+            "im text",
+            element,
+        ]);
+        console.log("Example", parent);
+        // EXAMPLE ++++++++++
+
+        ReactDOM.render(
+            recConvertToReactElement(a[0]),
+            document.getElementById("new")
+        );
         return a;
+    };
+
+    const recConvertToReactElement = (htmlObject) => {
+        /*
+         * Recursively converts every html object gotten
+         * from parsing epub to a React element
+         */
+        console.log("parent", htmlObject);
+        if (htmlObject.tag) {
+            return React.createElement(
+                htmlObject.tag,
+                htmlObject.attrs,
+                htmlObject.children?.map((child) =>
+                    recConvertToReactElement(child)
+                )
+            );
+        } else {
+            return htmlObject.text;
+        }
     };
 
     const handleBookRendition = (lastOpenedBook) => {
@@ -52,9 +89,6 @@ const Read = () => {
         const book = openBook(bookFile);
 
         asyncLoadBook(bookFile);
-        // a.then((a) => {
-        //     console.log("a", a.sections[0].toHtmlObjects());
-        // });
         // Initialize book render
         book.then((book) => {
             const options = {
@@ -63,21 +97,10 @@ const Read = () => {
                 height: 400,
             };
             const rendition = book.renderTo("book", options);
-            const counter_rendition = book.renderTo("page-counter", options);
 
             rendition.display();
-            const d = counter_rendition.display();
-
-            d.then(() => {
-                counter_rendition.next();
-                counter_rendition.next();
-                counter_rendition.next();
-                counter_rendition.next();
-                counter_rendition.next();
-            });
 
             setRendition(rendition);
-            // countPages(counter_rendition);
         });
     };
 
@@ -88,30 +111,12 @@ const Read = () => {
         rendition.prev();
     };
 
-    // const countPages = (counter_rendition) => {
-    //     const displayed = counter_rendition.display();
-    //     // console.log("counter_rendition", counter_rendition.next);
-    //     let i = 1;
-    //     displayed.then(() => {
-    //         while (!counter_rendition.location?.atEnd) {
-    //             i++;
-    //             counter_rendition.next();
-    //             console.log("lop");
-    //             if (i === 1000) {
-    //                 console.log(counter_rendition.location);
-    //                 break;
-    //             }
-    //         }
-    //     });
-
-    //     console.log("i", i);
-    // };
-
     return (
         <>
             <section className="section">
                 <h1>Read</h1>
-                <main hidden id="book"></main>
+                <div id="new"></div>
+                <main id="book"></main>
 
                 <button role="button" onClick={goBack}>
                     Back
@@ -120,7 +125,6 @@ const Read = () => {
                     Next
                 </button>
                 <Link to={ROUTES.LIBRARY}>Home</Link>
-                <div hidden id="page-counter"></div>
             </section>
         </>
     );
