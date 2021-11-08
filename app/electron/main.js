@@ -26,6 +26,8 @@ const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 
+const JSZip = require("jszip");
+const { parseEpub } = require("@liprikon/epub-parser");
 // local dependencies
 const io = require("./io");
 
@@ -341,18 +343,6 @@ app.on("remote-get-current-web-contents", (event, webContents) => {
     event.preventDefault();
 });
 
-// TEST IPC
-
-ipcMain.on("toMain", (event, args) => {
-    // fs.readFile("path/to/file", (error, data) => {
-    //     // Do something with file contents
-
-    //     // Send result back to renderer process
-    //     win.webContents.send("fromMain", responseObj);
-    // });
-    win.webContents.send("fromMain", "NEIN");
-});
-
 // FILE HANDLING
 // return list of files
 ipcMain.handle("app:get-files", () => {
@@ -415,4 +405,11 @@ ipcMain.on("app:on-file-delete", (event, file) => {
 // listen to file open event
 ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
+});
+
+ipcMain.handle("app:on-book-import", async (event, file) => {
+    const book = await parseEpub(file.path, {
+        type: "path",
+    });
+    return book.sections[10].toHtmlObjects();
 });

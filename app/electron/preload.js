@@ -22,14 +22,13 @@ contextBridge.exposeInMainWorld("api", {
     send: (channel, data) => {
         // whitelist channels
         const validChannels = [
-            "toMain",
-            "fromMain",
             "app:on-fs-dialog-open",
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
             "app:on-file-open",
             "app:on-file-delete",
+            "app:on-book-import",
         ];
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data);
@@ -37,14 +36,13 @@ contextBridge.exposeInMainWorld("api", {
     },
     receive: (channel, func) => {
         const validChannels = [
-            "toMain",
-            "fromMain",
             "app:on-fs-dialog-open",
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
             "app:on-file-open",
             "app:on-file-delete",
+            "app:on-book-import",
         ];
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`
@@ -54,14 +52,13 @@ contextBridge.exposeInMainWorld("api", {
 
     invoke: (channel, func) => {
         const validChannels = [
-            "toMain",
-            "fromMain",
             "app:on-fs-dialog-open",
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
             "app:on-file-open",
             "app:on-file-delete",
+            "app:on-book-import",
         ];
         if (validChannels.includes(channel)) {
             const promise = ipcRenderer.invoke(channel, func);
@@ -71,14 +68,13 @@ contextBridge.exposeInMainWorld("api", {
 
     on(channel, func) {
         const validChannels = [
-            "toMain",
-            "fromMain",
             "app:on-fs-dialog-open",
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
             "app:on-file-open",
             "app:on-file-delete",
+            "app:on-book-import",
         ];
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`

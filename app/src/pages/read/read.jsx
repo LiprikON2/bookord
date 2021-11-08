@@ -41,10 +41,20 @@ const Read = () => {
         window.api.store.send(readConfigRequest, "lastOpenedBook");
     }, []);
 
+    const asyncLoadBook = async (bookFile) => {
+        const a = await window.api.invoke("app:on-book-import", bookFile);
+        console.log("a", a);
+        return a;
+    };
+
     const handleBookRendition = (lastOpenedBook) => {
         const bookFile = location?.state?.bookFile || lastOpenedBook;
         const book = openBook(bookFile);
 
+        asyncLoadBook(bookFile);
+        // a.then((a) => {
+        //     console.log("a", a.sections[0].toHtmlObjects());
+        // });
         // Initialize book render
         book.then((book) => {
             const options = {
@@ -73,19 +83,6 @@ const Read = () => {
 
     const goNext = () => {
         rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        rendition.next();
-        console.log("re", rendition);
     };
     const goBack = () => {
         rendition.prev();
@@ -114,7 +111,8 @@ const Read = () => {
         <>
             <section className="section">
                 <h1>Read</h1>
-                <main id="book"></main>
+                <main hidden id="book"></main>
+
                 <button role="button" onClick={goBack}>
                     Back
                 </button>

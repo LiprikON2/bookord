@@ -67,10 +67,8 @@ exports.openFile = (filename) => {
 
     // open a file using default application
     if (fs.existsSync(filePath)) {
-        const arr = require("fs").readFileSync(filePath);
-        // const buffer = fs.readFile(filePath);
-
-        return arr;
+        const file = require("fs").readFileSync(filePath);
+        return file;
     }
 };
 
