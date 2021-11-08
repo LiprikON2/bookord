@@ -10,23 +10,23 @@ import {
 
 import ROUTES from "Constants/routes";
 
+const sendLastOpenedBook = (bookFile) => {
+    window.api.store.send(writeConfigRequest, "lastOpenedBook", bookFile);
+};
+
+const openBook = (bookFile) => {
+    sendLastOpenedBook(bookFile);
+
+    const buffer = window.api.invoke("app:on-file-open", bookFile);
+    const epub = buffer.then((buffer) => ePub(buffer));
+
+    return epub;
+};
+
 const Read = () => {
     const [rendition, setRendition] = useState();
 
     const location = useLocation();
-
-    const sendLastOpenedBook = (bookFile) => {
-        window.api.store.send(writeConfigRequest, "lastOpenedBook", bookFile);
-    };
-
-    const openBook = (bookFile) => {
-        sendLastOpenedBook(bookFile);
-
-        const buffer = window.api.invoke("app:on-file-open", bookFile);
-        const epub = buffer.then((buffer) => ePub(buffer));
-
-        return epub;
-    };
 
     useLayoutEffect(() => {
         // Listen for responses from the electron store
@@ -37,6 +37,7 @@ const Read = () => {
                 handleBookRendition(lastOpenedBook);
             }
         });
+        // Send an IPC request to get last opened book
         window.api.store.send(readConfigRequest, "lastOpenedBook");
     }, []);
 
@@ -46,34 +47,82 @@ const Read = () => {
 
         // Initialize book render
         book.then((book) => {
-            const rendition = book.renderTo("book", {
+            const options = {
+                // method: "continuous",
                 width: 600,
                 height: 400,
-            });
+            };
+            const rendition = book.renderTo("book", options);
+            const counter_rendition = book.renderTo("page-counter", options);
+
             rendition.display();
+            const d = counter_rendition.display();
+
+            d.then(() => {
+                counter_rendition.next();
+                counter_rendition.next();
+                counter_rendition.next();
+                counter_rendition.next();
+                counter_rendition.next();
+            });
+
             setRendition(rendition);
+            // countPages(counter_rendition);
         });
     };
 
     const goNext = () => {
         rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        rendition.next();
+        console.log("re", rendition);
     };
     const goBack = () => {
         rendition.prev();
     };
+
+    // const countPages = (counter_rendition) => {
+    //     const displayed = counter_rendition.display();
+    //     // console.log("counter_rendition", counter_rendition.next);
+    //     let i = 1;
+    //     displayed.then(() => {
+    //         while (!counter_rendition.location?.atEnd) {
+    //             i++;
+    //             counter_rendition.next();
+    //             console.log("lop");
+    //             if (i === 1000) {
+    //                 console.log(counter_rendition.location);
+    //                 break;
+    //             }
+    //         }
+    //     });
+
+    //     console.log("i", i);
+    // };
 
     return (
         <>
             <section className="section">
                 <h1>Read</h1>
                 <main id="book"></main>
-                <button id="test" role="button" onClick={goBack}>
+                <button role="button" onClick={goBack}>
                     Back
                 </button>
                 <button role="button" onClick={goNext}>
                     Next
                 </button>
                 <Link to={ROUTES.LIBRARY}>Home</Link>
+                <div hidden id="page-counter"></div>
             </section>
         </>
     );

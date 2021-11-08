@@ -1,9 +1,5 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import {
-    readConfigRequest,
-    readConfigResponse,
-    writeConfigRequest,
-} from "secure-electron-store";
+import React, { useState } from "react";
+import { writeConfigRequest } from "secure-electron-store";
 
 const SettingsList = ({ initSettings }) => {
     const [settings, setSettings] = useState(initSettings);
@@ -12,17 +8,11 @@ const SettingsList = ({ initSettings }) => {
         ...new Set(Object.keys(settings).map((key) => settings[key].section)),
     ];
 
-    useLayoutEffect(() => {
-        console.log("initSettings", initSettings);
-        console.log(":", settings, Object.keys(settings));
-        console.log("sections", sections);
-    }, []);
-
     const handleSettigChange = ({ target }) => {
         const setting = target.id;
         const value =
             target.type === "checkbox" ? target.checked : target.value;
-
+        // Updates only one specific value of an object inside another object
         const updatedSettings = {
             ...settings,
             [setting]: { ...settings[setting], value: value },
