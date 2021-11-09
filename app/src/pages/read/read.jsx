@@ -68,9 +68,14 @@ const Read = () => {
     }, []);
 
     const asyncLoadBook = async (bookFile) => {
-        const a = await window.api.invoke("app:on-book-import", bookFile);
+        const [a, styles] = await window.api.invoke(
+            "app:on-book-import",
+            bookFile
+        );
+        // console.log(a[6][0]);
+        // console.log(a[6][1]);
         console.log(a[6][2]);
-        console.log(a[6][0]);
+
         // EXAMPLE ++++++++++
         // const element = React.createElement(
         //     "h1",
@@ -87,11 +92,15 @@ const Read = () => {
         ReactDOM.render(
             a[6].map((a) => {
                 const b = recConvertToReactElement(a);
-                console.log("b", b);
+                // console.log("b", b);
                 return b;
             }),
             document.getElementById("new")
         );
+        // TODO export it as a blob
+        // e.g. blob:http://localhost:40992/a5cf1d1b-5f01-44e2-9ea0-0c07766445ec
+        document.querySelector(".book-container > style").innerText =
+            styles[0]["styles.css"]._data;
         return a[0];
     };
 
@@ -100,9 +109,7 @@ const Read = () => {
          * Recursively converts every html object gotten
          * from parsing epub to a React element
          */
-        // console.log("parent", htmlObject);
         if (htmlObject.tag) {
-            console.log("htmlObject.attrs", htmlObject);
             if (htmlObject.attrs) {
                 const { style, ...otherAttrs } = htmlObject.attrs;
                 const styleObj = style
@@ -163,7 +170,10 @@ const Read = () => {
         <>
             <section className="section">
                 <h1>Read</h1>
-                <div id="new" style={{ maxWidth: "500px" }}></div>
+                <div className="book-container">
+                    <style scoped></style>
+                    <div id="new" style={{ maxWidth: "500px" }}></div>
+                </div>
                 <main id="book"></main>
 
                 <button role="button" onClick={goBack}>
