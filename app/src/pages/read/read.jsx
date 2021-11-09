@@ -24,6 +24,31 @@ const openBook = (bookFile) => {
     return epub;
 };
 
+const formatStringToCamelCase = (str) => {
+    const splitted = str.split("-");
+    if (splitted.length === 1) return splitted[0];
+    return (
+        splitted[0] +
+        splitted
+            .slice(1)
+            .map((word) => word[0].toUpperCase() + word.slice(1))
+            .join("")
+    );
+};
+
+const getStyleObjectFromString = (str) => {
+    const style = {};
+    str.split(";").forEach((el) => {
+        const [property, value] = el.split(":");
+        if (!property) return;
+
+        const formattedProperty = formatStringToCamelCase(property.trim());
+        style[formattedProperty] = value.trim();
+    });
+
+    return style;
+};
+
 const Read = () => {
     const [rendition, setRendition] = useState();
 
@@ -44,25 +69,30 @@ const Read = () => {
 
     const asyncLoadBook = async (bookFile) => {
         const a = await window.api.invoke("app:on-book-import", bookFile);
-
+        console.log(a[6][2]);
+        console.log(a[6][0]);
         // EXAMPLE ++++++++++
-        const element = React.createElement(
-            "h1",
-            { className: "greeting" },
-            "Hello im child"
-        );
-        const parent = React.createElement("h1", { className: "greeting" }, [
-            "im text",
-            element,
-        ]);
-        console.log("Example", parent);
+        // const element = React.createElement(
+        //     "h1",
+        //     { className: "greeting" },
+        //     "Hello im child"
+        // );
+        // const parent = React.createElement("h1", { className: "greeting" }, [
+        //     "im text",
+        //     element,
+        // ]);
+        // console.log("Example", parent);
         // EXAMPLE ++++++++++
 
         ReactDOM.render(
-            recConvertToReactElement(a[0]),
+            a[6].map((a) => {
+                const b = recConvertToReactElement(a);
+                console.log("b", b);
+                return b;
+            }),
             document.getElementById("new")
         );
-        return a;
+        return a[0];
     };
 
     const recConvertToReactElement = (htmlObject) => {
@@ -70,15 +100,33 @@ const Read = () => {
          * Recursively converts every html object gotten
          * from parsing epub to a React element
          */
-        console.log("parent", htmlObject);
+        // console.log("parent", htmlObject);
         if (htmlObject.tag) {
-            return React.createElement(
-                htmlObject.tag,
-                htmlObject.attrs,
-                htmlObject.children?.map((child) =>
-                    recConvertToReactElement(child)
-                )
-            );
+            console.log("htmlObject.attrs", htmlObject);
+            if (htmlObject.attrs) {
+                const { style, ...otherAttrs } = htmlObject.attrs;
+                const styleObj = style
+                    ? getStyleObjectFromString(style)
+                    : undefined;
+                return React.createElement(
+                    htmlObject.tag,
+                    {
+                        style: styleObj,
+                        ...otherAttrs,
+                    },
+                    htmlObject.children?.map((child) =>
+                        recConvertToReactElement(child)
+                    )
+                );
+            } else {
+                return React.createElement(
+                    htmlObject.tag,
+                    {},
+                    htmlObject.children?.map((child) =>
+                        recConvertToReactElement(child)
+                    )
+                );
+            }
         } else {
             return htmlObject.text;
         }
@@ -115,7 +163,7 @@ const Read = () => {
         <>
             <section className="section">
                 <h1>Read</h1>
-                <div id="new"></div>
+                <div id="new" style={{ maxWidth: "500px" }}></div>
                 <main id="book"></main>
 
                 <button role="button" onClick={goBack}>

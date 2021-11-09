@@ -408,8 +408,10 @@ ipcMain.handle("app:on-file-open", (event, file) => {
 });
 
 ipcMain.handle("app:on-book-import", async (event, file) => {
-    const book = await parseEpub(file.path, {
-        type: "path",
-    });
-    return book.sections[10].toHtmlObjects();
+    const book = await parseEpub(file.path);
+    // console.log("book", book.info);
+    // console.log("book", book.structure);
+    // console.log("book", book.sections.length);
+    // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
+    return book.sections.map((section) => section.toHtmlObjects());
 });
