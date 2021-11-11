@@ -407,14 +407,29 @@ ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
 });
 
-ipcMain.handle("app:on-book-import", async (event, file) => {
-    const book = await parseEpub(file.path);
+ipcMain.handle("app:on-book-import", async (event, filePath) => {
+    const parsedEpub = await parseEpub(filePath);
+
+    const sections = parsedEpub.sections.map((section) =>
+        section.toHtmlObjects()
+    );
+
+    const book = {
+        info: parsedEpub.info,
+        styles: parsedEpub.styles,
+        sections,
+    };
+    return book;
     // console.log("book", book.info);
     // console.log("book", JSON.stringify(book._metadata[0], null, 4));
     // console.log("book", book.styles);
-    const sections = book.sections.map((section) => section.toHtmlObjects());
+
+    // ++
+    // const sections = book.sections.map((section) => section.toHtmlObjects());
+    // return [sections, book.styles];
+    // ++
+
     // console.log("book", book.structure);
     // console.log("book", book.sections.length);
     // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
-    return [sections, book.styles];
 });
