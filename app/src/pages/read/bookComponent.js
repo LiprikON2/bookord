@@ -1,18 +1,16 @@
-import {
-    readConfigRequest,
-    readConfigResponse,
-    writeConfigRequest,
-} from "secure-electron-store";
-
 const template = document.createElement("template");
 template.innerHTML = `
-    <style id="book-style"></style>
-    <div id="book-content">
-        im book
-    </div>
+    <section>
+        <style id="book-style"></style>
+        <div id="book-content"></div>
+    </section>
 `;
 
 class BookComponent extends HTMLElement {
+    // Listen for changes in attribute
+    static get observedAttributes() {
+        return ["book-page"];
+    }
     constructor() {
         super();
 
@@ -25,14 +23,11 @@ class BookComponent extends HTMLElement {
     }
 
     getSectionStyles(section) {
-        // First tag of a section is a head tag
+        // First tag of a section is the head tag
         const headLinks = section[0].children.filter((elem) => {
             return elem.tag === "link";
         });
         const sectionStyles = headLinks.map((link) => link?.attrs?.href);
-        // Remove head tag from section after
-        // extractiong all css references
-        section.shift();
         return sectionStyles;
     }
 
@@ -40,6 +35,7 @@ class BookComponent extends HTMLElement {
         // Loads styles into book-component
         const style = this.shadowRoot.getElementById("book-style");
         const sectionStyles = this.getSectionStyles(book.sections[section_num]);
+        style.innerHTML = "";
 
         Object.keys(book.styles).forEach((index) => {
             const bookStyle = book.styles[index];
@@ -81,17 +77,37 @@ class BookComponent extends HTMLElement {
 
     loadContent(book, section_num) {
         const content = this.shadowRoot.getElementById("book-content");
-        this.recCreateElements(content, book.sections[section_num]);
+        content.innerHTML = "";
+        // Making a copy of an array
+        const section = book.sections[section_num].slice();
+        // Removes head tag from section
+        section.shift();
+        this.recCreateElements(content, section);
+    }
+
+    loadSection(book, section_num) {
+        book.then((book) => {
+            this.loadStyles(book, section_num);
+            this.loadContent(book, section_num);
+        });
     }
 
     connectedCallback() {
         const bookPath = this.getAttribute("book-path");
-        const book = this.asyncLoadBook(bookPath);
+        this.book = this.asyncLoadBook(bookPath);
+        this.page = this.getAttribute("book-page");
 
-        book.then((book) => {
-            this.loadStyles(book, 10);
-            this.loadContent(book, 10);
-        });
+        this.loadSection(this.book, this.page);
+    }
+
+    attributeChangedCallback() {
+        // Triggered when next page or
+        // previous page button is clicked
+        if (this.page !== undefined) {
+            this.page = this.getAttribute("book-page");
+
+            this.loadSection(this.book, this.page);
+        }
     }
 }
 

@@ -18,6 +18,7 @@ const sendLastOpenedBook = (bookFile) => {
 
 const Read = () => {
     const [book, setBook] = useState({});
+    const [page, setPage] = useState(0);
 
     const location = useLocation();
 
@@ -35,28 +36,32 @@ const Read = () => {
         window.api.store.send(readConfigRequest, "lastOpenedBook");
     }, []);
 
-    // const goNext = () => {
-    //     rendition.next();
-    // };
-    // const goBack = () => {
-    //     rendition.prev();
-    // };
+    const goNext = () => {
+        setPage(page + 1);
+    };
+    const goBack = () => {
+        setPage(page - 1);
+    };
 
     return (
         <>
             <section className="section">
                 <h1>Read</h1>
                 <div className="book-container">
-                    {book.path && <book-component book-path={book.path} />}
+                    {book.path && (
+                        <book-component
+                            book-path={book.path}
+                            book-page={page}
+                        />
+                    )}
                 </div>
-                <main id="book"></main>
 
-                {/* <button role="button" onClick={goBack}>
+                <button role="button" onClick={goBack}>
                     Back
                 </button>
                 <button role="button" onClick={goNext}>
                     Next
-                </button> */}
+                </button>
                 <Link to={ROUTES.LIBRARY}>Home</Link>
             </section>
         </>
