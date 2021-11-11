@@ -1,7 +1,5 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import ReactDOM from "react-dom";
-import { Link, useParams, useLocation } from "react-router-dom";
-import ePub from "epubjs";
+import React, { useState, useLayoutEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 import {
     readConfigRequest,
@@ -11,6 +9,7 @@ import {
 
 import ROUTES from "Constants/routes";
 import "./bookComponent";
+import "./Read.css";
 
 const sendLastOpenedBook = (bookFile) => {
     window.api.store.send(writeConfigRequest, "lastOpenedBook", bookFile);
