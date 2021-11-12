@@ -1,7 +1,20 @@
 const template = document.createElement("template");
 template.innerHTML = `
-    <section>
+    <section class="book-container">
         <style>
+        .book-container {
+            width: 400px;
+            margin: auto;
+            overflow: hidden;
+        }
+        .book-container > #book-content {
+            columns: 1;
+            column-gap: 0;
+            height: 400px;
+        }
+        .book-container > #book-content > * {
+            max-height: 400px;
+        }
         img {
             display: block;
             max-width: 100%;
@@ -12,20 +25,11 @@ template.innerHTML = `
             object-fit: scale-down;
             */
         }
-        #book-content > * {
-            max-height: 400px;
-        }
-        #book-content {
-            columns: 1;
-            column-gap: 0;
-            height: 400px;
-            
-            /*column-gap: 50vw;*/
-            /*transform: translate(calc(-400px - 50vw));*/
-        }
         </style>
+
         <style id="book-style"></style>
         <div id="book-content"></div>
+        
         <button role="button" id="back">Back</button>
         <button role="button" id="next">Next</button>
     </section>
@@ -116,7 +120,7 @@ class BookComponent extends HTMLElement {
 
     createMarker() {
         /*
-         * Crates a marker that signifies the end of a section
+         * Creates a marker that signifies the end of a section
          * which is used in calculating max offset value
          */
         const marker = document.createElement("span");
@@ -178,15 +182,16 @@ class BookComponent extends HTMLElement {
             }
         }
     }
-    btnClickEvent(next) {
+    goNextOrBack(next) {
         /*
-         * Incerements offset to go to the
+         * Increments offset to go to the
          * next part of the text (next=true)
-         * or to go back (next=false)
+         * or to the previous part (next=false)
          */
         const newOffset = this.calcNextOffset(next);
         this.setCurrentOffset(newOffset);
     }
+    jumpTo(page) {}
 
     connectedCallback() {
         const bookPath = this.getAttribute("book-path");
@@ -199,18 +204,19 @@ class BookComponent extends HTMLElement {
         const backBtn = this.shadowRoot.querySelector("button#back");
 
         nextBtn.addEventListener("click", () => {
-            this.btnClickEvent(true);
+            this.goNextOrBack(true);
         });
         backBtn.addEventListener("click", () => {
-            this.btnClickEvent(false);
+            this.goNextOrBack(false);
         });
     }
     disconnectedCallback() {
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
-        nextBtn.removeEventListener("click", this.btnClickEvent);
-        backBtn.removeEventListener("click", this.btnClickEvent);
+        nextBtn.removeEventListener("click", this.goNextOrBack);
+        backBtn.removeEventListener("click", this.goNextOrBack);
     }
+
     isAValidPage(updatedPage) {
         // Checks if it's a first render
         if (this.page !== undefined) {
