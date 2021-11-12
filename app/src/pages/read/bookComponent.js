@@ -163,23 +163,22 @@ class BookComponent extends HTMLElement {
         return this.getElementOffset(marker);
     }
 
-    calcNextOffset(inPositiveDirection) {
+    calcNextOffset(nPageShift) {
+        /* Calculates how much pixels text needs to be
+         * offsetted in order to shift n section pages
+         */
         const displayWidth = this.content.offsetWidth;
         const currentOffset = this.getCurrentOffset();
+        const shiftOffset = -(nPageShift * displayWidth);
 
-        const minPos = 0;
-        const maxPos = this.getMaxOffset() / displayWidth;
-        const currentPos = Math.abs(currentOffset / displayWidth);
-        console.log("min max", currentPos, "/", maxPos);
+        const minPageNum = 1;
+        const maxPageNum = this.getMaxOffset() / displayWidth;
+        const currentPage = Math.abs(nPageShift / displayWidth) + minPageNum;
+        const nextPage = currentPage + nPageShift;
 
-        if (inPositiveDirection) {
-            if (currentPos + 1 >= minPos && currentPos + 1 <= maxPos) {
-                return currentOffset - displayWidth;
-            }
-        } else {
-            if (currentPos - 1 >= minPos && currentPos - 1 <= maxPos) {
-                return currentOffset + displayWidth;
-            }
+        // Checks if requested page in range of this section
+        if (nextPage >= minPageNum && nextPage <= maxPageNum) {
+            return currentOffset + shiftOffset;
         }
     }
     goNextOrBack(next) {
@@ -188,7 +187,9 @@ class BookComponent extends HTMLElement {
          * next part of the text (next=true)
          * or to the previous part (next=false)
          */
-        const newOffset = this.calcNextOffset(next);
+        const nPageShift = next ? 1 : -1;
+
+        const newOffset = this.calcNextOffset(nPageShift);
         this.setCurrentOffset(newOffset);
     }
     jumpTo(page) {}
