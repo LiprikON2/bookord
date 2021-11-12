@@ -17,13 +17,17 @@ template.innerHTML = `
         }
         #book-content {
             columns: 1;
+            column-gap: 0;
             height: 400px;
-            column-gap: 50vw;
+            
+            /*column-gap: 50vw;*/
             /*transform: translate(calc(-400px - 50vw));*/
         }
         </style>
         <style id="book-style"></style>
         <div id="book-content"></div>
+        <button role="button" id="back">Back</button>
+        <button role="button" id="next">Next</button>
     </section>
 `;
 
@@ -37,6 +41,7 @@ class BookComponent extends HTMLElement {
 
         this.attachShadow({ mode: "open" });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this.content = this.shadowRoot.getElementById("book-content");
     }
     async asyncLoadBook(bookPath) {
         const book = await window.api.invoke("app:on-book-import", bookPath);
@@ -65,7 +70,7 @@ class BookComponent extends HTMLElement {
         const inlineStyles = headStyles[0]?.children?.[0]?.text || "";
 
         style.innerHTML = inlineStyles;
-        console.log("after!!", { ys: style.innerHTML });
+
         Object.keys(book.styles).forEach((index) => {
             const bookStyle = book.styles[index];
             if (sectionStyles.includes(bookStyle.href)) {
@@ -101,14 +106,24 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    createMarker() {
+        /*
+         * Crates a marker that signifies the end of a section
+         * which is used in calculating max offset value
+         */
+        const marker = document.createElement("span");
+        marker.id = "endMarker";
+        this.content.appendChild(marker);
+    }
+
     loadContent(book, section_num) {
-        const content = this.shadowRoot.getElementById("book-content");
-        content.innerHTML = "";
+        this.content.innerHTML = "";
         // Making a copy of an array
         const section = book.sections[section_num].slice();
         // Removes head tag from section
         section.shift();
-        this.recCreateElements(content, section);
+        this.recCreateElements(this.content, section);
+        this.createMarker();
     }
 
     loadSection(book, section_num) {
@@ -118,6 +133,39 @@ class BookComponent extends HTMLElement {
             this.sectionsCount = book.sections.length;
         });
     }
+    getCurrentOffset() {
+        return (
+            // Strips all non-numeric characters from a string
+            parseInt(this.content.style.transform.replace(/[^\d.-]/g, "")) || 0
+        );
+    }
+    setCurrentOffset(nextOffset) {
+        this.content.style.transform = `translate(${nextOffset}px)`;
+    }
+
+    getMarkerOffset() {
+        const marker = this.shadowRoot.getElementById("endMarker");
+        return marker.offsetLeft;
+    }
+
+    calcNextOffset(inPositiveDirection) {
+        const displayWidth = this.content.offsetWidth;
+        const currentOffset = this.getCurrentOffset();
+
+        const minPos = 0;
+        const maxPos = this.getMarkerOffset() / displayWidth;
+        const currentPos = Math.abs(currentOffset / displayWidth);
+        console.log("min max", currentPos, "/", maxPos);
+        if (inPositiveDirection) {
+            if (currentPos + 1 >= minPos && currentPos + 1 <= maxPos) {
+                return currentOffset - displayWidth;
+            }
+        } else {
+            if (currentPos - 1 >= minPos && currentPos - 1 <= maxPos) {
+                return currentOffset + displayWidth;
+            }
+        }
+    }
 
     connectedCallback() {
         const bookPath = this.getAttribute("book-path");
@@ -125,6 +173,18 @@ class BookComponent extends HTMLElement {
         this.page = this.getAttribute("book-page");
 
         this.loadSection(this.book, this.page);
+
+        const nextBtn = this.shadowRoot.querySelector("button#next");
+        const backBtn = this.shadowRoot.querySelector("button#back");
+
+        nextBtn.addEventListener("click", () => {
+            const newOffset = this.calcNextOffset(true);
+            this.setCurrentOffset(newOffset);
+        });
+        backBtn.addEventListener("click", () => {
+            const newOffset = this.calcNextOffset(false);
+            this.setCurrentOffset(newOffset);
+        });
     }
     isAValidPage(updatedPage) {
         // Checks if it's a first render
@@ -138,12 +198,11 @@ class BookComponent extends HTMLElement {
         // previous page button is clicked
         const updatedPage = this.getAttribute("book-page");
 
-        console.log("valid", this.isAValidPage(updatedPage));
-
         if (this.isAValidPage(updatedPage)) {
             this.page = this.getAttribute("book-page");
             this.loadSection(this.book, this.page);
         }
+        this.setCurrentOffset(0);
     }
 }
 
