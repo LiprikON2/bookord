@@ -137,11 +137,21 @@ class BookComponent extends HTMLElement {
         this.recCreateElements(this.content, section);
         this.createMarker();
     }
-    loadSection(book, section_num) {
+    loadSection(book, section_num, nPageShift, fromEnd = false) {
         book.then((book) => {
+            console.log("book", section_num, nPageShift, fromEnd);
             this.loadStyles(book, section_num);
             this.loadContent(book, section_num);
-            this.sectionsCount = book.sections.length;
+            this.maxSectionNum = book.sections.length;
+
+            if (fromEnd) {
+                const maxOffset = this.getMaxOffset();
+                this.setCurrentOffset(maxOffset);
+            } else {
+                this.setCurrentOffset(0);
+            }
+            const newOffset = this.calcNextOffset(nPageShift);
+            this.setCurrentOffset(newOffset);
         });
     }
 
@@ -156,7 +166,7 @@ class BookComponent extends HTMLElement {
     }
 
     getElementOffset(element) {
-        return element.offsetLeft;
+        return -element.offsetLeft;
     }
     getMaxOffset() {
         const marker = this.shadowRoot.getElementById("endMarker");
@@ -171,14 +181,41 @@ class BookComponent extends HTMLElement {
         const currentOffset = this.getCurrentOffset();
         const shiftOffset = -(nPageShift * displayWidth);
 
-        const minPageNum = 1;
-        const maxPageNum = this.getMaxOffset() / displayWidth;
-        const currentPage = Math.abs(nPageShift / displayWidth) + minPageNum;
+        const minPageNum = 0;
+        const maxPageNum = Math.abs(this.getMaxOffset() / displayWidth);
+        const currentPage = Math.abs(currentOffset / displayWidth);
         const nextPage = currentPage + nPageShift;
 
-        // Checks if requested page in range of this section
+        // Checks if requested page is in range of this section
         if (nextPage >= minPageNum && nextPage <= maxPageNum) {
             return currentOffset + shiftOffset;
+        }
+        // Else go to the next section
+        else if (nextPage > maxPageNum) {
+            // Checks if requested page is in range of this book
+            if (this.sectionNum + 1 <= this.maxSectionNum) {
+                const pagesShifted = maxPageNum - currentPage;
+                const pagesLeftToShift = nPageShift - pagesShifted - 1;
+
+                this.sectionNum += 1;
+                this.loadSection(this.book, this.sectionNum, pagesLeftToShift);
+            }
+        }
+        // Else go to the previous section
+        else if (nextPage < minPageNum) {
+            // Checks if there is a previous section
+            if (this.sectionNum - 1 >= 0) {
+                const pagesShifted = currentPage - minPageNum;
+                const pagesLeftToShift = nPageShift + pagesShifted + 1;
+
+                this.sectionNum -= 1;
+                this.loadSection(
+                    this.book,
+                    this.sectionNum,
+                    pagesLeftToShift,
+                    true
+                );
+            }
         }
     }
     goNextOrBack(next) {
@@ -192,14 +229,19 @@ class BookComponent extends HTMLElement {
         const newOffset = this.calcNextOffset(nPageShift);
         this.setCurrentOffset(newOffset);
     }
-    jumpTo(page) {}
+    // jumpTo(page) {
+    //     const nPageShift = 0;
+
+    //     const newOffset = this.calcNextOffset(nPageShift);
+    //     this.setCurrentOffset(newOffset);
+    // }
 
     connectedCallback() {
         const bookPath = this.getAttribute("book-path");
         this.book = this.asyncLoadBook(bookPath);
-        this.page = this.getAttribute("book-page");
+        this.sectionNum = parseInt(this.getAttribute("book-page"));
 
-        this.loadSection(this.book, this.page);
+        this.loadSection(this.book, this.sectionNum, 0);
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
@@ -220,22 +262,22 @@ class BookComponent extends HTMLElement {
 
     isAValidPage(updatedPage) {
         // Checks if it's a first render
-        if (this.page !== undefined) {
-            return updatedPage >= 0 && updatedPage <= this.sectionsCount - 1;
+        if (this.sectionNum !== undefined) {
+            return updatedPage >= 0 && updatedPage <= this.maxSectionNum - 1;
         }
     }
 
-    attributeChangedCallback() {
-        // Triggered when next page or
-        // previous page button is clicked
-        const updatedPageNum = this.getAttribute("book-page");
+    // attributeChangedCallback() {
+    //     // Triggered when next page or
+    //     // previous page button is clicked
+    //     const updatedPageNum = this.getAttribute("book-page");
 
-        if (this.isAValidPage(updatedPageNum)) {
-            this.page = updatedPageNum;
-            this.loadSection(this.book, this.page);
-        }
-        this.setCurrentOffset(0);
-    }
+    //     if (this.isAValidPage(updatedPageNum)) {
+    //         this.sectionNum = updatedPageNum;
+    //         this.loadSection(this.book, this.sectionNum);
+    //     }
+    //     this.setCurrentOffset(0);
+    // }
 }
 
 window.customElements.define("book-component", BookComponent);
