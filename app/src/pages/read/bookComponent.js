@@ -32,7 +32,7 @@ template.innerHTML = `
 `;
 
 class BookComponent extends HTMLElement {
-    // Listen for changes in attribute
+    // Listen for changes in the attribute
     static get observedAttributes() {
         return ["book-page"];
     }
@@ -41,14 +41,18 @@ class BookComponent extends HTMLElement {
 
         this.attachShadow({ mode: "open" });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
+
         this.content = this.shadowRoot.getElementById("book-content");
     }
     async asyncLoadBook(bookPath) {
-        const book = await window.api.invoke("app:on-book-import", bookPath);
-        return book;
+        return await window.api.invoke("app:on-book-import", bookPath);
     }
 
-    getSectionStyles(section) {
+    getSectionStyleReferences(section) {
+        /*
+         * Returns all references to stylesheet names in a section
+         */
+
         // First tag of a section is the head tag
         const headLinks = section[0].children.filter((elem) => {
             return elem.tag === "link";
@@ -57,24 +61,28 @@ class BookComponent extends HTMLElement {
         const sectionStyles = headLinks.map((link) => link?.attrs?.href);
         return sectionStyles;
     }
-
-    loadStyles(book, section_num) {
-        // Loads styles into book-component
-        const section = book.sections[section_num];
-        const style = this.shadowRoot.getElementById("book-style");
-        const sectionStyles = this.getSectionStyles(section);
-
+    getSectionInlineStyles(section) {
         const headStyles = section[0].children.filter((elem) => {
             return elem.tag === "style";
         });
-        const inlineStyles = headStyles[0]?.children?.[0]?.text || "";
+        return headStyles[0]?.children?.[0]?.text || "";
+    }
 
-        style.innerHTML = inlineStyles;
+    loadStyles(book, section_num) {
+        const section = book.sections[section_num];
+        const styleElem = this.shadowRoot.getElementById("book-style");
 
+        const sectionStyles = this.getSectionStyleReferences(section);
+        const inlineStyles = this.getSectionInlineStyles(section);
+
+        styleElem.innerHTML = inlineStyles;
+
+        // Appends all of the referenced
+        // styles to the style element
         Object.keys(book.styles).forEach((index) => {
             const bookStyle = book.styles[index];
             if (sectionStyles.includes(bookStyle.href)) {
-                style.innerHTML += bookStyle._data;
+                styleElem.innerHTML += bookStyle._data;
             }
         });
     }
@@ -125,7 +133,6 @@ class BookComponent extends HTMLElement {
         this.recCreateElements(this.content, section);
         this.createMarker();
     }
-
     loadSection(book, section_num) {
         book.then((book) => {
             this.loadStyles(book, section_num);
@@ -133,6 +140,7 @@ class BookComponent extends HTMLElement {
             this.sectionsCount = book.sections.length;
         });
     }
+
     getCurrentOffset() {
         return (
             // Strips all non-numeric characters from a string
@@ -143,9 +151,12 @@ class BookComponent extends HTMLElement {
         this.content.style.transform = `translate(${nextOffset}px)`;
     }
 
-    getMarkerOffset() {
+    getElementOffset(element) {
+        return element.offsetLeft;
+    }
+    getMaxOffset() {
         const marker = this.shadowRoot.getElementById("endMarker");
-        return marker.offsetLeft;
+        return this.getElementOffset(marker);
     }
 
     calcNextOffset(inPositiveDirection) {
@@ -153,9 +164,10 @@ class BookComponent extends HTMLElement {
         const currentOffset = this.getCurrentOffset();
 
         const minPos = 0;
-        const maxPos = this.getMarkerOffset() / displayWidth;
+        const maxPos = this.getMaxOffset() / displayWidth;
         const currentPos = Math.abs(currentOffset / displayWidth);
         console.log("min max", currentPos, "/", maxPos);
+
         if (inPositiveDirection) {
             if (currentPos + 1 >= minPos && currentPos + 1 <= maxPos) {
                 return currentOffset - displayWidth;
@@ -165,6 +177,15 @@ class BookComponent extends HTMLElement {
                 return currentOffset + displayWidth;
             }
         }
+    }
+    btnClickEvent(next) {
+        /*
+         * Incerements offset to go to the
+         * next part of the text (next=true)
+         * or to go back (next=false)
+         */
+        const newOffset = this.calcNextOffset(next);
+        this.setCurrentOffset(newOffset);
     }
 
     connectedCallback() {
@@ -178,13 +199,17 @@ class BookComponent extends HTMLElement {
         const backBtn = this.shadowRoot.querySelector("button#back");
 
         nextBtn.addEventListener("click", () => {
-            const newOffset = this.calcNextOffset(true);
-            this.setCurrentOffset(newOffset);
+            this.btnClickEvent(true);
         });
         backBtn.addEventListener("click", () => {
-            const newOffset = this.calcNextOffset(false);
-            this.setCurrentOffset(newOffset);
+            this.btnClickEvent(false);
         });
+    }
+    disconnectedCallback() {
+        const nextBtn = this.shadowRoot.querySelector("button#next");
+        const backBtn = this.shadowRoot.querySelector("button#back");
+        nextBtn.removeEventListener("click", this.btnClickEvent);
+        backBtn.removeEventListener("click", this.btnClickEvent);
     }
     isAValidPage(updatedPage) {
         // Checks if it's a first render
@@ -196,10 +221,10 @@ class BookComponent extends HTMLElement {
     attributeChangedCallback() {
         // Triggered when next page or
         // previous page button is clicked
-        const updatedPage = this.getAttribute("book-page");
+        const updatedPageNum = this.getAttribute("book-page");
 
-        if (this.isAValidPage(updatedPage)) {
-            this.page = this.getAttribute("book-page");
+        if (this.isAValidPage(updatedPageNum)) {
+            this.page = updatedPageNum;
             this.loadSection(this.book, this.page);
         }
         this.setCurrentOffset(0);
