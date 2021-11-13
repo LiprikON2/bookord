@@ -2,6 +2,7 @@ const template = document.createElement("template");
 template.innerHTML = `
     <section class="book-container">
         <style>
+        * {box-sizing: border-box}
         .book-container {
             width: 400px;
             margin: auto;
@@ -12,13 +13,19 @@ template.innerHTML = `
             column-gap: 0;
             height: 400px;
         }
-        .book-container > #book-content > * {
-            max-height: 400px;
-        }
         img {
+            border: 1px solid #000;
+            display: block;
+            max-width: 100%;
+            height: 400px;
+            margin-inline: auto
+
+            /* 
             display: block;
             max-width: 100%;
             height: auto;
+
+             */
             /*
             width:100%;
             height:100%;
@@ -52,11 +59,10 @@ class BookComponent extends HTMLElement {
         return await window.api.invoke("app:on-book-import", bookPath);
     }
 
+    /*
+     * Returns all references to stylesheet names in a section
+     */
     getSectionStyleReferences(section) {
-        /*
-         * Returns all references to stylesheet names in a section
-         */
-
         // First tag of a section is the head tag
         const headLinks = section[0].children.filter((elem) => {
             return elem.tag === "link";
@@ -90,11 +96,11 @@ class BookComponent extends HTMLElement {
             }
         });
     }
+    /*
+     * Recursively creates and appends child
+     * elements to the respective child's parent
+     */
     recCreateElements(parent, children) {
-        /*
-         * Recursively creates and appends child
-         * elements to the respective child's parent
-         */
         children.map((element) => {
             if (element?.tag !== undefined) {
                 const tag = document.createElement(element.tag);
@@ -118,11 +124,11 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    /*
+     * Creates a marker that signifies the end of a section
+     * which is used in calculating max offset value
+     */
     createMarker() {
-        /*
-         * Creates a marker that signifies the end of a section
-         * which is used in calculating max offset value
-         */
         const marker = document.createElement("span");
         marker.id = "endMarker";
         this.content.appendChild(marker);
@@ -173,10 +179,11 @@ class BookComponent extends HTMLElement {
         return this.getElementOffset(marker);
     }
 
+    /*
+     * Calculates how much pixels text needs to be
+     * offsetted in order to shift n section pages
+     */
     calcNextOffset(nPageShift) {
-        /* Calculates how much pixels text needs to be
-         * offsetted in order to shift n section pages
-         */
         const displayWidth = this.content.offsetWidth;
         const currentOffset = this.getCurrentOffset();
         const shiftOffset = -(nPageShift * displayWidth);
@@ -218,12 +225,12 @@ class BookComponent extends HTMLElement {
             }
         }
     }
+    /*
+     * Increments offset to go to the
+     * next part of the text (next=true)
+     * or to the previous part (next=false)
+     */
     goNextOrBack(next) {
-        /*
-         * Increments offset to go to the
-         * next part of the text (next=true)
-         * or to the previous part (next=false)
-         */
         const nPageShift = next ? 1 : -1;
 
         const newOffset = this.calcNextOffset(nPageShift);
