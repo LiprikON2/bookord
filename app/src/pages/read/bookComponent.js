@@ -14,23 +14,9 @@ template.innerHTML = `
             height: 400px;
         }
         img {
-            border: 1px solid #000;
-            display: block;
-            max-width: 100%;
+            width: 100%;
             height: 400px;
-            margin-inline: auto
-
-            /* 
-            display: block;
-            max-width: 100%;
-            height: auto;
-
-             */
-            /*
-            width:100%;
-            height:100%;
-            object-fit: scale-down;
-            */
+            object-fit: contain;
         }
         </style>
 
