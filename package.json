@@ -21,8 +21,8 @@
     "test": "mocha"
   },
   "build": {
-    "productName": "YourProductName",
-    "appId": "com.yourcompany|electron.yourproductname",
+    "productName": "Bookord",
+    "appId": "com.bookord|electron.bookord",
     "directories": {
       "buildResources": "resources"
     },
@@ -111,7 +111,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@liprikon/epub-parser": "^2.0.16",
+    "@liprikon/epub-parser": "^2.0.25",
     "@loadable/component": "^5.15.0",
     "@reduxjs/toolkit": "^1.6.1",
     "bulma": "^0.9.3",

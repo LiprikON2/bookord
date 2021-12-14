@@ -26,7 +26,6 @@ const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 
-const JSZip = require("jszip");
 const { parseEpub } = require("@liprikon/epub-parser");
 // local dependencies
 const io = require("./io");
@@ -414,9 +413,14 @@ ipcMain.handle("app:on-book-import", async (event, filePath) => {
         section.toHtmlObjects()
     );
 
+    // console.log("book", parsedEpub.sections[0].toHtmlObjects());
+    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
+    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.navMap, null, 4));
+    // console.log("book", JSON.stringify(parsedEpub._manifest, null, 4));
     const book = {
         info: parsedEpub.info,
         styles: parsedEpub.styles,
+        structure: parsedEpub.structure,
         sections,
     };
     return book;

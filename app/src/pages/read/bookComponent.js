@@ -1,6 +1,6 @@
 const template = document.createElement("template");
 template.innerHTML = `
-    <section class="book-container">
+    <section id="root" class="book-container">
         <style>
         * {box-sizing: border-box}
         .book-container {
@@ -14,8 +14,9 @@ template.innerHTML = `
             height: 400px;
         }
         img {
-            width: 100%;
-            height: 400px;
+            display: block;
+            width: 100% !important;
+            height: 400px !important;
             object-fit: contain;
         }
         </style>
@@ -25,6 +26,7 @@ template.innerHTML = `
         
         <button role="button" id="back">Back</button>
         <button role="button" id="next">Next</button>
+        <button role="button" id="jump">Jump 5</button>
     </section>
 `;
 
@@ -64,8 +66,8 @@ class BookComponent extends HTMLElement {
         return headStyles[0]?.children?.[0]?.text || "";
     }
 
-    loadStyles(book, section_num) {
-        const section = book.sections[section_num];
+    loadStyles(book, sectionNum) {
+        const section = book.sections[sectionNum];
         const styleElem = this.shadowRoot.getElementById("book-style");
 
         const sectionStyles = this.getSectionStyleReferences(section);
@@ -82,6 +84,7 @@ class BookComponent extends HTMLElement {
             }
         });
     }
+
     /*
      * Recursively creates and appends child
      * elements to the respective child's parent
@@ -120,30 +123,65 @@ class BookComponent extends HTMLElement {
         this.content.appendChild(marker);
     }
 
-    loadContent(book, section_num) {
+    handleLink(e, book) {
+        e.preventDefault();
+        const sectionName = e.target.href.split("#").pop();
+        const sectionIndex = Object.keys(book.structure).filter((index) => {
+            const obj = book.structure[index];
+            return obj.sectionId === sectionName;
+        });
+        const sectionNum = parseInt(book.structure[sectionIndex].playOrder);
+        console.log("sectionNum", sectionNum);
+        this.loadSection(this.book, sectionNum, 0);
+    }
+
+    loadContent(book, sectionNum) {
         this.content.innerHTML = "";
         // Making a copy of an array
-        const section = book.sections[section_num].slice();
+        const section = book.sections[sectionNum].slice();
         // Removes head tag from section
         section.shift();
         this.recCreateElements(this.content, section);
         this.createMarker();
     }
-    loadSection(book, section_num, nPageShift, fromEnd = false) {
+    /*
+     * sectionNum - index of an html file - section
+     * nPageShift - how many pages to flip through
+     * offsetMarkerId - id of an element within section to scroll to
+     */
+    loadSection(book, sectionNum, nPageShift, offsetMarkerId = "") {
         book.then((book) => {
-            console.log("book", section_num, nPageShift, fromEnd);
-            this.loadStyles(book, section_num);
-            this.loadContent(book, section_num);
+            // Removes anchor event listeners when leaving the section
+            let anchors = this.shadowRoot.querySelectorAll("a");
+            anchors.forEach((a) => {
+                a.removeEventListener("click", this.handleLink);
+            });
+
+            const bookStructure = book.structure;
+
+            this.sectionNum = sectionNum;
+            console.log("book", sectionNum, nPageShift, offsetMarkerId);
+            this.loadStyles(book, sectionNum);
+            this.loadContent(book, sectionNum);
             this.maxSectionNum = book.sections.length;
 
-            if (fromEnd) {
-                const maxOffset = this.getMaxOffset();
-                this.setCurrentOffset(maxOffset);
+            // In case user traveled from next section
+            if (offsetMarkerId) {
+                const markerOffset = this.getElementOffset("endMarker");
+                this.setCurrentOffset(markerOffset);
+            } else if (nPageShift !== 0) {
+                // if user traveled from previous section and still had
+                // pages pending left to shift
+                const newOffset = this.calcNextOffset(nPageShift);
+                this.setCurrentOffset(newOffset);
             } else {
                 this.setCurrentOffset(0);
             }
-            const newOffset = this.calcNextOffset(nPageShift);
-            this.setCurrentOffset(newOffset);
+
+            anchors = this.shadowRoot.querySelectorAll("a");
+            anchors.forEach((a) => {
+                a.addEventListener("click", (e) => this.handleLink(e, book));
+            });
         });
     }
 
@@ -157,16 +195,16 @@ class BookComponent extends HTMLElement {
         this.content.style.transform = `translate(${nextOffset}px)`;
     }
 
-    getElementOffset(element) {
+    getElementOffset(elementId) {
+        const element = this.shadowRoot.getElementById(elementId);
         return -element.offsetLeft;
     }
     getMaxOffset() {
-        const marker = this.shadowRoot.getElementById("endMarker");
-        return this.getElementOffset(marker);
+        return this.getElementOffset("endMarker");
     }
 
     /*
-     * Calculates how much pixels text needs to be
+     * Calculates how many pixels text needs to be
      * offsetted in order to shift n section pages
      */
     calcNextOffset(nPageShift) {
@@ -185,13 +223,16 @@ class BookComponent extends HTMLElement {
         }
         // Else go to the next section
         else if (nextPage > maxPageNum) {
-            // Checks if requested page is in range of this book
+            // Checks if there is a next section
             if (this.sectionNum + 1 <= this.maxSectionNum) {
                 const pagesShifted = maxPageNum - currentPage;
                 const pagesLeftToShift = nPageShift - pagesShifted - 1;
 
-                this.sectionNum += 1;
-                this.loadSection(this.book, this.sectionNum, pagesLeftToShift);
+                this.loadSection(
+                    this.book,
+                    this.sectionNum + 1,
+                    pagesLeftToShift
+                );
             }
         }
         // Else go to the previous section
@@ -201,24 +242,16 @@ class BookComponent extends HTMLElement {
                 const pagesShifted = currentPage - minPageNum;
                 const pagesLeftToShift = nPageShift + pagesShifted + 1;
 
-                this.sectionNum -= 1;
                 this.loadSection(
                     this.book,
-                    this.sectionNum,
+                    this.sectionNum - 1,
                     pagesLeftToShift,
-                    true
+                    "endMarker"
                 );
             }
         }
     }
-    /*
-     * Increments offset to go to the
-     * next part of the text (next=true)
-     * or to the previous part (next=false)
-     */
-    goNextOrBack(next) {
-        const nPageShift = next ? 1 : -1;
-
+    flipNPages(nPageShift) {
         const newOffset = this.calcNextOffset(nPageShift);
         this.setCurrentOffset(newOffset);
     }
@@ -240,25 +273,30 @@ class BookComponent extends HTMLElement {
         const backBtn = this.shadowRoot.querySelector("button#back");
 
         nextBtn.addEventListener("click", () => {
-            this.goNextOrBack(true);
+            this.flipNPages(1);
         });
         backBtn.addEventListener("click", () => {
-            this.goNextOrBack(false);
+            this.flipNPages(-1);
         });
     }
     disconnectedCallback() {
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
-        nextBtn.removeEventListener("click", this.goNextOrBack);
-        backBtn.removeEventListener("click", this.goNextOrBack);
+        nextBtn.removeEventListener("click", this.flipNPages);
+        backBtn.removeEventListener("click", this.flipNPages);
+
+        const anchors = this.shadowRoot.querySelectorAll("a");
+        anchors.forEach((a) => {
+            a.removeEventListener("click", this.handleLink);
+        });
     }
 
-    isAValidPage(updatedPage) {
-        // Checks if it's a first render
-        if (this.sectionNum !== undefined) {
-            return updatedPage >= 0 && updatedPage <= this.maxSectionNum - 1;
-        }
-    }
+    // isAValidPage(updatedPage) {
+    //     // Checks if it's a first render
+    //     if (this.sectionNum !== undefined) {
+    //         return updatedPage >= 0 && updatedPage <= this.maxSectionNum - 1;
+    //     }
+    // }
 
     // attributeChangedCallback() {
     //     // Triggered when next page or
