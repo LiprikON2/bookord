@@ -132,8 +132,6 @@ class BookComponent extends HTMLElement {
     }
 
     handleLink(e, book) {
-        e.stopPropagation();
-        console.log("e.currentTarget.href", e.currentTarget.href);
         const [sectionName, marker] = e.currentTarget.href
             .split("#")
             .pop()
@@ -163,6 +161,24 @@ class BookComponent extends HTMLElement {
         this.recCreateElements(this.content, section);
         this.createMarker();
     }
+
+    updateBookState(book, currentSection) {
+        const bookStructure = book.structure;
+
+        this.posInBook.currentSection = currentSection;
+        this.posInBook.totalSections = book.sections.length;
+
+        const currentTocEntry = bookStructure.find(
+            (tocEntry) =>
+                tocEntry.sectionId === book.sectionNames[currentSection]
+        );
+        if (currentTocEntry) {
+            this.posInBook.currentSectionTitle = currentTocEntry.name;
+        }
+
+        console.log("Current section:", this.posInBook.currentSectionTitle);
+    }
+
     /*
      * sectionNum - index of an html file - section
      * nPageShift - how many pages to flip through
@@ -173,39 +189,15 @@ class BookComponent extends HTMLElement {
             // Removes anchor event listeners when leaving the section
             let anchors = this.shadowRoot.querySelectorAll("a");
             anchors.forEach((a) => {
-                a.removeEventListener("click", this.handleLink, true);
+                a.removeEventListener("click", this.handleLink);
             });
 
-            const bookStructure = book.structure;
-
-            this.posInBook.currentSection = currentSection;
-            this.posInBook.totalSections = book.sections.length;
-
-            this.posInBook.currentSectionTitle = this.getSectionTitle(
-                book,
-                currentSection
-            );
-            // const diff = this.posInBook.totalSections - bookStructure.length;
-            // this.posInBook.currentChapterTitle =
-            //     book.structure?.[currentSection - diff]?.name || "";
-
-            // console.log(this.posInBook.currentSectionTitle);
-
-            // console.log(
-            //     "Sections",
-            //     currentSection,
-            //     "/",
-            //     this.posInBook.totalSections,
-            //     "Structure",
-            //     bookStructure,
-            //     this.posInBook.currentChapterTitle
-            // );
-
             console.log("book", currentSection, nPageShift, offsetMarkerId);
+            this.updateBookState(book, currentSection);
             this.loadStyles(book, currentSection);
             this.loadContent(book, currentSection);
 
-            // In case user traveled from next section
+            // In case user traveled from the following section
             if (offsetMarkerId) {
                 const markerOffset = this.getElementOffset("endMarker");
                 this.setCurrentOffset(markerOffset);
@@ -220,11 +212,7 @@ class BookComponent extends HTMLElement {
 
             anchors = this.shadowRoot.querySelectorAll("a");
             anchors.forEach((a) => {
-                a.addEventListener(
-                    "click",
-                    (e) => this.handleLink(e, book),
-                    true
-                );
+                a.addEventListener("click", (e) => this.handleLink(e, book));
             });
         });
     }
@@ -347,7 +335,7 @@ class BookComponent extends HTMLElement {
 
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            a.removeEventListener("click", this.handleLink, true);
+            a.removeEventListener("click", this.handleLink);
         });
     }
 
