@@ -2,27 +2,46 @@ const template = document.createElement("template");
 template.innerHTML = `
     <section id="root" class="book-container">
         <style>
-        * {box-sizing: border-box}
-        .book-container {
-            width: 400px;
-            margin: auto;
-            overflow: hidden;
-        }
-        .book-container > #book-content {
-            columns: 1;
-            column-gap: 0;
-            height: 400px;
-        }
-        img {
-            display: block;
-            width: 100% !important;
-            height: 400px !important;
-            object-fit: contain;
-        }
+            * {box-sizing: border-box}
+            .book-container {
+                width: 400px;
+                margin: auto;
+                overflow: hidden;
+            }
+            .book-container > #book-content {
+                columns: 1;
+                column-gap: 0;
+                height: 400px;
+            }
+            img {
+                display: block;
+                width: 100% !important;
+                height: 400px !important;
+                object-fit: contain;
+            }
+            ul.book-ui {
+                display: flex;
+                justify-content: space-between;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                min-height: 1.5em;
+            }
+            ul.book-ui > * {
+                min-height: 1.5em;
+            }
+
         </style>
 
         <style id="book-style"></style>
         <div id="book-content"></div>
+
+        <ul class="book-ui">
+            <li id="section-name"></li>
+            <li id="page">
+                <span id="current-page"></span>/<span id="total-pages"></span>
+            </li>
+        </ul>
         
         <button role="button" id="back">Back</button>
         <button role="button" id="next">Next</button>
@@ -162,19 +181,30 @@ class BookComponent extends HTMLElement {
         this.createMarker();
     }
 
-    updateBookState(book, currentSection) {
-        const bookStructure = book.structure;
+    updateBookUI() {
+        const sectionNameElem = this.shadowRoot.getElementById("section-name");
+        sectionNameElem.innerHTML = this.posInBook.currentSectionTitle;
 
+        const currentPageElem = this.shadowRoot.getElementById("current-page");
+        currentPageElem.innerHTML = this.posInBook.currentBookPage;
+
+        const totalPageElem = this.shadowRoot.getElementById("total-pages");
+        totalPageElem.innerHTML = this.posInBook.totalBookPages;
+    }
+
+    updateBookState(book, currentSection) {
         this.posInBook.currentSection = currentSection;
         this.posInBook.totalSections = book.sections.length;
 
-        const currentTocEntry = bookStructure.find(
+        const currentTocEntry = book.structure.find(
             (tocEntry) =>
                 tocEntry.sectionId === book.sectionNames[currentSection]
         );
         if (currentTocEntry) {
             this.posInBook.currentSectionTitle = currentTocEntry.name;
         }
+
+        this.updateBookUI();
 
         console.log("Current section:", this.posInBook.currentSectionTitle);
     }
@@ -312,7 +342,6 @@ class BookComponent extends HTMLElement {
             totalBookPages: 0,
 
             currentSectionTitle: "",
-            currentSectionName: "",
         };
 
         this.loadSection(this.book, this.posInBook.currentSection, 0);
