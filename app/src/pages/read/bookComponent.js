@@ -26,7 +26,6 @@ template.innerHTML = `
         
         <button role="button" id="back">Back</button>
         <button role="button" id="next">Next</button>
-        <button role="button" id="jump">Jump 5</button>
     </section>
 `;
 
@@ -64,6 +63,16 @@ class BookComponent extends HTMLElement {
             return elem.tag === "style";
         });
         return headStyles[0]?.children?.[0]?.text || "";
+    }
+    getSectionTitle(book, sectionNum) {
+        const section = book.sections[sectionNum];
+
+        console.log("section", section);
+        const titleTag = section[0].children.filter((elem) => {
+            return elem.tag === "title";
+        })?.[0];
+
+        return titleTag.children?.[0]?.text || "";
     }
 
     loadStyles(book, sectionNum) {
@@ -124,6 +133,7 @@ class BookComponent extends HTMLElement {
     }
 
     handleLink(e, book) {
+        // todo: handle only toc links, ignore website links
         e.preventDefault();
         const sectionName = e.target.href.split("#").pop();
         const sectionIndex = Object.keys(book.structure).filter((index) => {
@@ -131,7 +141,6 @@ class BookComponent extends HTMLElement {
             return obj.sectionId === sectionName;
         });
         const sectionNum = parseInt(book.structure[sectionIndex].playOrder);
-        console.log("sectionNum", sectionNum);
         this.loadSection(this.book, sectionNum, 0);
     }
 
@@ -149,7 +158,7 @@ class BookComponent extends HTMLElement {
      * nPageShift - how many pages to flip through
      * offsetMarkerId - id of an element within section to scroll to
      */
-    loadSection(book, sectionNum, nPageShift, offsetMarkerId = "") {
+    loadSection(book, currentSection, nPageShift, offsetMarkerId = "") {
         book.then((book) => {
             // Removes anchor event listeners when leaving the section
             let anchors = this.shadowRoot.querySelectorAll("a");
@@ -159,11 +168,31 @@ class BookComponent extends HTMLElement {
 
             const bookStructure = book.structure;
 
-            this.sectionNum = sectionNum;
-            console.log("book", sectionNum, nPageShift, offsetMarkerId);
-            this.loadStyles(book, sectionNum);
-            this.loadContent(book, sectionNum);
-            this.maxSectionNum = book.sections.length;
+            this.posInBook.currentSection = currentSection;
+            this.posInBook.totalSections = book.sections.length;
+
+            this.posInBook.currentSectionTitle = this.getSectionTitle(
+                book,
+                currentSection
+            );
+            // const diff = this.posInBook.totalSections - bookStructure.length;
+            // this.posInBook.currentChapterTitle =
+            //     book.structure?.[currentSection - diff]?.name || "";
+
+            console.log(this.posInBook.currentSectionTitle);
+            // console.log(
+            //     "Sections",
+            //     currentSection,
+            //     "/",
+            //     this.posInBook.totalSections,
+            //     "Structure",
+            //     bookStructure,
+            //     this.posInBook.currentChapterTitle
+            // );
+
+            console.log("book", currentSection, nPageShift, offsetMarkerId);
+            this.loadStyles(book, currentSection);
+            this.loadContent(book, currentSection);
 
             // In case user traveled from next section
             if (offsetMarkerId) {
@@ -224,13 +253,16 @@ class BookComponent extends HTMLElement {
         // Else go to the next section
         else if (nextPage > maxPageNum) {
             // Checks if there is a next section
-            if (this.sectionNum + 1 <= this.maxSectionNum) {
+            if (
+                this.posInBook.currentSection + 1 <
+                this.posInBook.totalSections
+            ) {
                 const pagesShifted = maxPageNum - currentPage;
                 const pagesLeftToShift = nPageShift - pagesShifted - 1;
 
                 this.loadSection(
                     this.book,
-                    this.sectionNum + 1,
+                    this.posInBook.currentSection + 1,
                     pagesLeftToShift
                 );
             }
@@ -238,13 +270,13 @@ class BookComponent extends HTMLElement {
         // Else go to the previous section
         else if (nextPage < minPageNum) {
             // Checks if there is a previous section
-            if (this.sectionNum - 1 >= 0) {
+            if (this.posInBook.currentSection - 1 >= 0) {
                 const pagesShifted = currentPage - minPageNum;
                 const pagesLeftToShift = nPageShift + pagesShifted + 1;
 
                 this.loadSection(
                     this.book,
-                    this.sectionNum - 1,
+                    this.posInBook.currentSection - 1,
                     pagesLeftToShift,
                     "endMarker"
                 );
@@ -265,9 +297,21 @@ class BookComponent extends HTMLElement {
     connectedCallback() {
         const bookPath = this.getAttribute("book-path");
         this.book = this.asyncLoadBook(bookPath);
-        this.sectionNum = parseInt(this.getAttribute("book-page"));
 
-        this.loadSection(this.book, this.sectionNum, 0);
+        this.posInBook = {
+            currentSection: parseInt(this.getAttribute("book-page")),
+            totalSections: 0,
+
+            currentSectionPage: 0,
+            totalSectionPages: 0,
+
+            currentBookPage: 0,
+            totalBookPages: 0,
+
+            currentSectionTitle: "",
+        };
+
+        this.loadSection(this.book, this.posInBook.currentSection, 0);
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
@@ -293,8 +337,8 @@ class BookComponent extends HTMLElement {
 
     // isAValidPage(updatedPage) {
     //     // Checks if it's a first render
-    //     if (this.sectionNum !== undefined) {
-    //         return updatedPage >= 0 && updatedPage <= this.maxSectionNum - 1;
+    //     if (this.posInBook.currentSection !== undefined) {
+    //         return updatedPage >= 0 && updatedPage <= this.posInBook.totalSections - 1;
     //     }
     // }
 
@@ -304,8 +348,8 @@ class BookComponent extends HTMLElement {
     //     const updatedPageNum = this.getAttribute("book-page");
 
     //     if (this.isAValidPage(updatedPageNum)) {
-    //         this.sectionNum = updatedPageNum;
-    //         this.loadSection(this.book, this.sectionNum);
+    //         this.posInBook.currentSection = updatedPageNum;
+    //         this.loadSection(this.book, this.posInBook.currentSection);
     //     }
     //     this.setCurrentOffset(0);
     // }
