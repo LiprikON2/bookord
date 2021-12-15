@@ -413,15 +413,23 @@ ipcMain.handle("app:on-book-import", async (event, filePath) => {
         section.toHtmlObjects()
     );
 
+    const sectionNames = parsedEpub.sections.map((section) => section.id);
+
     // console.log("book", parsedEpub.sections[0].toHtmlObjects());
     // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
     // console.log("book", JSON.stringify(parsedEpub._toc.ncx.navMap, null, 4));
-    // console.log("book", JSON.stringify(parsedEpub._manifest, null, 4));
+
+    // console.log(
+    //     "book",
+    //     JSON.stringify(parsedEpub._manifest, null, 4),
+    //     parsedEpub._manifest.length
+    // );
     const book = {
         info: parsedEpub.info,
         styles: parsedEpub.styles,
         structure: parsedEpub.structure,
         sections,
+        sectionNames,
     };
     return book;
     // console.log("book", book.info);

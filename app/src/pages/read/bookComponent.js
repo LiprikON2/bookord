@@ -67,7 +67,6 @@ class BookComponent extends HTMLElement {
     getSectionTitle(book, sectionNum) {
         const section = book.sections[sectionNum];
 
-        console.log("section", section);
         const titleTag = section[0].children.filter((elem) => {
             return elem.tag === "title";
         })?.[0];
@@ -133,15 +132,26 @@ class BookComponent extends HTMLElement {
     }
 
     handleLink(e, book) {
-        // todo: handle only toc links, ignore website links
-        e.preventDefault();
-        const sectionName = e.target.href.split("#").pop();
-        const sectionIndex = Object.keys(book.structure).filter((index) => {
-            const obj = book.structure[index];
-            return obj.sectionId === sectionName;
-        });
-        const sectionNum = parseInt(book.structure[sectionIndex].playOrder);
-        this.loadSection(this.book, sectionNum, 0);
+        e.stopPropagation();
+        console.log("e.currentTarget.href", e.currentTarget.href);
+        const [sectionName, marker] = e.currentTarget.href
+            .split("#")
+            .pop()
+            .split(",");
+
+        const sectionNum = book.sectionNames.findIndex(
+            (section) => section === sectionName
+        );
+
+        if (sectionNum !== -1) {
+            e.preventDefault();
+            this.loadSection(this.book, sectionNum, 0);
+            // this.loadSection(this.book, sectionNum, 0, marker);
+        } else {
+            e.preventDefault();
+            console.log("Normal link");
+            //  todo: handle website links
+        }
     }
 
     loadContent(book, sectionNum) {
@@ -163,7 +173,7 @@ class BookComponent extends HTMLElement {
             // Removes anchor event listeners when leaving the section
             let anchors = this.shadowRoot.querySelectorAll("a");
             anchors.forEach((a) => {
-                a.removeEventListener("click", this.handleLink);
+                a.removeEventListener("click", this.handleLink, true);
             });
 
             const bookStructure = book.structure;
@@ -179,7 +189,8 @@ class BookComponent extends HTMLElement {
             // this.posInBook.currentChapterTitle =
             //     book.structure?.[currentSection - diff]?.name || "";
 
-            console.log(this.posInBook.currentSectionTitle);
+            // console.log(this.posInBook.currentSectionTitle);
+
             // console.log(
             //     "Sections",
             //     currentSection,
@@ -209,7 +220,11 @@ class BookComponent extends HTMLElement {
 
             anchors = this.shadowRoot.querySelectorAll("a");
             anchors.forEach((a) => {
-                a.addEventListener("click", (e) => this.handleLink(e, book));
+                a.addEventListener(
+                    "click",
+                    (e) => this.handleLink(e, book),
+                    true
+                );
             });
         });
     }
@@ -309,6 +324,7 @@ class BookComponent extends HTMLElement {
             totalBookPages: 0,
 
             currentSectionTitle: "",
+            currentSectionName: "",
         };
 
         this.loadSection(this.book, this.posInBook.currentSection, 0);
@@ -331,7 +347,7 @@ class BookComponent extends HTMLElement {
 
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            a.removeEventListener("click", this.handleLink);
+            a.removeEventListener("click", this.handleLink, true);
         });
     }
 
