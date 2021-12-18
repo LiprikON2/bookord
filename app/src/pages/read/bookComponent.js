@@ -14,6 +14,11 @@ template.innerHTML = `
                 column-gap: 0;
                 height: 400px;
             }
+
+            .book-container > #book-page-counter {
+                visibility: hidden;
+            } 
+
             img {
                 display: block;
                 width: 100% !important;
@@ -45,8 +50,7 @@ template.innerHTML = `
         <style id="book-style"></style>
         <div id="book-title"></div>
         <div id="book-content"></div>
-        <div id="book-page-counter" hidden></div>
-
+        
         <ul class="book-ui">
             <li id="section-name"></li>
             <li id="section-page">
@@ -56,8 +60,11 @@ template.innerHTML = `
                 <span id="current-book-page"></span>/<span id="total-book-pages"></span>
             </li>
         </ul>
+
         <button role="button" id="back">Back</button>
         <button role="button" id="next">Next</button>
+
+        <div id="book-page-counter"></div>
     </section>
 `;
 
@@ -192,36 +199,35 @@ class BookComponent extends HTMLElement {
         section.shift();
         this.recCreateElements(target, section);
 
-        this.createMarker(target, "endMarker");
+        const markerId = target.id + "-end-marker";
+        this.createMarker(target, markerId);
     }
 
     updateBookUI() {
         const bookTitleElem = this.shadowRoot.getElementById("book-title");
-        bookTitleElem.innerHTML = this.posInBook.bookTitle;
-        bookTitleElem.title = this.posInBook.bookTitle;
+        bookTitleElem.innerHTML = this.bookState.bookTitle;
+        bookTitleElem.title = this.bookState.bookTitle;
 
         const sectionNameElem = this.shadowRoot.getElementById("section-name");
-        sectionNameElem.innerHTML = this.posInBook.currentSectionTitle;
-        sectionNameElem.title = this.posInBook.currentSectionTitle;
+        sectionNameElem.innerHTML = this.bookState.currentSectionTitle;
+        sectionNameElem.title = this.bookState.currentSectionTitle;
 
         const currentSectionPageElem = this.shadowRoot.getElementById(
             "current-section-page"
         );
         currentSectionPageElem.innerHTML =
-            this.posInBook.currentSectionPage + 1;
+            this.bookState.currentSectionPage + 1;
         const totalSectionPageElem = this.shadowRoot.getElementById(
             "total-section-pages"
         );
-        totalSectionPageElem.innerHTML = this.posInBook.totalSectionPages + 1;
+        totalSectionPageElem.innerHTML = this.bookState.totalSectionPages + 1;
 
         const currentBookPageElem =
             this.shadowRoot.getElementById("current-book-page");
-        currentBookPageElem.innerHTML = this.posInBook.currentBookPage + 1;
+        currentBookPageElem.innerHTML = this.bookState.currentBookPage + 1;
         const totalBookPageElem =
             this.shadowRoot.getElementById("total-book-pages");
-        totalBookPageElem.innerHTML = this.posInBook.totalBookPages + 1;
-
-        // console.log("this.posInBook", this.posInBook);
+        totalBookPageElem.innerHTML = this.bookState.totalBookPages + 1;
     }
 
     getSectionTitle(book, currentSection) {
@@ -232,25 +238,31 @@ class BookComponent extends HTMLElement {
         return currentTocEntry?.name || "";
     }
 
-    updateBookPageState(target) {
+    calcTotalSectionPages(target) {
         const displayWidth = target.offsetWidth;
-        const maxPageNum = Math.abs(this.getMaxOffset() / displayWidth);
-        this.posInBook.totalSectionPages = maxPageNum;
-
+        const maxPageNum = Math.abs(this.getMaxOffset(target) / displayWidth);
+        return maxPageNum;
+    }
+    calcCurrentSectionPage(target) {
+        const displayWidth = target.offsetWidth;
         const currentOffset = this.getCurrentOffset(target);
         const currentPage = Math.abs(currentOffset / displayWidth);
-        this.posInBook.currentSectionPage = currentPage;
+        return currentPage;
     }
 
-    updateBookState(target, book, currentSection) {
-        this.posInBook.currentSection = currentSection;
-        this.posInBook.totalSections = book.sections.length;
-        this.posInBook.bookTitle = book.info.title;
-        this.posInBook.currentSectionTitle = this.getSectionTitle(
+    updateBookPageState(target) {
+        this.bookState.totalSectionPages = this.calcTotalSectionPages(target);
+        this.bookState.currentSectionPage = this.calcCurrentSectionPage(target);
+    }
+
+    updateBookSectionState(book, currentSection) {
+        this.bookState.currentSection = currentSection;
+        this.bookState.totalSections = book.sections.length;
+        this.bookState.bookTitle = book.info.title;
+        this.bookState.currentSectionTitle = this.getSectionTitle(
             book,
             currentSection
         );
-        this.updateBookPageState(target);
     }
 
     /*
@@ -260,7 +272,7 @@ class BookComponent extends HTMLElement {
      */
     loadSection(target, currentSection, nPageShift, offsetMarkerId = "") {
         this.book.then((book) => {
-            // Removes anchor event listeners when leaving the section
+            // Removes anchor's event handlers before loading another section
             let anchors = this.shadowRoot.querySelectorAll("a");
             anchors.forEach((a) => {
                 a.removeEventListener("click", this.handleLink);
@@ -270,20 +282,24 @@ class BookComponent extends HTMLElement {
             this.loadStyles(book, currentSection);
             this.loadContent(target, book, currentSection);
 
-            // In case user traveled from the following section
+            // In case user traveled back from the subsequent section
             if (offsetMarkerId) {
-                const markerOffset = this.getElementOffset("endMarker");
+                const markerId = target.id + "-end-marker";
+                const markerOffset = this.getElementOffset(markerId);
+                // Set offset to the last page of this section
                 this.setCurrentOffset(target, markerOffset);
             } else {
+                // Set offset to the first page of this section
                 this.setCurrentOffset(target, 0);
             }
 
-            this.updateBookState(target, book, currentSection);
+            this.updateBookSectionState(book, currentSection);
+            this.updateBookPageState(target);
             this.updateBookUI();
 
+            // In case user traveled from previous section and
+            // still had pages pending to shift through
             if (nPageShift !== 0) {
-                // if user traveled from previous section and still had
-                // pages pending left to shift
                 const newOffset = this.calcNextOffset(target, nPageShift);
                 this.setCurrentOffset(target, newOffset);
 
@@ -291,6 +307,7 @@ class BookComponent extends HTMLElement {
                 this.updateBookUI();
             }
 
+            // Attaches event handlers to anchor tags to handle book navigation
             anchors = this.shadowRoot.querySelectorAll("a");
             anchors.forEach((a) => {
                 a.addEventListener("click", (e) => this.handleLink(e, book));
@@ -312,8 +329,9 @@ class BookComponent extends HTMLElement {
         const element = this.shadowRoot.getElementById(elementId);
         return -element.offsetLeft;
     }
-    getMaxOffset() {
-        return this.getElementOffset("endMarker");
+    getMaxOffset(target) {
+        const markerId = target.id + "-end-marker";
+        return this.getElementOffset(markerId);
     }
 
     /*
@@ -326,8 +344,8 @@ class BookComponent extends HTMLElement {
         const shiftOffset = -(nPageShift * displayWidth);
 
         const minPageNum = 0;
-        const maxPageNum = Math.abs(this.getMaxOffset() / displayWidth);
-        const currentPage = Math.abs(currentOffset / displayWidth);
+        const maxPageNum = this.calcTotalSectionPages(target);
+        const currentPage = this.calcCurrentSectionPage(target);
         const nextPage = currentPage + nPageShift;
 
         // Checks if requested page is in range of this section
@@ -338,15 +356,15 @@ class BookComponent extends HTMLElement {
         else if (nextPage > maxPageNum) {
             // Checks if there is a next section
             if (
-                this.posInBook.currentSection + 1 <
-                this.posInBook.totalSections
+                this.bookState.currentSection + 1 <
+                this.bookState.totalSections
             ) {
                 const pagesShifted = maxPageNum - currentPage;
                 const pagesLeftToShift = nPageShift - pagesShifted - 1;
 
                 this.loadSection(
                     target,
-                    this.posInBook.currentSection + 1,
+                    this.bookState.currentSection + 1,
                     pagesLeftToShift
                 );
                 return 0;
@@ -355,17 +373,18 @@ class BookComponent extends HTMLElement {
         // Else go to the previous section
         else if (nextPage < minPageNum) {
             // Checks if there is a previous section
-            if (this.posInBook.currentSection - 1 >= 0) {
+            if (this.bookState.currentSection - 1 >= 0) {
                 const pagesShifted = currentPage - minPageNum;
                 const pagesLeftToShift = nPageShift + pagesShifted + 1;
 
+                const markerId = target.id + "-end-marker";
                 this.loadSection(
                     target,
-                    this.posInBook.currentSection - 1,
+                    this.bookState.currentSection - 1,
                     pagesLeftToShift,
-                    "endMarker"
+                    markerId
                 );
-                return this.getMaxOffset();
+                return this.getMaxOffset(target);
             }
         }
     }
@@ -384,20 +403,43 @@ class BookComponent extends HTMLElement {
     // }
 
     countBookPages() {
-        // this.loadSection(here, this.posInBook.currentSection, 0);
+        this.book.then((book) => {
+            const bookPageCounterElem =
+                this.shadowRoot.getElementById("book-page-counter");
+
+            const sectionPages = book.sectionNames.map(
+                (sectionName, sectionIndex) => {
+                    // this.loadSection(bookPageCounterElem, sectionIndex, 0);
+                    this.loadStyles(book, sectionIndex);
+                    this.loadContent(bookPageCounterElem, book, sectionIndex);
+                    return parseInt(
+                        this.calcTotalSectionPages(bookPageCounterElem)
+                    );
+                    // this.setCurrentOffset(bookPageCounterElem, 0);
+                }
+            );
+            const pageCount = sectionPages.reduce(
+                (prevValue, currValue) => prevValue + currValue
+            );
+            console.log("sectionPages", sectionPages);
+            console.log("pageCount", pageCount);
+
+            // console.log("book", book);
+        });
     }
 
     connectedCallback() {
         const bookPath = this.getAttribute("book-path");
         this.book = this.asyncLoadBook(bookPath);
 
-        this.posInBook = {
+        this.bookState = {
             currentSection: parseInt(this.getAttribute("book-page")),
             totalSections: 0,
 
-            currentSectionPage: 0,
-            totalSectionPages: 0,
+            currentSectionPage: 0, // TODO sectionPagesCount[currentSection] === totalSectionPages
+            totalSectionPages: 0, //  TODO totalSections === sectionPagesCount
 
+            sectionPagesCount: [],
             currentBookPage: 0,
             totalBookPages: 0,
 
@@ -405,7 +447,7 @@ class BookComponent extends HTMLElement {
             currentSectionTitle: "",
         };
 
-        this.loadSection(this.content, this.posInBook.currentSection, 0);
+        this.loadSection(this.content, this.bookState.currentSection, 0);
         this.countBookPages();
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
