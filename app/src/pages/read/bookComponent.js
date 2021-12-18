@@ -21,19 +21,28 @@ template.innerHTML = `
             }
             ul.book-ui {
                 display: flex;
+                gap: 1em;
                 justify-content: space-between;
                 list-style: none;
                 padding: 0;
                 margin: 0;
-                min-height: 1.5em;
             }
-            ul.book-ui > * {
-                min-height: 1.5em;
+            ul.book-ui > *,
+            #book-title {
+                color: #999;
+                height: 1.5em;
+            }
+            ul.book-ui > #section-name,
+            #boook-title {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
             }
 
         </style>
 
         <style id="book-style"></style>
+        <div id="book-title"></div>
         <div id="book-content"></div>
 
         <ul class="book-ui">
@@ -190,11 +199,16 @@ class BookComponent extends HTMLElement {
 
         const totalPageElem = this.shadowRoot.getElementById("total-pages");
         totalPageElem.innerHTML = this.posInBook.totalBookPages;
+
+        const bookTitleElem = this.shadowRoot.getElementById("book-title");
+        console.log("this", this.posInBook.bookTitle);
+        bookTitleElem.innerHTML = this.posInBook.bookTitle;
     }
 
     updateBookState(book, currentSection) {
         this.posInBook.currentSection = currentSection;
         this.posInBook.totalSections = book.sections.length;
+        this.posInBook.bookTitle = book.info.title;
 
         const currentTocEntry = book.structure.find(
             (tocEntry) =>
@@ -341,6 +355,7 @@ class BookComponent extends HTMLElement {
             currentBookPage: 0,
             totalBookPages: 0,
 
+            bookTitle: "",
             currentSectionTitle: "",
         };
 

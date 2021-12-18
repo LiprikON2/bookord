@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import {
@@ -21,7 +21,7 @@ const Read = () => {
 
     const location = useLocation();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         // Listen for responses from the electron store
         window.api.store.clearRendererBindings();
         window.api.store.onReceive(readConfigResponse, (args) => {
