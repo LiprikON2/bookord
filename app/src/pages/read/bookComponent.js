@@ -175,8 +175,8 @@ class BookComponent extends HTMLElement {
 
         if (sectionNum !== -1) {
             e.preventDefault();
-            this.loadSection(sectionNum, 0);
-            // this.loadSection(this.book, sectionNum, 0, marker);
+            this.loadSection(this.content, sectionNum, 0);
+            // this.loadSection(this.content, sectionNum, 0, marker);
         } else {
             e.preventDefault();
             console.log("Normal link");
@@ -233,7 +233,7 @@ class BookComponent extends HTMLElement {
     }
 
     updateBookPageState(target) {
-        const displayWidth = this.content.offsetWidth;
+        const displayWidth = target.offsetWidth;
         const maxPageNum = Math.abs(this.getMaxOffset() / displayWidth);
         this.posInBook.totalSectionPages = maxPageNum;
 
@@ -258,7 +258,7 @@ class BookComponent extends HTMLElement {
      * nPageShift - how many pages to flip through
      * offsetMarkerId - id of an element within section to scroll to
      */
-    loadSection(currentSection, nPageShift, offsetMarkerId = "") {
+    loadSection(target, currentSection, nPageShift, offsetMarkerId = "") {
         this.book.then((book) => {
             // Removes anchor event listeners when leaving the section
             let anchors = this.shadowRoot.querySelectorAll("a");
@@ -268,26 +268,26 @@ class BookComponent extends HTMLElement {
 
             console.log("book", currentSection, nPageShift, offsetMarkerId);
             this.loadStyles(book, currentSection);
-            this.loadContent(this.content, book, currentSection);
+            this.loadContent(target, book, currentSection);
 
             // In case user traveled from the following section
             if (offsetMarkerId) {
                 const markerOffset = this.getElementOffset("endMarker");
-                this.setCurrentOffset(this.content, markerOffset);
+                this.setCurrentOffset(target, markerOffset);
             } else {
-                this.setCurrentOffset(this.content, 0);
+                this.setCurrentOffset(target, 0);
             }
 
-            this.updateBookState(this.content, book, currentSection);
+            this.updateBookState(target, book, currentSection);
             this.updateBookUI();
 
             if (nPageShift !== 0) {
                 // if user traveled from previous section and still had
                 // pages pending left to shift
-                const newOffset = this.calcNextOffset(this.content, nPageShift);
-                this.setCurrentOffset(this.content, newOffset);
+                const newOffset = this.calcNextOffset(target, nPageShift);
+                this.setCurrentOffset(target, newOffset);
 
-                this.updateBookPageState(this.content);
+                this.updateBookPageState(target);
                 this.updateBookUI();
             }
 
@@ -321,7 +321,7 @@ class BookComponent extends HTMLElement {
      * offsetted in order to shift n section pages
      */
     calcNextOffset(target, nPageShift) {
-        const displayWidth = this.content.offsetWidth;
+        const displayWidth = target.offsetWidth;
         const currentOffset = this.getCurrentOffset(target);
         const shiftOffset = -(nPageShift * displayWidth);
 
@@ -345,6 +345,7 @@ class BookComponent extends HTMLElement {
                 const pagesLeftToShift = nPageShift - pagesShifted - 1;
 
                 this.loadSection(
+                    target,
                     this.posInBook.currentSection + 1,
                     pagesLeftToShift
                 );
@@ -359,6 +360,7 @@ class BookComponent extends HTMLElement {
                 const pagesLeftToShift = nPageShift + pagesShifted + 1;
 
                 this.loadSection(
+                    target,
                     this.posInBook.currentSection - 1,
                     pagesLeftToShift,
                     "endMarker"
@@ -369,7 +371,7 @@ class BookComponent extends HTMLElement {
     }
     flipNPages(target, nPageShift) {
         const newOffset = this.calcNextOffset(target, nPageShift);
-        this.setCurrentOffset(this.content, newOffset);
+        this.setCurrentOffset(target, newOffset);
 
         this.updateBookPageState(target);
         this.updateBookUI();
@@ -381,7 +383,9 @@ class BookComponent extends HTMLElement {
     //     this.setCurrentOffset(this.content, newOffset);
     // }
 
-    countBookPages() {}
+    countBookPages() {
+        // this.loadSection(here, this.posInBook.currentSection, 0);
+    }
 
     connectedCallback() {
         const bookPath = this.getAttribute("book-path");
@@ -401,7 +405,8 @@ class BookComponent extends HTMLElement {
             currentSectionTitle: "",
         };
 
-        this.loadSection(this.posInBook.currentSection, 0);
+        this.loadSection(this.content, this.posInBook.currentSection, 0);
+        this.countBookPages();
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
