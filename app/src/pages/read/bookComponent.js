@@ -9,7 +9,7 @@ template.innerHTML = `
                 overflow: hidden;
             }
             .book-container > #book-content,
-            .book-container > #book-page-counter {
+            .book-container > #book-page-counter { /* TODO dynamically copy parent styles to page counter  */
                 columns: 1;
                 column-gap: 0;
                 height: 400px;
@@ -39,7 +39,7 @@ template.innerHTML = `
                 height: 1.5em;
             }
             ul.book-ui > #section-name,
-            #boook-title {
+            #book-title {
                 text-overflow: ellipsis;
                 overflow: hidden;
                 white-space: nowrap;
@@ -216,18 +216,20 @@ class BookComponent extends HTMLElement {
             "current-section-page"
         );
         currentSectionPageElem.innerHTML =
-            this.bookState.currentSectionPage + 1;
+            this.bookState.getCurrentSectionPage(this.content) + 1;
         const totalSectionPageElem = this.shadowRoot.getElementById(
             "total-section-pages"
         );
-        totalSectionPageElem.innerHTML = this.bookState.totalSectionPages + 1;
+        totalSectionPageElem.innerHTML = this.bookState.getTotalSectionPages();
 
         const currentBookPageElem =
             this.shadowRoot.getElementById("current-book-page");
-        currentBookPageElem.innerHTML = this.bookState.currentBookPage + 1;
+        currentBookPageElem.innerHTML = this.bookState.getCurrentBookPage(
+            this.content
+        );
         const totalBookPageElem =
             this.shadowRoot.getElementById("total-book-pages");
-        totalBookPageElem.innerHTML = this.bookState.totalBookPages + 1;
+        totalBookPageElem.innerHTML = this.bookState.getTotalBookPages();
     }
 
     getSectionTitle(book, currentSection) {
@@ -241,18 +243,7 @@ class BookComponent extends HTMLElement {
     calcTotalSectionPages(target) {
         const displayWidth = target.offsetWidth;
         const maxPageNum = Math.abs(this.getMaxOffset(target) / displayWidth);
-        return maxPageNum;
-    }
-    calcCurrentSectionPage(target) {
-        const displayWidth = target.offsetWidth;
-        const currentOffset = this.getCurrentOffset(target);
-        const currentPage = Math.abs(currentOffset / displayWidth);
-        return currentPage;
-    }
-
-    updateBookPageState(target) {
-        this.bookState.totalSectionPages = this.calcTotalSectionPages(target);
-        this.bookState.currentSectionPage = this.calcCurrentSectionPage(target);
+        return parseInt(maxPageNum);
     }
 
     updateBookSectionState(book, currentSection) {
@@ -294,7 +285,6 @@ class BookComponent extends HTMLElement {
             }
 
             this.updateBookSectionState(book, currentSection);
-            this.updateBookPageState(target);
             this.updateBookUI();
 
             // In case user traveled from previous section and
@@ -303,7 +293,6 @@ class BookComponent extends HTMLElement {
                 const newOffset = this.calcNextOffset(target, nPageShift);
                 this.setCurrentOffset(target, newOffset);
 
-                this.updateBookPageState(target);
                 this.updateBookUI();
             }
 
@@ -315,12 +304,6 @@ class BookComponent extends HTMLElement {
         });
     }
 
-    getCurrentOffset(target) {
-        return (
-            // Strips all non-numeric characters from a string
-            parseInt(target.style.transform.replace(/[^\d.-]/g, "")) || 0
-        );
-    }
     setCurrentOffset(target, nextOffset) {
         target.style.transform = `translate(${nextOffset}px)`;
     }
@@ -340,12 +323,12 @@ class BookComponent extends HTMLElement {
      */
     calcNextOffset(target, nPageShift) {
         const displayWidth = target.offsetWidth;
-        const currentOffset = this.getCurrentOffset(target);
+        const currentOffset = this.bookState.getCurrentOffset(target);
         const shiftOffset = -(nPageShift * displayWidth);
 
         const minPageNum = 0;
         const maxPageNum = this.calcTotalSectionPages(target);
-        const currentPage = this.calcCurrentSectionPage(target);
+        const currentPage = this.bookState.getCurrentSectionPage(target);
         const nextPage = currentPage + nPageShift;
 
         // Checks if requested page is in range of this section
@@ -392,7 +375,6 @@ class BookComponent extends HTMLElement {
         const newOffset = this.calcNextOffset(target, nPageShift);
         this.setCurrentOffset(target, newOffset);
 
-        this.updateBookPageState(target);
         this.updateBookUI();
     }
     // jumpTo(page) {
@@ -402,29 +384,33 @@ class BookComponent extends HTMLElement {
     //     this.setCurrentOffset(this.content, newOffset);
     // }
 
-    countBookPages() {
+    async countBookPages() {
         this.book.then((book) => {
             const bookPageCounterElem =
                 this.shadowRoot.getElementById("book-page-counter");
 
-            const sectionPages = book.sectionNames.map(
-                (sectionName, sectionIndex) => {
-                    // this.loadSection(bookPageCounterElem, sectionIndex, 0);
-                    this.loadStyles(book, sectionIndex);
-                    this.loadContent(bookPageCounterElem, book, sectionIndex);
-                    return parseInt(
-                        this.calcTotalSectionPages(bookPageCounterElem)
-                    );
-                    // this.setCurrentOffset(bookPageCounterElem, 0);
-                }
-            );
-            const pageCount = sectionPages.reduce(
-                (prevValue, currValue) => prevValue + currValue
-            );
-            console.log("sectionPages", sectionPages);
-            console.log("pageCount", pageCount);
+            this.bookState.sectionPagesCount = [];
+            book.sectionNames.forEach((sectionName, sectionIndex) => {
+                this.loadStyles(book, sectionIndex);
+                this.loadContent(bookPageCounterElem, book, sectionIndex);
 
-            // console.log("book", book);
+                const totalSectionPages =
+                    this.calcTotalSectionPages(bookPageCounterElem);
+                this.bookState.sectionPagesCount.push(totalSectionPages);
+                this.updateBookUI();
+            });
+            // const pageCount = sectionPages.reduce(
+            //     (prevValue, currValue) => prevValue + currValue
+            // );
+            // this.bookState.sectionPagesCount = sectionPages;
+            console.log(
+                "this.bookState.sectionPagesCount",
+                this.bookState.sectionPagesCount
+            );
+            console.log(
+                "this.bookState.getTotalBookPages",
+                this.bookState.getTotalBookPages()
+            );
         });
     }
 
@@ -435,13 +421,46 @@ class BookComponent extends HTMLElement {
         this.bookState = {
             currentSection: parseInt(this.getAttribute("book-page")),
             totalSections: 0,
+            getCurrentOffset: function (target) {
+                // Strips all non-numeric characters from a string
+                return (
+                    parseInt(target.style.transform.replace(/[^\d.-]/g, "")) ||
+                    0
+                );
+            },
 
-            currentSectionPage: 0, // TODO sectionPagesCount[currentSection] === totalSectionPages
-            totalSectionPages: 0, //  TODO totalSections === sectionPagesCount
+            getCurrentSectionPage: function (target) {
+                const displayWidth = target.offsetWidth;
+                const currentOffset = this.getCurrentOffset(target);
+                const currentPage = Math.abs(currentOffset / displayWidth);
+                return currentPage;
+            },
+            getTotalSectionPages: function () {
+                return this.sectionPagesCount[this.currentSection];
+            },
 
-            sectionPagesCount: [],
-            currentBookPage: 0,
-            totalBookPages: 0,
+            sectionPagesCount: [0],
+            getCurrentBookPage: function (target) {
+                const sectionPagesCountSlice = this.sectionPagesCount.slice(
+                    0,
+                    this.currentSection + 1
+                );
+                const sectionPagesCountSliceSum = sectionPagesCountSlice.reduce(
+                    (prevValue, currValue) => prevValue + currValue
+                );
+                return (
+                    sectionPagesCountSliceSum -
+                    this.getTotalSectionPages() +
+                    this.getCurrentSectionPage(target) +
+                    1
+                );
+            },
+            getTotalBookPages: function () {
+                const totalBookPages = this.sectionPagesCount.reduce(
+                    (prevValue, currValue) => prevValue + currValue
+                );
+                return totalBookPages;
+            },
 
             bookTitle: "",
             currentSectionTitle: "",
