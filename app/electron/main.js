@@ -6,6 +6,7 @@ const {
     ipcMain,
     Menu,
     dialog,
+    shell,
 } = require("electron");
 const {
     default: installExtension,
@@ -89,6 +90,11 @@ async function createWindow() {
         },
     });
     win.maximize();
+
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        shell.openExternal(url);
+        return { action: "deny" };
+    });
 
     // Sets up main.js bindings for our i18next backend
     i18nextBackend.mainBindings(ipcMain, win, fs);

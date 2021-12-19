@@ -34,7 +34,9 @@ const SettingsList = ({ initSettings }) => {
                                     const setting = settings[key];
                                     if (setting.section === section) {
                                         return (
-                                            <li key={key}>
+                                            <li
+                                                key={key}
+                                                title={setting.description}>
                                                 <input
                                                     id={key}
                                                     type="checkbox"

@@ -174,6 +174,7 @@ class BookComponent extends HTMLElement {
     }
 
     handleLink(e, book) {
+        e.preventDefault();
         const [sectionName, marker] = e.currentTarget.href
             .split("#")
             .pop()
@@ -184,13 +185,10 @@ class BookComponent extends HTMLElement {
         );
 
         if (sectionNum !== -1) {
-            e.preventDefault();
-            this.loadSection(this.content, sectionNum, 0);
-            // this.loadSection(this.content, sectionNum, 0, marker);
+            this.loadSection(this.content, sectionNum, 0, marker);
         } else {
-            e.preventDefault();
-            console.log("Normal link");
-            //  todo: handle website links
+            // Opens link in external browser
+            window.open(e.target.href, "_blank");
         }
     }
 
@@ -245,6 +243,8 @@ class BookComponent extends HTMLElement {
     calcTotalSectionPages(target) {
         const displayWidth = target.offsetWidth;
         const maxPageNum = Math.abs(this.getMaxOffset(target) / displayWidth);
+        // TODO for some reason this
+        // has values of 78.28, 111.28, 76.28...
         // console.log("hm", maxPageNum);
         return parseInt(maxPageNum);
     }
@@ -260,6 +260,7 @@ class BookComponent extends HTMLElement {
     }
 
     /*
+     * target - reference to the book element
      * sectionNum - index of an html file - section
      * nPageShift - how many pages to flip through
      * offsetMarkerId - id of an element within section to scroll to
@@ -278,8 +279,7 @@ class BookComponent extends HTMLElement {
 
             // In case user traveled back from the subsequent section
             if (offsetMarkerId) {
-                const markerId = target.id + "-end-marker";
-                const markerOffset = this.getElementOffset(markerId);
+                const markerOffset = this.getElementOffset(offsetMarkerId);
                 // Set offset to the last page of this section
                 this.setCurrentOffset(target, markerOffset);
             } else {
