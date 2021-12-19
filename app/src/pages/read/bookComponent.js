@@ -54,10 +54,10 @@ template.innerHTML = `
         
         <ul class="book-ui">
             <li id="section-name"></li>
-            <li id="section-page">
+            <li id="section-page" title="Section page">
                 <span id="current-section-page"></span>/<span id="total-section-pages"></span>
             </li>
-            <li id="book-page">
+            <li id="book-page" title="Book page">
                 <span id="current-book-page"></span>/<span id="total-book-pages"></span>
             </li>
         </ul>
@@ -408,11 +408,12 @@ class BookComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        const bookPath = this.getAttribute("book-path");
-        this.book = this.asyncLoadBook(bookPath);
+        const bookPathAttr = this.getAttribute("book-path");
+        const pageAttr = parseInt(this.getAttribute("book-page")) - 1;
+        this.book = this.asyncLoadBook(bookPathAttr);
 
         this.bookState = {
-            currentSection: parseInt(this.getAttribute("book-page")),
+            currentSection: 0,
             totalSections: 0,
             getCurrentOffset: function (target) {
                 // Strips all non-numeric characters from a string
@@ -459,19 +460,19 @@ class BookComponent extends HTMLElement {
         };
 
         this.countBookPages();
-        this.loadSection(this.content, this.bookState.currentSection, 0);
+        this.loadSection(this.content, this.bookState.currentSection, pageAttr);
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
 
         nextBtn.addEventListener("click", () => {
-            // this.flipNPages(this.content, 1);
-            this.jumpTo(this.content, 581);
+            this.flipNPages(this.content, 1);
         });
         backBtn.addEventListener("click", () => {
-            // this.flipNPages(this.content, -1);
-            this.jumpTo(this.content, 1);
+            this.flipNPages(this.content, -1);
         });
+
+        console.log("Connected!");
     }
     disconnectedCallback() {
         const nextBtn = this.shadowRoot.querySelector("button#next");
@@ -492,17 +493,12 @@ class BookComponent extends HTMLElement {
     //     }
     // }
 
-    // attributeChangedCallback() {
-    //     // Triggered when next page or
-    //     // previous page button is clicked
-    //     const updatedPageNum = this.getAttribute("book-page");
-
-    //     if (this.isAValidPage(updatedPageNum)) {
-    //         this.posInBook.currentSection = updatedPageNum;
-    //         this.loadSection(this.posInBook.currentSection);
-    //     }
-    //     this.setCurrentOffset(this.content, 0);
-    // }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "book-page" && oldValue) {
+            const updatedPage = this.getAttribute("book-page");
+            this.jumpTo(this.content, updatedPage);
+        }
+    }
 }
 
 window.customElements.define("book-component", BookComponent);
