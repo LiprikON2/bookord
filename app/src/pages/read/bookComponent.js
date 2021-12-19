@@ -8,16 +8,17 @@ template.innerHTML = `
                 margin: auto;
                 overflow: hidden;
             }
+            .book-container.page-counter {
+                visibility: hidden;
+                max-height: 0;
+            } 
+
             .book-container > #book-content,
-            .book-container > #book-page-counter { /* TODO dynamically copy parent styles to page counter  */
+            .book-container > #book-page-counter {
                 columns: 1;
                 column-gap: 0;
                 height: 400px;
             }
-
-            .book-container > #book-page-counter {
-                visibility: hidden;
-            } 
 
             img {
                 display: block;
@@ -63,9 +64,11 @@ template.innerHTML = `
 
         <button role="button" id="back">Back</button>
         <button role="button" id="next">Next</button>
-
-        <div id="book-page-counter"></div>
-    </section>
+        
+        <div class="page-counter book-container">
+            <div id="book-page-counter"></div>
+        </div>
+        </section>
 `;
 
 class BookComponent extends HTMLElement {
@@ -224,9 +227,8 @@ class BookComponent extends HTMLElement {
 
         const currentBookPageElem =
             this.shadowRoot.getElementById("current-book-page");
-        currentBookPageElem.innerHTML = this.bookState.getCurrentBookPage(
-            this.content
-        );
+        currentBookPageElem.innerHTML =
+            this.bookState.getCurrentBookPage(this.content) + 1;
         const totalBookPageElem =
             this.shadowRoot.getElementById("total-book-pages");
         totalBookPageElem.innerHTML = this.bookState.getTotalBookPages();
@@ -243,6 +245,7 @@ class BookComponent extends HTMLElement {
     calcTotalSectionPages(target) {
         const displayWidth = target.offsetWidth;
         const maxPageNum = Math.abs(this.getMaxOffset(target) / displayWidth);
+        // console.log("hm", maxPageNum);
         return parseInt(maxPageNum);
     }
 
@@ -292,7 +295,6 @@ class BookComponent extends HTMLElement {
             if (nPageShift !== 0) {
                 const newOffset = this.calcNextOffset(target, nPageShift);
                 this.setCurrentOffset(target, newOffset);
-
                 this.updateBookUI();
             }
 
@@ -352,6 +354,7 @@ class BookComponent extends HTMLElement {
                 );
                 return 0;
             }
+            return this.getMaxOffset(target);
         }
         // Else go to the previous section
         else if (nextPage < minPageNum) {
@@ -369,6 +372,7 @@ class BookComponent extends HTMLElement {
                 );
                 return this.getMaxOffset(target);
             }
+            return 0;
         }
     }
     flipNPages(target, nPageShift) {
@@ -377,14 +381,15 @@ class BookComponent extends HTMLElement {
 
         this.updateBookUI();
     }
-    // jumpTo(page) {
-    //     const nPageShift = 0;
+    jumpTo(target, page) {
+        const currentPage = this.bookState.getCurrentBookPage(target);
+        const nPageShift = page - currentPage - 1;
 
-    //     const newOffset = this.calcNextOffset(target, nPageShift);
-    //     this.setCurrentOffset(this.content, newOffset);
-    // }
+        this.flipNPages(target, nPageShift);
+    }
 
-    async countBookPages() {
+    // TODO make it async
+    countBookPages() {
         this.book.then((book) => {
             const bookPageCounterElem =
                 this.shadowRoot.getElementById("book-page-counter");
@@ -397,20 +402,8 @@ class BookComponent extends HTMLElement {
                 const totalSectionPages =
                     this.calcTotalSectionPages(bookPageCounterElem);
                 this.bookState.sectionPagesCount.push(totalSectionPages);
-                this.updateBookUI();
+                this.updateBookUI(); // TODO make it async
             });
-            // const pageCount = sectionPages.reduce(
-            //     (prevValue, currValue) => prevValue + currValue
-            // );
-            // this.bookState.sectionPagesCount = sectionPages;
-            console.log(
-                "this.bookState.sectionPagesCount",
-                this.bookState.sectionPagesCount
-            );
-            console.log(
-                "this.bookState.getTotalBookPages",
-                this.bookState.getTotalBookPages()
-            );
         });
     }
 
@@ -451,8 +444,7 @@ class BookComponent extends HTMLElement {
                 return (
                     sectionPagesCountSliceSum -
                     this.getTotalSectionPages() +
-                    this.getCurrentSectionPage(target) +
-                    1
+                    this.getCurrentSectionPage(target)
                 );
             },
             getTotalBookPages: function () {
@@ -466,17 +458,19 @@ class BookComponent extends HTMLElement {
             currentSectionTitle: "",
         };
 
-        this.loadSection(this.content, this.bookState.currentSection, 0);
         this.countBookPages();
+        this.loadSection(this.content, this.bookState.currentSection, 0);
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
 
         nextBtn.addEventListener("click", () => {
-            this.flipNPages(this.content, 1);
+            // this.flipNPages(this.content, 1);
+            this.jumpTo(this.content, 581);
         });
         backBtn.addEventListener("click", () => {
-            this.flipNPages(this.content, -1);
+            // this.flipNPages(this.content, -1);
+            this.jumpTo(this.content, 1);
         });
     }
     disconnectedCallback() {
