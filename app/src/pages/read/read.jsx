@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import {
@@ -17,7 +17,7 @@ const sendLastOpenedBook = (bookFile) => {
 
 const Read = () => {
     const [book, setBook] = useState({});
-    const [page, setPage] = useState(8);
+    const [page, setPage] = useState(1);
 
     const location = useLocation();
 
@@ -35,11 +35,35 @@ const Read = () => {
         window.api.store.send(readConfigRequest, "lastOpenedBook");
     }, []);
 
+    const bookComponent = useRef(null);
+
+    const enforcePageRange = (nextPage) => {
+        const minPage = 1;
+        const maxPage = bookComponent.current.bookState.getTotalBookPages();
+
+        if (nextPage < minPage) {
+            nextPage = minPage;
+        } else if (nextPage > maxPage) {
+            nextPage = maxPage;
+        }
+        return nextPage;
+    };
+
     const goNext = () => {
-        setPage(page + 1);
+        const currentPage =
+            bookComponent.current.bookState.getCurrentBookPage(
+                bookComponent.current.content
+            ) + 1;
+        const validNextPage = enforcePageRange(currentPage + 1);
+        setPage(validNextPage);
     };
     const goBack = () => {
-        setPage(page - 1);
+        const currentPage =
+            bookComponent.current.bookState.getCurrentBookPage(
+                bookComponent.current.content
+            ) + 1;
+        const validNextPage = enforcePageRange(currentPage - 1);
+        setPage(validNextPage);
     };
 
     return (
@@ -49,6 +73,7 @@ const Read = () => {
                 <div className="book-container">
                     {book.path && (
                         <book-component
+                            ref={bookComponent}
                             book-path={book.path}
                             book-page={page}
                         />
