@@ -325,7 +325,7 @@ class BookComponent extends HTMLElement {
      */
     calcNextOffset(target, nPageShift) {
         const displayWidth = target.offsetWidth;
-        const currentOffset = this.bookState.getCurrentOffset(target);
+        const currentOffset = this.bookState._getCurrentOffset(target);
         const shiftOffset = -(nPageShift * displayWidth);
 
         const minPageNum = 0;
@@ -377,28 +377,41 @@ class BookComponent extends HTMLElement {
     }
 
     flipNPages(target, nPageShift) {
+        // TODO rework
         const newOffset = this.calcNextOffset(target, nPageShift);
         this.setCurrentOffset(target, newOffset);
 
         this.updateBookUI();
     }
     jumpToPage(target, page) {
+        const minPage = 0;
+        const maxPage = this.bookState.getTotalBookPages();
+        if (page < minPage) {
+            page = minPage;
+        } else if (page > maxPage) {
+            page = maxPage;
+        }
+
         const currentPage = this.bookState.getCurrentBookPage(target);
         const nPageShift = page - currentPage - 1;
 
         const nextSection = this.bookState.getSectionBookPageBelongsTo(page);
-        const sectionPagesCount = this.bookState.sectionPagesCount;
+        const currentSection = this.bookState.currentSection;
 
-        const sumOfPages = this.bookState._sumFirstNArrayItems(
-            sectionPagesCount,
-            nextSection
-        );
-        const nextSectionPageCount = sectionPagesCount[nextSection];
+        if (nextSection === currentSection) {
+            this.flipNPages(target, nPageShift);
+        } else {
+            const sectionPagesArr = this.bookState.sectionPagesArr;
+            const sumOfPages = this.bookState._sumFirstNArrayItems(
+                sectionPagesArr,
+                nextSection
+            );
+            const totalNextSectionPage = sectionPagesArr[nextSection];
+            const currentNextSectionPage =
+                currentPage + nPageShift - sumOfPages + totalNextSectionPage;
 
-        const pagesLeftToShift =
-            currentPage + nPageShift - sumOfPages + nextSectionPageCount;
-
-        this.loadSection(target, nextSection, pagesLeftToShift);
+            this.loadSection(target, nextSection, currentNextSectionPage);
+        }
     }
 
     // TODO make it async
@@ -407,14 +420,14 @@ class BookComponent extends HTMLElement {
             const bookPageCounterElem =
                 this.shadowRoot.getElementById("book-page-counter");
 
-            this.bookState.sectionPagesCount = [];
+            this.bookState.sectionPagesArr = [];
             book.sectionNames.forEach((sectionName, sectionIndex) => {
                 this.loadStyles(book, sectionIndex);
                 this.loadContent(bookPageCounterElem, book, sectionIndex);
 
                 const totalSectionPages =
                     this.calcTotalSectionPages(bookPageCounterElem);
-                this.bookState.sectionPagesCount.push(totalSectionPages);
+                this.bookState.sectionPagesArr.push(totalSectionPages);
                 this.updateBookUI(); // TODO make it async
             });
         });
@@ -428,12 +441,13 @@ class BookComponent extends HTMLElement {
         this.bookState = {
             currentSection: 0,
             totalSections: 0,
+
             getSectionBookPageBelongsTo: function (page) {
                 const sliceOfPages = [];
                 for (const [
                     index,
                     pageCount,
-                ] of this.sectionPagesCount.entries()) {
+                ] of this.sectionPagesArr.entries()) {
                     sliceOfPages.push(pageCount);
                     const sumOfPages = sliceOfPages.reduce(
                         (prevValue, currValue) => prevValue + currValue
@@ -442,28 +456,20 @@ class BookComponent extends HTMLElement {
                 }
             },
 
-            getCurrentOffset: function (target) {
-                // Strips all non-numeric characters from a string
-                return (
-                    parseInt(target.style.transform.replace(/[^\d.-]/g, "")) ||
-                    0
-                );
-            },
-
             getCurrentSectionPage: function (target) {
                 const displayWidth = target.offsetWidth;
-                const currentOffset = this.getCurrentOffset(target);
+                const currentOffset = this._getCurrentOffset(target);
                 const currentPage = Math.abs(currentOffset / displayWidth);
                 return currentPage;
             },
             getTotalSectionPages: function () {
-                return this.sectionPagesCount[this.currentSection];
+                return this.sectionPagesArr[this.currentSection];
             },
 
-            sectionPagesCount: [0],
+            sectionPagesArr: [0],
             getCurrentBookPage: function (target) {
                 const sumOfPages = this._sumFirstNArrayItems(
-                    this.sectionPagesCount,
+                    this.sectionPagesArr,
                     this.currentSection
                 );
                 return (
@@ -473,11 +479,15 @@ class BookComponent extends HTMLElement {
                 );
             },
             getTotalBookPages: function () {
-                const totalBookPages = this.sectionPagesCount.reduce(
+                const totalBookPages = this.sectionPagesArr.reduce(
                     (prevValue, currValue) => prevValue + currValue
                 );
                 return totalBookPages;
             },
+
+            bookTitle: "",
+            currentSectionTitle: "",
+
             _sumFirstNArrayItems: function (array, n) {
                 const arraySlice = array.slice(0, n + 1);
                 const arraySum = arraySlice.reduce(
@@ -485,13 +495,18 @@ class BookComponent extends HTMLElement {
                 );
                 return arraySum;
             },
-
-            bookTitle: "",
-            currentSectionTitle: "",
+            _getCurrentOffset: function (target) {
+                // Strips all non-numeric characters from a string
+                return (
+                    parseInt(target.style.transform.replace(/[^\d.-]/g, "")) ||
+                    0
+                );
+            },
         };
 
         this.countBookPages();
         this.loadSection(this.content, this.bookState.currentSection, pageAttr);
+        // TODO rework: with non-zero pageAttr, multiple section loadings
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
@@ -519,7 +534,7 @@ class BookComponent extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "book-page" && oldValue) {
-            const updatedPage = parseInt(this.getAttribute("book-page"));
+            const updatedPage = parseInt(newValue);
             this.jumpToPage(this.content, updatedPage);
         }
     }
