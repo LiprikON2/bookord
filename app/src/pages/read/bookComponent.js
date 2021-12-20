@@ -108,6 +108,7 @@ class BookComponent extends HTMLElement {
     }
     getSectionTitle(book, sectionNum) {
         const section = book.sections[sectionNum];
+        console.log("section", section);
 
         const titleTag = section[0].children.filter((elem) => {
             return elem.tag === "title";
@@ -233,6 +234,7 @@ class BookComponent extends HTMLElement {
     }
 
     getSectionTitle(book, currentSection) {
+        // TODO handle subchapters (trash) and chapter for only first part of sections (overlord)
         const currentTocEntry = book.structure.find(
             (tocEntry) =>
                 tocEntry.sectionId === book.sectionNames[currentSection]
@@ -280,7 +282,7 @@ class BookComponent extends HTMLElement {
             // In case user traveled back from the subsequent section
             if (offsetMarkerId) {
                 const markerOffset = this.getElementOffset(offsetMarkerId);
-                // Set offset to the last page of this section
+                // Set offset to the last page (if it's end-marker) of this section
                 this.setCurrentOffset(target, markerOffset);
             } else {
                 // Set offset to the first page of this section
@@ -293,10 +295,7 @@ class BookComponent extends HTMLElement {
             // In case user traveled from previous section and
             // still had pages pending to shift through
             if (nPageShift !== 0) {
-                const newOffset = this.calcNextOffset(target, nPageShift);
-
-                this.setCurrentOffset(target, newOffset);
-                this.updateBookUI();
+                this.flipNPages(target, nPageShift);
             }
 
             // Attaches event handlers to anchor tags to handle book navigation
@@ -304,6 +303,7 @@ class BookComponent extends HTMLElement {
             anchors.forEach((a) => {
                 a.addEventListener("click", (e) => this.handleLink(e, book));
             });
+            console.log("Done loading!");
         });
     }
 
@@ -329,93 +329,44 @@ class BookComponent extends HTMLElement {
         const currentOffset = this.bookState._getCurrentOffset(target);
         const shiftOffset = -(nPageShift * displayWidth);
 
+        return currentOffset + shiftOffset;
+    }
+
+    flipNPages(target, nPageShift) {
         const minPageNum = 0;
         const maxPageNum = this.calcTotalSectionPages(target);
         const currentPage = this.bookState.getCurrentSectionPage(target);
         const nextSectionPage = currentPage + nPageShift;
 
-        const currentBookPage = this.bookState.getCurrentBookPage(target);
-        const nextBookPage = currentBookPage + nPageShift + 1;
-
         const currentSection = this.bookState.currentSection;
         const totalSections = this.bookState.totalSections;
 
-        console.log(
-            "nextSectionPage >= minPageNum && nextSectionPage <= maxPageNum",
-            nextSectionPage >= minPageNum && nextSectionPage <= maxPageNum
-        );
-        console.log(
-            "(currentSection + 1 < totalSections && nextBookPage > maxPageNum) || (currentSection - 1 >= 0 && nextBookPage < minPageNum)",
-            currentSection + 1 < totalSections,
-            nextBookPage > maxPageNum,
-            currentSection - 1 >= 0,
-            nextBookPage < minPageNum
-        );
-        console.log(
-            "nextBookPage",
-            nextBookPage,
-            "minPageNum",
-            minPageNum,
-            nextBookPage < minPageNum
-        );
         // Checks if requested page is in range of this section
         if (nextSectionPage >= minPageNum && nextSectionPage <= maxPageNum) {
-            return currentOffset + shiftOffset;
+            const newOffset = this.calcNextOffset(target, nPageShift);
+
+            this.setCurrentOffset(target, newOffset);
+            this.updateBookUI();
         }
-        // Else go to the next section
-        // else if (nextPage > maxPageNum) {
-        //     // Checks if there is a next section
-        //     if (
-        //         this.bookState.currentSection + 1 <
-        //         this.bookState.totalSections
-        //     ) {
-        //         const pagesShifted = maxPageNum - currentPage;
-        //         const pagesLeftToShift = nPageShift - pagesShifted - 1;
-
-        //         this.loadSection(
-        //             target,
-        //             this.bookState.currentSection + 1,
-        //             pagesLeftToShift
-        //         );
-        //         return 0;
-        //     }
-        //     return this.getMaxOffset(target);
-        // }
-        // // Else go to the previous section
-        // else if (nextPage < minPageNum) {
-        //     // Checks if there is a previous section
-        //     if (this.bookState.currentSection - 1 >= 0) {
-        //         const pagesShifted = currentPage - minPageNum;
-        //         const pagesLeftToShift = nPageShift + pagesShifted + 1;
-
-        //         const markerId = target.id + "-end-marker";
-        //         this.loadSection(
-        //             target,
-        //             this.bookState.currentSection - 1,
-        //             pagesLeftToShift,
-        //             markerId
-        //         );
-        //         return this.getMaxOffset(target);
-        //     }
-        //     return 0;
-        // }
+        // Else if it's possible to jump to the next or previous sections
         else if (
-            (currentSection + 1 < totalSections && nextBookPage < maxPageNum) ||
-            (currentSection - 1 >= 0 && nextBookPage > minPageNum)
+            (currentSection + 1 < totalSections && nPageShift > 0) ||
+            (currentSection - 1 >= 0 && nPageShift < 0)
         ) {
+            const currentBookPage = this.bookState.getCurrentBookPage(target);
+            const nextBookPage = currentBookPage + nPageShift + 1;
+
             this.jumpToPage(target, nextBookPage);
-            return 0;
+        }
+        // Else the page is out of range
+        else {
+            const firstPage = 1;
+            const lastPage = this.bookState.getTotalBookPages();
+            const edgePage = nPageShift > 0 ? lastPage : firstPage;
+            this.jumpToPage(target, edgePage);
         }
     }
-
-    flipNPages(target, nPageShift) {
-        console.log("shifting", nPageShift);
-        const newOffset = this.calcNextOffset(target, nPageShift);
-        this.setCurrentOffset(target, newOffset);
-
-        this.updateBookUI();
-    }
-    jumpToPage(target, page) {
+    enforcePageRange(page) {
         const minPage = 1;
         const maxPage = this.bookState.getTotalBookPages();
         if (page < minPage) {
@@ -423,11 +374,16 @@ class BookComponent extends HTMLElement {
         } else if (page > maxPage) {
             page = maxPage;
         }
+        return page;
+    }
+    jumpToPage(target, page) {
+        const validPage = this.enforcePageRange(page);
 
         const currentPage = this.bookState.getCurrentBookPage(target);
-        const nPageShift = page - currentPage - 1;
+        const nPageShift = validPage - currentPage - 1;
 
-        const nextSection = this.bookState.getSectionBookPageBelongsTo(page);
+        const nextSection =
+            this.bookState.getSectionBookPageBelongsTo(validPage);
         const currentSection = this.bookState.currentSection;
 
         if (nextSection === currentSection && nPageShift !== 0) {
@@ -462,6 +418,7 @@ class BookComponent extends HTMLElement {
                 this.bookState.sectionPagesArr.push(totalSectionPages);
                 this.updateBookUI(); // TODO make it async
             });
+            console.log("Done counting!");
         });
     }
 
@@ -538,7 +495,6 @@ class BookComponent extends HTMLElement {
 
         this.countBookPages();
         this.loadSection(this.content, this.bookState.currentSection, pageAttr);
-        // TODO rework: with non-zero pageAttr, multiple section loadings
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
@@ -567,7 +523,6 @@ class BookComponent extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "book-page" && oldValue) {
             const updatedPage = parseInt(newValue);
-            console.log("updatedPage", oldValue, updatedPage);
             this.jumpToPage(this.content, updatedPage);
         }
     }
