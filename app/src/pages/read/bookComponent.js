@@ -108,7 +108,6 @@ class BookComponent extends HTMLElement {
     }
     getSectionTitle(book, sectionNum) {
         const section = book.sections[sectionNum];
-        console.log("section", section);
 
         const titleTag = section[0].children.filter((elem) => {
             return elem.tag === "title";
@@ -269,6 +268,7 @@ class BookComponent extends HTMLElement {
      */
     loadSection(target, currentSection, nPageShift, offsetMarkerId = "") {
         this.book.then((book) => {
+            console.time("loadingSection");
             // Removes anchor's event handlers before loading another section
             let anchors = this.shadowRoot.querySelectorAll("a");
             anchors.forEach((a) => {
@@ -303,7 +303,7 @@ class BookComponent extends HTMLElement {
             anchors.forEach((a) => {
                 a.addEventListener("click", (e) => this.handleLink(e, book));
             });
-            console.log("Done loading!");
+            console.timeLog("loadingSection");
         });
     }
 
@@ -402,24 +402,46 @@ class BookComponent extends HTMLElement {
         }
     }
 
-    // TODO make it async
-    countBookPages() {
-        this.book.then((book) => {
-            const bookPageCounterElem =
-                this.shadowRoot.getElementById("book-page-counter");
+    async asyncForEach(array, callback) {
+        for (let index = 0; index < array.length; index++) {
+            await callback(array[index], index, array);
+        }
+    }
 
-            this.bookState.sectionPagesArr = [];
-            book.sectionNames.forEach((sectionName, sectionIndex) => {
+    async countBookPages() {
+        const waitForNextTask = () => {
+            const { port1, port2 } = (waitForNextTask.channel ??=
+                new MessageChannel());
+            return new Promise((res) => {
+                port1.addEventListener("message", () => res(), { once: true });
+                port1.start();
+                port2.postMessage("");
+            });
+        };
+
+        const book = await this.book;
+
+        const bookPageCounterElem =
+            this.shadowRoot.getElementById("book-page-counter");
+
+        this.bookState.sectionPagesArr = [];
+
+        await this.asyncForEach(
+            book.sectionNames,
+            async (sectionName, sectionIndex) => {
                 this.loadStyles(book, sectionIndex);
                 this.loadContent(bookPageCounterElem, book, sectionIndex);
 
                 const totalSectionPages =
                     this.calcTotalSectionPages(bookPageCounterElem);
                 this.bookState.sectionPagesArr.push(totalSectionPages);
-                this.updateBookUI(); // TODO make it async
-            });
-            console.log("Done counting!");
-        });
+                // Update page count every 10 sections
+                if (sectionIndex % 10 === 0) {
+                    this.updateBookUI();
+                }
+                await waitForNextTask();
+            }
+        );
     }
 
     connectedCallback() {
@@ -505,8 +527,6 @@ class BookComponent extends HTMLElement {
         backBtn.addEventListener("click", () => {
             this.flipNPages(this.content, -1);
         });
-
-        console.log("Connected!");
     }
     disconnectedCallback() {
         const nextBtn = this.shadowRoot.querySelector("button#next");
