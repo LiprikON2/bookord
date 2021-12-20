@@ -375,17 +375,30 @@ class BookComponent extends HTMLElement {
             return 0;
         }
     }
+
     flipNPages(target, nPageShift) {
         const newOffset = this.calcNextOffset(target, nPageShift);
         this.setCurrentOffset(target, newOffset);
 
         this.updateBookUI();
     }
-    jumpTo(target, page) {
+    jumpToPage(target, page) {
         const currentPage = this.bookState.getCurrentBookPage(target);
         const nPageShift = page - currentPage - 1;
 
-        this.flipNPages(target, nPageShift);
+        const nextSection = this.bookState.getSectionBookPageBelongsTo(page);
+        const sectionPagesCount = this.bookState.sectionPagesCount;
+
+        const sumOfPages = this.bookState._sumFirstNArrayItems(
+            sectionPagesCount,
+            nextSection
+        );
+        const nextSectionPageCount = sectionPagesCount[nextSection];
+
+        const pagesLeftToShift =
+            currentPage + nPageShift - sumOfPages + nextSectionPageCount;
+
+        this.loadSection(target, nextSection, pagesLeftToShift);
     }
 
     // TODO make it async
@@ -415,6 +428,20 @@ class BookComponent extends HTMLElement {
         this.bookState = {
             currentSection: 0,
             totalSections: 0,
+            getSectionBookPageBelongsTo: function (page) {
+                const sliceOfPages = [];
+                for (const [
+                    index,
+                    pageCount,
+                ] of this.sectionPagesCount.entries()) {
+                    sliceOfPages.push(pageCount);
+                    const sumOfPages = sliceOfPages.reduce(
+                        (prevValue, currValue) => prevValue + currValue
+                    );
+                    if (page <= sumOfPages) return index;
+                }
+            },
+
             getCurrentOffset: function (target) {
                 // Strips all non-numeric characters from a string
                 return (
@@ -435,15 +462,12 @@ class BookComponent extends HTMLElement {
 
             sectionPagesCount: [0],
             getCurrentBookPage: function (target) {
-                const sectionPagesCountSlice = this.sectionPagesCount.slice(
-                    0,
-                    this.currentSection + 1
-                );
-                const sectionPagesCountSliceSum = sectionPagesCountSlice.reduce(
-                    (prevValue, currValue) => prevValue + currValue
+                const sumOfPages = this._sumFirstNArrayItems(
+                    this.sectionPagesCount,
+                    this.currentSection
                 );
                 return (
-                    sectionPagesCountSliceSum -
+                    sumOfPages -
                     this.getTotalSectionPages() +
                     this.getCurrentSectionPage(target)
                 );
@@ -453,6 +477,13 @@ class BookComponent extends HTMLElement {
                     (prevValue, currValue) => prevValue + currValue
                 );
                 return totalBookPages;
+            },
+            _sumFirstNArrayItems: function (array, n) {
+                const arraySlice = array.slice(0, n + 1);
+                const arraySum = arraySlice.reduce(
+                    (prevValue, currValue) => prevValue + currValue
+                );
+                return arraySum;
             },
 
             bookTitle: "",
@@ -486,17 +517,10 @@ class BookComponent extends HTMLElement {
         });
     }
 
-    // isAValidPage(updatedPage) {
-    //     // Checks if it's a first render
-    //     if (this.posInBook.currentSection !== undefined) {
-    //         return updatedPage >= 0 && updatedPage <= this.posInBook.totalSections - 1;
-    //     }
-    // }
-
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "book-page" && oldValue) {
-            const updatedPage = this.getAttribute("book-page");
-            this.jumpTo(this.content, updatedPage);
+            const updatedPage = parseInt(this.getAttribute("book-page"));
+            this.jumpToPage(this.content, updatedPage);
         }
     }
 }

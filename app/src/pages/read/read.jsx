@@ -17,7 +17,7 @@ const sendLastOpenedBook = (bookFile) => {
 
 const Read = () => {
     const [book, setBook] = useState({});
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(8);
 
     const location = useLocation();
 
