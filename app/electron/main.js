@@ -412,12 +412,18 @@ ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
 });
 
-ipcMain.handle("app:on-book-import", async (event, filePath) => {
+ipcMain.handle("app:on-book-import", async (event, [filePath, sectionNum]) => {
     const parsedEpub = await parseEpub(filePath);
 
+    win.webContents.send("app:on-book-section-import", [
+        sectionNum,
+        parsedEpub.sections[sectionNum].toHtmlObjects(),
+    ]);
+    // console.time("1");
     const sections = parsedEpub.sections.map((section) =>
         section.toHtmlObjects()
     );
+    // console.timeLog("1");
 
     const sectionNames = parsedEpub.sections.map((section) => section.id);
 

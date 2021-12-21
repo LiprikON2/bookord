@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:on-file-open",
             "app:on-file-delete",
             "app:on-book-import",
+            "app:on-book-section-import",
         ];
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data);
@@ -43,6 +44,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:on-file-open",
             "app:on-file-delete",
             "app:on-book-import",
+            "app:on-book-section-import",
         ];
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`
@@ -59,6 +61,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:on-file-open",
             "app:on-file-delete",
             "app:on-book-import",
+            "app:on-book-section-import",
         ];
         if (validChannels.includes(channel)) {
             const promise = ipcRenderer.invoke(channel, func);
@@ -75,6 +78,7 @@ contextBridge.exposeInMainWorld("api", {
             "app:on-file-open",
             "app:on-file-delete",
             "app:on-book-import",
+            "app:on-book-section-import",
         ];
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`

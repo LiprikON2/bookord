@@ -8,13 +8,13 @@ template.innerHTML = `
                 margin: auto;
                 overflow: hidden;
             }
-            .book-container.page-counter {
+            .book-container#page-counter-container {
                 visibility: hidden;
                 max-height: 0;
             } 
 
             .book-container > #book-content,
-            .book-container > #book-page-counter {
+            .book-container > #page-counter {
                 columns: 1;
                 column-gap: 0;
                 height: 400px;
@@ -65,10 +65,7 @@ template.innerHTML = `
         <button role="button" id="back">Back</button>
         <button role="button" id="next">Next</button>
         
-        <div class="page-counter book-container">
-            <div id="book-page-counter"></div>
-        </div>
-        </section>
+    </section>
 `;
 
 class BookComponent extends HTMLElement {
@@ -76,6 +73,7 @@ class BookComponent extends HTMLElement {
     static get observedAttributes() {
         return ["book-page"];
     }
+
     constructor() {
         super();
 
@@ -83,11 +81,19 @@ class BookComponent extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.content = this.shadowRoot.getElementById("book-content");
-    }
-    async asyncLoadBook(bookPath) {
-        return await window.api.invoke("app:on-book-import", bookPath);
-    }
 
+        this.isInitialized = false;
+        window.api.receive(
+            "app:on-book-section-import",
+            ([sectionNum, section]) => {
+                this.initialSectionNum = sectionNum;
+                this.initialSection = section;
+            }
+        );
+    }
+    importBook(bookPath) {
+        return window.api.invoke("app:on-book-import", [bookPath, 0]); // todo: [path, section, page (nPageShift)]
+    }
     /*
      * Returns all references to stylesheet names in a section
      */
@@ -115,9 +121,11 @@ class BookComponent extends HTMLElement {
 
         return titleTag.children?.[0]?.text || "";
     }
+    getSection(book, sectionNum) {
+        return book.sections[sectionNum];
+    }
 
-    loadStyles(book, sectionNum) {
-        const section = book.sections[sectionNum];
+    loadStyles(book, section) {
         const styleElem = this.shadowRoot.getElementById("book-style");
 
         const sectionStyles = this.getSectionStyleReferences(section);
@@ -192,13 +200,13 @@ class BookComponent extends HTMLElement {
         }
     }
 
-    loadContent(target, book, sectionNum) {
+    loadContent(target, section) {
         target.innerHTML = "";
-        // Making a copy of an array
-        const section = book.sections[sectionNum].slice();
+        // slice() to make a copy of an array
+        const sectionCopy = section.slice(); // todo check
         // Removes head tag from section
-        section.shift();
-        this.recCreateElements(target, section);
+        sectionCopy.shift();
+        this.recCreateElements(target, sectionCopy);
 
         const markerId = target.id + "-end-marker";
         this.createMarker(target, markerId);
@@ -260,6 +268,20 @@ class BookComponent extends HTMLElement {
         );
     }
 
+    // Attaches event handlers to anchor tags to handle book navigation
+    attachLinkHandlers() {
+        const anchors = this.shadowRoot.querySelectorAll("a");
+        anchors.forEach((a) => {
+            a.addEventListener("click", (e) => this.handleLink(e, book));
+        });
+    }
+    // Removes anchor's event handlers before loading another section
+    removeLinkHandlers() {
+        const anchors = this.shadowRoot.querySelectorAll("a");
+        anchors.forEach((a) => {
+            a.removeEventListener("click", this.handleLink);
+        });
+    }
     /*
      * target - reference to the book element
      * sectionNum - index of an html file - section
@@ -267,17 +289,24 @@ class BookComponent extends HTMLElement {
      * offsetMarkerId - id of an element within section to scroll to
      */
     loadSection(target, currentSection, nPageShift, offsetMarkerId = "") {
+        if (!this.isInitialized) {
+            console.log("huh");
+        }
         this.book.then((book) => {
-            console.time("loadingSection");
-            // Removes anchor's event handlers before loading another section
-            let anchors = this.shadowRoot.querySelectorAll("a");
-            anchors.forEach((a) => {
-                a.removeEventListener("click", this.handleLink);
-            });
+            this.removeLinkHandlers();
 
             console.log("book", currentSection, nPageShift, offsetMarkerId);
-            this.loadStyles(book, currentSection);
-            this.loadContent(target, book, currentSection);
+            let section;
+            if (!this.isInitialized) {
+                section = this.initialSection;
+                currentSection = this.initialSectionNum;
+                this.isInitialized = true;
+            } else {
+                section = this.getSection(book, currentSection);
+            }
+
+            this.loadStyles(book, section);
+            this.loadContent(target, section);
 
             // In case user traveled back from the subsequent section
             if (offsetMarkerId) {
@@ -298,12 +327,7 @@ class BookComponent extends HTMLElement {
                 this.flipNPages(target, nPageShift);
             }
 
-            // Attaches event handlers to anchor tags to handle book navigation
-            anchors = this.shadowRoot.querySelectorAll("a");
-            anchors.forEach((a) => {
-                a.addEventListener("click", (e) => this.handleLink(e, book));
-            });
-            console.timeLog("loadingSection");
+            this.attachLinkHandlers();
         });
     }
 
@@ -402,12 +426,11 @@ class BookComponent extends HTMLElement {
         }
     }
 
-    async asyncForEach(array, callback) {
+    async _asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
             await callback(array[index], index, array);
         }
     }
-
     async countBookPages() {
         const waitForNextTask = () => {
             const { port1, port2 } = (waitForNextTask.channel ??=
@@ -421,19 +444,28 @@ class BookComponent extends HTMLElement {
 
         const book = await this.book;
 
-        const bookPageCounterElem =
-            this.shadowRoot.getElementById("book-page-counter");
+        const counterContainerElem = document.createElement("div");
+        counterContainerElem.setAttribute("id", "page-counter-container");
+        counterContainerElem.setAttribute("class", "book-container");
+
+        const counterElem = document.createElement("div");
+        counterElem.setAttribute("id", "page-counter");
+
+        const rootElem = this.shadowRoot.getElementById("root");
+        counterContainerElem.appendChild(counterElem);
+        rootElem.appendChild(counterContainerElem);
 
         this.bookState.sectionPagesArr = [];
 
-        await this.asyncForEach(
+        await this._asyncForEach(
             book.sectionNames,
             async (sectionName, sectionIndex) => {
-                this.loadStyles(book, sectionIndex);
-                this.loadContent(bookPageCounterElem, book, sectionIndex);
+                const section = this.getSection(book, sectionIndex);
+                this.loadStyles(book, section);
+                this.loadContent(counterElem, section);
 
                 const totalSectionPages =
-                    this.calcTotalSectionPages(bookPageCounterElem);
+                    this.calcTotalSectionPages(counterElem);
                 this.bookState.sectionPagesArr.push(totalSectionPages);
                 // Update page count every 10 sections
                 if (sectionIndex % 10 === 0) {
@@ -442,12 +474,14 @@ class BookComponent extends HTMLElement {
                 await waitForNextTask();
             }
         );
+        this.updateBookUI();
+        counterContainerElem.remove();
     }
 
     connectedCallback() {
         const bookPathAttr = this.getAttribute("book-path");
         const pageAttr = parseInt(this.getAttribute("book-page")) - 1;
-        this.book = this.asyncLoadBook(bookPathAttr);
+        this.book = this.importBook(bookPathAttr);
 
         this.bookState = {
             currentSection: 0,
@@ -534,10 +568,7 @@ class BookComponent extends HTMLElement {
         nextBtn.removeEventListener("click", this.flipNPages);
         backBtn.removeEventListener("click", this.flipNPages);
 
-        const anchors = this.shadowRoot.querySelectorAll("a");
-        anchors.forEach((a) => {
-            a.removeEventListener("click", this.handleLink);
-        });
+        this.removeLinkHandlers();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
