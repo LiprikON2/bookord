@@ -82,14 +82,13 @@ class BookComponent extends HTMLElement {
 
         this.content = this.shadowRoot.getElementById("book-content");
 
-        this.isInitialized = false;
-        window.api.receive(
-            "app:on-book-section-import",
-            ([sectionNum, section]) => {
-                this.initialSectionNum = sectionNum;
-                this.initialSection = section;
-            }
-        );
+        this.isInit = false;
+        // Initial book with only one section parsed
+        this.initBook = new Promise((resolve, reject) => {
+            window.api.receive("app:on-book-section-import", (initBook) => {
+                resolve(initBook);
+            });
+        });
     }
     importBook(bookPath) {
         return window.api.invoke("app:on-book-import", [bookPath, 0]); // todo: [path, section, page (nPageShift)]
@@ -112,14 +111,22 @@ class BookComponent extends HTMLElement {
         });
         return headStyles[0]?.children?.[0]?.text || "";
     }
-    getSectionTitle(book, sectionNum) {
-        const section = book.sections[sectionNum];
+    // getSectionTitle(book, sectionNum) {
+    //     const section = book.sections[sectionNum];
 
-        const titleTag = section[0].children.filter((elem) => {
-            return elem.tag === "title";
-        })?.[0];
+    //     const titleTag = section[0].children.filter((elem) => {
+    //         return elem.tag === "title";
+    //     })?.[0];
 
-        return titleTag.children?.[0]?.text || "";
+    //     return titleTag.children?.[0]?.text || "";
+    // }
+    getSectionTitle(book, currentSection) {
+        // TODO handle subchapters (trash) and chapter for only first part of sections (overlord)
+        const currentTocEntry = book.structure.find(
+            (tocEntry) =>
+                tocEntry.sectionId === book.sectionNames[currentSection]
+        );
+        return currentTocEntry?.name || "";
     }
     getSection(book, sectionNum) {
         return book.sections[sectionNum];
@@ -240,15 +247,6 @@ class BookComponent extends HTMLElement {
         totalBookPageElem.innerHTML = this.bookState.getTotalBookPages();
     }
 
-    getSectionTitle(book, currentSection) {
-        // TODO handle subchapters (trash) and chapter for only first part of sections (overlord)
-        const currentTocEntry = book.structure.find(
-            (tocEntry) =>
-                tocEntry.sectionId === book.sectionNames[currentSection]
-        );
-        return currentTocEntry?.name || "";
-    }
-
     calcTotalSectionPages(target) {
         const displayWidth = target.offsetWidth;
         const maxPageNum = Math.abs(this.getMaxOffset(target) / displayWidth);
@@ -260,7 +258,7 @@ class BookComponent extends HTMLElement {
 
     updateBookSectionState(book, currentSection) {
         this.bookState.currentSection = currentSection;
-        this.bookState.totalSections = book.sections.length;
+        this.bookState.totalSections = book.sectionsTotal;
         this.bookState.bookTitle = book.info.title;
         this.bookState.currentSectionTitle = this.getSectionTitle(
             book,
@@ -288,47 +286,49 @@ class BookComponent extends HTMLElement {
      * nPageShift - how many pages to flip through
      * offsetMarkerId - id of an element within section to scroll to
      */
-    loadSection(target, currentSection, nPageShift, offsetMarkerId = "") {
-        if (!this.isInitialized) {
-            console.log("huh");
+    async loadSection(target, currentSection, nPageShift, offsetMarkerId = "") {
+        let section, book;
+        if (!this.isInit) {
+            console.log("init book!");
+            book = await this.initBook;
+
+            section = book.initSection;
+            currentSection = book.initSectionNum;
+
+            this.isInit = true;
+        } else {
+            console.log("normal");
+            book = await this.book;
+            section = this.getSection(book, currentSection);
         }
-        this.book.then((book) => {
-            this.removeLinkHandlers();
 
-            console.log("book", currentSection, nPageShift, offsetMarkerId);
-            let section;
-            if (!this.isInitialized) {
-                section = this.initialSection;
-                currentSection = this.initialSectionNum;
-                this.isInitialized = true;
-            } else {
-                section = this.getSection(book, currentSection);
-            }
+        this.removeLinkHandlers();
 
-            this.loadStyles(book, section);
-            this.loadContent(target, section);
+        console.log("book", currentSection, nPageShift, offsetMarkerId);
 
-            // In case user traveled back from the subsequent section
-            if (offsetMarkerId) {
-                const markerOffset = this.getElementOffset(offsetMarkerId);
-                // Set offset to the last page (if it's end-marker) of this section
-                this.setCurrentOffset(target, markerOffset);
-            } else {
-                // Set offset to the first page of this section
-                this.setCurrentOffset(target, 0);
-            }
+        this.loadStyles(book, section);
+        this.loadContent(target, section);
 
-            this.updateBookSectionState(book, currentSection);
-            this.updateBookUI();
+        // In case user traveled back from the subsequent section
+        if (offsetMarkerId) {
+            const markerOffset = this.getElementOffset(offsetMarkerId);
+            // Set offset to the last page (if it's end-marker) of this section
+            this.setCurrentOffset(target, markerOffset);
+        } else {
+            // Set offset to the first page of this section
+            this.setCurrentOffset(target, 0);
+        }
 
-            // In case user traveled from previous section and
-            // still had pages pending to shift through
-            if (nPageShift !== 0) {
-                this.flipNPages(target, nPageShift);
-            }
+        this.updateBookSectionState(book, currentSection);
+        this.updateBookUI();
 
-            this.attachLinkHandlers();
-        });
+        // In case user traveled from previous section and
+        // still had pages pending to shift through
+        if (nPageShift !== 0) {
+            this.flipNPages(target, nPageShift);
+        }
+
+        this.attachLinkHandlers();
     }
 
     setCurrentOffset(target, nextOffset) {

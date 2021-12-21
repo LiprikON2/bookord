@@ -415,17 +415,23 @@ ipcMain.handle("app:on-file-open", (event, file) => {
 ipcMain.handle("app:on-book-import", async (event, [filePath, sectionNum]) => {
     const parsedEpub = await parseEpub(filePath);
 
-    win.webContents.send("app:on-book-section-import", [
-        sectionNum,
-        parsedEpub.sections[sectionNum].toHtmlObjects(),
-    ]);
+    const sectionNames = parsedEpub.sections.map((section) => section.id);
+    const initBook = {
+        info: parsedEpub.info,
+        styles: parsedEpub.styles,
+        structure: parsedEpub.structure,
+        sectionsTotal: parsedEpub.sections.length,
+        sectionNames,
+        initSectionNum: sectionNum,
+        initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
+    };
+    win.webContents.send("app:on-book-section-import", initBook);
+
     // console.time("1");
     const sections = parsedEpub.sections.map((section) =>
         section.toHtmlObjects()
     );
     // console.timeLog("1");
-
-    const sectionNames = parsedEpub.sections.map((section) => section.id);
 
     // console.log("book", parsedEpub.sections[0].toHtmlObjects());
     // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
@@ -437,11 +443,8 @@ ipcMain.handle("app:on-book-import", async (event, [filePath, sectionNum]) => {
     //     parsedEpub._manifest.length
     // );
     const book = {
-        info: parsedEpub.info,
-        styles: parsedEpub.styles,
-        structure: parsedEpub.structure,
+        ...initBook,
         sections,
-        sectionNames,
     };
     return book;
     // console.log("book", book.info);
