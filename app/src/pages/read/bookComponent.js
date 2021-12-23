@@ -244,7 +244,6 @@ class BookComponent extends HTMLElement {
             "total-section-pages"
         );
         totalSectionPageElem.innerHTML = this.bookState.getTotalSectionPages(
-            this.content,
             this.bookState.currentSection
         );
 
@@ -522,37 +521,8 @@ class BookComponent extends HTMLElement {
                 const currentPage = Math.abs(currentOffset / displayWidth);
                 return currentPage;
             },
-            getTotalSectionPages: function (target, sectionNum) {
-                const calculatedTotal = this.sectionPagesArr[sectionNum];
-                return calculatedTotal;
-                const displayWidth = target.offsetWidth;
-                const maxPageNum = Math.abs(
-                    this._getMaxOffset(target) / displayWidth
-                );
-                // console.log(
-                //     "calculatedTotal",
-                //     calculatedTotal,
-                //     "vs int",
-                //     parseInt(maxPageNum)
-                // );
-                // TODO for some reason this
-                // has values of 78.28, 111.28, 76.28...
-                // console.log("hm", maxPageNum);
-                return parseInt(maxPageNum);
-
-                // if (calculatedTotal) {
-                //     console.log("what");
-                //     return calculatedTotal;
-                // } else {
-                //     const displayWidth = target.offsetWidth;
-                //     const maxPageNum = Math.abs(
-                //         this._getMaxOffset(target) / displayWidth
-                //     );
-                //     // TODO for some reason this
-                //     // has values of 78.28, 111.28, 76.28...
-                //     // console.log("hm", maxPageNum);
-                //     return parseInt(maxPageNum);
-                // }
+            getTotalSectionPages: function (sectionNum) {
+                return this.sectionPagesArr[sectionNum];
             },
 
             sectionPagesArr: [0],
@@ -563,7 +533,7 @@ class BookComponent extends HTMLElement {
                 );
                 return (
                     sumOfPages -
-                    this.getTotalSectionPages(target, this.currentSection) +
+                    this.getTotalSectionPages(this.currentSection) +
                     this.getCurrentSectionPage(target)
                 );
             },

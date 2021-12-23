@@ -13,27 +13,34 @@ const Read = () => {
     const location = useLocation();
 
     // Callback ref for passing object to the web component
-    const bookComponentRef = useCallback((node) => {
-        if (node !== null) {
-            // Listen for responses from the electron store
-            window.api.store.clearRendererBindings();
-            window.api.store.onReceive(readConfigResponse, (args) => {
-                if (args.key === "lastOpenedBook" && args.success) {
-                    const lastOpenedBook = location?.state?.book || args.value;
-                    node.loadBook(lastOpenedBook);
-                }
-            });
-            // Send an IPC request to get last opened book
-            window.api.store.send(readConfigRequest, "lastOpenedBook");
-        }
-        // return node; // todo: extract this logic into a reusable Hook (so nextPage works)
-        // https://reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node
-        // https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780
-    }, []);
+    function useHookWithRefCallback() {
+        const ref = useRef(null);
+        const setRef = useCallback((node) => {
+            if (node) {
+                // Listen for responses from the electron store
+                window.api.store.clearRendererBindings();
+                window.api.store.onReceive(readConfigResponse, (args) => {
+                    if (args.key === "lastOpenedBook" && args.success) {
+                        const lastOpenedBook =
+                            location?.state?.book || args.value;
+                        node.loadBook(lastOpenedBook);
+                    }
+                });
+                // Send an IPC request to get last opened book
+                window.api.store.send(readConfigRequest, "lastOpenedBook");
+            }
+
+            ref.current = node;
+        }, []);
+
+        return [ref, setRef];
+    }
+    const [bookComponentRef, setBookComponentRef] = useHookWithRefCallback();
 
     const enforcePageRange = (nextPage) => {
+        const bookRef = bookComponentRef.current;
         const minPage = 1;
-        const maxPage = bookComponentRef.current.bookState.getTotalBookPages();
+        const maxPage = bookRef.bookState.getTotalBookPages();
 
         if (nextPage < minPage) {
             nextPage = minPage;
@@ -44,19 +51,16 @@ const Read = () => {
     };
 
     const goNext = () => {
-        console.log("bookComponentRef", bookComponentRef.current);
+        const bookRef = bookComponentRef.current;
         const currentPage =
-            bookComponentRef.bookState.getCurrentBookPage(
-                bookComponentRef.content
-            ) + 1;
+            bookRef.bookState.getCurrentBookPage(bookRef.content) + 1;
         const validNextPage = enforcePageRange(currentPage + 1);
         setPage(validNextPage);
     };
     const goBack = () => {
+        const bookRef = bookComponentRef.current;
         const currentPage =
-            bookComponentRef.bookState.getCurrentBookPage(
-                bookComponentRef.content
-            ) + 1;
+            bookRef.bookState.getCurrentBookPage(bookRef.content) + 1;
         const validNextPage = enforcePageRange(currentPage - 1);
         setPage(validNextPage);
     };
@@ -66,7 +70,10 @@ const Read = () => {
             <section className="section">
                 <h1>Read</h1>
                 <div className="book-container">
-                    <book-component ref={bookComponentRef} book-page={page} />
+                    <book-component
+                        ref={setBookComponentRef}
+                        book-page={page}
+                    />
                 </div>
 
                 <button role="button" onClick={goBack}>
