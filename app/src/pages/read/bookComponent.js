@@ -82,7 +82,7 @@ class BookComponent extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-        this.content = this.shadowRoot.getElementById("book-content"); // todo rename
+        this.contentElem = this.shadowRoot.getElementById("book-content");
 
         this.isInit = false;
         // Initial book with only one section parsed
@@ -94,11 +94,15 @@ class BookComponent extends HTMLElement {
     }
 
     importBook(bookPath, sectionNum, sectionPage) {
-        return window.api.invoke("app:on-book-import", [
+        const book = window.api.invoke("app:on-book-import", [
             bookPath,
             sectionNum,
             sectionPage,
         ]);
+        book.then(() => {
+            this.isInit = true;
+        });
+        return book;
     }
     /*
      * Returns all references to stylesheet names in a section
@@ -207,7 +211,7 @@ class BookComponent extends HTMLElement {
         );
 
         if (sectionNum !== -1) {
-            this.loadSection(this.content, sectionNum, 0, marker);
+            this.loadSection(this.contentElem, sectionNum, 0, marker);
         } else {
             // Opens link in external browser
             window.open(e.target.href, "_blank");
@@ -226,7 +230,9 @@ class BookComponent extends HTMLElement {
 
     updateBookUI() {
         // TODO: while pages are being counted, dont show undefined and NaN
-        // TODO: save counted pages in config
+        //     : save counted pages in config
+        //     : lastOpenedBook is not only book with progress tracked
+
         const bookTitleElem = this.shadowRoot.getElementById("book-title");
         bookTitleElem.innerHTML = this.bookState.bookTitle;
         bookTitleElem.title = this.bookState.bookTitle;
@@ -239,7 +245,7 @@ class BookComponent extends HTMLElement {
             "current-section-page"
         );
         currentSectionPageElem.innerHTML =
-            this.bookState.getCurrentSectionPage(this.content) + 1;
+            this.bookState.getCurrentSectionPage(this.contentElem) + 1;
         const totalSectionPageElem = this.shadowRoot.getElementById(
             "total-section-pages"
         );
@@ -250,7 +256,7 @@ class BookComponent extends HTMLElement {
         const currentBookPageElem =
             this.shadowRoot.getElementById("current-book-page");
         currentBookPageElem.innerHTML =
-            this.bookState.getCurrentBookPage(this.content) + 1;
+            this.bookState.getCurrentBookPage(this.contentElem) + 1;
         const totalBookPageElem =
             this.shadowRoot.getElementById("total-book-pages");
         totalBookPageElem.innerHTML = this.bookState.getTotalBookPages();
@@ -267,7 +273,7 @@ class BookComponent extends HTMLElement {
     }
 
     // Attaches event handlers to anchor tags to handle book navigation
-    attachLinkHandlers() {
+    attachLinkHandlers(book) {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
             a.addEventListener("click", (e) => this.handleLink(e, book));
@@ -325,7 +331,8 @@ class BookComponent extends HTMLElement {
             this.flipNPages(target, nPageShift);
         }
 
-        this.attachLinkHandlers();
+        this.attachLinkHandlers(book);
+        this.saveLastOpenedBook(target);
     }
 
     setCurrentOffset(target, nextOffset) {
@@ -349,9 +356,7 @@ class BookComponent extends HTMLElement {
         const maxPageNum = Math.abs(
             this.bookState._getMaxOffset(target) / displayWidth
         );
-        // TODO for some reason this
-        // has values of 78.28, 111.28, 76.28...
-        // console.log("hm", maxPageNum);
+        // TODO for some reason this has values of 78.28, 111.28, 76.28...
         return parseInt(maxPageNum);
     }
 
@@ -370,6 +375,7 @@ class BookComponent extends HTMLElement {
 
             this.setCurrentOffset(target, newOffset);
             this.updateBookUI();
+            this.saveLastOpenedBook(target);
         }
         // Else if it's possible to jump to the next or previous sections
         else if (
@@ -396,7 +402,6 @@ class BookComponent extends HTMLElement {
             const edgePage = nPageShift > 0 ? lastPage : firstPage;
             this.jumpToPage(target, edgePage);
         }
-        this.saveLastOpenedBook(target);
     }
     enforcePageRange(page) {
         const minPage = 1;
@@ -483,7 +488,7 @@ class BookComponent extends HTMLElement {
             }
         );
         this.updateBookUI();
-        this.isInit = true;
+
         counterContainerElem.remove();
     }
 
@@ -496,7 +501,6 @@ class BookComponent extends HTMLElement {
             lastOpenedBook.sectionPage
         );
 
-        // TODO: use getters and setters
         this.bookState = {
             currentSection: lastOpenedBook.section,
             totalSections: 0,
@@ -571,7 +575,7 @@ class BookComponent extends HTMLElement {
         };
         this.countBookPages();
         this.loadSection(
-            this.content,
+            this.contentElem,
             this.bookState.currentSection,
             lastOpenedBook.sectionPage
         );
@@ -580,10 +584,10 @@ class BookComponent extends HTMLElement {
         const backBtn = this.shadowRoot.querySelector("button#back");
 
         nextBtn.addEventListener("click", () => {
-            this.flipNPages(this.content, 1);
+            this.flipNPages(this.contentElem, 1);
         });
         backBtn.addEventListener("click", () => {
-            this.flipNPages(this.content, -1);
+            this.flipNPages(this.contentElem, -1);
         });
     }
 
@@ -595,6 +599,7 @@ class BookComponent extends HTMLElement {
             section: this.bookState.currentSection,
             sectionPage: this.bookState.getCurrentSectionPage(target),
         };
+        console.log("saving...", book.section, book.sectionPage);
         window.api.store.send(writeConfigRequest, "lastOpenedBook", book);
     }
 
@@ -610,7 +615,7 @@ class BookComponent extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "book-page" && oldValue) {
             const updatedPage = parseInt(newValue);
-            this.jumpToPage(this.content, updatedPage);
+            this.jumpToPage(this.contentElem, updatedPage);
         }
     }
 }

@@ -53,14 +53,14 @@ const Read = () => {
     const goNext = () => {
         const bookRef = bookComponentRef.current;
         const currentPage =
-            bookRef.bookState.getCurrentBookPage(bookRef.content) + 1;
+            bookRef.bookState.getCurrentBookPage(bookRef.contentElem) + 1;
         const validNextPage = enforcePageRange(currentPage + 1);
         setPage(validNextPage);
     };
     const goBack = () => {
         const bookRef = bookComponentRef.current;
         const currentPage =
-            bookRef.bookState.getCurrentBookPage(bookRef.content) + 1;
+            bookRef.bookState.getCurrentBookPage(bookRef.contentElem) + 1;
         const validNextPage = enforcePageRange(currentPage - 1);
         setPage(validNextPage);
     };
