@@ -412,51 +412,54 @@ ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
 });
 
-ipcMain.handle("app:on-book-import", async (event, [filePath, sectionNum]) => {
-    const parsedEpub = await parseEpub(filePath);
+ipcMain.handle(
+    "app:on-book-import",
+    async (event, [filePath, sectionNum, page]) => {
+        const parsedEpub = await parseEpub(filePath);
 
-    const sectionNames = parsedEpub.sections.map((section) => section.id);
-    const initBook = {
-        info: parsedEpub.info,
-        styles: parsedEpub.styles,
-        structure: parsedEpub.structure,
-        sectionsTotal: parsedEpub.sections.length,
-        sectionNames,
-        initSectionNum: sectionNum,
-        initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
-    };
-    win.webContents.send("app:on-book-section-import", initBook);
+        const sectionNames = parsedEpub.sections.map((section) => section.id);
+        const initBook = {
+            info: parsedEpub.info,
+            styles: parsedEpub.styles,
+            structure: parsedEpub.structure,
+            sectionsTotal: parsedEpub.sections.length,
+            sectionNames,
+            initSectionNum: sectionNum,
+            initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
+        };
+        win.webContents.send("app:on-book-section-import", initBook);
 
-    // console.time("1");
-    const sections = parsedEpub.sections.map((section) =>
-        section.toHtmlObjects()
-    );
-    // console.timeLog("1");
+        // console.time("1");
+        const sections = parsedEpub.sections.map((section) =>
+            section.toHtmlObjects()
+        );
+        // console.timeLog("1");
 
-    // console.log("book", parsedEpub.sections[0].toHtmlObjects());
-    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
-    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.navMap, null, 4));
+        // console.log("book", parsedEpub.sections[0].toHtmlObjects());
+        // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
+        // console.log("book", JSON.stringify(parsedEpub._toc.ncx.navMap, null, 4));
 
-    // console.log(
-    //     "book",
-    //     JSON.stringify(parsedEpub._manifest, null, 4),
-    //     parsedEpub._manifest.length
-    // );
-    const book = {
-        ...initBook,
-        sections,
-    };
-    return book;
-    // console.log("book", book.info);
-    // console.log("book", JSON.stringify(book._metadata[0], null, 4));
-    // console.log("book", book.styles);
+        // console.log(
+        //     "book",
+        //     JSON.stringify(parsedEpub._manifest, null, 4),
+        //     parsedEpub._manifest.length
+        // );
+        const book = {
+            ...initBook,
+            sections,
+        };
+        return book;
+        // console.log("book", book.info);
+        // console.log("book", JSON.stringify(book._metadata[0], null, 4));
+        // console.log("book", book.styles);
 
-    // ++
-    // const sections = book.sections.map((section) => section.toHtmlObjects());
-    // return [sections, book.styles];
-    // ++
+        // ++
+        // const sections = book.sections.map((section) => section.toHtmlObjects());
+        // return [sections, book.styles];
+        // ++
 
-    // console.log("book", book.structure);
-    // console.log("book", book.sections.length);
-    // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
-});
+        // console.log("book", book.structure);
+        // console.log("book", book.sections.length);
+        // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
+    }
+);

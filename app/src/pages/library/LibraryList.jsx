@@ -17,7 +17,13 @@ const LibraryList = ({ files, setFiles }) => {
                             <Link
                                 to={{
                                     pathname: ROUTES.READ,
-                                    state: { bookFile: file },
+                                    state: {
+                                        book: {
+                                            ...file,
+                                            section: 0,
+                                            sectionPage: 0, //todo: try to read from config first
+                                        },
+                                    },
                                 }}>
                                 {file.name}
                             </Link>

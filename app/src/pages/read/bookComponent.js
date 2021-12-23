@@ -1,3 +1,5 @@
+import { writeConfigRequest } from "secure-electron-store";
+
 const template = document.createElement("template");
 template.innerHTML = `
     <section id="root" class="book-container">
@@ -80,7 +82,7 @@ class BookComponent extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-        this.content = this.shadowRoot.getElementById("book-content");
+        this.content = this.shadowRoot.getElementById("book-content"); // todo rename
 
         this.isInit = false;
         // Initial book with only one section parsed
@@ -90,8 +92,13 @@ class BookComponent extends HTMLElement {
             });
         });
     }
-    importBook(bookPath) {
-        return window.api.invoke("app:on-book-import", [bookPath, 0]); // todo: [path, section, page (nPageShift)]
+
+    importBook(bookPath, sectionNum, sectionPage) {
+        return window.api.invoke("app:on-book-import", [
+            bookPath,
+            sectionNum,
+            sectionPage,
+        ]);
     }
     /*
      * Returns all references to stylesheet names in a section
@@ -209,17 +216,17 @@ class BookComponent extends HTMLElement {
 
     loadContent(target, section) {
         target.innerHTML = "";
-        // slice() to make a copy of an array
-        const sectionCopy = section.slice(); // todo check
-        // Removes head tag from section
-        sectionCopy.shift();
-        this.recCreateElements(target, sectionCopy);
+        // Remove head tag from section
+        section = section.slice(1);
+        this.recCreateElements(target, section);
 
         const markerId = target.id + "-end-marker";
         this.createMarker(target, markerId);
     }
 
     updateBookUI() {
+        // TODO: while pages are being counted, dont show undefined and NaN
+        // TODO: save counted pages in config
         const bookTitleElem = this.shadowRoot.getElementById("book-title");
         bookTitleElem.innerHTML = this.bookState.bookTitle;
         bookTitleElem.title = this.bookState.bookTitle;
@@ -236,7 +243,10 @@ class BookComponent extends HTMLElement {
         const totalSectionPageElem = this.shadowRoot.getElementById(
             "total-section-pages"
         );
-        totalSectionPageElem.innerHTML = this.bookState.getTotalSectionPages();
+        totalSectionPageElem.innerHTML = this.bookState.getTotalSectionPages(
+            this.content,
+            this.bookState.currentSection
+        );
 
         const currentBookPageElem =
             this.shadowRoot.getElementById("current-book-page");
@@ -245,15 +255,6 @@ class BookComponent extends HTMLElement {
         const totalBookPageElem =
             this.shadowRoot.getElementById("total-book-pages");
         totalBookPageElem.innerHTML = this.bookState.getTotalBookPages();
-    }
-
-    calcTotalSectionPages(target) {
-        const displayWidth = target.offsetWidth;
-        const maxPageNum = Math.abs(this.getMaxOffset(target) / displayWidth);
-        // TODO for some reason this
-        // has values of 78.28, 111.28, 76.28...
-        // console.log("hm", maxPageNum);
-        return parseInt(maxPageNum);
     }
 
     updateBookSectionState(book, currentSection) {
@@ -289,15 +290,11 @@ class BookComponent extends HTMLElement {
     async loadSection(target, currentSection, nPageShift, offsetMarkerId = "") {
         let section, book;
         if (!this.isInit) {
-            console.log("init book!");
             book = await this.initBook;
 
             section = book.initSection;
             currentSection = book.initSectionNum;
-
-            this.isInit = true;
         } else {
-            console.log("normal");
             book = await this.book;
             section = this.getSection(book, currentSection);
         }
@@ -311,7 +308,8 @@ class BookComponent extends HTMLElement {
 
         // In case user traveled back from the subsequent section
         if (offsetMarkerId) {
-            const markerOffset = this.getElementOffset(offsetMarkerId);
+            const markerElem = this.shadowRoot.getElementById(offsetMarkerId);
+            const markerOffset = -markerElem.offsetLeft;
             // Set offset to the last page (if it's end-marker) of this section
             this.setCurrentOffset(target, markerOffset);
         } else {
@@ -335,15 +333,6 @@ class BookComponent extends HTMLElement {
         target.style.transform = `translate(${nextOffset}px)`;
     }
 
-    getElementOffset(elementId) {
-        const element = this.shadowRoot.getElementById(elementId);
-        return -element.offsetLeft;
-    }
-    getMaxOffset(target) {
-        const markerId = target.id + "-end-marker";
-        return this.getElementOffset(markerId);
-    }
-
     /*
      * Calculates how many pixels text needs to be
      * offsetted in order to shift n section pages
@@ -356,14 +345,25 @@ class BookComponent extends HTMLElement {
         return currentOffset + shiftOffset;
     }
 
+    calcTotalSectionPages(target) {
+        const displayWidth = target.offsetWidth;
+        const maxPageNum = Math.abs(
+            this.bookState._getMaxOffset(target) / displayWidth
+        );
+        // TODO for some reason this
+        // has values of 78.28, 111.28, 76.28...
+        // console.log("hm", maxPageNum);
+        return parseInt(maxPageNum);
+    }
+
     flipNPages(target, nPageShift) {
+        const currentSection = this.bookState.currentSection;
+        const totalSections = this.bookState.totalSections;
+
         const minPageNum = 0;
         const maxPageNum = this.calcTotalSectionPages(target);
         const currentPage = this.bookState.getCurrentSectionPage(target);
         const nextSectionPage = currentPage + nPageShift;
-
-        const currentSection = this.bookState.currentSection;
-        const totalSections = this.bookState.totalSections;
 
         // Checks if requested page is in range of this section
         if (nextSectionPage >= minPageNum && nextSectionPage <= maxPageNum) {
@@ -377,6 +377,10 @@ class BookComponent extends HTMLElement {
             (currentSection + 1 < totalSections && nPageShift > 0) ||
             (currentSection - 1 >= 0 && nPageShift < 0)
         ) {
+            // Prevent changing of a section before book is fully loaded
+            if (!this.isInit) {
+                return;
+            }
             const currentBookPage = this.bookState.getCurrentBookPage(target);
             const nextBookPage = currentBookPage + nPageShift + 1;
 
@@ -384,11 +388,16 @@ class BookComponent extends HTMLElement {
         }
         // Else the page is out of range
         else {
+            // Prevent changing of a section before book is fully loaded
+            if (!this.isInit) {
+                return;
+            }
             const firstPage = 1;
             const lastPage = this.bookState.getTotalBookPages();
             const edgePage = nPageShift > 0 ? lastPage : firstPage;
             this.jumpToPage(target, edgePage);
         }
+        this.saveLastOpenedBook(target);
     }
     enforcePageRange(page) {
         const minPage = 1;
@@ -475,16 +484,22 @@ class BookComponent extends HTMLElement {
             }
         );
         this.updateBookUI();
+        this.isInit = true;
         counterContainerElem.remove();
     }
 
-    connectedCallback() {
-        const bookPathAttr = this.getAttribute("book-path");
-        const pageAttr = parseInt(this.getAttribute("book-page")) - 1;
-        this.book = this.importBook(bookPathAttr);
+    loadBook(lastOpenedBook) {
+        this.lastOpenedBook = lastOpenedBook;
 
+        this.book = this.importBook(
+            lastOpenedBook.path,
+            lastOpenedBook.section,
+            lastOpenedBook.sectionPage
+        );
+
+        // TODO: use getters and setters
         this.bookState = {
-            currentSection: 0,
+            currentSection: lastOpenedBook.section,
             totalSections: 0,
 
             getSectionBookPageBelongsTo: function (page) {
@@ -507,8 +522,37 @@ class BookComponent extends HTMLElement {
                 const currentPage = Math.abs(currentOffset / displayWidth);
                 return currentPage;
             },
-            getTotalSectionPages: function () {
-                return this.sectionPagesArr[this.currentSection];
+            getTotalSectionPages: function (target, sectionNum) {
+                const calculatedTotal = this.sectionPagesArr[sectionNum];
+                return calculatedTotal;
+                const displayWidth = target.offsetWidth;
+                const maxPageNum = Math.abs(
+                    this._getMaxOffset(target) / displayWidth
+                );
+                // console.log(
+                //     "calculatedTotal",
+                //     calculatedTotal,
+                //     "vs int",
+                //     parseInt(maxPageNum)
+                // );
+                // TODO for some reason this
+                // has values of 78.28, 111.28, 76.28...
+                // console.log("hm", maxPageNum);
+                return parseInt(maxPageNum);
+
+                // if (calculatedTotal) {
+                //     console.log("what");
+                //     return calculatedTotal;
+                // } else {
+                //     const displayWidth = target.offsetWidth;
+                //     const maxPageNum = Math.abs(
+                //         this._getMaxOffset(target) / displayWidth
+                //     );
+                //     // TODO for some reason this
+                //     // has values of 78.28, 111.28, 76.28...
+                //     // console.log("hm", maxPageNum);
+                //     return parseInt(maxPageNum);
+                // }
             },
 
             sectionPagesArr: [0],
@@ -519,7 +563,7 @@ class BookComponent extends HTMLElement {
                 );
                 return (
                     sumOfPages -
-                    this.getTotalSectionPages() +
+                    this.getTotalSectionPages(target, this.currentSection) +
                     this.getCurrentSectionPage(target)
                 );
             },
@@ -547,10 +591,20 @@ class BookComponent extends HTMLElement {
                     0
                 );
             },
-        };
 
+            _getMaxOffset: function (target) {
+                const markerId = target.id + "-end-marker";
+                const markerElem = this.shadowRoot.getElementById(markerId);
+                const markerOffset = -markerElem.offsetLeft;
+                return markerOffset;
+            }.bind(this),
+        };
         this.countBookPages();
-        this.loadSection(this.content, this.bookState.currentSection, pageAttr);
+        this.loadSection(
+            this.content,
+            this.bookState.currentSection,
+            lastOpenedBook.sectionPage
+        );
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
@@ -562,6 +616,18 @@ class BookComponent extends HTMLElement {
             this.flipNPages(this.content, -1);
         });
     }
+
+    saveLastOpenedBook(target) {
+        const book = {
+            name: this.lastOpenedBook.name,
+            path: this.lastOpenedBook.path,
+            size: this.lastOpenedBook.size,
+            section: this.bookState.currentSection,
+            sectionPage: this.bookState.getCurrentSectionPage(target),
+        };
+        window.api.store.send(writeConfigRequest, "lastOpenedBook", book);
+    }
+
     disconnectedCallback() {
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
