@@ -131,40 +131,8 @@ class BookComponent extends HTMLElement {
 
     //     return titleTag.children?.[0]?.text || "";
     // }
-    getTocChild(parent, nesting) {
-        console.log("parent", parent);
-        console.log("parent?.children[0]", parent?.children?.[0]);
-        if (parent?.children && nesting > 0) {
-            return getTocChild(parent?.children[0], nesting - 1);
-        }
-        return parent;
-    }
 
-    getSectionTitle(book, toc, deep = 0) {
-        // TODO handle subchapters (trash) and chapter for only first part of sections (overlord)
-
-        // console.log("book.structure", toc);
-        // if (sectionNum >= 0 && sectionNum < this.bookState.totalSections) {
-        //     const sectionTocEntry = book.structure.find(
-        //         (tocEntry) =>
-        //             tocEntry.sectionId === book.sectionNames[sectionNum]
-        //     );
-        // const sectionTitle = sectionTocEntry?.name;
-        //     if (sectionTitle) {
-        //         return sectionTitle;
-        //     }
-        //     return this.getSectionTitle(book, sectionNum - 1) || "";
-        // }
-
-        const sectionNum = this.bookState.currentSection;
-        const tocEntry = toc.find(
-            (tocEntry) => tocEntry.sectionId === book.sectionNames[sectionNum]
-        );
-        const sectionTitle = tocEntry?.name;
-        // if (sectionTitle) {
-        //     console.log(" ".repeat(deep), "return sectionTitle", sectionTitle);
-        //     return sectionTitle;
-        // }
+    getSectionTitle(book, toc, sectionNum, root = true) {
         let descendantSectionTitle;
         for (let tocEntry of toc) {
             const tocEntryChildren = tocEntry?.children;
@@ -172,24 +140,35 @@ class BookComponent extends HTMLElement {
                 descendantSectionTitle = this.getSectionTitle(
                     book,
                     tocEntryChildren,
-                    deep + 1
+                    sectionNum,
+                    false
                 );
                 if (descendantSectionTitle) break;
             }
         }
+        const tocEntry = toc.find(
+            (tocEntry) => tocEntry.sectionId === book.sectionNames[sectionNum]
+        );
+        const sectionTitle = tocEntry?.name;
 
         if (descendantSectionTitle) {
-            console.log(
-                " ".repeat(deep),
-                "return descendantSectionTitle",
-                descendantSectionTitle
-            );
             return descendantSectionTitle;
         } else if (sectionTitle) {
             return sectionTitle;
+        } else if (
+            root &&
+            sectionNum >= 0 &&
+            sectionNum < this.bookState.totalSections
+        ) {
+            const prevSectionTitle = this.getSectionTitle(
+                book,
+                toc,
+                sectionNum - 1
+            );
+            return prevSectionTitle;
+        } else {
+            return "";
         }
-        console.log(" ".repeat(deep), 'return ""', "");
-        return "";
     }
     getSection(book, sectionNum) {
         return book.sections[sectionNum];
@@ -320,7 +299,8 @@ class BookComponent extends HTMLElement {
         this.bookState.bookTitle = book.info.title;
         this.bookState.currentSectionTitle = this.getSectionTitle(
             book,
-            book.structure
+            book.structure,
+            this.bookState.currentSection
         );
     }
 
@@ -359,7 +339,7 @@ class BookComponent extends HTMLElement {
 
         console.log("book", currentSection, nPageShift, offsetMarkerId);
 
-        this.loadStyles(book, section);
+        // this.loadStyles(book, section);
         this.loadContent(target, section);
 
         // In case user traveled back from the subsequent section
@@ -525,7 +505,7 @@ class BookComponent extends HTMLElement {
             book.sectionNames,
             async (sectionName, sectionIndex) => {
                 const section = this.getSection(book, sectionIndex);
-                this.loadStyles(book, section);
+                this.loadStyles(book, section); // todo prevent from changing main styles
                 this.loadContent(counterElem, section);
 
                 const totalSectionPages =

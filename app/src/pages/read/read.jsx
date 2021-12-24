@@ -13,29 +13,23 @@ const Read = () => {
     const location = useLocation();
 
     // Callback ref for passing object to the web component
-    const useHookWithRefCallback = () => {
-        const bookComponentRef = useRef(null);
-        const setBookComponentRef = useCallback((node) => {
-            if (node) {
-                // Listen for responses from the electron store
-                window.api.store.clearRendererBindings();
-                window.api.store.onReceive(readConfigResponse, (args) => {
-                    if (args.key === "lastOpenedBook" && args.success) {
-                        const lastOpenedBook =
-                            location?.state?.book || args.value;
-                        node.loadBook(lastOpenedBook);
-                    }
-                });
-                // Send an IPC request to get last opened book
-                window.api.store.send(readConfigRequest, "lastOpenedBook");
-            }
+    const bookComponentRef = useRef(null);
+    const setBookComponentRef = useCallback((node) => {
+        if (node) {
+            // Listen for responses from the electron store
+            window.api.store.clearRendererBindings();
+            window.api.store.onReceive(readConfigResponse, (args) => {
+                if (args.key === "lastOpenedBook" && args.success) {
+                    const lastOpenedBook = location?.state?.book || args.value;
+                    node.loadBook(lastOpenedBook);
+                }
+            });
+            // Send an IPC request to get last opened book
+            window.api.store.send(readConfigRequest, "lastOpenedBook");
+        }
 
-            bookComponentRef.current = node;
-        }, []);
-
-        return [bookComponentRef, setBookComponentRef];
-    };
-    const [bookComponentRef, setBookComponentRef] = useHookWithRefCallback();
+        bookComponentRef.current = node;
+    }, []);
 
     const goNext = () => {
         const bookRef = bookComponentRef.current;
