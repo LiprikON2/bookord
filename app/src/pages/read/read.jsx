@@ -13,9 +13,9 @@ const Read = () => {
     const location = useLocation();
 
     // Callback ref for passing object to the web component
-    function useHookWithRefCallback() {
-        const ref = useRef(null);
-        const setRef = useCallback((node) => {
+    const useHookWithRefCallback = () => {
+        const bookComponentRef = useRef(null);
+        const setBookComponentRef = useCallback((node) => {
             if (node) {
                 // Listen for responses from the electron store
                 window.api.store.clearRendererBindings();
@@ -30,38 +30,25 @@ const Read = () => {
                 window.api.store.send(readConfigRequest, "lastOpenedBook");
             }
 
-            ref.current = node;
+            bookComponentRef.current = node;
         }, []);
 
-        return [ref, setRef];
-    }
-    const [bookComponentRef, setBookComponentRef] = useHookWithRefCallback();
-
-    const enforcePageRange = (nextPage) => {
-        const bookRef = bookComponentRef.current;
-        const minPage = 1;
-        const maxPage = bookRef.bookState.getTotalBookPages();
-
-        if (nextPage < minPage) {
-            nextPage = minPage;
-        } else if (nextPage > maxPage) {
-            nextPage = maxPage;
-        }
-        return nextPage;
+        return [bookComponentRef, setBookComponentRef];
     };
+    const [bookComponentRef, setBookComponentRef] = useHookWithRefCallback();
 
     const goNext = () => {
         const bookRef = bookComponentRef.current;
         const currentPage =
             bookRef.bookState.getCurrentBookPage(bookRef.contentElem) + 1;
-        const validNextPage = enforcePageRange(currentPage + 1);
+        const validNextPage = bookRef.enforcePageRange(currentPage + 1);
         setPage(validNextPage);
     };
     const goBack = () => {
         const bookRef = bookComponentRef.current;
         const currentPage =
             bookRef.bookState.getCurrentBookPage(bookRef.contentElem) + 1;
-        const validNextPage = enforcePageRange(currentPage - 1);
+        const validNextPage = bookRef.enforcePageRange(currentPage - 1);
         setPage(validNextPage);
     };
 

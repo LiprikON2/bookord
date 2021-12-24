@@ -416,6 +416,10 @@ ipcMain.handle(
     "app:on-book-import",
     async (event, [filePath, sectionNum, page]) => {
         const parsedEpub = await parseEpub(filePath);
+        // console.log("_manifest", parsedEpub._manifest, "\n +++\n +++");
+        // console.log("_spine", parsedEpub._spine, "\n +++\n +++");
+        // console.log("_toc", parsedEpub._toc, "\n +++\n +++");
+        // console.log("structure", parsedEpub.structure, "\n +++\n +++");
 
         const sectionNames = parsedEpub.sections.map((section) => section.id);
         const initBook = {
