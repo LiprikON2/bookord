@@ -47,6 +47,10 @@ template.innerHTML = `
                 overflow: hidden;
                 white-space: nowrap;
             }
+            ul.book-ui > #section-page,
+            ul.book-ui > #book-page {
+                visibility: hidden;
+            }
 
         </style>
 
@@ -260,8 +264,7 @@ class BookComponent extends HTMLElement {
     }
 
     updateBookUI() {
-        // TODO: while pages are being counted, dont show undefined and NaN
-        //     : save counted pages in config
+        // Todo: save counted pages in config
         //     : lastOpenedBook is not only book with progress tracked
 
         const bookTitleElem = this.shadowRoot.getElementById("book-title");
@@ -272,25 +275,47 @@ class BookComponent extends HTMLElement {
         sectionNameElem.innerHTML = this.bookState.currentSectionTitle;
         sectionNameElem.title = this.bookState.currentSectionTitle;
 
+        const sectionPageElem = this.shadowRoot.getElementById("section-page");
         const currentSectionPageElem = this.shadowRoot.getElementById(
             "current-section-page"
         );
-        currentSectionPageElem.innerHTML =
-            this.bookState.getCurrentSectionPage(this.contentElem) + 1;
         const totalSectionPageElem = this.shadowRoot.getElementById(
             "total-section-pages"
         );
-        totalSectionPageElem.innerHTML = this.bookState.getTotalSectionPages(
+
+        const currentSectionPage =
+            this.bookState.getCurrentSectionPage(this.contentElem) + 1;
+        const totalSectioPage = this.bookState.getTotalSectionPages(
             this.bookState.currentSection
         );
 
+        if (currentSectionPage >= 0 && totalSectioPage > 0) {
+            sectionPageElem.style.visibility = "visible";
+
+            currentSectionPageElem.innerHTML = currentSectionPage;
+            totalSectionPageElem.innerHTML = totalSectioPage;
+        } else {
+            sectionPageElem.style.visibility = "hidden";
+        }
+
+        const bookPageElem = this.shadowRoot.getElementById("book-page");
         const currentBookPageElem =
             this.shadowRoot.getElementById("current-book-page");
-        currentBookPageElem.innerHTML =
-            this.bookState.getCurrentBookPage(this.contentElem) + 1;
-        const totalBookPageElem =
+        const totalBookPagesElem =
             this.shadowRoot.getElementById("total-book-pages");
-        totalBookPageElem.innerHTML = this.bookState.getTotalBookPages();
+
+        const currentBookPage =
+            this.bookState.getCurrentBookPage(this.contentElem) + 1;
+        const totalBookPages = this.bookState.getTotalBookPages();
+
+        if (currentBookPage >= 0 && totalBookPages > 0) {
+            bookPageElem.style.visibility = "visible";
+
+            currentBookPageElem.innerHTML = currentBookPage;
+            totalBookPagesElem.innerHTML = totalBookPages;
+        } else {
+            bookPageElem.style.visibility = "hidden";
+        }
     }
 
     updateBookSectionState(book, currentSection) {
