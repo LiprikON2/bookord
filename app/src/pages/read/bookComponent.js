@@ -10,10 +10,6 @@ template.innerHTML = `
                 margin: auto;
                 overflow: hidden;
             }
-            .book-container#page-counter-container {
-                visibility: hidden;
-                max-height: 0;
-            } 
 
             .book-container > #book-content,
             .book-container > #page-counter {
@@ -499,8 +495,11 @@ class BookComponent extends HTMLElement {
 
     createCounterComponent() {
         const counterComponent = document.createElement("book-component");
-        counterComponent.setAttribute("id", "page-counter-container");
         this.shadowRoot.appendChild(counterComponent);
+
+        const rootElem = counterComponent.shadowRoot.getElementById("root");
+        rootElem.style.visibility = "hidden";
+        rootElem.style.maxHeight = "0";
 
         counterComponent._countBookPages(this);
     }
