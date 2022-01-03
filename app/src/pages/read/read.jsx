@@ -43,8 +43,8 @@ const Read = () => {
 
     // Callback ref for passing object to the web component
     const bookComponentRef = useRef(null);
-    const setBookComponentRef = useCallback((node) => {
-        if (node) {
+    const setBookComponentRef = useCallback((bookComponent) => {
+        if (bookComponent) {
             window.api.store.clearRendererBindings();
 
             // Send an IPC request to get config
@@ -53,27 +53,31 @@ const Read = () => {
             // Listen for responses from the electron store
             window.api.store.onReceive(readConfigResponse, (args) => {
                 if (args.key === "interactionStates" && args.success) {
+                    const interactionStates = args.value;
+
                     let bookFile;
                     // Tries to get book file from link's location
                     if (location?.state?.book) {
                         bookFile = location.state.book;
                     }
                     // If no book is specified, open last opened bok
-                    else if (args.value?.lastOpenedBook) {
-                        bookFile = args.value.lastOpenedBook;
+                    else if (interactionStates?.lastOpenedBook) {
+                        bookFile = interactionStates.lastOpenedBook;
                     } else {
                         return;
                     }
 
-                    const bookPath = bookFile?.path;
-                    const interactionStates = args.value;
-                    const savedInteractionState = interactionStates?.[bookPath];
-                    node.loadBook(savedInteractionState, interactionStates);
+                    const savedInteractionState =
+                        interactionStates[bookFile.path];
+                    bookComponent.loadBook(
+                        savedInteractionState,
+                        interactionStates
+                    );
                 }
             });
         }
 
-        bookComponentRef.current = node;
+        bookComponentRef.current = bookComponent;
     }, []);
 
     const handleKeypress = (event) => {

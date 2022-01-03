@@ -9,8 +9,6 @@ import {
 const dragDrop = require("drag-drop");
 
 const LibraryUpload = ({ files, setFiles }) => {
-    const initStorage = window.api.store.initial();
-
     const handleUpload = () => {
         const promise = window.api.invoke("app:on-fs-dialog-open");
         promise.then(() => {

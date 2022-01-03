@@ -37,7 +37,6 @@ const ContextMenu = loadable(() =>
 );
 
 const initStorage = window.api.store.initial();
-
 const createDefaultAppSettings = () => {
     // Providing default values to settings without overriding existing ones
     const mergedSettings = Object.assign(

@@ -70,8 +70,44 @@ template.innerHTML = `
     </section>
 `;
 
+/** Book file
+ * @typedef {Object} BookFile
+ * @property {string} name - Book's filename
+ * @property {string} path - Path to the book
+ * @property {string} size - Size of the book in kilobytes
+ */
+
+/** Book metadata information
+ * @typedef {Object} Info
+ * @property {string} title - Book's title
+ * @property {Array<string>} idetifiers - List of book's identifiers (such as a UUID, DOI or ISBN)
+ * @property {Array<string>} languages - List of language codes that correspond to languages used in the book
+ * @property {Array<string>} relations - List of book's relations
+ * @property {Array<string>} subjects - List of book's genres
+ * @property {Array<string>} publishers - List of book's publishers
+ * @property {Array<string>} contributors - List of book's contributors
+ * @property {Array<string>} coverages - List of book's coverage information
+ * @property {Array<string>} rights - List of book's copyright information
+ * @property {Array<string>} sources - List of book's sources
+ * @property {string} description - Book's description
+ * @property {string} date - Book's publication date (ISO8601)
+ * @property {string} cover - Base64-encoded cover image
+ * @property {string} author - Author (creator) of the book
+ */
+
+/** Interaction state of the book
+ * @typedef {Object} InteractionState
+ * @property {Info} info - Book metadata information
+ */
+
+/**
+ * @typedef {Object} InteractionStates
+ * @property {BookFile} lastOpenedBook - Book file of last opened book
+ * @property {InteractionState} * - Path to the book is used as a key
+ */
+
 class BookComponent extends HTMLElement {
-    // Listen for changes in the attribute
+    // Listen for changes in the book-page attribute
     static get observedAttributes() {
         return ["book-page"];
     }
@@ -92,7 +128,11 @@ class BookComponent extends HTMLElement {
             });
         });
     }
-
+    /**
+     * @param  {} bookPath
+     * @param  {} sectionNum
+     * @param  {} sectionPage
+     */
     importBook(bookPath, sectionNum, sectionPage) {
         const book = window.api.invoke("app:on-book-import", [
             bookPath,
@@ -344,6 +384,7 @@ class BookComponent extends HTMLElement {
         this.removeLinkHandlers();
 
         console.log("book", currentSection, nPageShift, offsetMarkerId);
+        console.log(this.interactionStates);
 
         this.loadStyles(book, section);
         this.loadContent(section);
@@ -369,7 +410,7 @@ class BookComponent extends HTMLElement {
         }
 
         this.attachLinkHandlers(book);
-        this.saveLastOpenedBook();
+        this.saveInteractionProgress();
     }
 
     setCurrentOffset(nextOffset) {
@@ -416,7 +457,7 @@ class BookComponent extends HTMLElement {
 
             this.setCurrentOffset(newOffset);
             this.updateBookUI();
-            this.saveLastOpenedBook();
+            this.saveInteractionProgress();
         }
         // Else if it's possible to jump to the next or previous sections
         else if (
@@ -532,18 +573,18 @@ class BookComponent extends HTMLElement {
         this.remove();
     }
 
-    loadBook(lastOpenedBook, interactionStates) {
-        this.lastOpenedBook = lastOpenedBook;
+    loadBook(bookFile, interactionStates) {
+        this.bookFile = bookFile;
         this.interactionStates = interactionStates;
 
         this.book = this.importBook(
-            lastOpenedBook.path,
-            lastOpenedBook.section,
-            lastOpenedBook.sectionPage
+            bookFile.path,
+            bookFile.section,
+            bookFile.sectionPage
         );
 
         this.bookState = {
-            currentSection: lastOpenedBook.section,
+            currentSection: bookFile.section,
             totalSections: 0,
 
             getSectionBookPageBelongsTo: function (page) {
@@ -611,15 +652,12 @@ class BookComponent extends HTMLElement {
                 );
             }.bind(this),
         };
+
         this.createCounterComponent();
-        this.loadSection(
-            this.bookState.currentSection,
-            lastOpenedBook.sectionPage
-        );
+        this.loadSection(this.bookState.currentSection, bookFile.sectionPage);
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
-
         nextBtn.addEventListener("click", () => {
             this.flipNPages(1);
         });
@@ -628,24 +666,18 @@ class BookComponent extends HTMLElement {
         });
     }
 
-    saveLastOpenedBook() {
-        const bookFile = {
-            name: this.lastOpenedBook.name,
-            path: this.lastOpenedBook.path,
-            size: this.lastOpenedBook.size,
-        };
+    saveInteractionProgress() {
         const book = {
-            ...bookFile,
+            ...this.bookFile,
             section: this.bookState.currentSection,
             sectionPage: this.bookState.getCurrentSectionPage(this),
         };
-        const bookPath = book.path;
 
         const prevInteractionStates = this.interactionStates;
         const updatedInteractionStates = {
-            lastOpenedBook: bookFile,
-            [bookPath]: {
-                ...prevInteractionStates[bookPath],
+            lastOpenedBook: this.bookFile,
+            [book.path]: {
+                ...prevInteractionStates[book.path],
                 ...book,
             },
         };
