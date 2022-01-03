@@ -8,24 +8,55 @@ import "./bookComponent";
 import "./Read.css";
 
 const Read = () => {
-    const [page, setPage] = useState(1);
-
     const location = useLocation();
+    const initStorage = window.api.store.initial();
+
+    const [page, setPage] = useState(1);
 
     // Callback ref for passing object to the web component
     const bookComponentRef = useRef(null);
     const setBookComponentRef = useCallback((node) => {
         if (node) {
-            // Listen for responses from the electron store
             window.api.store.clearRendererBindings();
+
+            // Send an IPC request to get config
+            window.api.store.send(readConfigRequest, "interactionStates");
+
+            // Listen for responses from the electron store
             window.api.store.onReceive(readConfigResponse, (args) => {
-                if (args.key === "lastOpenedBook" && args.success) {
-                    const lastOpenedBook = location?.state?.book || args.value;
-                    node.loadBook(lastOpenedBook);
+                if (args.key === "interactionStates" && args.success) {
+                    let bookFile;
+                    // Tries to get book file from link's location
+                    if (location?.state?.book) {
+                        bookFile = location.state.book;
+                    }
+                    // If no book is specified, open last opened bok
+                    else if (args.value?.lastOpenedBook) {
+                        bookFile = args.value.lastOpenedBook;
+                    } else {
+                        return;
+                    }
+
+                    const defaultInteractionState = {
+                        ...bookFile,
+                        section: 0,
+                        sectionPage: 0,
+                    };
+
+                    const bookPath = defaultInteractionState?.path;
+                    const interactionStates = args.value;
+                    const savedInteractionState = interactionStates?.[bookPath];
+
+                    if (savedInteractionState) {
+                        node.loadBook(savedInteractionState, interactionStates);
+                    } else {
+                        node.loadBook(
+                            defaultInteractionState,
+                            interactionStates
+                        );
+                    }
                 }
             });
-            // Send an IPC request to get last opened book
-            window.api.store.send(readConfigRequest, "lastOpenedBook");
         }
 
         bookComponentRef.current = node;

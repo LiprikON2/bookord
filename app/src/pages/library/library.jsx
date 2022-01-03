@@ -6,8 +6,6 @@ import ROUTES from "Constants/routes";
 import LibraryUpload from "./LibraryUpload";
 import LibraryList from "./LibraryList";
 
-const dragDrop = require("drag-drop");
-
 const Library = () => {
     const [files, setFiles] = useState([]);
 

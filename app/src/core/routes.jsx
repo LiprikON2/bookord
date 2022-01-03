@@ -47,7 +47,6 @@ const createDefaultAppSettings = () => {
     );
 
     window.api.store.send(writeConfigRequest, "settings", mergedSettings);
-    // console.log("writing mergedSettings...", mergedSettings);
 
     return mergedSettings;
 };
@@ -55,10 +54,12 @@ const createDefaultAppSettings = () => {
 const initSettings = createDefaultAppSettings();
 
 const toContinueReading = () => {
-    const lastOpenedBook = initStorage.lastOpenedBook;
-    const continueReading = initStorage?.settings?.continueReading?.value;
+    const lastOpenedBook = initStorage.interactionStates?.lastOpenedBook;
 
-    return lastOpenedBook !== undefined && continueReading;
+    const continueReadingSetting =
+        initStorage?.settings?.continueReading?.value;
+
+    return lastOpenedBook !== undefined && continueReadingSetting;
 };
 
 const Routes = () => {

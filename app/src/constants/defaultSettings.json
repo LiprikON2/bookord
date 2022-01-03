@@ -16,18 +16,6 @@
         "description": "Whether or not app will open last read book on startup.",
         "section": "Reading",
         "value": true
-    },
-    "maybe": {
-        "name": "maybe.",
-        "description": "Whether or not app will open last read book on startup.",
-        "section": "Something",
-        "value": true
-    },
-    "what": {
-        "name": "what.",
-        "description": "Whether or not app will open last read book on startup.",
-        "section": "Reading",
-        "value": true
     }
     
 }

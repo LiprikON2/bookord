@@ -1,4 +1,8 @@
-import { writeConfigRequest } from "secure-electron-store";
+import {
+    readConfigRequest,
+    readConfigResponse,
+    writeConfigRequest,
+} from "secure-electron-store";
 
 const template = document.createElement("template");
 template.innerHTML = `
@@ -122,15 +126,6 @@ class BookComponent extends HTMLElement {
         });
         return headStyles[0]?.children?.[0]?.text || "";
     }
-    // getSectionTitle(book, sectionNum) {
-    //     const section = book.sections[sectionNum];
-
-    //     const titleTag = section[0].children.filter((elem) => {
-    //         return elem.tag === "title";
-    //     })?.[0];
-
-    //     return titleTag.children?.[0]?.text || "";
-    // }
 
     getSectionTitle(book, toc, sectionNum, root = true) {
         let descendantSectionTitle;
@@ -260,9 +255,6 @@ class BookComponent extends HTMLElement {
     }
 
     updateBookUI() {
-        // Todo: save counted pages in config
-        //     : lastOpenedBook is not only book with progress tracked
-
         const bookTitleElem = this.shadowRoot.getElementById("book-title");
         bookTitleElem.innerHTML = this.bookState.bookTitle;
         bookTitleElem.title = this.bookState.bookTitle;
@@ -278,7 +270,6 @@ class BookComponent extends HTMLElement {
         const totalSectionPageElem = this.shadowRoot.getElementById(
             "total-section-pages"
         );
-        console.log("before", this.contentElem.offsetWidth);
         const currentSectionPage =
             this.bookState.getCurrentSectionPage(this) + 1;
         const totalSectioPage = this.bookState.getTotalSectionPages(
@@ -545,8 +536,9 @@ class BookComponent extends HTMLElement {
         this.remove();
     }
 
-    loadBook(lastOpenedBook) {
+    loadBook(lastOpenedBook, interactionStates) {
         this.lastOpenedBook = lastOpenedBook;
+        this.interactionStates = interactionStates;
 
         this.book = this.importBook(
             lastOpenedBook.path,
@@ -641,14 +633,34 @@ class BookComponent extends HTMLElement {
     }
 
     saveLastOpenedBook() {
-        const book = {
+        const bookFile = {
             name: this.lastOpenedBook.name,
             path: this.lastOpenedBook.path,
             size: this.lastOpenedBook.size,
+        };
+        const book = {
+            ...bookFile,
             section: this.bookState.currentSection,
             sectionPage: this.bookState.getCurrentSectionPage(this),
         };
-        window.api.store.send(writeConfigRequest, "lastOpenedBook", book);
+        const bookPath = book.path;
+
+        const prevInteractionStates = this.interactionStates;
+        const updatedInteractionStates = {
+            lastOpenedBook: bookFile,
+            [bookPath]: book,
+        };
+        const mergedInteractionStates = Object.assign(
+            {},
+            prevInteractionStates,
+            updatedInteractionStates
+        );
+
+        window.api.store.send(
+            writeConfigRequest,
+            "interactionStates",
+            mergedInteractionStates
+        );
     }
 
     disconnectedCallback() {
