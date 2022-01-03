@@ -1,8 +1,12 @@
 import React, { useEffect, useLayoutEffect } from "react";
 
+import { readConfigRequest, readConfigResponse } from "secure-electron-store";
+
 const dragDrop = require("drag-drop");
 
 const LibraryUpload = ({ files, setFiles }) => {
+    const initStorage = window.api.store.initial();
+
     const handleUpload = () => {
         const promise = window.api.invoke("app:on-fs-dialog-open");
         promise.then(() => {
@@ -12,8 +16,28 @@ const LibraryUpload = ({ files, setFiles }) => {
 
     const updateFiles = () => {
         const promise = window.api.invoke("app:get-files");
-        promise.then((files = []) => {
-            setFiles(files);
+        promise.then(async (files = []) => {
+            const interactionStates = initStorage.interactionStates || {};
+            const filesWithMetadata = await Promise.all(
+                files.map(async (file) => {
+                    if (interactionStates[file.path]?.info) {
+                        console.log(
+                            "interactionStates.[file.path]",
+                            interactionStates[file.path]
+                        );
+                        return file;
+                    } else {
+                        console.log("no");
+                        const metadata = await window.api.invoke(
+                            "app:on-book-metadata-import",
+                            file.path
+                        );
+                        return { ...file, info: metadata };
+                    }
+                })
+            );
+            console.log("filesWithMetadata", filesWithMetadata);
+            setFiles(filesWithMetadata);
         });
     };
 
@@ -23,6 +47,14 @@ const LibraryUpload = ({ files, setFiles }) => {
     }, []);
 
     useEffect(() => {
+        // window.api.store.send(readConfigRequest, "interactionStates");
+
+        // window.api.store.onReceive(readConfigResponse, (args) => {
+        //     if (args.key === "interactionStates" && args.success) {
+
+        //     }
+        // });
+
         // Initial file drag and drop event litener
         dragDrop("#uploader", (files) => {
             const mappedFiles = files.map((file) => {

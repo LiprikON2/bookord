@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { writeConfigRequest } from "secure-electron-store";
 
+// todo test if works correctly
 const SettingsList = ({ initSettings }) => {
     const [settings, setSettings] = useState(initSettings);
     // Extracts all unique settings sections

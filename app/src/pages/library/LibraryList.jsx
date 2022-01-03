@@ -14,6 +14,10 @@ const LibraryList = ({ files, setFiles }) => {
                 <ul>
                     {files.map((file) => (
                         <li key={file.path}>
+                            <img
+                                src={file.info.cover}
+                                style={{ maxHeight: "10em" }}
+                            />
                             <Link
                                 to={{
                                     pathname: ROUTES.READ,
@@ -23,7 +27,11 @@ const LibraryList = ({ files, setFiles }) => {
                                 }}>
                                 {file.name}
                             </Link>
-                            <span> | {file.path}</span>
+                            <span>
+                                {" "}
+                                | {file.path} | {file.info.publisher}
+                            </span>
+
                             <button
                                 role="button"
                                 onClick={() => handleDelete(file)}>

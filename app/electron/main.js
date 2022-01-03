@@ -142,7 +142,7 @@ async function createWindow() {
     }
 
     win.webContents.on("did-finish-load", () => {
-        win.setTitle(`Bookord`);
+        win.setTitle("Bookord");
         io.watchFiles(win);
     });
 
@@ -420,6 +420,7 @@ ipcMain.handle(
         // console.log("_spine", parsedEpub._spine, "\n +++\n +++");
         // console.log("_toc", parsedEpub._toc, "\n +++\n +++");
         // console.log("structure", parsedEpub.structure, "\n +++\n +++");
+        // console.log("_manifest", parsedEpub._metadata, "\n +++\n +++");
 
         const sectionNames = parsedEpub.sections.map((section) => section.id);
         const initBook = {
@@ -467,3 +468,8 @@ ipcMain.handle(
         // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
     }
 );
+
+ipcMain.handle("app:on-book-metadata-import", async (event, filePath) => {
+    const parsedEpub = await parseEpub(filePath);
+    return parsedEpub.info;
+});

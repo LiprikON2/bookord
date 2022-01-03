@@ -38,7 +38,6 @@ function useEventListener(eventName, handler, element = window) {
 
 const Read = () => {
     const location = useLocation();
-    const initStorage = window.api.store.initial();
 
     const [page, setPage] = useState(1);
 

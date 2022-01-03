@@ -68,8 +68,8 @@ template.innerHTML = `
             </li>
         </ul>
 
-        <button role="button" id="back">Back</button>
-        <button role="button" id="next">Next</button>
+        <button role="button" id="back" hidden>Back</button>
+        <button role="button" id="next" hidden>Next</button>
         
     </section>
 `;
@@ -348,6 +348,7 @@ class BookComponent extends HTMLElement {
         this.removeLinkHandlers();
 
         console.log("book", currentSection, nPageShift, offsetMarkerId);
+        console.log(book.info);
 
         this.loadStyles(book, section);
         this.loadContent(section);
