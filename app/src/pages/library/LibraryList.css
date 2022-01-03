@@ -1,0 +1,13 @@
+ul.book-list {
+    display: grid;
+    grid-template-columns: 200px 200px 200px 200px;
+    grid-template-rows: auto;
+    gap: 3em;
+}
+ul.book-list .title {
+    font-size: 1em;
+}
+ul.book-list img#cover {
+    object-fit: cover;
+    /* max-height: 10em; */
+}

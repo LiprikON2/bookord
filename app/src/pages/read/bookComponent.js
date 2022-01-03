@@ -1,8 +1,4 @@
-import {
-    readConfigRequest,
-    readConfigResponse,
-    writeConfigRequest,
-} from "secure-electron-store";
+import { writeConfigRequest } from "secure-electron-store";
 
 const template = document.createElement("template");
 template.innerHTML = `
@@ -348,7 +344,6 @@ class BookComponent extends HTMLElement {
         this.removeLinkHandlers();
 
         console.log("book", currentSection, nPageShift, offsetMarkerId);
-        console.log(book.info);
 
         this.loadStyles(book, section);
         this.loadContent(section);
@@ -649,7 +644,10 @@ class BookComponent extends HTMLElement {
         const prevInteractionStates = this.interactionStates;
         const updatedInteractionStates = {
             lastOpenedBook: bookFile,
-            [bookPath]: book,
+            [bookPath]: {
+                ...prevInteractionStates[bookPath],
+                ...book,
+            },
         };
         const mergedInteractionStates = Object.assign(
             {},

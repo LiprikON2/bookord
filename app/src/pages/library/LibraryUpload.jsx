@@ -1,6 +1,10 @@
 import React, { useEffect, useLayoutEffect } from "react";
 
-import { readConfigRequest, readConfigResponse } from "secure-electron-store";
+import {
+    readConfigRequest,
+    readConfigResponse,
+    writeConfigRequest,
+} from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
 
@@ -16,28 +20,62 @@ const LibraryUpload = ({ files, setFiles }) => {
 
     const updateFiles = () => {
         const promise = window.api.invoke("app:get-files");
-        promise.then(async (files = []) => {
-            const interactionStates = initStorage.interactionStates || {};
-            const filesWithMetadata = await Promise.all(
-                files.map(async (file) => {
-                    if (interactionStates[file.path]?.info) {
-                        console.log(
-                            "interactionStates.[file.path]",
-                            interactionStates[file.path]
-                        );
-                        return file;
-                    } else {
-                        console.log("no");
-                        const metadata = await window.api.invoke(
-                            "app:on-book-metadata-import",
-                            file.path
-                        );
-                        return { ...file, info: metadata };
-                    }
-                })
-            );
-            console.log("filesWithMetadata", filesWithMetadata);
-            setFiles(filesWithMetadata);
+        window.api.store.clearRendererBindings();
+        window.api.store.send(readConfigRequest, "interactionStates");
+
+        window.api.store.onReceive(readConfigResponse, (args) => {
+            if (args.key === "interactionStates" && args.success) {
+                const interactionStates = args.value;
+
+                promise.then(async (files = []) => {
+                    const updatedInteractionStateList = [];
+                    const filesWithMetadata = await Promise.all(
+                        files.map(async (file) => {
+                            const savedMetadata =
+                                interactionStates?.[file.path]?.info;
+                            // If books were already parsed, retrive saved results
+                            if (savedMetadata) {
+                                return { ...file, info: savedMetadata };
+                            }
+                            // Otherwise parse books for metadata & then save results
+                            else {
+                                const metadata = await window.api.invoke(
+                                    "app:on-book-metadata-import",
+                                    file.path
+                                );
+
+                                const updatedInteractionState = {
+                                    [file.path]: {
+                                        ...file,
+                                        section: 0,
+                                        sectionPage: 0,
+                                        ...interactionStates?.[file.path],
+                                        info: metadata,
+                                    },
+                                };
+                                updatedInteractionStateList.push(
+                                    updatedInteractionState
+                                );
+
+                                return { ...file, info: metadata };
+                            }
+                        })
+                    );
+                    const mergedInteractionStates = Object.assign(
+                        {},
+                        interactionStates,
+                        ...updatedInteractionStateList
+                    );
+
+                    window.api.store.send(
+                        writeConfigRequest,
+                        "interactionStates",
+                        mergedInteractionStates
+                    );
+
+                    setFiles(filesWithMetadata);
+                });
+            }
         });
     };
 
@@ -47,14 +85,6 @@ const LibraryUpload = ({ files, setFiles }) => {
     }, []);
 
     useEffect(() => {
-        // window.api.store.send(readConfigRequest, "interactionStates");
-
-        // window.api.store.onReceive(readConfigResponse, (args) => {
-        //     if (args.key === "interactionStates" && args.success) {
-
-        //     }
-        // });
-
         // Initial file drag and drop event litener
         dragDrop("#uploader", (files) => {
             const mappedFiles = files.map((file) => {

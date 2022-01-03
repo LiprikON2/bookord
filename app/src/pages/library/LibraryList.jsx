@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import ROUTES from "Constants/routes";
+import "./LibraryList.css";
 
 const LibraryList = ({ files, setFiles }) => {
     const handleDelete = (file) => {
@@ -11,33 +12,32 @@ const LibraryList = ({ files, setFiles }) => {
     return (
         <>
             <section className="section">
-                <ul>
+                <ul className="book-list">
                     {files.map((file) => (
-                        <li key={file.path}>
-                            <img
-                                src={file.info.cover}
-                                style={{ maxHeight: "10em" }}
-                            />
-                            <Link
-                                to={{
-                                    pathname: ROUTES.READ,
-                                    state: {
-                                        book: file,
-                                    },
-                                }}>
-                                {file.name}
-                            </Link>
-                            <span>
-                                {" "}
-                                | {file.path} | {file.info.publisher}
-                            </span>
+                        <Link
+                            to={{
+                                pathname: ROUTES.READ,
+                                state: {
+                                    book: file,
+                                },
+                            }}
+                            key={file.path}>
+                            <li>
+                                <img
+                                    id="cover"
+                                    src={file.info.cover}
+                                    alt="book cover"
+                                />
 
-                            <button
-                                role="button"
-                                onClick={() => handleDelete(file)}>
-                                Delete
-                            </button>
-                        </li>
+                                <h3 className="title">{file.info.title}</h3>
+
+                                {/* <button
+                                    role="button"
+                                    onClick={() => handleDelete(file)}>
+                                    Delete
+                                </button> */}
+                            </li>
+                        </Link>
                     ))}
                 </ul>
             </section>

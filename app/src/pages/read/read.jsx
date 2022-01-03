@@ -65,24 +65,10 @@ const Read = () => {
                         return;
                     }
 
-                    const defaultInteractionState = {
-                        ...bookFile,
-                        section: 0,
-                        sectionPage: 0,
-                    };
-
-                    const bookPath = defaultInteractionState?.path;
+                    const bookPath = bookFile?.path;
                     const interactionStates = args.value;
                     const savedInteractionState = interactionStates?.[bookPath];
-
-                    if (savedInteractionState) {
-                        node.loadBook(savedInteractionState, interactionStates);
-                    } else {
-                        node.loadBook(
-                            defaultInteractionState,
-                            interactionStates
-                        );
-                    }
+                    node.loadBook(savedInteractionState, interactionStates);
                 }
             });
         }
