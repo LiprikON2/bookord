@@ -73,8 +73,8 @@ template.innerHTML = `
 /** Book file
  * @typedef {Object} BookFile
  * @property {string} name - Book's filename
- * @property {string} path - Path to the book
- * @property {string} size - Size of the book in kilobytes
+ * @property {string} path - Path to the book file
+ * @property {string} size - Size of the book file in kilobytes
  */
 
 /** Book metadata information
@@ -95,17 +95,46 @@ template.innerHTML = `
  * @property {string} author - Author (creator) of the book
  */
 
-/** Interaction state of the book
- * @typedef {Object} InteractionState
- * @property {Info} info - Book metadata information
+/** Book section state
+ * @typedef {Object} State
+ * @property {number} section - Section number of a book
+ * @property {number} sectionPage - Page number of a book's section
  */
 
-/**
+/** Interaction state of the book which contains information about file, metadata and reading progress
+ * @typedef {Object} InteractionState
+ * @property {BookFile} file - Book file
+ * @property {Info} info - Book metadata information
+ * @property {State} state - Book section state
+ */
+
+/** Contains interaction states of all of the books; path to the book's file is used to access individual InteractionState objects
  * @typedef {Object} InteractionStates
  * @property {BookFile} lastOpenedBook - Book file of last opened book
  * @property {InteractionState} * - Path to the book is used as a key
  */
 
+/** HTML & XML parsed to the JavaScript object
+ * @typedef {Object} HtmlObject
+ * @property {string|undefined} [name]
+ * @property {string|undefined} [sectionId]
+ * @property {string|undefined} [href]
+ * @property {string|undefined} [_data] - HTML content as a string
+ * @property {string|undefined} [tag] - HTML tag
+ * @property {number|undefined} [type] - Value of 3 corresponds to the text node
+ * @property {HtmlObject|undefined} [children]
+ */
+
+/** Parsed book object which consists of sections
+ * @typedef {Object} Book
+ * @property {Info} info - Book metadata information
+ * @property {Array<HtmlObject>} initSection - Initially parsed book section
+ * @property {number} initSectionNum - Number that corresponds the book's initally parsed section
+ * @property {Array<string>} sectionNames - List of section ids (names)
+ * @property {number} sectionTotal - Book's total number of section
+ * @property {Array<HtmlObject>} structure - Book's parsed Table Of Contents (TOC)
+ * @property {Array<HtmlObject>} styles - Book's stylesheets
+ */
 class BookComponent extends HTMLElement {
     // Listen for changes in the book-page attribute
     static get observedAttributes() {
@@ -120,8 +149,13 @@ class BookComponent extends HTMLElement {
 
         this.contentElem = this.shadowRoot.getElementById("book-content");
 
+        /**
+         * @property {bool} isInit - Status of initialization of the book, true when all of the book's sections are parsed
+         */
         this.isInit = false;
-        // Initial book with only one section parsed
+        /**
+         * @property {Promise<Book>} initBook - Initial book with only one section parsed
+         */
         this.initBook = new Promise((resolve, reject) => {
             window.api.receive("app:on-book-section-import", (initBook) => {
                 resolve(initBook);
@@ -129,13 +163,15 @@ class BookComponent extends HTMLElement {
         });
     }
     /**
-     * @param  {} bookPath
-     * @param  {} sectionNum
-     * @param  {} sectionPage
+     * Imports book using IPC, completes initialization as soon as promise is resolved
+     * @param  {string} filePath
+     * @param  {number} sectionNum
+     * @param  {number} sectionPage
+     * @returns {Promise<Book>}
      */
-    importBook(bookPath, sectionNum, sectionPage) {
+    importBook(filePath, sectionNum, sectionPage) {
         const book = window.api.invoke("app:on-book-import", [
-            bookPath,
+            filePath,
             sectionNum,
             sectionPage,
         ]);
@@ -144,8 +180,10 @@ class BookComponent extends HTMLElement {
         });
         return book;
     }
-    /*
+    /**
      * Returns all references to stylesheet names in a section
+     * @param {HtmlObject} section
+     * @returns {Array<string>}
      */
     getSectionStyleReferences(section) {
         // First tag of a section is the head tag
@@ -156,6 +194,11 @@ class BookComponent extends HTMLElement {
         const sectionStyles = headLinks.map((link) => link?.attrs?.href);
         return sectionStyles;
     }
+    /**
+     * Returns inline styles of a particular book section
+     * @param {HtmlObject} section
+     * @returns {string}
+     */
     getSectionInlineStyles(section) {
         const headStyles = section[0].children.filter((elem) => {
             return elem.tag === "style";
@@ -163,6 +206,14 @@ class BookComponent extends HTMLElement {
         return headStyles[0]?.children?.[0]?.text || "";
     }
 
+    /**
+     * Recursively extracts section (chapter) title from book's TOC
+     * @param {Book} book
+     * @param {Array<HtmlObject>} toc
+     * @param {number} sectionNum
+     * @param {bool} root - A way to differentiate between recursive and non-recursive function call
+     * @returns {string}
+     */
     getSectionTitle(book, toc, sectionNum, root = true) {
         let descendantSectionTitle;
         for (let tocEntry of toc) {
@@ -201,10 +252,21 @@ class BookComponent extends HTMLElement {
             return "";
         }
     }
+    /**
+     * Returns book's section object
+     * @param {Book} book
+     * @param {number} sectionNum
+     * @returns {HtmlObject}
+     */
     getSection(book, sectionNum) {
         return book.sections[sectionNum];
     }
-
+    /**
+     * Collects book's styles and applies them to the web component
+     * @param {Book} book
+     * @param {HtmlObject} section
+     * @returns {void}
+     */
     loadStyles(book, section) {
         const styleElem = this.shadowRoot.getElementById("book-style");
 
@@ -223,9 +285,11 @@ class BookComponent extends HTMLElement {
         });
     }
 
-    /*
-     * Recursively creates and appends child
-     * elements to the respective child's parent
+    /**
+     * Recursively creates and appends child elements to the respective child's parent
+     * @param {HTMLElement} parent
+     * @param {HtmlObject} children
+     * @returns {void}
      */
     recCreateElements(parent, children) {
         children.map((element) => {
@@ -251,9 +315,10 @@ class BookComponent extends HTMLElement {
         });
     }
 
-    /*
-     * Creates a marker that signifies the end of a section
-     * which is used in calculating max offset value
+    /**
+     * Creates a marker that signifies the end of a section which is used in calculating max offset value
+     * @param {string} markerId - ID of to-be-created HTML element
+     * @returns {void}
      */
     createMarker(markerId) {
         const marker = document.createElement("span");
@@ -261,6 +326,13 @@ class BookComponent extends HTMLElement {
         this.contentElem.appendChild(marker);
     }
 
+    /**
+     * Handles clicks on book navigation links and website links
+     * @param {Event} e - Event
+     * @param {Book} book
+     * @listens Event
+     * @returns {void}
+     */
     handleLink(e, book) {
         e.preventDefault();
         const [sectionName, marker] = e.currentTarget.href
@@ -279,7 +351,11 @@ class BookComponent extends HTMLElement {
             window.open(e.target.href, "_blank");
         }
     }
-
+    /**
+     * Loads book's content and appends a end-marker to it
+     * @param {HtmlObject} section
+     * @returns {void}
+     */
     loadContent(section) {
         this.contentElem.innerHTML = "";
         // Remove head tag from section
@@ -289,7 +365,10 @@ class BookComponent extends HTMLElement {
         const markerId = this.contentElem.id + "-end-marker";
         this.createMarker(markerId);
     }
-
+    /**
+     * Updates book's UI elements such as book title, section title and page counters
+     * @returns {void}
+     */
     updateBookUI() {
         const bookTitleElem = this.shadowRoot.getElementById("book-title");
         bookTitleElem.innerHTML = this.bookState.bookTitle;
@@ -340,6 +419,12 @@ class BookComponent extends HTMLElement {
         }
     }
 
+    /**
+     * Updates book's state
+     * @param {Book} book
+     * @param {number} currentSection
+     * @returns {void}
+     */
     updateBookSectionState(book, currentSection) {
         this.bookState.currentSection = currentSection;
         this.bookState.totalSections = book.sectionsTotal;
@@ -351,24 +436,33 @@ class BookComponent extends HTMLElement {
         );
     }
 
-    // Attaches event handlers to anchor tags to handle book navigation
+    /**
+     * Attaches event handlers to anchor tags to handle book navigation
+     * @param {Book} book
+     * @returns {void}
+     */
     attachLinkHandlers(book) {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
             a.addEventListener("click", (e) => this.handleLink(e, book));
         });
     }
-    // Removes anchor's event handlers before loading another section
+    /**
+     * Removes anchor's event handlers before loading another section
+     * @returns {void}
+     */
     removeLinkHandlers() {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
             a.removeEventListener("click", this.handleLink);
         });
     }
-    /*
-     * sectionNum - index of an html file - section
-     * nPageShift - how many pages to flip through
-     * offsetMarkerId - id of an element within section to scroll to
+    /**
+     * Loads specified book section along with its styles, sets event listeners, updates UI and saves interaction progress
+     * @param {number} currentSection
+     * @param {number} nPageShift
+     * @param {string} offsetMarkerId
+     * @returns {void}
      */
     async loadSection(currentSection, nPageShift, offsetMarkerId = "") {
         if (!this.isInit) {
@@ -383,8 +477,7 @@ class BookComponent extends HTMLElement {
 
         this.removeLinkHandlers();
 
-        console.log("book", currentSection, nPageShift, offsetMarkerId);
-        console.log(this.interactionStates);
+        // console.log("book", currentSection, nPageShift, offsetMarkerId);
 
         this.loadStyles(book, section);
         this.loadContent(section);
@@ -413,13 +506,19 @@ class BookComponent extends HTMLElement {
         this.saveInteractionProgress();
     }
 
+    /**
+     * Sets pixel offset as a way to advance pages within a section
+     * @param {string|number} nextOffset
+     * @returns {void}
+     */
     setCurrentOffset(nextOffset) {
         this.contentElem.style.transform = `translate(${nextOffset}px)`;
     }
 
-    /*
-     * Calculates how many pixels text needs to be
-     * offsetted in order to shift n section pages
+    /**
+     * Calculates how many pixels text needs to be offsetted in order to shift N section pages
+     * @param {number} nPageShift
+     * @returns {number}
      */
     calcNextOffset(nPageShift) {
         const displayWidth = this.contentElem.offsetWidth;
@@ -428,20 +527,30 @@ class BookComponent extends HTMLElement {
 
         return currentOffset + shiftOffset;
     }
-
+    /**
+     * Returns end-marker's offset which is maximum possible offset
+     * @returns {number}
+     */
     _getMaxOffset() {
         const markerId = this.contentElem.id + "-end-marker";
         const markerElem = this.shadowRoot.getElementById(markerId);
         const markerOffset = -markerElem.offsetLeft;
         return markerOffset;
     }
+    /**
+     * Returns the total of current section pages
+     * @returns {number}
+     */
     calcTotalSectionPages() {
         const displayWidth = this.contentElem.offsetWidth;
         const maxPageNum = Math.abs(this._getMaxOffset() / displayWidth);
-        // TODO for some reason this has values of 78.28, 111.28, 76.28...
         return parseInt(maxPageNum);
     }
-
+    /**
+     * Flips N pages of a book, when it is discovered that N page shift would land in different section, calls jumpToPage function instead
+     * @param {number} nPageShift
+     * @returns {void}
+     */
     flipNPages(nPageShift) {
         const currentSection = this.bookState.currentSection;
         const totalSections = this.bookState.totalSections;
@@ -477,8 +586,10 @@ class BookComponent extends HTMLElement {
             this.jumpToPage(edgePage);
         }
     }
-    /*
+    /**
      * Returns page that is guranteed to be withing the borders of a book
+     * @param {number} page
+     * @returns {number}
      */
     enforcePageRange(page) {
         const minPage = 1;
@@ -490,6 +601,12 @@ class BookComponent extends HTMLElement {
         }
         return page;
     }
+
+    /**
+     * Jumps straight to the particular book page
+     * @param {number} page
+     * @returns {void}
+     */
     jumpToPage(page) {
         const validPage = this.enforcePageRange(page);
 
@@ -521,6 +638,10 @@ class BookComponent extends HTMLElement {
         }
     }
 
+    /**
+     * Creates another web component which is used to count pages of a book, and then destroys it
+     * @return {void}
+     */
     createCounterComponent() {
         const counterComponent = document.createElement("book-component");
         this.shadowRoot.appendChild(counterComponent);
@@ -531,11 +652,23 @@ class BookComponent extends HTMLElement {
 
         counterComponent._countBookPages(this);
     }
+    /**
+     * Asynchronous version of a forEach
+     * @param {Array} array
+     * @param {*} callback
+     * @returns {void}
+     */
     async _asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
             await callback(array[index], index, array);
         }
     }
+
+    /**
+     * Asynchronously and non-blockingly counts pages of a book with a help of a parent web component
+     * @param {HTMLElement} parentComponent - instance of a parent web component which created this counter web component
+     * @returns {void}
+     */
     async _countBookPages(parentComponent) {
         const _waitForNextTask = () => {
             const { port1, port2 } = (_waitForNextTask.channel ??=
@@ -573,18 +706,24 @@ class BookComponent extends HTMLElement {
         this.remove();
     }
 
-    loadBook(bookFile, interactionStates) {
-        this.bookFile = bookFile;
+    /**
+     * Loads book to the web component, as well as runs a page counter
+     * @param {string} filePath - Path to the book file, also serves as the key to InteractionStates object
+     * @param {InteractionStates} interactionStates - interaction states of all of the books
+     * @return {void}
+     */
+    loadBook(filePath, interactionStates) {
+        this.currInteractionState = interactionStates[filePath];
         this.interactionStates = interactionStates;
 
         this.book = this.importBook(
-            bookFile.path,
-            bookFile.section,
-            bookFile.sectionPage
+            this.currInteractionState.file.path,
+            this.currInteractionState.state.section,
+            this.currInteractionState.state.sectionPage
         );
 
         this.bookState = {
-            currentSection: bookFile.section,
+            currentSection: this.currInteractionState.state.section,
             totalSections: 0,
 
             getSectionBookPageBelongsTo: function (page) {
@@ -654,7 +793,10 @@ class BookComponent extends HTMLElement {
         };
 
         this.createCounterComponent();
-        this.loadSection(this.bookState.currentSection, bookFile.sectionPage);
+        this.loadSection(
+            this.bookState.currentSection,
+            this.currInteractionState.state.sectionPage
+        );
 
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
@@ -666,19 +808,24 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    /**
+     * Saves interaction state progress in electron store
+     * @returns {void}
+     */
     saveInteractionProgress() {
-        const book = {
-            ...this.bookFile,
+        const state = {
             section: this.bookState.currentSection,
             sectionPage: this.bookState.getCurrentSectionPage(this),
         };
+        const filePath = this.currInteractionState.file.path;
 
         const prevInteractionStates = this.interactionStates;
         const updatedInteractionStates = {
-            lastOpenedBook: this.bookFile,
-            [book.path]: {
-                ...prevInteractionStates[book.path],
-                ...book,
+            lastOpenedBook: this.currInteractionState.file,
+            [filePath]: {
+                file: this.currInteractionState.file,
+                ...prevInteractionStates[filePath],
+                state,
             },
         };
         const mergedInteractionStates = Object.assign(
@@ -703,6 +850,12 @@ class BookComponent extends HTMLElement {
         this.removeLinkHandlers();
     }
 
+    /**
+     * Runs everytime web component's listened attribute changes.
+     * @param {string} name
+     * @param {string|undefined} oldValue
+     * @param {string|undefined} newValue
+     */
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "book-page" && oldValue) {
             const updatedPage = parseInt(newValue);

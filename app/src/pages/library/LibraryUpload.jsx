@@ -44,9 +44,11 @@ const LibraryUpload = ({ files, setFiles }) => {
 
                                 const updatedInteractionState = {
                                     [file.path]: {
-                                        ...file,
-                                        section: 0,
-                                        sectionPage: 0,
+                                        file,
+                                        state: {
+                                            section: 0,
+                                            sectionPage: 0,
+                                        },
                                         ...interactionStates?.[file.path],
                                         info: metadata,
                                     },
