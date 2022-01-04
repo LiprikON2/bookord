@@ -2,7 +2,8 @@ import React from "react";
 import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
 import Routes from "Core/Routes";
-import Nav from "./Nav";
+import Titlebar from "./Titlebar";
+import "bulma/css/bulma.css";
 import "./Root.css";
 
 class Root extends React.Component {
@@ -13,7 +14,7 @@ class Root extends React.Component {
             <>
                 <Provider store={store}>
                     <ConnectedRouter history={history}>
-                        <Nav history={history}></Nav>
+                        <Titlebar></Titlebar>
                         <Routes></Routes>
                     </ConnectedRouter>
                 </Provider>

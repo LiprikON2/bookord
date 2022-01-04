@@ -17,6 +17,9 @@ module.exports = {
             path: require.resolve("path-browserify"),
             stream: require.resolve("stream-browserify"),
         },
+        alias: {
+            resources: path.resolve(__dirname, "resources/"),
+        },
     },
     module: {
         rules: [

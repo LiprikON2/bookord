@@ -109,6 +109,12 @@ const Read = () => {
         <>
             <section className="section">
                 <h1>Read</h1>
+                <Link
+                    to={ROUTES.LIBRARY}
+                    className="button is-dark"
+                    role="button">
+                    Home
+                </Link>
                 <div className="book-container">
                     <book-component
                         ref={setBookComponentRef}
@@ -116,13 +122,20 @@ const Read = () => {
                     />
                 </div>
 
-                <button role="button" onClick={goBack}>
-                    Back
-                </button>
-                <button role="button" onClick={goNext}>
-                    Next
-                </button>
-                <Link to={ROUTES.LIBRARY}>Home</Link>
+                <div className="button-group">
+                    <button
+                        className="button is-dark"
+                        role="button"
+                        onClick={goBack}>
+                        Back
+                    </button>
+                    <button
+                        className="button is-dark"
+                        role="button"
+                        onClick={goNext}>
+                        Next
+                    </button>
+                </div>
             </section>
         </>
     );

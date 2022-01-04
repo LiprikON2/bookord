@@ -11,7 +11,7 @@
     height: 400px;
 }
 
-img {
+.book-container img {
     display: block;
     width: 100% !important;
     height: 400px !important;

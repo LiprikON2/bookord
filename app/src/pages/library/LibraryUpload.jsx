@@ -109,7 +109,7 @@ const LibraryUpload = ({ files, setFiles }) => {
             <section className="section">
                 <div id="uploader" className="container">
                     <button
-                        className="bookUpload"
+                        className="button is-dark"
                         type="button"
                         onClick={handleUpload}>
                         Add a book

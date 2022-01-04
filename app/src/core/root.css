@@ -1,9 +1,13 @@
 :root {
     --clr-primary: #dcddde;
     --clr-secondary: #8e9297;
+    --clr-danger: #d31223;
 
+    --clr-bg-darkest: #17191b;
     --clr-bg-primary: #202225;
     --clr-bg-secondary: #2f3136;
+
+    --titlebar-height: 32px;
 }
 
 * {
@@ -12,36 +16,101 @@
 
 html {
     height: 100%;
+    width: 100%;
+    overflow: initial;
 }
 
 body {
-    margin: 0px;
-    height: -webkit-fill-available;
-}
+    height: 100%;
+    width: 100%;
+    border: 1px solid #48545c;
+    overflow: hidden;
 
-#root {
-    height: -webkit-fill-available;
-}
-
-body,
-html {
+    color: var(--clr-primary);
     background-color: var(--clr-bg-primary);
+}
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+#titlebar {
+    height: var(--titlebar-height);
+    width: calc(100% - 2px);
+
+    display: flex;
+    position: fixed;
+    z-index: 10;
+    background-color: var(--clr-bg-darkest);
+    user-select: none;
+}
+#titlebar > #drag-region {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 1em;
+
+    -webkit-app-region: drag;
+}
+#titlebar > .button-group {
+    display: flex;
+}
+#titlebar > .button-group > .button {
+    height: 100%;
+    color: inherit;
+    background-color: inherit;
+    border: none;
+    border-radius: 0;
+    padding-top: 5px;
+}
+#titlebar > .button-group > .button:focus {
+    border-color: inherit;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+#titlebar > .button-group > .button:hover {
+    transition: all 0.2s ease;
+    background-color: var(--clr-bg-secondary);
+    color: white;
+}
+#titlebar > .button-group > .close-button:hover {
+    background-color: var(--clr-danger);
+}
+#titlebar .logo {
+    padding: 4px;
+    height: var(--titlebar-height);
+    width: var(--titlebar-height);
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+
+    padding: 20px;
+    padding-top: var(--titlebar-height);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* Scrollbar */
-*::-webkit-scrollbar {
-    width: 5px;
+::-webkit-scrollbar {
+    width: 12px;
 }
-
-*::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background: transparent;
 }
 
-*::-webkit-scrollbar-thumb {
+:hover::-webkit-scrollbar-thumb {
     background: transparent;
+    background: hsl(0 0% 29% / 0.75);
+    border-radius: 100vw;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 35% / 1);
 }
 
-*:hover::-webkit-scrollbar-thumb {
-    border-radius: 12px;
-    background: #4a4a4a; /* light mode #cfcfcf */
+#main::-webkit-scrollbar-track {
+    margin-top: var(--titlebar-height);
 }
