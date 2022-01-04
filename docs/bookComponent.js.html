@@ -1,9 +1,37 @@
-import { writeConfigRequest } from "secure-electron-store";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: bookComponent.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: bookComponent.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { writeConfigRequest } from "secure-electron-store";
 
 const template = document.createElement("template");
 template.innerHTML = `
-    <section id="root" class="book-container">
-        <style>
+    &lt;section id="root" class="book-container">
+        &lt;style>
             * {box-sizing: border-box}
             .book-container {
                 width: 400px;
@@ -48,26 +76,26 @@ template.innerHTML = `
                 visibility: hidden;
             }
 
-        </style>
+        &lt;/style>
 
-        <style id="book-style"></style>
-        <div id="book-title"></div>
-        <div id="book-content"></div>
+        &lt;style id="book-style">&lt;/style>
+        &lt;div id="book-title">&lt;/div>
+        &lt;div id="book-content">&lt;/div>
         
-        <ul class="book-ui">
-            <li id="section-name"></li>
-            <li id="section-page" title="Section page">
-                <span id="current-section-page"></span>/<span id="total-section-pages"></span>
-            </li>
-            <li id="book-page" title="Book page">
-                <span id="current-book-page"></span>/<span id="total-book-pages"></span>
-            </li>
-        </ul>
+        &lt;ul class="book-ui">
+            &lt;li id="section-name">&lt;/li>
+            &lt;li id="section-page" title="Section page">
+                &lt;span id="current-section-page">&lt;/span>/&lt;span id="total-section-pages">&lt;/span>
+            &lt;/li>
+            &lt;li id="book-page" title="Book page">
+                &lt;span id="current-book-page">&lt;/span>/&lt;span id="total-book-pages">&lt;/span>
+            &lt;/li>
+        &lt;/ul>
 
-        <button role="button" id="back" hidden>Back</button>
-        <button role="button" id="next" hidden>Next</button>
+        &lt;button role="button" id="back" hidden>Back&lt;/button>
+        &lt;button role="button" id="next" hidden>Next&lt;/button>
         
-    </section>
+    &lt;/section>
 `;
 
 /** Book file
@@ -80,15 +108,15 @@ template.innerHTML = `
 /** Book metadata information
  * @typedef {Object} Info
  * @property {string} title - Book's title
- * @property {Array<string>} idetifiers - List of book's identifiers (such as a UUID, DOI or ISBN)
- * @property {Array<string>} languages - List of language codes that correspond to languages used in the book
- * @property {Array<string>} relations - List of book's relations
- * @property {Array<string>} subjects - List of book's genres
- * @property {Array<string>} publishers - List of book's publishers
- * @property {Array<string>} contributors - List of book's contributors
- * @property {Array<string>} coverages - List of book's coverage information
- * @property {Array<string>} rights - List of book's copyright information
- * @property {Array<string>} sources - List of book's sources
+ * @property {Array&lt;string>} idetifiers - List of book's identifiers (such as a UUID, DOI or ISBN)
+ * @property {Array&lt;string>} languages - List of language codes that correspond to languages used in the book
+ * @property {Array&lt;string>} relations - List of book's relations
+ * @property {Array&lt;string>} subjects - List of book's genres
+ * @property {Array&lt;string>} publishers - List of book's publishers
+ * @property {Array&lt;string>} contributors - List of book's contributors
+ * @property {Array&lt;string>} coverages - List of book's coverage information
+ * @property {Array&lt;string>} rights - List of book's copyright information
+ * @property {Array&lt;string>} sources - List of book's sources
  * @property {string} description - Book's description
  * @property {string} date - Book's publication date (ISO8601)
  * @property {string} cover - Base64-encoded cover image
@@ -114,7 +142,7 @@ template.innerHTML = `
  * @property {InteractionState} * - Path to the book is used as a key
  */
 
-/** HTML & XML parsed to the JavaScript object
+/** HTML &amp; XML parsed to the JavaScript object
  * @typedef {Object} HtmlObject
  * @property {string|undefined} [name]
  * @property {string|undefined} [sectionId]
@@ -128,12 +156,12 @@ template.innerHTML = `
 /** Parsed book object which consists of sections
  * @typedef {Object} Book
  * @property {Info} info - Book metadata information
- * @property {Array<HtmlObject>} initSection - Initially parsed book section
+ * @property {Array&lt;HtmlObject>} initSection - Initially parsed book section
  * @property {number} initSectionNum - Number that corresponds the book's initally parsed section
- * @property {Array<string>} sectionNames - List of section ids (names)
+ * @property {Array&lt;string>} sectionNames - List of section ids (names)
  * @property {number} sectionTotal - Book's total number of section
- * @property {Array<HtmlObject>} structure - Book's parsed Table Of Contents (TOC)
- * @property {Array<HtmlObject>} styles - Book's stylesheets
+ * @property {Array&lt;HtmlObject>} structure - Book's parsed Table Of Contents (TOC)
+ * @property {Array&lt;HtmlObject>} styles - Book's stylesheets
  */
 
 /**
@@ -158,7 +186,7 @@ class BookComponent extends HTMLElement {
          */
         this.isInit = false;
         /**
-         * @property {Promise<Book>} initBook - Initial book with only one section parsed
+         * @property {Promise&lt;Book>} initBook - Initial book with only one section parsed
          */
         this.initBook = new Promise((resolve, reject) => {
             window.api.receive("app:on-book-section-import", (initBook) => {
@@ -171,7 +199,7 @@ class BookComponent extends HTMLElement {
      * @param  {string} filePath
      * @param  {number} sectionNum
      * @param  {number} sectionPage
-     * @returns {Promise<Book>}
+     * @returns {Promise&lt;Book>}
      */
     importBook(filePath, sectionNum, sectionPage) {
         const book = window.api.invoke("app:on-book-import", [
@@ -187,7 +215,7 @@ class BookComponent extends HTMLElement {
     /**
      * Returns all references to stylesheet names in a section
      * @param {HtmlObject} section
-     * @returns {Array<string>}
+     * @returns {Array&lt;string>}
      */
     getSectionStyleReferences(section) {
         // First tag of a section is the head tag
@@ -213,7 +241,7 @@ class BookComponent extends HTMLElement {
     /**
      * Recursively extracts section (chapter) title from book's TOC
      * @param {Book} book
-     * @param {Array<HtmlObject>} toc
+     * @param {Array&lt;HtmlObject>} toc
      * @param {number} sectionNum
      * @param {bool} root - A way to differentiate between recursive and non-recursive function call
      * @returns {string}
@@ -242,9 +270,9 @@ class BookComponent extends HTMLElement {
         } else if (sectionTitle) {
             return sectionTitle;
         } else if (
-            root &&
-            sectionNum >= 0 &&
-            sectionNum < this.bookState.totalSections
+            root &amp;&amp;
+            sectionNum >= 0 &amp;&amp;
+            sectionNum &lt; this.bookState.totalSections
         ) {
             const prevSectionTitle = this.getSectionTitle(
                 book,
@@ -395,7 +423,7 @@ class BookComponent extends HTMLElement {
             this.bookState.currentSection
         );
 
-        if (currentSectionPage >= 0 && totalSectioPage > 0) {
+        if (currentSectionPage >= 0 &amp;&amp; totalSectioPage > 0) {
             sectionPageElem.style.visibility = "visible";
 
             currentSectionPageElem.innerHTML = currentSectionPage;
@@ -413,7 +441,7 @@ class BookComponent extends HTMLElement {
         const currentBookPage = this.bookState.getCurrentBookPage(this) + 1;
         const totalBookPages = this.bookState.getTotalBookPages();
 
-        if (currentBookPage >= 0 && totalBookPages > 0) {
+        if (currentBookPage >= 0 &amp;&amp; totalBookPages > 0) {
             bookPageElem.style.visibility = "visible";
 
             currentBookPageElem.innerHTML = currentBookPage;
@@ -565,7 +593,7 @@ class BookComponent extends HTMLElement {
         const nextSectionPage = currentPage + nPageShift;
 
         // Checks if requested page is in range of this section
-        if (nextSectionPage >= minPageNum && nextSectionPage <= maxPageNum) {
+        if (nextSectionPage >= minPageNum &amp;&amp; nextSectionPage &lt;= maxPageNum) {
             const newOffset = this.calcNextOffset(nPageShift);
 
             this.setCurrentOffset(newOffset);
@@ -574,8 +602,8 @@ class BookComponent extends HTMLElement {
         }
         // Else if it's possible to jump to the next or previous sections
         else if (
-            (currentSection + 1 < totalSections && nPageShift > 0) ||
-            (currentSection - 1 >= 0 && nPageShift < 0)
+            (currentSection + 1 &lt; totalSections &amp;&amp; nPageShift > 0) ||
+            (currentSection - 1 >= 0 &amp;&amp; nPageShift &lt; 0)
         ) {
             const currentBookPage = this.bookState.getCurrentBookPage(this);
             const nextBookPage = currentBookPage + nPageShift + 1;
@@ -598,7 +626,7 @@ class BookComponent extends HTMLElement {
     enforcePageRange(page) {
         const minPage = 1;
         const maxPage = this.bookState.getTotalBookPages();
-        if (page < minPage) {
+        if (page &lt; minPage) {
             page = minPage;
         } else if (page > maxPage) {
             page = maxPage;
@@ -621,7 +649,7 @@ class BookComponent extends HTMLElement {
             this.bookState.getSectionBookPageBelongsTo(validPage);
         const currentSection = this.bookState.currentSection;
 
-        if (nextSection === currentSection && nPageShift !== 0) {
+        if (nextSection === currentSection &amp;&amp; nPageShift !== 0) {
             this.flipNPages(nPageShift);
         } else if (nextSection !== currentSection) {
             const sectionPagesArr = this.bookState.sectionPagesArr;
@@ -663,7 +691,7 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     async _asyncForEach(array, callback) {
-        for (let index = 0; index < array.length; index++) {
+        for (let index = 0; index &lt; array.length; index++) {
             await callback(array[index], index, array);
         }
     }
@@ -740,7 +768,7 @@ class BookComponent extends HTMLElement {
                     const sumOfPages = sliceOfPages.reduce(
                         (prevValue, currValue) => prevValue + currValue
                     );
-                    if (page <= sumOfPages) return index;
+                    if (page &lt;= sumOfPages) return index;
                 }
             },
 
@@ -861,7 +889,7 @@ class BookComponent extends HTMLElement {
      * @param {string|undefined} newValue
      */
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "book-page" && oldValue) {
+        if (name === "book-page" &amp;&amp; oldValue) {
             const updatedPage = parseInt(newValue);
             this.jumpToPage(updatedPage);
         }
@@ -869,3 +897,26 @@ class BookComponent extends HTMLElement {
 }
 
 window.customElements.define("book-component", BookComponent);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BookComponent.html">BookComponent</a></li></ul><h3><a href="global.html">Bookord Docs</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Jan 04 2022 03:33:31 GMT+0300 (Москва, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

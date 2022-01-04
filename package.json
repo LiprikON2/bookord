@@ -18,7 +18,8 @@
     "dist-linux": "npm run test && npm run prod-build && electron-builder --linux",
     "dist-windows": "npm run prod-build && electron-builder --windows",
     "dist-all": "npm run test && npm run prod-build && electron-builder --mac --linux --windows",
-    "test": "mocha"
+    "test": "mocha",
+    "doc": "jsdoc -c jsdoc.json"
   },
   "build": {
     "productName": "Bookord",
@@ -125,6 +126,7 @@
     "i18next": "^20.6.1",
     "i18next-electron-fs-backend": "^2.0.0",
     "i18next-fs-backend": "^1.1.1",
+    "jsdoc": "^3.6.7",
     "lodash": "4.17.21",
     "lodash.merge": "^4.6.2",
     "open": "^8.4.0",
