@@ -1,3 +1,15 @@
+:root {
+    --clr-primary: #dcddde;
+    --clr-secondary: #8e9297;
+
+    --clr-bg-primary: #202225;
+    --clr-bg-secondary: #2f3136;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 html {
     height: 100%;
 }
@@ -9,4 +21,27 @@ body {
 
 #root {
     height: -webkit-fill-available;
+}
+
+body,
+html {
+    background-color: var(--clr-bg-primary);
+}
+
+/* Scrollbar */
+*::-webkit-scrollbar {
+    width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+    border-radius: 12px;
+    background: #4a4a4a; /* light mode #cfcfcf */
 }

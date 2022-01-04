@@ -73,9 +73,10 @@ async function createWindow() {
         height: 728,
         minHeight: 500,
         minWidth: 500,
-        backgroundColor: "#292a2d", // todo loading bg
-        icon: getAssetPath("icon.png"), // todo fix favicon
+        backgroundColor: "#202225",
+        icon: getAssetPath("icon.ico"),
         title: "Application is currently initializing...",
+        frame: false,
         webPreferences: {
             devTools: isDev,
             nodeIntegration: false,
@@ -89,7 +90,11 @@ async function createWindow() {
             disableBlinkFeatures: "Auxclick",
         },
     });
-    win.maximize();
+
+    win.once("ready-to-show", function () {
+        win.maximize();
+        win.focus();
+    });
 
     win.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);

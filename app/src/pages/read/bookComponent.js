@@ -1,54 +1,10 @@
 import { writeConfigRequest } from "secure-electron-store";
+import "./bookComponent.css"; // Then used from ReadChunk.css
 
 const template = document.createElement("template");
 template.innerHTML = `
     <section id="root" class="book-container">
-        <style>
-            * {box-sizing: border-box}
-            .book-container {
-                width: 400px;
-                margin: auto;
-                overflow: hidden;
-            }
-
-            .book-container > #book-content,
-            .book-container > #page-counter {
-                columns: 1;
-                column-gap: 0;
-                height: 400px;
-            }
-
-            img {
-                display: block;
-                width: 100% !important;
-                height: 400px !important;
-                object-fit: contain;
-            }
-            ul.book-ui {
-                display: flex;
-                gap: 1em;
-                justify-content: space-between;
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-            ul.book-ui > *,
-            #book-title {
-                color: #999;
-                height: 1.5em;
-            }
-            ul.book-ui > #section-name,
-            #book-title {
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-            }
-            ul.book-ui > #section-page,
-            ul.book-ui > #book-page {
-                visibility: hidden;
-            }
-
-        </style>
+        <link href="ReadChunk.css" rel="stylesheet" type="text/css">  
 
         <style id="book-style"></style>
         <div id="book-title"></div>
@@ -166,6 +122,7 @@ class BookComponent extends HTMLElement {
             });
         });
     }
+
     /**
      * Imports book using IPC, completes initialization as soon as promise is resolved
      * @param  {string} filePath
@@ -184,6 +141,7 @@ class BookComponent extends HTMLElement {
         });
         return book;
     }
+
     /**
      * Returns all references to stylesheet names in a section
      * @param {HtmlObject} section
@@ -198,6 +156,7 @@ class BookComponent extends HTMLElement {
         const sectionStyles = headLinks.map((link) => link?.attrs?.href);
         return sectionStyles;
     }
+
     /**
      * Returns inline styles of a particular book section
      * @param {HtmlObject} section
@@ -256,6 +215,7 @@ class BookComponent extends HTMLElement {
             return "";
         }
     }
+
     /**
      * Returns book's section object
      * @param {Book} book
@@ -265,6 +225,7 @@ class BookComponent extends HTMLElement {
     getSection(book, sectionNum) {
         return book.sections[sectionNum];
     }
+
     /**
      * Collects book's styles and applies them to the web component
      * @param {Book} book
@@ -355,6 +316,7 @@ class BookComponent extends HTMLElement {
             window.open(e.target.href, "_blank");
         }
     }
+
     /**
      * Loads book's content and appends a end-marker to it
      * @param {HtmlObject} section
@@ -369,6 +331,7 @@ class BookComponent extends HTMLElement {
         const markerId = this.contentElem.id + "-end-marker";
         this.createMarker(markerId);
     }
+
     /**
      * Updates book's UI elements such as book title, section title and page counters
      * @returns {void}
@@ -451,6 +414,7 @@ class BookComponent extends HTMLElement {
             a.addEventListener("click", (e) => this.handleLink(e, book));
         });
     }
+
     /**
      * Removes anchor's event handlers before loading another section
      * @returns {void}
@@ -461,6 +425,7 @@ class BookComponent extends HTMLElement {
             a.removeEventListener("click", this.handleLink);
         });
     }
+
     /**
      * Loads specified book section along with its styles, sets event listeners, updates UI and saves interaction progress
      * @param {number} currentSection
@@ -531,6 +496,7 @@ class BookComponent extends HTMLElement {
 
         return currentOffset + shiftOffset;
     }
+
     /**
      * Returns end-marker's offset which is maximum possible offset
      * @returns {number}
@@ -541,6 +507,7 @@ class BookComponent extends HTMLElement {
         const markerOffset = -markerElem.offsetLeft;
         return markerOffset;
     }
+
     /**
      * Returns the total of current section pages
      * @returns {number}
@@ -550,6 +517,7 @@ class BookComponent extends HTMLElement {
         const maxPageNum = Math.abs(this._getMaxOffset() / displayWidth);
         return parseInt(maxPageNum);
     }
+
     /**
      * Flips N pages of a book, when it is discovered that N page shift would land in different section, calls jumpToPage function instead
      * @param {number} nPageShift
@@ -590,6 +558,7 @@ class BookComponent extends HTMLElement {
             this.jumpToPage(edgePage);
         }
     }
+
     /**
      * Returns page that is guranteed to be withing the borders of a book
      * @param {number} page
@@ -656,6 +625,7 @@ class BookComponent extends HTMLElement {
 
         counterComponent._countBookPages(this);
     }
+
     /**
      * Asynchronous version of a forEach
      * @param {Array} array

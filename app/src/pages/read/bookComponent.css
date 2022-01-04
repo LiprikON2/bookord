@@ -1,0 +1,42 @@
+.book-container {
+    width: 400px;
+    margin: auto;
+    overflow: hidden;
+}
+
+.book-container > #book-content,
+.book-container > #page-counter {
+    columns: 1;
+    column-gap: 0;
+    height: 400px;
+}
+
+img {
+    display: block;
+    width: 100% !important;
+    height: 400px !important;
+    object-fit: contain;
+}
+ul.book-ui {
+    display: flex;
+    gap: 1em;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ul.book-ui > *,
+#book-title {
+    color: #999;
+    height: 1.5em;
+}
+ul.book-ui > #section-name,
+#book-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+ul.book-ui > #section-page,
+ul.book-ui > #book-page {
+    visibility: hidden;
+}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import LibraryUpload from "./LibraryUpload";
 import LibraryList from "./LibraryList";
+import "./Library.css";
 
 const Library = () => {
     const [files, setFiles] = useState([]);

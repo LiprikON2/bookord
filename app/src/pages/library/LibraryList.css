@@ -2,6 +2,7 @@ ul.book-list {
     display: grid;
     grid-template-columns: 200px 200px 200px 200px;
     grid-template-rows: auto;
+    justify-content: center;
     gap: 3em;
 }
 ul.book-list .title {
@@ -9,5 +10,4 @@ ul.book-list .title {
 }
 ul.book-list img#cover {
     object-fit: cover;
-    /* max-height: 10em; */
 }

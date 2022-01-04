@@ -59,14 +59,11 @@ const Read = () => {
                     // Tries to get book file from link's location
                     if (location?.state?.book) {
                         bookFile = location.state.book;
-                        console.log("if ", bookFile);
                     }
                     // If no book is specified, open last opened bok
                     else if (interactionStates?.lastOpenedBook) {
                         bookFile = interactionStates.lastOpenedBook;
-                        console.log("else if", bookFile);
                     } else {
-                        console.log("else!!!");
                         return;
                     }
 
