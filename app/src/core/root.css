@@ -1,4 +1,6 @@
 :root {
+    --hsl-accent: 190 29% 35%;
+
     --clr-primary: #dcddde;
     --clr-secondary: #8e9297;
     --clr-danger: #d31223;
@@ -13,18 +15,25 @@
 * {
     box-sizing: border-box;
 }
+:focus-visible {
+    outline: -webkit-focus-ring-color auto 1px !important;
+}
 
 html {
     height: 100%;
     width: 100%;
     overflow: initial;
+
+    background-color: var(--clr-bg-primary);
+
+    padding-right: 1px; /* for 1px border */
+    padding-bottom: 1px; /* for 1px border */
 }
 
 body {
     height: 100%;
     width: 100%;
     border: 1px solid #48545c;
-    overflow: hidden;
 
     color: var(--clr-primary);
     background-color: var(--clr-bg-primary);
@@ -36,7 +45,7 @@ body {
 
 #titlebar {
     height: var(--titlebar-height);
-    width: calc(100% - 2px);
+    width: calc(100% - 3px); /* for 1px border */
 
     display: flex;
     position: fixed;

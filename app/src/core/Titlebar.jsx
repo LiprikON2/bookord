@@ -10,13 +10,13 @@ const Titlebar = () => {
                     <span>Bookord app</span>
                 </div>
                 <div className="button-group">
-                    <button tabindex="-1" className="button">
+                    <button tabIndex="-1" className="button">
                         ─
                     </button>
-                    <button tabindex="-1" className="button">
+                    <button tabIndex="-1" className="button">
                         ❒
                     </button>
-                    <button tabindex="-1" className="button close-button">
+                    <button tabIndex="-1" className="button close-button">
                         ✕
                     </button>
                 </div>

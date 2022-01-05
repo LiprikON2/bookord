@@ -12,7 +12,7 @@ const LibraryList = ({ files, setFiles }) => {
     return (
         <>
             <section className="section">
-                <ul className="book-list">
+                <ul className="card-list">
                     {files.map((file) => (
                         <Link
                             to={{
@@ -22,14 +22,22 @@ const LibraryList = ({ files, setFiles }) => {
                                 },
                             }}
                             key={file.path}>
-                            <li>
+                            <li className="card">
                                 <img
-                                    id="cover"
+                                    className="card-cover"
                                     src={file.info.cover}
                                     alt="book cover"
                                 />
-
-                                <h3 className="title">{file.info.title}</h3>
+                                <div className="card-content">
+                                    <h3 className="card-content-title">
+                                        {file.info.title}
+                                    </h3>
+                                    <button
+                                        className="card-content-button button is-dark"
+                                        onClick={(e) => e.preventDefault()}>
+                                        ⚙
+                                    </button>
+                                </div>
 
                                 {/* <button
                                     role="button"
