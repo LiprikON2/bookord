@@ -1,13 +1,14 @@
 ul.card-list {
     display: grid;
     width: min(100%, 60rem);
-    grid-template-columns: repeat(4, 1fr);
+    /* grid-template-columns: repeat(4, 1fr); */
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     gap: 1.5rem;
     margin-inline: auto;
 }
 
 a > .card {
-    margin: 1rem 1rem 0.5rem 1rem;
+    margin: 1rem 1rem 0.5rem 1rem; /* For tab's outline */
 }
 .card {
     display: grid;
@@ -30,7 +31,8 @@ a:focus > .card > .card-cover {
 
 .card > .card-content {
     align-self: end;
-    font-size: 0.875rem;
+    /* font-size: 0.875rem; */
+
     gap: 0.25rem;
     padding: 0;
     transition: all 0.2s ease;
@@ -63,9 +65,13 @@ a:focus > .card > .card-content {
     padding: 0.15rem 0.8rem;
     border-radius: 8px;
     text-align: center;
-    /* transform: translateX(-1rem); */
+    align-self: stretch;
+
+    display: flex;
+    align-items: center;
 
     line-height: 1.3;
+    font-size: 87.5%;
 }
 
 .card > img.card-cover {

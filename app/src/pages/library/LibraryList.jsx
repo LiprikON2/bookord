@@ -30,7 +30,7 @@ const LibraryList = ({ files, setFiles }) => {
                                 />
                                 <div className="card-content">
                                     <h3 className="card-content-title">
-                                        {file.info.title}
+                                        <span>{file.info.title}</span>
                                     </h3>
                                     <button
                                         className="card-content-button button is-dark"
