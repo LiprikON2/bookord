@@ -1,14 +1,13 @@
 ul.card-list {
     display: grid;
     width: min(100%, 60rem);
-    /* grid-template-columns: repeat(4, 1fr); */
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
     gap: 1.5rem;
     margin-inline: auto;
 }
 
 a > .card {
-    margin: 1rem 1rem 0.5rem 1rem; /* For tab's outline */
+    margin: 1rem 1rem 0.5rem 1rem; /* For card's tabbing outline */
 }
 .card {
     display: grid;
@@ -22,7 +21,7 @@ a > .card {
 }
 .card-cover:hover,
 a:focus > .card > .card-cover {
-    transform: translateY(-30px) scale(1.08);
+    transform: translateY(-1.875rem) scale(1.08);
 }
 .card > * {
     grid-row: 1 / 2;
@@ -31,20 +30,20 @@ a:focus > .card > .card-cover {
 
 .card > .card-content {
     align-self: end;
-    /* font-size: 0.875rem; */
 
+    width: 110%;
+    transform: translateX(-5%); /* Centering-compensation for the 110% width */
+    /* TODO transition when pressing options - transform: translateX(-5%) translateY(0); */
+    transition: all 0.2s ease;
     gap: 0.25rem;
     padding: 0;
-    transition: all 0.2s ease;
-    transform: translateX(-5%) translateY(0);
-    width: 110%;
 
     display: flex;
     justify-content: center;
     align-items: flex-end;
 }
 
-/* TODO for pressing options */
+/* TODO transition when pressing options */
 /* .card-cover:hover + .card-content,
 a:focus > .card > .card-content {
     transform: translateX(-5%) translateY(20px);
@@ -71,14 +70,14 @@ a:focus > .card > .card-content {
     align-items: center;
 
     line-height: 1.3;
-    font-size: 87.5%;
+    font-size: 0.875rem;
 }
 
 .card > img.card-cover {
     transition: all 0.2s ease;
     width: 100%;
     border-radius: 10px;
-    /* aspect-ratio: 1 / 1.6; */
+    /* TODO test other book covers - aspect-ratio: 1 / 1.6; */
     aspect-ratio: 351 / 500;
     object-fit: cover;
     box-shadow: 0 0.75rem 1.25rem hsl(var(--hsl-accent) / 0.5);

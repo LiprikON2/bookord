@@ -35,7 +35,7 @@ const LibraryList = ({ files, setFiles }) => {
                                     <button
                                         className="card-content-button button is-dark"
                                         onClick={(e) => e.preventDefault()}>
-                                        ⚙
+                                        ☰
                                     </button>
                                 </div>
 

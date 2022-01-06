@@ -9,14 +9,20 @@ const Titlebar = () => {
                     <img className="logo" src={logo} alt="" />
                     <span>Bookord app</span>
                 </div>
-                <div className="button-group">
-                    <button tabIndex="-1" className="button">
+                <div className="window-control-group">
+                    <button
+                        tabIndex="-1"
+                        className="button"
+                        id="minimize-button">
                         ─
                     </button>
-                    <button tabIndex="-1" className="button">
-                        ❒
+                    <button
+                        tabIndex="-1"
+                        className="button"
+                        id="maximize-button">
+                        ❐◻
                     </button>
-                    <button tabIndex="-1" className="button close-button">
+                    <button tabIndex="-1" className="button" id="close-button">
                         ✕
                     </button>
                 </div>

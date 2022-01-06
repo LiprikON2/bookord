@@ -16,14 +16,18 @@
     box-sizing: border-box;
 }
 :focus-visible {
-    outline: -webkit-focus-ring-color auto 1px !important;
+    outline: -webkit-focus-ring-color auto 1px !important; /* Consistent tabbing outline */
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
 html {
-    height: 100%;
-    width: 100%;
-    overflow: initial;
-
     background-color: var(--clr-bg-primary);
 
     padding-right: 1px; /* for 1px border */
@@ -31,16 +35,10 @@ html {
 }
 
 body {
-    height: 100%;
-    width: 100%;
     border: 1px solid #48545c;
 
     color: var(--clr-primary);
     background-color: var(--clr-bg-primary);
-}
-#root {
-    height: 100%;
-    width: 100%;
 }
 
 #titlebar {
@@ -63,28 +61,29 @@ body {
 
     -webkit-app-region: drag;
 }
-#titlebar > .button-group {
+#titlebar > .window-control-group {
     display: flex;
 }
-#titlebar > .button-group > .button {
+#titlebar > .window-control-group > .button {
     height: 100%;
+    width: 46px;
     color: inherit;
     background-color: inherit;
     border: none;
     border-radius: 0;
     padding-top: 5px;
 }
-#titlebar > .button-group > .button:focus {
+#titlebar > .window-control-group > .button:focus {
     border-color: inherit;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
-#titlebar > .button-group > .button:hover {
+#titlebar > .window-control-group > .button:hover {
     transition: all 0.2s ease;
     background-color: var(--clr-bg-secondary);
     color: white;
 }
-#titlebar > .button-group > .close-button:hover {
+#titlebar > .window-control-group > #close-button:hover {
     background-color: var(--clr-danger);
 }
 #titlebar .logo {
@@ -110,7 +109,6 @@ body {
 ::-webkit-scrollbar-track {
     background: transparent;
 }
-
 :hover::-webkit-scrollbar-thumb {
     background: transparent;
     background: hsl(0 0% 29% / 0.75);
@@ -121,5 +119,7 @@ body {
 }
 
 #main::-webkit-scrollbar-track {
-    margin-top: var(--titlebar-height);
+    margin-top: var(
+        --titlebar-height
+    ); /* Scrollbar adjusted for titlebar height */
 }

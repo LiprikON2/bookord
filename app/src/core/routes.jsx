@@ -63,25 +63,31 @@ const toContinueReading = () => {
 
 const Routes = () => {
     return (
-        <Switch>
-            <Route exact path="/">
-                {toContinueReading() ? (
-                    <Redirect to={ROUTES.READ} />
-                ) : (
-                    <Redirect to={ROUTES.LIBRARY} />
-                )}
-            </Route>
-            <Route path={ROUTES.SETTINGS}>
-                <Settings initSettings={initSettings} />
-            </Route>
-            <Route path={ROUTES.LIBRARY} component={Library}></Route>
-            <Route path={ROUTES.READ} component={Read}></Route>
-            <Route path={ROUTES.ABOUT} component={About}></Route>
-            <Route path={ROUTES.MOTD} component={Motd}></Route>
-            <Route path={ROUTES.LOCALIZATION} component={Localization}></Route>
-            <Route path={ROUTES.UNDOREDO} component={UndoRedo}></Route>
-            <Route path={ROUTES.CONTEXTMENU} component={ContextMenu}></Route>
-        </Switch>
+        <main id="main">
+            <Switch>
+                <Route exact path="/">
+                    {toContinueReading() ? (
+                        <Redirect to={ROUTES.READ} />
+                    ) : (
+                        <Redirect to={ROUTES.LIBRARY} />
+                    )}
+                </Route>
+                <Route path={ROUTES.SETTINGS}>
+                    <Settings initSettings={initSettings} />
+                </Route>
+                <Route path={ROUTES.LIBRARY} component={Library}></Route>
+                <Route path={ROUTES.READ} component={Read}></Route>
+                <Route path={ROUTES.ABOUT} component={About}></Route>
+                <Route path={ROUTES.MOTD} component={Motd}></Route>
+                <Route
+                    path={ROUTES.LOCALIZATION}
+                    component={Localization}></Route>
+                <Route path={ROUTES.UNDOREDO} component={UndoRedo}></Route>
+                <Route
+                    path={ROUTES.CONTEXTMENU}
+                    component={ContextMenu}></Route>
+            </Switch>
+        </main>
     );
 };
 
