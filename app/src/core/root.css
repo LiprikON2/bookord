@@ -57,14 +57,22 @@ body {
 
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 0.25em;
+    overflow: hidden;
 
     -webkit-app-region: drag;
 }
-#titlebar > .window-control-group {
+#titlebar > #drag-region > .window-title {
+    font-size: 12px;
+    font-family: "Segoe UI", sans-serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#titlebar > .window-control-buttons {
     display: flex;
 }
-#titlebar > .window-control-group > .button {
+#titlebar > .window-control-buttons > .button {
     height: 100%;
     width: 46px;
     color: inherit;
@@ -73,17 +81,29 @@ body {
     border-radius: 0;
     padding-top: 5px;
 }
-#titlebar > .window-control-group > .button:focus {
+#titlebar > .window-control-buttons > .button:focus {
     border-color: inherit;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
-#titlebar > .window-control-group > .button:hover {
+#titlebar > .window-control-buttons > .button:hover {
     transition: all 0.2s ease;
     background-color: var(--clr-bg-secondary);
     color: white;
 }
-#titlebar > .window-control-group > #close-button:hover {
+#titlebar > .window-control-buttons > .button:active {
+    filter: brightness(125%);
+}
+
+@media (-webkit-device-pixel-ratio: 1.5),
+    (-webkit-device-pixel-ratio: 2),
+    (-webkit-device-pixel-ratio: 3) {
+    #titlebar > .window-control-buttons > .button > img {
+        width: 10px;
+        height: 10px;
+    }
+}
+#titlebar > .window-control-buttons > #close-button:hover {
     background-color: var(--clr-danger);
 }
 #titlebar .logo {

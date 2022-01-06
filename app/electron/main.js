@@ -96,6 +96,13 @@ async function createWindow() {
         win.focus();
     });
 
+    win.on("maximize", () => {
+        win.webContents.send("app:window-is-maximized");
+    });
+    win.on("unmaximize", () => {
+        win.webContents.send("app:window-is-restored");
+    });
+
     win.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
         return { action: "deny" };
@@ -354,6 +361,21 @@ app.on("remote-get-current-window", (event, webContents) => {
 
 app.on("remote-get-current-web-contents", (event, webContents) => {
     event.preventDefault();
+});
+
+// TITLEBAR CONTROLS
+
+ipcMain.on("app:minimize-window", () => {
+    win.minimize();
+});
+ipcMain.on("app:restore-window", () => {
+    win.restore();
+});
+ipcMain.on("app:maximize-window", () => {
+    win.maximize();
+});
+ipcMain.on("app:close-window", () => {
+    win.close();
 });
 
 // FILE HANDLING
