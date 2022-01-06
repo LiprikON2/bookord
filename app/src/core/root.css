@@ -10,6 +10,8 @@
     --clr-bg-secondary: #2f3136;
 
     --titlebar-height: 32px;
+    --scrollbar-width: 12px;
+    --border-width: 1px;
 }
 
 * {
@@ -30,24 +32,26 @@ body,
 html {
     background-color: var(--clr-bg-primary);
 
-    padding-right: 1px; /* for 1px border */
-    padding-bottom: 1px; /* for 1px border */
+    padding-right: var(--border-width);
+    padding-bottom: var(--border-width);
 }
 
 body {
-    border: 1px solid #48545c;
+    border: var(--border-width) solid #48545c;
 
     color: var(--clr-primary);
     background-color: var(--clr-bg-primary);
 }
 
+/* todo separate css in files */
+
 #titlebar {
     height: var(--titlebar-height);
-    width: calc(100% - 3px); /* for 1px border */
+    width: calc(100% - var(--border-width) * 3);
 
     display: flex;
     position: fixed;
-    z-index: 10;
+    z-index: 1000;
     background-color: var(--clr-bg-darkest);
     user-select: none;
 }
@@ -124,7 +128,8 @@ body {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-    width: 12px;
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
 }
 ::-webkit-scrollbar-track {
     background: transparent;
