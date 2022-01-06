@@ -17,11 +17,18 @@ const Library = () => {
                 </div>
                 <Link
                     to={ROUTES.SETTINGS}
+                    draggable="false"
+                    onAuxClick={(e) => e.preventDefault()}
                     className="button is-dark"
                     role="button">
                     Settings
                 </Link>
-                <Link to={ROUTES.READ} className="button is-dark" role="button">
+                <Link
+                    to={ROUTES.READ}
+                    draggable="false"
+                    onAuxClick={(e) => e.preventDefault()}
+                    className="button is-dark"
+                    role="button">
                     Read
                 </Link>
             </section>

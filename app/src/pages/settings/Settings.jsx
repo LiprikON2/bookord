@@ -11,6 +11,8 @@ const Settings = ({ initSettings }) => {
                 <h1>Settings</h1>
                 <Link
                     to={ROUTES.LIBRARY}
+                    draggable="false"
+                    onAuxClick={(e) => e.preventDefault()}
                     className="button is-dark"
                     role="button">
                     Home

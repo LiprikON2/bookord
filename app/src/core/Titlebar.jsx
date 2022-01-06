@@ -60,7 +60,7 @@ const Titlebar = () => {
         e.preventDefault();
         window.api.send("app:close-window");
     };
-    // TODO create button component
+
     return (
         <>
             <header id="titlebar">

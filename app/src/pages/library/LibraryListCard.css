@@ -1,0 +1,118 @@
+.card {
+    display: grid;
+    justify-items: center;
+    aspect-ratio: 351 / 575;
+
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 10px;
+    overflow: visible;
+    user-select: none;
+}
+
+span:hover > .card-cover,
+a:focus-visible > .card .card-cover {
+    transform: translateY(-1.875rem) scale(1.08);
+}
+.card > * {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+}
+
+.card img.card-cover {
+    width: 100%;
+    transition: all 0.2s ease;
+    border-radius: 10px;
+    /* TODO test other book covers - aspect-ratio: 1 / 1.6; */
+    aspect-ratio: 351 / 500;
+    object-fit: cover;
+    box-shadow: 0 0.75rem 1.25rem hsl(var(--hsl-accent) / 0.5);
+}
+
+.card > .card-content {
+    align-self: end;
+
+    width: calc(110% + 4% * 2);
+    padding-inline: 4%; /* Prevents clicks on underlying link's padding */
+    padding-block: 7.5%; /* Prevents clicks on underlying link's padding */
+
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.card-content > *:not(.dropdown) {
+    color: var(--clr-primary);
+    background-color: hsl(var(--hsl-accent) / 0.9);
+    box-shadow: 0 0.3rem 0.5rem hsl(var(--hsl-accent) / 0.25);
+    border: none;
+
+    transition: all 0.2s ease;
+}
+
+.card-content > .card-content-title {
+    --line-clamp: 2;
+    --line-height: 1.3;
+
+    padding: 0.15rem 0.8rem;
+    border-radius: 8px;
+    text-align: center;
+    align-self: stretch;
+
+    display: flex;
+    align-items: center;
+
+    line-height: var(--line-height);
+    font-size: 0.875rem;
+}
+
+.card-content > .card-content-title > span {
+    display: -webkit-box;
+    max-height: calc(var(--line-height) * var(--line-clamp));
+    -webkit-line-clamp: var(--line-clamp);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown > .dropdown-menu {
+    min-width: initial;
+    display: block;
+    opacity: 0;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    transform: translateY(10%);
+    transition: all 0.15s ease-in-out;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.dropdown.is-active > .dropdown-menu {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+.dropdown > .dropdown-menu > .dropdown-content {
+    /* background-color: var(--clr-bg-secondary); */
+    background-color: #363636;
+    opacity: 0.95;
+}
+
+.dropdown > .dropdown-menu > .dropdown-content > .dropdown-divider {
+    background-color: var(--clr-secondary);
+}
+.dropdown > .dropdown-menu > .dropdown-content > .dropdown-item {
+    padding: 0;
+}
+.dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .button {
+    width: 100%;
+    justify-content: flex-start;
+}
