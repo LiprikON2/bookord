@@ -6,12 +6,13 @@ ul.card-list {
     margin-inline: auto;
 }
 
-a > .card {
-    margin: 1rem 1rem 0.5rem 1rem; /* For card's tabbing outline */
+ul.card-list > a {
+    padding: 1rem 1rem 0.5rem 1rem; /* For card's tabbing outline */
 }
 .card {
     display: grid;
-    aspect-ratio: 351 / 550;
+    justify-items: center;
+    aspect-ratio: 351 / 575;
 
     background-color: transparent;
     box-shadow: none;
@@ -20,7 +21,7 @@ a > .card {
     user-select: none;
 }
 .card-cover:hover,
-a:focus > .card > .card-cover {
+a:focus-visible > .card > .card-cover {
     transform: translateY(-1.875rem) scale(1.08);
 }
 .card > * {
@@ -31,12 +32,14 @@ a:focus > .card > .card-cover {
 .card > .card-content {
     align-self: end;
 
-    width: 110%;
-    transform: translateX(-5%); /* Centering-compensation for the 110% width */
+    width: calc(110% + 4% * 2);
+    padding-inline: 4%; /* Prevents clicking link in its padding */
+    padding-block: 7.5%; /* Prevents clicking link in its padding */
+
     /* TODO transition when pressing options - transform: translateX(-5%) translateY(0); */
     transition: all 0.2s ease;
     gap: 0.25rem;
-    padding: 0;
+    z-index: 10;
 
     display: flex;
     justify-content: center;
@@ -51,7 +54,7 @@ a:focus > .card > .card-content {
     gap: 0.5rem;
 } */
 
-.card-content > *:not(.card-content-button) {
+.card-content > *:not(.card-content-dropdown) {
     color: var(--clr-primary);
     background-color: hsl(var(--hsl-accent) / 0.9);
     box-shadow: 0 0.3rem 0.5rem hsl(var(--hsl-accent) / 0.25);
@@ -81,4 +84,22 @@ a:focus > .card > .card-content {
     aspect-ratio: 351 / 500;
     object-fit: cover;
     box-shadow: 0 0.75rem 1.25rem hsl(var(--hsl-accent) / 0.5);
+}
+
+.dropdown > .dropdown-menu {
+    min-width: initial;
+}
+
+.dropdown > .dropdown-menu > .dropdown-content {
+    background-color: var(--clr-bg-secondary);
+    opacity: 0.95;
+}
+
+.dropdown > .dropdown-menu > .dropdown-content > .dropdown-divider {
+    background-color: var(--clr-secondary);
+}
+
+.dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .button {
+    /* width: 100%; */
+    justify-content: flex-end;
 }
