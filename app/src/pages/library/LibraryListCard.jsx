@@ -34,7 +34,7 @@ const LibraryListCard = ({ file }) => {
 
         window.api.send("app:on-file-delete", file);
     };
-
+    /* Make fallback cover image */
     return (
         <>
             <li className="card">

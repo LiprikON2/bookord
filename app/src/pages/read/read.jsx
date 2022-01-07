@@ -122,6 +122,10 @@ const Read = () => {
             currentPage + nPageShift
         );
         setPage(validNextPage);
+        // console.log(
+        //     'bookComponentRef === null ? "visible" : "hidden"',
+        //     bookComponentRef === null ? "visible" : "hidden"
+        // );
     };
 
     return (
@@ -136,7 +140,12 @@ const Read = () => {
                     role="button">
                     Home
                 </Link>
-                <div className="book-container">
+                <div
+                    className="book-container"
+                    style={{
+                        visibility:
+                            bookComponentRef !== null ? "visible" : "hidden",
+                    }}>
                     <book-component
                         ref={setBookComponentRef}
                         book-page={page}

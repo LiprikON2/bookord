@@ -3,7 +3,7 @@ import "./bookComponent.css"; // Then used from ReadChunk.css in template
 
 const template = document.createElement("template");
 template.innerHTML = `
-    <section id="root" class="book-container" inert>
+    <section id="root" class="book-container">
         <link href="ReadChunk.css" rel="stylesheet" type="text/css">  
 
         <style id="book-style"></style>
@@ -417,7 +417,13 @@ class BookComponent extends HTMLElement {
         });
     }
 
-    handleImgClick(e) {
+    /**
+     * Emits "imgClickEvent" when img tag is clicked
+     * @param {Event} e - Event
+     * @listens Event
+     * @return {void}
+     */
+    emitImgClickEvent(e) {
         const imgClickEvent = new CustomEvent("imgClickEvent", {
             bubbles: true,
             cancelable: false,
@@ -435,7 +441,7 @@ class BookComponent extends HTMLElement {
     attachImgEventEmitters() {
         const images = this.shadowRoot.querySelectorAll("img");
         images.forEach((img) => {
-            img.addEventListener("click", this.handleImgClick);
+            img.addEventListener("click", this.emitImgClickEvent);
         });
     }
 
@@ -524,7 +530,7 @@ class BookComponent extends HTMLElement {
         anchors.forEach((a) => {
             const currentOffset = this.bookState._getCurrentOffset();
             const anchorOffset = this.getAnchorOffset(a);
-            console.log(a.innerText, currentOffset, anchorOffset);
+
             if (currentOffset === anchorOffset) {
                 a.style.visibility = "visible";
             } else {
@@ -541,12 +547,25 @@ class BookComponent extends HTMLElement {
     getElementOffset(elem) {
         return -elem.offsetLeft;
     }
+
+    /**
+     * Inserts element right after target element
+     * @param {HTMLElement} referenceNode
+     * @param {HTMLElement} newNode
+     * @returns {void}
+     */
     _insertAfter(referenceNode, newNode) {
         referenceNode.parentNode.insertBefore(
             newNode,
             referenceNode.nextSibling
         );
     }
+
+    /**
+     * Returns top most element's parent, but which is still a child to the book content element
+     * @param {HTMLElement} elem
+     * @returns {HTMLElement}
+     */
     findDirectContentChild(elem) {
         if (elem.parentNode === this.contentElem) {
             return elem;
@@ -555,6 +574,11 @@ class BookComponent extends HTMLElement {
         }
     }
 
+    /**
+     * Returns offset of an anchor element
+     * @param {HTMLElement} anchor
+     * @returns {number}
+     */
     getAnchorOffset(anchor) {
         const contentChild = this.findDirectContentChild(anchor);
         const marker = document.createElement("span");
@@ -597,21 +621,39 @@ class BookComponent extends HTMLElement {
         const markerId = this.contentElem.id + "-end-marker";
         const markerElem = this.shadowRoot.getElementById(markerId);
         const markerOffset = this.getElementOffset(markerElem);
-        console.log(this, "markerOffset", markerOffset);
+
         return markerOffset;
     }
 
+    /**
+     * Returns book content's width
+     * @returns {number}
+     */
     _getDisplayWidth() {
         return this.contentElem.offsetWidth;
     }
 
     /**
-     * Returns the total of current section pages
+     * Returns a magic number of pixels that counteracts counter component's error
      * @returns {number}
      */
-    calcTotalSectionPages() {
+    _getCounterErrorCorrection() {
         const displayWidth = this._getDisplayWidth();
-        const maxPageNum = Math.abs(this._getMaxOffset() / displayWidth);
+        return displayWidth - 1.5 * displayWidth + 713;
+    }
+    /**
+     * Returns the total of current section pages
+     * @param {bool} [correctCounterError] - Wether or not correct for counter component's error
+     * @returns {number}
+     */
+    calcTotalSectionPages(correctCounterError = false) {
+        const displayWidth = this._getDisplayWidth();
+        let maxOffset = this._getMaxOffset();
+        if (correctCounterError) {
+            const counterError = this._getCounterErrorCorrection();
+            maxOffset += counterError;
+        }
+        const maxPageNum = Math.abs(maxOffset / displayWidth) + 1;
         return parseInt(maxPageNum);
     }
 
@@ -625,7 +667,7 @@ class BookComponent extends HTMLElement {
         const totalSections = this.bookState.totalSections;
 
         const minPageNum = 0;
-        const maxPageNum = this.calcTotalSectionPages();
+        const maxPageNum = this.calcTotalSectionPages() - 1;
         const currentPage = this.bookState.getCurrentSectionPage(this);
         const nextSectionPage = currentPage + nPageShift;
 
@@ -750,6 +792,7 @@ class BookComponent extends HTMLElement {
                 port2.postMessage("");
             });
         };
+
         const book = await parentComponent.book;
 
         parentComponent.bookState.sectionPagesArr = [];
@@ -761,7 +804,7 @@ class BookComponent extends HTMLElement {
                 this.loadStyles(book, section);
                 this.loadContent(section);
 
-                const totalSectionPages = this.calcTotalSectionPages();
+                const totalSectionPages = this.calcTotalSectionPages(true);
                 parentComponent.bookState.sectionPagesArr.push(
                     totalSectionPages
                 );

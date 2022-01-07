@@ -1,7 +1,19 @@
 /* todo novel's extra styles are spilling */
+:root {
+    --book-component-width: 400px;
 
+    /* 
+    400: 513
+    600: 413
+    800: 313
+
+    400 - 400 * 1.5 + 713 = 513
+    -400 + 400 * 1.5 - 713 = -513
+    
+    */
+}
 .book-container {
-    width: 400px;
+    width: var(--book-component-width);
     margin: auto;
     overflow: hidden;
 }
@@ -10,13 +22,13 @@
 .book-container > #page-counter {
     columns: 1;
     column-gap: 0;
-    height: 400px;
+    height: var(--book-component-width);
 }
 
 .book-container img {
     display: block;
     width: 100% !important;
-    height: 400px !important;
+    height: var(--book-component-width) !important;
     object-fit: contain;
 }
 ul.book-ui {
