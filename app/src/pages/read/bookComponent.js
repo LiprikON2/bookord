@@ -3,7 +3,7 @@ import "./bookComponent.css"; // Then used from ReadChunk.css in template
 
 const template = document.createElement("template");
 template.innerHTML = `
-    <section id="root" class="book-container">
+    <section id="root" class="book-container" inert>
         <link href="ReadChunk.css" rel="stylesheet" type="text/css">  
 
         <style id="book-style"></style>
@@ -492,7 +492,7 @@ class BookComponent extends HTMLElement {
         // In case user traveled back from the subsequent section
         if (offsetMarkerId) {
             const markerElem = this.shadowRoot.getElementById(offsetMarkerId);
-            const markerOffset = -markerElem.offsetLeft;
+            const markerOffset = this.getElementOffset(markerElem);
             // Set offset to the last page (if it's the end-marker) of this section
             this.setCurrentOffset(markerOffset);
         } else {
@@ -516,12 +516,65 @@ class BookComponent extends HTMLElement {
     }
 
     /**
+     * Hides links' on another pages so they can't be navigated to with keyboard without flipping the page
+     * @returns {void}
+     */
+    markVisibleLinks() {
+        const anchors = this.shadowRoot.querySelectorAll("a");
+        anchors.forEach((a) => {
+            const currentOffset = this.bookState._getCurrentOffset();
+            const anchorOffset = this.getAnchorOffset(a);
+            console.log(a.innerText, currentOffset, anchorOffset);
+            if (currentOffset === anchorOffset) {
+                a.style.visibility = "visible";
+            } else {
+                a.style.visibility = "hidden";
+            }
+        });
+    }
+
+    /**
+     * Returns element's offset
+     * @param {HTMLElement} elem
+     * @returns {number}
+     */
+    getElementOffset(elem) {
+        return -elem.offsetLeft;
+    }
+    _insertAfter(referenceNode, newNode) {
+        referenceNode.parentNode.insertBefore(
+            newNode,
+            referenceNode.nextSibling
+        );
+    }
+    findDirectContentChild(elem) {
+        if (elem.parentNode === this.contentElem) {
+            return elem;
+        } else {
+            return this.findDirectContentChild(elem.parentNode);
+        }
+    }
+
+    getAnchorOffset(anchor) {
+        const contentChild = this.findDirectContentChild(anchor);
+        const marker = document.createElement("span");
+        marker.id = "find-marker";
+
+        this._insertAfter(contentChild, marker);
+        const elemOffset = this.getElementOffset(marker);
+        marker.remove();
+
+        return elemOffset;
+    }
+
+    /**
      * Sets pixel offset as a way to advance pages within a section
      * @param {string|number} nextOffset
      * @returns {void}
      */
     setCurrentOffset(nextOffset) {
         this.contentElem.style.transform = `translate(${nextOffset}px)`;
+        this.markVisibleLinks();
     }
 
     /**
@@ -530,10 +583,9 @@ class BookComponent extends HTMLElement {
      * @returns {number}
      */
     calcNextOffset(nPageShift) {
-        const displayWidth = this.contentElem.offsetWidth;
+        const displayWidth = this._getDisplayWidth();
         const currentOffset = this.bookState._getCurrentOffset();
         const shiftOffset = -(nPageShift * displayWidth);
-
         return currentOffset + shiftOffset;
     }
 
@@ -544,8 +596,13 @@ class BookComponent extends HTMLElement {
     _getMaxOffset() {
         const markerId = this.contentElem.id + "-end-marker";
         const markerElem = this.shadowRoot.getElementById(markerId);
-        const markerOffset = -markerElem.offsetLeft;
+        const markerOffset = this.getElementOffset(markerElem);
+        console.log(this, "markerOffset", markerOffset);
         return markerOffset;
+    }
+
+    _getDisplayWidth() {
+        return this.contentElem.offsetWidth;
     }
 
     /**
@@ -553,7 +610,7 @@ class BookComponent extends HTMLElement {
      * @returns {number}
      */
     calcTotalSectionPages() {
-        const displayWidth = this.contentElem.offsetWidth;
+        const displayWidth = this._getDisplayWidth();
         const maxPageNum = Math.abs(this._getMaxOffset() / displayWidth);
         return parseInt(maxPageNum);
     }
@@ -755,7 +812,7 @@ class BookComponent extends HTMLElement {
             },
 
             getCurrentSectionPage: function (that) {
-                const displayWidth = that.contentElem.offsetWidth;
+                const displayWidth = that._getDisplayWidth();
                 const currentOffset = this._getCurrentOffset();
                 const currentPage = Math.abs(currentOffset / displayWidth);
                 return currentPage;
