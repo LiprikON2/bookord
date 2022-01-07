@@ -10,10 +10,6 @@
     user-select: none;
 }
 
-span:hover > .card-cover,
-a:focus-visible > .card .card-cover {
-    transform: translateY(-1.875rem) scale(1.08);
-}
 .card > * {
     grid-row: 1 / 2;
     grid-column: 1 / 2;
@@ -27,6 +23,11 @@ a:focus-visible > .card .card-cover {
     aspect-ratio: 351 / 500;
     object-fit: cover;
     box-shadow: 0 0.75rem 1.25rem hsl(var(--hsl-accent) / 0.5);
+}
+
+span:hover > .card-cover,
+a:focus-visible > .card .card-cover {
+    transform: translateY(-1.875rem) scale(1.08);
 }
 
 .card > .card-content {
@@ -101,7 +102,7 @@ a:focus-visible > .card .card-cover {
 }
 
 .dropdown > .dropdown-menu > .dropdown-content {
-    /* background-color: var(--clr-bg-secondary); */
+    /* background-color: var(--clr-bg-secondary); */ /* todo put color in a variable */
     background-color: #363636;
     opacity: 0.95;
 }

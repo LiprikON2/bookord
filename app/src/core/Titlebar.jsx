@@ -72,25 +72,21 @@ const Titlebar = () => {
                 </div>
                 <div className="window-control-buttons">
                     <TitlebarButton
-                        className="button"
                         id="minimize-button"
                         onClick={handleMinimize}
                         srcSet={`${min10} 1x, ${min12} 1.25x, ${min15} 1.5x, ${min15} 1.75x, ${min20} 2x, ${min20} 2.25x, ${min24} 2.5x, ${min30} 3x, ${min30} 3.5x`}></TitlebarButton>
                     {maximized ? (
                         <TitlebarButton
-                            className="button"
                             id="restore-button"
                             onClick={handleRestore}
                             srcSet={`${restore10} 1x, ${restore12} 1.25x, ${restore15} 1.5x, ${restore15} 1.75x, ${restore20} 2x, ${restore20} 2.25x, ${restore24} 2.5x, ${restore30} 3x, ${restore30} 3.5x`}></TitlebarButton>
                     ) : (
                         <TitlebarButton
-                            className="button"
                             id="maximize-button"
                             onClick={handleMaximize}
                             srcSet={`${max10} 1x, ${max12} 1.25x, ${max15} 1.5x, ${max15} 1.75x, ${max20} 2x, ${max20} 2.25x, ${max24} 2.5x, ${max30} 3x, ${max30} 3.5x`}></TitlebarButton>
                     )}
                     <TitlebarButton
-                        className="button"
                         id="close-button"
                         onClick={handleClose}
                         srcSet={`${close10} 1x, ${close12} 1.25x, ${close15} 1.5x, ${close15} 1.75x, ${close20} 2x, ${close20} 2.25x, ${close24} 2.5x, ${close30} 3x, ${close30} 3.5x`}></TitlebarButton>

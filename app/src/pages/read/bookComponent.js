@@ -415,6 +415,22 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    attachImgEventEmitters() {
+        const images = this.shadowRoot.querySelectorAll("img");
+        images.forEach((img) => {
+            img.addEventListener("click", (e) => {
+                const imgClickEvent = new CustomEvent("imgClickEvent", {
+                    bubbles: true,
+                    cancelable: false,
+                    composed: true,
+                    detail: { src: e.target.src },
+                });
+
+                this.dispatchEvent(imgClickEvent);
+            });
+        });
+    }
+
     /**
      * Removes anchor's event handlers before loading another section
      * @returns {void}
@@ -423,6 +439,15 @@ class BookComponent extends HTMLElement {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
             a.removeEventListener("click", this.handleLink);
+        });
+    }
+
+    removeImgEventEmitters() {
+        const images = this.shadowRoot.querySelectorAll("img");
+        images.forEach((img) => {
+            img.addEventListener("click", (e) => {
+                this.dispatchEvent;
+            });
         });
     }
 
@@ -445,6 +470,7 @@ class BookComponent extends HTMLElement {
         }
 
         this.removeLinkHandlers();
+        this.removeImgEventEmitters();
 
         // console.log("book", currentSection, nPageShift, offsetMarkerId);
 
@@ -472,6 +498,8 @@ class BookComponent extends HTMLElement {
         }
 
         this.attachLinkHandlers(book);
+        this.attachImgEventEmitters();
+
         this.saveInteractionProgress();
     }
 

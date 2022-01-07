@@ -1,0 +1,20 @@
+.modal {
+    inset: calc(var(--border-width) * 2);
+    top: calc(var(--border-width) + var(--titlebar-height));
+    left: var(--border-width);
+}
+
+.modal > .modal-content {
+    max-height: initial;
+}
+
+.modal > .modal-close {
+    top: calc(20px + var(--border-width) + var(--titlebar-height));
+}
+
+.modal img {
+    display: block;
+    width: 100% !important;
+    height: 80vh !important;
+    object-fit: scale-down;
+}

@@ -3,8 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 
 import { readConfigRequest, readConfigResponse } from "secure-electron-store";
 
-import ROUTES from "Constants/routes";
+import ImageModal from "./ImageModal";
 import "./bookComponent";
+import ROUTES from "Constants/routes";
 import "./Read.css";
 
 function useEventListener(eventName, handler, element = window) {
@@ -68,24 +69,42 @@ const Read = () => {
                     }
 
                     bookComponent.loadBook(bookFile.path, interactionStates);
+                    bookComponent.addEventListener(
+                        "imgClickEvent",
+                        handleImgClick
+                    );
                 }
             });
         }
 
         bookComponentRef.current = bookComponent;
+
+        return () => {
+            console.log("bookComponentRef clean", bookComponentRef.current);
+            bookComponentRef.current.removeEventListener(
+                "imgClickEvent",
+                handleImgClick
+            );
+        };
     }, []);
 
-    const handleKeypress = (event) => {
-        if (event.key === "ArrowRight" && event.ctrlKey) {
+    const handleKeypress = (e) => {
+        if (e.key === "ArrowRight" && e.ctrlKey) {
             flipNPages(5);
-        } else if (event.key === "ArrowLeft" && event.ctrlKey) {
+        } else if (e.key === "ArrowLeft" && e.ctrlKey) {
             flipNPages(-5);
-        } else if (event.key === "ArrowRight") {
+        } else if (e.key === "ArrowRight") {
             goNext();
-        } else if (event.key === "ArrowLeft") {
+        } else if (e.key === "ArrowLeft") {
             goBack();
         }
     };
+
+    const [imageModalSrc, setImageModalSrc] = useState();
+    const handleImgClick = (e) => {
+        setImageModalSrc(e.detail.src);
+    };
+
     // Add event listener using custom hook
     useEventListener("keydown", handleKeypress);
 
@@ -123,7 +142,9 @@ const Read = () => {
                         book-page={page}
                     />
                 </div>
-
+                <ImageModal
+                    src={imageModalSrc}
+                    setSrc={setImageModalSrc}></ImageModal>
                 <div className="button-group">
                     <button
                         className="button is-dark"
