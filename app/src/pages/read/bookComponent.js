@@ -1,5 +1,5 @@
 import { writeConfigRequest } from "secure-electron-store";
-import "./bookComponent.css"; // Then used from ReadChunk.css
+import "./bookComponent.css"; // Then used from ReadChunk.css in template
 
 const template = document.createElement("template");
 template.innerHTML = `

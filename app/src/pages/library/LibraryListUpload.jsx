@@ -8,7 +8,7 @@ import {
 
 const dragDrop = require("drag-drop");
 
-const LibraryUpload = ({ files, setFiles }) => {
+const LibraryListUpload = ({ files, setFiles }) => {
     const handleUpload = () => {
         const promise = window.api.invoke("app:on-fs-dialog-open");
         promise.then(() => {
@@ -106,18 +106,16 @@ const LibraryUpload = ({ files, setFiles }) => {
     }, []);
     return (
         <>
-            <section className="section">
-                <div id="uploader" className="container">
-                    <button
-                        className="button is-dark"
-                        type="button"
-                        onClick={handleUpload}>
-                        Add a book
-                    </button>
-                </div>
-            </section>
+            <div className="container">
+                <button
+                    className="button is-dark"
+                    type="button"
+                    onClick={handleUpload}>
+                    Add a book
+                </button>
+            </div>
         </>
     );
 };
 
-export default LibraryUpload;
+export default LibraryListUpload;

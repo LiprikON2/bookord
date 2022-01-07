@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 import ROUTES from "Constants/routes";
-import LibraryUpload from "./LibraryUpload";
+import LibraryListUpload from "./LibraryListUpload";
 import LibraryList from "./LibraryList";
 import "./Library.css";
 
@@ -33,7 +33,6 @@ const Library = () => {
                 </Link>
             </section>
 
-            <LibraryUpload files={files} setFiles={setFiles} />
             <LibraryList files={files} setFiles={setFiles} />
         </>
     );

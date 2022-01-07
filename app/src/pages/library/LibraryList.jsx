@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import LibraryListCard from "./LibraryListCard";
+import LibraryListUpload from "./LibraryListUpload";
 import ROUTES from "Constants/routes";
 import "./LibraryList.css";
 
@@ -9,7 +10,7 @@ const LibraryList = ({ files, setFiles }) => {
     // todo Link component
     return (
         <>
-            <section className="section">
+            <section className="section" id="uploader">
                 <ul className="card-list">
                     {files.map((file, index) => (
                         <Link
@@ -26,6 +27,7 @@ const LibraryList = ({ files, setFiles }) => {
                         </Link>
                     ))}
                 </ul>
+                <LibraryListUpload files={files} setFiles={setFiles} />
             </section>
         </>
     );
