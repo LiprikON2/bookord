@@ -85,6 +85,7 @@ a:focus-visible > .card .card-cover {
     min-width: initial;
     display: block;
     opacity: 0;
+    visibility: hidden;
 
     position: absolute;
     left: 0;
@@ -98,6 +99,7 @@ a:focus-visible > .card .card-cover {
 
 .dropdown.is-active > .dropdown-menu {
     opacity: 1;
+    visibility: visible;
     transform: none;
     pointer-events: auto;
     z-index: 1;

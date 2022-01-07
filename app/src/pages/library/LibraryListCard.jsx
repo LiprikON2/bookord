@@ -15,10 +15,6 @@ const LibraryListCard = ({ file }) => {
             const isMenu = dropdownRef.current.contains(e.target);
             if (!isMenu) {
                 dropdownRef.current.classList.remove("is-active");
-                const buttonElems = dropdownRef.current.querySelectorAll(
-                    ".dropdown-item .button"
-                );
-                setMenuButtonsTabIndex("-1");
                 document.body.removeEventListener("click", closeDropdown);
             }
         }
@@ -27,19 +23,8 @@ const LibraryListCard = ({ file }) => {
     const openDropdown = (e) => {
         e.preventDefault();
 
-        const isActive = dropdownRef.current.classList.toggle("is-active");
-        isActive ? setMenuButtonsTabIndex("0") : setMenuButtonsTabIndex("-1");
+        dropdownRef.current.classList.toggle("is-active");
         document.body.addEventListener("click", closeDropdown);
-    };
-
-    /* Manual tab index manipulation to make animation of dropdown menu possible */
-    const setMenuButtonsTabIndex = (tabIndex) => {
-        const buttonElems = dropdownRef.current.querySelectorAll(
-            ".dropdown-item button"
-        );
-        [...buttonElems].forEach((buttonElem) => {
-            buttonElem.tabIndex = tabIndex;
-        });
     };
 
     const handleDelete = (e, file) => {
@@ -84,16 +69,12 @@ const LibraryListCard = ({ file }) => {
                             role="menu">
                             <div className="dropdown-content">
                                 <div className="dropdown-item">
-                                    <button
-                                        className="button is-dark"
-                                        tabIndex="-1">
+                                    <button className="button is-dark">
                                         Open
                                     </button>
                                 </div>
                                 <div className="dropdown-item">
-                                    <button
-                                        className="button is-dark"
-                                        tabIndex="-1">
+                                    <button className="button is-dark">
                                         Edit
                                     </button>
                                 </div>
@@ -101,7 +82,6 @@ const LibraryListCard = ({ file }) => {
                                 <div className="dropdown-item">
                                     <button
                                         className="button is-dark"
-                                        tabIndex="-1"
                                         onClick={(e) => handleDelete(e, file)}>
                                         Delete
                                     </button>
