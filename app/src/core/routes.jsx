@@ -3,7 +3,6 @@ import { Switch, Route, Redirect } from "react-router";
 import { writeConfigRequest } from "secure-electron-store";
 
 import ROUTES from "Constants/routes";
-import DEFAULT_SETTINGS from "Constants/defaultSettings";
 import loadable from "@loadable/component";
 
 // Load bundles asynchronously so that the initial render happens faster
@@ -37,20 +36,6 @@ const ContextMenu = loadable(() =>
 );
 
 const initStorage = window.api.store.initial();
-const createDefaultAppSettings = () => {
-    // Providing default values to settings without overriding existing ones
-    const mergedSettings = Object.assign(
-        {},
-        DEFAULT_SETTINGS,
-        initStorage?.settings
-    );
-
-    window.api.store.send(writeConfigRequest, "settings", mergedSettings);
-
-    return mergedSettings;
-};
-
-const initSettings = createDefaultAppSettings();
 
 const toContinueReading = () => {
     const lastOpenedBook = initStorage.interactionStates?.lastOpenedBook;
@@ -73,7 +58,7 @@ const Routes = () => {
                     )}
                 </Route>
                 <Route path={ROUTES.SETTINGS}>
-                    <Settings initSettings={initSettings} />
+                    <Settings />
                 </Route>
                 <Route path={ROUTES.LIBRARY} component={Library}></Route>
                 <Route path={ROUTES.READ} component={Read}></Route>

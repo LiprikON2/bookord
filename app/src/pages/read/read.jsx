@@ -122,10 +122,6 @@ const Read = () => {
             currentPage + nPageShift
         );
         setPage(validNextPage);
-        // console.log(
-        //     'bookComponentRef === null ? "visible" : "hidden"',
-        //     bookComponentRef === null ? "visible" : "hidden"
-        // );
     };
 
     return (

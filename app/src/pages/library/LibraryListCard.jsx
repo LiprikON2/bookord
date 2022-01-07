@@ -1,4 +1,9 @@
 import React, { useRef, useEffect } from "react";
+import {
+    readConfigRequest,
+    readConfigResponse,
+    writeConfigRequest,
+} from "secure-electron-store";
 
 import "./LibraryListCard.css";
 
@@ -28,11 +33,27 @@ const LibraryListCard = ({ file }) => {
     };
 
     const handleDelete = (e, file) => {
-        // todo remove from last opened book too
-        // todo fix freeze on delete or add
         e.preventDefault();
 
-        window.api.send("app:on-file-delete", file);
+        window.api.store.clearRendererBindings();
+
+        // Send an IPC request to get config
+        window.api.store.send(readConfigRequest, "interactionStates");
+
+        // Listen for responses from the electron store
+        window.api.store.onReceive(readConfigResponse, (args) => {
+            if (args.key === "interactionStates" && args.success) {
+                const interactionStates = args.value;
+                delete interactionStates[file.path];
+
+                window.api.store.send(
+                    writeConfigRequest,
+                    "interactionStates",
+                    interactionStates
+                );
+                window.api.send("app:on-file-delete", file);
+            }
+        });
     };
     /* Make fallback cover image */
     return (

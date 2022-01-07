@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import ROUTES from "Constants/routes";
 import SettingsList from "./SettingsList";
 
-const Settings = ({ initSettings }) => {
+const Settings = () => {
     return (
         <>
             <section className="section">
@@ -18,7 +18,7 @@ const Settings = ({ initSettings }) => {
                     Home
                 </Link>
             </section>
-            <SettingsList initSettings={initSettings} />
+            <SettingsList />
         </>
     );
 };
