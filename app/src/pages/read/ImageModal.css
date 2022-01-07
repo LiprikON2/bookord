@@ -6,6 +6,11 @@
 
 .modal > .modal-content {
     max-height: initial;
+    width: 100%;
+}
+
+.modal > .modal-content {
+    width: min(90%, 70rem);
 }
 
 .modal > .modal-close {
@@ -14,7 +19,6 @@
 
 .modal img {
     display: block;
-    width: 100% !important;
-    height: 80vh !important;
-    object-fit: scale-down;
+    height: 80vh;
+    object-fit: contain;
 }

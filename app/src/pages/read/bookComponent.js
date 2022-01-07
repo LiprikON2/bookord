@@ -313,7 +313,9 @@ class BookComponent extends HTMLElement {
             this.loadSection(sectionNum, 0, marker);
         } else {
             // Opens link in external browser
-            window.open(e.target.href, "_blank");
+            if (e.currentTarget.href) {
+                window.open(e.currentTarget.href, "_blank");
+            }
         }
     }
 
@@ -415,19 +417,25 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    handleImgClick(e) {
+        const imgClickEvent = new CustomEvent("imgClickEvent", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: { src: e.target.src },
+        });
+
+        this.dispatchEvent(imgClickEvent);
+    }
+
+    /**
+     * Attaches event emitter to img tags to handle open modals on click
+     * @returns {void}
+     */
     attachImgEventEmitters() {
         const images = this.shadowRoot.querySelectorAll("img");
         images.forEach((img) => {
-            img.addEventListener("click", (e) => {
-                const imgClickEvent = new CustomEvent("imgClickEvent", {
-                    bubbles: true,
-                    cancelable: false,
-                    composed: true,
-                    detail: { src: e.target.src },
-                });
-
-                this.dispatchEvent(imgClickEvent);
-            });
+            img.addEventListener("click", this.handleImgClick);
         });
     }
 
@@ -442,6 +450,10 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    /**
+     * Removes images' event emitters before loading another section
+     * @returns {void}
+     */
     removeImgEventEmitters() {
         const images = this.shadowRoot.querySelectorAll("img");
         images.forEach((img) => {
