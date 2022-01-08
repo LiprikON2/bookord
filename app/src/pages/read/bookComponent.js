@@ -361,7 +361,7 @@ class BookComponent extends HTMLElement {
         );
 
         if (currentSectionPage >= 0 && totalSectioPage > 0) {
-            sectionPageElem.style.visibility = "visible";
+            sectionPageElem.style.visibility = "initial";
 
             currentSectionPageElem.innerHTML = currentSectionPage;
             totalSectionPageElem.innerHTML = totalSectioPage;
@@ -379,7 +379,7 @@ class BookComponent extends HTMLElement {
         const totalBookPages = this.bookState.getTotalBookPages();
 
         if (currentBookPage >= 0 && totalBookPages > 0) {
-            bookPageElem.style.visibility = "visible";
+            bookPageElem.style.visibility = "initial";
 
             currentBookPageElem.innerHTML = currentBookPage;
             totalBookPagesElem.innerHTML = totalBookPages;
@@ -532,7 +532,7 @@ class BookComponent extends HTMLElement {
             const anchorOffset = this.getAnchorOffset(a);
 
             if (currentOffset === anchorOffset) {
-                a.style.visibility = "visible";
+                a.style.visibility = "initial";
             } else {
                 a.style.visibility = "hidden";
             }

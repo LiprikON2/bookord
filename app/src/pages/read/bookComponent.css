@@ -18,8 +18,9 @@
     overflow: hidden;
 }
 
-.book-container > #book-content,
-.book-container > #page-counter {
+.book-container > #book-content {
+    /* transform: translate(0); */
+    /* transition: all 0.2s ease-out; */
     columns: 1;
     column-gap: 0;
     height: var(--book-component-width);

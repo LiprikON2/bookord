@@ -73,7 +73,7 @@ async function createWindow() {
         minHeight: 500,
         minWidth: 500,
         backgroundColor: "#202225",
-        icon: getAssetPath("icon.ico"), // todo ico windows, png linux, icns macos https://blog.avocode.com/4-must-know-tips-for-building-cross-platform-electron-apps-f3ae9c2bffff
+        icon: getAssetPath("icons/256x256.png"),
         title: "Application is currently initializing...",
         frame: false,
         webPreferences: {
@@ -95,6 +95,7 @@ async function createWindow() {
         win.focus();
     });
 
+    // TITLEBAR WINDOW CONTROLS
     win.on("maximize", () => {
         win.webContents.send("app:window-is-maximized");
     });
@@ -362,7 +363,7 @@ app.on("remote-get-current-web-contents", (event, webContents) => {
     event.preventDefault();
 });
 
-// TITLEBAR CONTROLS
+// TITLEBAR WINDOW CONTROLS
 
 ipcMain.on("app:minimize-window", () => {
     win.minimize();

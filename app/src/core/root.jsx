@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
 import Routes from "Core/Routes";
@@ -6,21 +6,19 @@ import Titlebar from "./Titlebar";
 import "bulma/css/bulma.css";
 import "./Root.css";
 
-class Root extends React.Component {
-    render() {
-        const { store, history } = this.props;
+const Root = ({ store, history }) => {
+    const [title, setTitle] = useState("Bookord app");
 
-        return (
-            <>
-                <Provider store={store}>
-                    <ConnectedRouter history={history}>
-                        <Titlebar></Titlebar>
-                        <Routes></Routes>
-                    </ConnectedRouter>
-                </Provider>
-            </>
-        );
-    }
-}
+    return (
+        <>
+            <Provider store={store}>
+                <ConnectedRouter history={history}>
+                    <Titlebar title={title} setTitle={setTitle}></Titlebar>
+                    <Routes></Routes>
+                </ConnectedRouter>
+            </Provider>
+        </>
+    );
+};
 
 export default Root;

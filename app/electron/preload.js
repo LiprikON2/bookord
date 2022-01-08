@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld("api", {
     send: (channel, data) => {
         // whitelist channels
         const validChannels = [
-            "app:on-fs-dialog-open", // todo clean up channels
+            "app:on-fs-dialog-open",
             "app:get-files",
             "app:delete-file",
             "app:on-file-add",
@@ -91,6 +91,8 @@ contextBridge.exposeInMainWorld("api", {
             "app:on-book-import",
             "app:on-book-section-import",
             "app:on-book-metadata-import",
+            "app:window-is-maximized",
+            "app:window-is-restored",
         ];
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`

@@ -100,7 +100,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
         });
 
         // Listen for chokidar file delete events
-        window.api.on("app:delete-file", (event, filename) => {
+        window.api.receive("app:delete-file", (event, filename) => {
             updateFiles();
         });
     }, []);
