@@ -62,9 +62,9 @@ const Routes = () => {
             <Switch>
                 <Route exact path="/">
                     {toContinueReading() ? (
-                        <Read />
+                        <Redirect push to={ROUTES.READ} />
                     ) : (
-                        <Library files={files} setFiles={setFiles} />
+                        <Redirect push to={ROUTES.LIBRARY} />
                     )}
                 </Route>
                 <Route path={ROUTES.SETTINGS}>
