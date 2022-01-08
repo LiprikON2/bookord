@@ -5,9 +5,7 @@ import ROUTES from "Constants/routes";
 import LibraryList from "./LibraryList";
 import "./Library.css";
 
-const Library = () => {
-    const [files, setFiles] = useState([]);
-
+const Library = ({ files, setFiles }) => {
     return (
         <>
             <section className="section">

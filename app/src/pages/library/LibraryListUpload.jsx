@@ -17,7 +17,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
     };
 
     const updateFiles = () => {
-        const promise = window.api.invoke("app:get-files");
+        const files = window.api.invoke("app:get-files");
         window.api.store.clearRendererBindings();
         window.api.store.send(readConfigRequest, "interactionStates");
 
@@ -25,7 +25,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
             if (args.key === "interactionStates" && args.success) {
                 const interactionStates = args.value;
 
-                promise.then(async (files = []) => {
+                files.then(async (files = []) => {
                     const updatedInteractionStateList = [];
                     const filesWithMetadata = await Promise.all(
                         files.map(async (file) => {

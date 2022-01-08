@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Switch, Route, Redirect } from "react-router";
 import { writeConfigRequest } from "secure-electron-store";
 
 import ROUTES from "Constants/routes";
+import DEFAULT_SETTINGS from "Constants/defaultSettings";
 import loadable from "@loadable/component";
 
 // Load bundles asynchronously so that the initial render happens faster
@@ -46,21 +47,32 @@ const toContinueReading = () => {
     return lastOpenedBook !== undefined && continueReadingSetting;
 };
 
+const getInitSettings = () => {
+    const initSettings = initStorage?.settings;
+    const mergedSettings = Object.assign({}, DEFAULT_SETTINGS, initSettings);
+
+    return mergedSettings;
+};
+
 const Routes = () => {
+    const [files, setFiles] = useState([]);
+    const [settings, setSettings] = useState(getInitSettings());
     return (
         <main id="main">
             <Switch>
                 <Route exact path="/">
                     {toContinueReading() ? (
-                        <Redirect to={ROUTES.READ} />
+                        <Read />
                     ) : (
-                        <Redirect to={ROUTES.LIBRARY} />
+                        <Library files={files} setFiles={setFiles} />
                     )}
                 </Route>
                 <Route path={ROUTES.SETTINGS}>
-                    <Settings />
+                    <Settings settings={settings} setSettings={setSettings} />
                 </Route>
-                <Route path={ROUTES.LIBRARY} component={Library}></Route>
+                <Route path={ROUTES.LIBRARY}>
+                    <Library files={files} setFiles={setFiles} />
+                </Route>
                 <Route path={ROUTES.READ} component={Read}></Route>
                 <Route path={ROUTES.ABOUT} component={About}></Route>
                 <Route path={ROUTES.MOTD} component={Motd}></Route>

@@ -5,53 +5,19 @@ import {
     writeConfigRequest,
 } from "secure-electron-store";
 
-import DEFAULT_SETTINGS from "Constants/defaultSettings";
-
 // todo test if works correctly (needs refresh to save changes for some reason)
-const SettingsList = () => {
-    const [settings, setSettings] = useState({});
+const SettingsList = ({ settings, setSettings }) => {
     const [sections, setSections] = useState([]);
 
-    const loadInitSettings = () => {
-        window.api.store.clearRendererBindings();
-        window.api.store.send(readConfigRequest, "settings");
-
-        window.api.store.onReceive(readConfigResponse, (args) => {
-            if (args.key === "settings" && args.success) {
-                const initSettings = args.value;
-
-                // Providing default values to settings without overriding existing ones
-                const mergedSettings = Object.assign(
-                    {},
-                    DEFAULT_SETTINGS,
-                    initSettings
-                );
-                setSettings(mergedSettings);
-
-                window.api.store.send(
-                    writeConfigRequest,
-                    "settings",
-                    mergedSettings
-                );
-            }
-        });
-    };
     // Extracts all settings sections without repeats
     const createSections = () => {
-        const uniqueSections = [
-            /* unique? todo */
+        const sectionsSet = [
             ...new Set(
                 Object.keys(settings).map((key) => settings[key].section)
             ),
         ];
-        setSections(uniqueSections);
+        setSections(sectionsSet);
     };
-
-    useLayoutEffect(() => {
-        // Initial loading of settings
-        console.log("settings", settings);
-        loadInitSettings();
-    }, []);
 
     useLayoutEffect(() => {
         createSections();
