@@ -16,17 +16,16 @@
     grid-row: 1 / 2;
     grid-column: 1 / 2;
 }
-
 .card > .card-cover {
     width: 100%;
     transition: all 0.2s ease;
     aspect-ratio: 351 / 500;
     object-fit: cover;
     border-radius: 10px;
-    box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-000-hsl) / 0.5);
 }
 .card > .card-cover > * {
     border-radius: 10px;
+    box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-000-hsl) / 0.5);
 }
 
 .card > .card-cover:hover,
@@ -40,14 +39,14 @@ a:focus-visible > .card > .card-cover {
     text-transform: uppercase;
     line-height: 1;
 
+    border: 2px solid var(--clr-accent-000);
+    background-color: var(--clr-accent-000);
     color: var(--clr-accent-000);
 }
 
 .no-cover > .clip-path-wrapper {
     height: 100%;
     width: 100%;
-
-    background-color: var(--clr-accent-000);
 }
 
 .no-cover > .clip-path-wrapper > .clip-path {
@@ -63,7 +62,7 @@ a:focus-visible > .card > .card-cover {
 }
 .no-cover > .clip-path-wrapper .clip-path > * {
     width: 80%;
-    margin-right: 0.35rem;
+    padding-right: 0.35rem;
 
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -71,6 +70,14 @@ a:focus-visible > .card > .card-cover {
     overflow: hidden;
     text-overflow: clip;
     text-align: right;
+
+    background-color: var(--clr-secondary-300);
+    border-radius: 10px 0 0 10px;
+    transition: all 0.1s ease;
+}
+.no-cover:hover > .clip-path-wrapper .clip-path > * {
+    background-color: var(--clr-accent-000);
+    color: var(--clr-secondary-300);
 }
 
 .card > .card-content {
