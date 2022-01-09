@@ -1,3 +1,18 @@
+@font-face {
+    font-family: "Exo";
+    src: url("resources/fonts/Exo-Italic-VariableFont_wght.ttf")
+        format("truetype");
+    font-style: italic, oblique;
+}
+@font-face {
+    font-family: "Exo";
+    src: url("resources/fonts/Exo-VariableFont_wght.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Staatliches";
+    src: url("resources/fonts/Staatliches-Regular.ttf") format("truetype");
+}
+
 :root {
     /* Colors */
     --clr-primary-000: white;
@@ -20,6 +35,9 @@
     --scrollbar-width: 12px;
     --border-width: 1px;
 
+    /* Fon family */
+    --ff-exo: "Exo", sans-serif;
+    --ff-staatliches: "Staatliches", cursive;
     /* Font size */
     --fs-100: 0.64rem;
     --fs-200: 0.8rem;

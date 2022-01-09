@@ -20,11 +20,10 @@
 .card > .card-cover {
     width: 100%;
     transition: all 0.2s ease;
-    /* TODO test other book covers - aspect-ratio: 1 / 1.6; */
     aspect-ratio: 351 / 500;
     object-fit: cover;
-    box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-000-hsl) / 0.5);
     border-radius: 10px;
+    box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-000-hsl) / 0.5);
 }
 .card > .card-cover > * {
     border-radius: 10px;
@@ -36,19 +35,19 @@ a:focus-visible > .card > .card-cover {
 }
 
 .no-cover {
+    font-family: var(--ff-staatliches);
     font-size: var(--fs-700);
-    font-weight: var(--fw-700);
-    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    text-transform: uppercase;
+    line-height: 1;
 
     color: var(--clr-accent-000);
-    line-height: 1.1;
 }
 
 .no-cover > .clip-path-wrapper {
-    background-color: var(--clr-accent-000);
     height: 100%;
     width: 100%;
-    /* filter: drop-shadow(-10px 0 5px black); */
+
+    background-color: var(--clr-accent-000);
 }
 
 .no-cover > .clip-path-wrapper > .clip-path {
@@ -110,8 +109,10 @@ a:focus-visible > .card > .card-cover {
     display: flex;
     align-items: center;
 
+    font-family: var(--ff-exo);
     line-height: var(--line-height);
     font-size: 0.875rem;
+    width: 80%;
 }
 
 .card-content > .card-content-title > span {
