@@ -1,5 +1,4 @@
 /* todo make a remove/delete/open animation */
-
 .card {
     display: grid;
     justify-items: center;
@@ -18,10 +17,10 @@
 }
 .card > .card-cover {
     width: 100%;
-    transition: all 0.2s ease;
     aspect-ratio: 351 / 500;
     object-fit: cover;
     border-radius: 10px;
+    transition: all 0.2s ease;
 }
 .card > .card-cover > * {
     border-radius: 10px;
@@ -60,7 +59,7 @@ a:focus-visible > .card > .card-cover {
     clip-path: ellipse(85% 95% at 95% 30%);
     background-color: var(--clr-secondary-300);
 }
-.no-cover > .clip-path-wrapper .clip-path > * {
+.no-cover .clip-path > h3 {
     width: 80%;
     padding-right: 0.35rem;
 
@@ -73,9 +72,12 @@ a:focus-visible > .card > .card-cover {
 
     background-color: var(--clr-secondary-300);
     border-radius: 10px 0 0 10px;
+
     transition: all 0.1s ease;
+    transition-delay: 0.05s;
 }
-.no-cover:hover > .clip-path-wrapper .clip-path > * {
+.no-cover:hover .clip-path > h3,
+a:focus-visible .no-cover .clip-path > h3 {
     background-color: var(--clr-accent-000);
     color: var(--clr-secondary-300);
 }
@@ -141,10 +143,10 @@ a:focus-visible > .card > .card-cover {
     left: 0;
     right: 0;
 
+    z-index: -1;
+    pointer-events: none;
     transform: translateY(10%);
     transition: all 0.15s ease-in-out;
-    pointer-events: none;
-    z-index: -1;
 }
 
 .dropdown.is-active > .dropdown-menu {
@@ -173,15 +175,15 @@ a:focus-visible > .card > .card-cover {
     justify-content: flex-start;
 }
 
+/* todo make separate button component */
 .button {
     background-color: var(--clr-secondary-300);
 }
 
-/* todo make separate button component */
 .button:hover {
-    transition: all 0.2s ease;
     background-color: var(--clr-secondary-300);
     color: var(--clr-primary-000);
+    transition: all 0.2s ease;
 }
 .button:active {
     filter: brightness(125%);
