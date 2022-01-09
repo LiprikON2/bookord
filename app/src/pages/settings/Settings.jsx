@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
+import Link from "components/Link";
 import ROUTES from "Constants/routes";
 import SettingsList from "./SettingsList";
 
@@ -9,14 +9,7 @@ const Settings = ({ settings, setSettings }) => {
         <>
             <section className="section">
                 <h1>Settings</h1>
-                <Link
-                    to={ROUTES.LIBRARY}
-                    draggable="false"
-                    onAuxClick={(e) => e.preventDefault()}
-                    className="button is-dark"
-                    role="button">
-                    Home
-                </Link>
+                <Link to={ROUTES.LIBRARY}>Home</Link>
             </section>
             <SettingsList settings={settings} setSettings={setSettings} />
         </>

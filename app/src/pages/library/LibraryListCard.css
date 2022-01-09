@@ -174,17 +174,3 @@ a:focus-visible .no-cover .clip-path > h3 {
 
     justify-content: flex-start;
 }
-
-/* todo make separate button component */
-.button {
-    background-color: var(--clr-secondary-300);
-}
-
-.button:hover {
-    background-color: var(--clr-secondary-300);
-    color: var(--clr-primary-000);
-    transition: all 0.2s ease;
-}
-.button:active {
-    filter: brightness(125%);
-}

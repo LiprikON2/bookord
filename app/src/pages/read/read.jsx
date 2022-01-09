@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import { readConfigRequest, readConfigResponse } from "secure-electron-store";
 
+import Link from "components/Link";
+import Button from "components/Button";
 import ImageModal from "./ImageModal";
-import "./bookComponent";
 import ROUTES from "Constants/routes";
+import "./bookComponent";
 import "./Read.css";
 
 function useEventListener(eventName, handler, element = window) {
@@ -128,14 +130,7 @@ const Read = () => {
         <>
             <section className="section">
                 <h1>Read</h1>
-                <Link
-                    to={ROUTES.LIBRARY}
-                    draggable="false"
-                    onAuxClick={(e) => e.preventDefault()}
-                    className="button is-dark"
-                    role="button">
-                    Home
-                </Link>
+                <Link to={ROUTES.LIBRARY}>Home</Link>
                 <div
                     className="book-container"
                     style={{
@@ -151,18 +146,8 @@ const Read = () => {
                     src={imageModalSrc}
                     setSrc={setImageModalSrc}></ImageModal>
                 <div className="button-group">
-                    <button
-                        className="button is-dark"
-                        role="button"
-                        onClick={goBack}>
-                        Back
-                    </button>
-                    <button
-                        className="button is-dark"
-                        role="button"
-                        onClick={goNext}>
-                        Next
-                    </button>
+                    <Button onClick={goBack}>Back</Button>
+                    <Button onClick={goNext}>Next</Button>
                 </div>
             </section>
         </>

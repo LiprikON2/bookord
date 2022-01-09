@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import TitlebarButton from "./TitlebarButton";
+import Button from "components/Button";
+
 import "./Titlebar.css";
 import logo from "resources/icons/icon.svg";
 
@@ -129,25 +130,21 @@ const Titlebar = ({ title, setTitle }) => {
                     </h1>
                 </div>
                 <div className="window-control-buttons">
-                    <TitlebarButton
-                        id="minimize-button"
-                        onClick={handleMinimize}
-                        srcSet={minimizeSrcSet}></TitlebarButton>
+                    <Button id="minimize-button" onClick={handleMinimize}>
+                        <img srcSet={minimizeSrcSet} />
+                    </Button>
                     {isMaximized ? (
-                        <TitlebarButton
-                            id="restore-button"
-                            onClick={handleRestore}
-                            srcSet={restoreSrcSet}></TitlebarButton>
+                        <Button id="restore-button" onClick={handleRestore}>
+                            <img srcSet={restoreSrcSet} />
+                        </Button>
                     ) : (
-                        <TitlebarButton
-                            id="maximize-button"
-                            onClick={handleMaximize}
-                            srcSet={maximizeSrcSet}></TitlebarButton>
+                        <Button id="maximize-button" onClick={handleMaximize}>
+                            <img srcSet={maximizeSrcSet} />
+                        </Button>
                     )}
-                    <TitlebarButton
-                        id="close-button"
-                        onClick={handleClose}
-                        srcSet={closeSrcSet}></TitlebarButton>
+                    <Button id="close-button" onClick={handleClose}>
+                        <img srcSet={closeSrcSet} />
+                    </Button>
                 </div>
             </header>
         </>

@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
+import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
 import LibraryListUpload from "./LibraryListUpload";
 import ROUTES from "Constants/routes";
@@ -20,8 +20,7 @@ const LibraryList = ({ files, setFiles }) => {
                                     book: file,
                                 },
                             }}
-                            draggable="false"
-                            onAuxClick={(e) => e.preventDefault()}
+                            className="a"
                             key={file.path}>
                             <LibraryListCard file={file}></LibraryListCard>
                         </Link>

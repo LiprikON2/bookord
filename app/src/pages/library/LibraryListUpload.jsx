@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 
+import Button from "components/Button";
 import {
     readConfigRequest,
     readConfigResponse,
@@ -107,12 +108,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
     return (
         <>
             <div className="container">
-                <button
-                    className="button is-dark"
-                    type="button"
-                    onClick={handleUpload}>
-                    Add a book
-                </button>
+                <Button onClick={handleUpload}>Add a book</Button>
             </div>
         </>
     );

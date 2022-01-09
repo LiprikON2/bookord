@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
+import Button from "components/Button";
 import "./ImageModal.css";
 
 const ImageModal = ({ src, setSrc }) => {
@@ -23,10 +24,10 @@ const ImageModal = ({ src, setSrc }) => {
                         <img src={src} alt="" />
                     </p>
                 </div>
-                <button
+                <Button
                     className="modal-close is-large"
                     aria-label="close"
-                    onClick={closeModal}></button>
+                    onClick={closeModal}></Button>
             </div>
         </>
     );

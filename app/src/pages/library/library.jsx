@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 
+import Link from "components/Link";
 import ROUTES from "Constants/routes";
 import LibraryList from "./LibraryList";
 import "./Library.css";
@@ -13,22 +13,8 @@ const Library = ({ files, setFiles }) => {
                     <h1>Library</h1>
                 </div>
                 <div className="button-group">
-                    <Link
-                        to={ROUTES.SETTINGS}
-                        draggable="false"
-                        onAuxClick={(e) => e.preventDefault()}
-                        className="button is-dark"
-                        role="button">
-                        Settings
-                    </Link>
-                    <Link
-                        to={ROUTES.READ}
-                        draggable="false"
-                        onAuxClick={(e) => e.preventDefault()}
-                        className="button is-dark"
-                        role="button">
-                        Read
-                    </Link>
+                    <Link to={ROUTES.SETTINGS}>Settings</Link>
+                    <Link to={ROUTES.READ}>Read</Link>
                 </div>
             </section>
 

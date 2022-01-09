@@ -5,6 +5,7 @@ import {
     writeConfigRequest,
 } from "secure-electron-store";
 
+import Button from "components/Button";
 import "./LibraryListCard.css";
 
 const LibraryListCard = ({ file }) => {
@@ -82,13 +83,12 @@ const LibraryListCard = ({ file }) => {
                     </h3>
                     <div ref={dropdownRef} className="dropdown is-up is-right">
                         <div className="dropdown-trigger">
-                            <button
-                                className="button is-dark"
+                            <Button
                                 aria-haspopup="true"
                                 aria-controls="dropdown-menu-options"
                                 onClick={openDropdown}>
                                 <span>☰</span>
-                            </button>
+                            </Button>
                         </div>
                         <div
                             className="dropdown-menu"
@@ -96,22 +96,17 @@ const LibraryListCard = ({ file }) => {
                             role="menu">
                             <div className="dropdown-content">
                                 <div className="dropdown-item">
-                                    <button className="button is-dark">
-                                        Open
-                                    </button>
+                                    <Button>Open</Button>
                                 </div>
                                 <div className="dropdown-item">
-                                    <button className="button is-dark">
-                                        Edit
-                                    </button>
+                                    <Button>Edit</Button>
                                 </div>
                                 <hr className="dropdown-divider" />
                                 <div className="dropdown-item">
-                                    <button
-                                        className="button is-dark"
+                                    <Button
                                         onClick={(e) => handleDelete(e, file)}>
                                         Delete
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>
