@@ -1,11 +1,11 @@
 import React from "react";
 
+import "./Button.css";
+
 const Button = ({ children, className, ...rest }) => {
     return (
         <>
-            <button
-                className={className ? className : "button is-dark"}
-                {...rest}>
+            <button className={className ? className : "button btn"} {...rest}>
                 {children}
             </button>
         </>

@@ -1,4 +1,4 @@
-ul.card-list {
+.card-list {
     display: grid;
     width: min(100%, 60rem);
     grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
@@ -7,6 +7,6 @@ ul.card-list {
     margin-inline: auto;
 }
 
-ul.card-list > a {
+.card-list > a {
     padding: 1rem 1rem 0 1rem; /* For nicely lining up card's tabbing outline */
 }

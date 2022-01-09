@@ -116,17 +116,3 @@ main#main {
         --titlebar-height
     ); /* Scrollbar adjusted for titlebar height */
 }
-
-/* buttons */
-.button {
-    background-color: var(--clr-secondary-300);
-}
-
-.button:hover {
-    background-color: var(--clr-secondary-300);
-    color: var(--clr-primary-000);
-    transition: all 0.2s ease;
-}
-.button:active {
-    filter: brightness(125%);
-}

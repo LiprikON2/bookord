@@ -11,7 +11,7 @@ const LibraryList = ({ files, setFiles }) => {
     return (
         <>
             <section className="section" id="uploader">
-                <ul className="card-list">
+                <div className="card-list" role="list">
                     {files.map((file, index) => (
                         <Link
                             to={{
@@ -21,11 +21,12 @@ const LibraryList = ({ files, setFiles }) => {
                                 },
                             }}
                             className="a"
+                            role="listitem"
                             key={file.path}>
                             <LibraryListCard file={file}></LibraryListCard>
                         </Link>
                     ))}
-                </ul>
+                </div>
                 <LibraryListUpload files={files} setFiles={setFiles} />
             </section>
         </>

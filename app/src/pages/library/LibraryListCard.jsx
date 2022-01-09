@@ -59,7 +59,7 @@ const LibraryListCard = ({ file }) => {
     /* Make fallback cover image */
     return (
         <>
-            <li className="card">
+            <div className="card">
                 {file.info.cover ? (
                     <span className="card-cover">
                         <img src={file.info.cover} alt="book cover" />
@@ -112,7 +112,7 @@ const LibraryListCard = ({ file }) => {
                         </div>
                     </div>
                 </div>
-            </li>
+            </div>
         </>
     );
 };

@@ -130,19 +130,35 @@ const Titlebar = ({ title, setTitle }) => {
                     </h1>
                 </div>
                 <div className="window-control-buttons">
-                    <Button id="minimize-button" onClick={handleMinimize}>
+                    <Button
+                        id="minimize-button"
+                        className="button btn btn-titlebar"
+                        tabIndex="-1"
+                        onClick={handleMinimize}>
                         <img srcSet={minimizeSrcSet} />
                     </Button>
                     {isMaximized ? (
-                        <Button id="restore-button" onClick={handleRestore}>
+                        <Button
+                            id="restore-button"
+                            className="button btn btn-titlebar"
+                            tabIndex="-1"
+                            onClick={handleRestore}>
                             <img srcSet={restoreSrcSet} />
                         </Button>
                     ) : (
-                        <Button id="maximize-button" onClick={handleMaximize}>
+                        <Button
+                            id="maximize-button"
+                            className="button btn btn-titlebar"
+                            tabIndex="-1"
+                            onClick={handleMaximize}>
                             <img srcSet={maximizeSrcSet} />
                         </Button>
                     )}
-                    <Button id="close-button" onClick={handleClose}>
+                    <Button
+                        id="close-button"
+                        className="button btn btn-titlebar"
+                        tabIndex="-1"
+                        onClick={handleClose}>
                         <img srcSet={closeSrcSet} />
                     </Button>
                 </div>

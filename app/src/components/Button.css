@@ -1,0 +1,54 @@
+.button.btn {
+    background-color: var(--clr-secondary-300);
+    color: var(--clr-primary-100);
+    transition: all 0.2s ease;
+
+    border: none;
+}
+
+/* Removes bulmas' outline   */
+.button.btn:focus:not(:active) {
+    color: var(--clr-primary-100);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+/* Hovered */
+.button.btn:hover {
+    background-color: var(--clr-secondary-100);
+    color: var(--clr-primary-100);
+}
+
+/* Pressed */
+.button.btn:active {
+    background-color: var(--clr-secondary-100);
+    color: var(--clr-primary-100);
+    filter: brightness(75%);
+}
+
+/* Prevents form image icons inside button from being draggable */
+.button.btn > * {
+    pointer-events: none;
+}
+
+/* +++++ Titlebar button +++++ */
+.button.btn-titlebar {
+    border: none;
+    border-radius: 0;
+
+    color: inherit;
+    background-color: inherit;
+}
+/* Hovered */
+.button.btn-titlebar:hover {
+    background-color: var(--clr-secondary-300);
+    color: var(--clr-primary-000);
+}
+.button.btn-titlebar:last-child:hover {
+    background-color: var(--clr-danger);
+}
+/* Pressed */
+.button.btn-titlebar:active {
+    filter: brightness(125%);
+}
+/* +++++                 +++++ */

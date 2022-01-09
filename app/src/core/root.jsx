@@ -5,18 +5,19 @@ import { Provider } from "react-redux";
 import Routes from "Core/Routes";
 import Titlebar from "./Titlebar";
 import ROUTES from "Constants/routes";
+
 import "bulma/css/bulma.css";
 import "./Root.css";
 
 const getKeyByValue = (object, value) => {
     return Object.keys(object).find((key) => object[key] === value);
 };
-
 const toTitleCase = (str) => {
     return str.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 };
+
 const getTitleFromLocation = (location) => {
     const baseTitle = "Bookord app";
 
