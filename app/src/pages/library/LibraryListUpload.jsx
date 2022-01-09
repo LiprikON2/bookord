@@ -31,6 +31,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
     };
 
     const updateFiles = () => {
+        console.log("UPDATE FILES CALLED");
         const files = window.api.invoke("app:get-files");
         window.api.store.clearRendererBindings();
         window.api.store.send(readConfigRequest, "interactionStates");
@@ -45,7 +46,6 @@ const LibraryListUpload = ({ files, setFiles }) => {
                     const filesWithMetadata = await mapInGroups(
                         files,
                         async (file) => {
-                            console.log(file.name);
                             const savedMetadata =
                                 interactionStates?.[file.path]?.info;
                             // If books were already parsed, retrive saved results
@@ -133,6 +133,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
 
     useLayoutEffect(() => {
         // Initial file load
+        console.log("initial");
         updateFiles();
     }, []);
 
@@ -147,12 +148,13 @@ const LibraryListUpload = ({ files, setFiles }) => {
             });
             // send file(s) add event to the `main` process
             window.api.invoke("app:on-file-add", mappedFiles).then(() => {
+                console.log("added");
                 updateFiles();
             });
         });
 
-        // Listen for chokidar file delete events
-        window.api.receive("app:file-is-deleted", (event, filename) => {
+        window.api.receive("app:file-is-deleted", (filename) => {
+            console.log("deleted", filename);
             updateFiles();
         });
     }, []);

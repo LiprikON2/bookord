@@ -29,6 +29,7 @@ const validChannels = [
     "app:window-is-restored",
     "app:window-is-maximized",
 ];
+const list = [];
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
@@ -55,6 +56,8 @@ contextBridge.exposeInMainWorld("api", {
 
     invoke: (channel, func) => {
         if (validChannels.includes(channel)) {
+            list.push(channel);
+            console.log("list!!", list);
             const promise = ipcRenderer.invoke(channel, func);
             return promise;
         }

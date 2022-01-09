@@ -74,7 +74,16 @@ exports.openFile = (filename) => {
 
 // watch files from the application's storage directory
 exports.watchFiles = (win) => {
-    chokidar.watch(appDir).on("unlink", (filepath) => {
-        win.webContents.send("app:file-is-deleted", path.parse(filepath).base);
-    });
+    console.log("WATCHING");
+    const watcher = chokidar
+        .watch(appDir, { persistent: false })
+        .on("unlink", (filepath) => {
+            console.log("whaat? filepath", path.parse(filepath).base);
+            win.webContents.send(
+                "app:file-is-deleted",
+                path.parse(filepath).base
+            );
+        });
+
+    return watcher;
 };

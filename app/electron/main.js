@@ -104,6 +104,7 @@ async function createWindow() {
     });
 
     win.webContents.setWindowOpenHandler(({ url }) => {
+        // TODO unsecure
         shell.openExternal(url);
         return { action: "deny" };
     });
