@@ -117,7 +117,7 @@ class BookComponent extends HTMLElement {
          * @property {Promise<Book>} initBook - Initial book with only one section parsed
          */
         this.initBook = new Promise((resolve, reject) => {
-            window.api.receive("app:on-book-section-import", (initBook) => {
+            window.api.receive("app:receive-parsed-section", (initBook) => {
                 resolve(initBook);
             });
         });
@@ -131,7 +131,7 @@ class BookComponent extends HTMLElement {
      * @returns {Promise<Book>}
      */
     importBook(filePath, sectionNum, sectionPage) {
-        const book = window.api.invoke("app:on-book-import", [
+        const book = window.api.invoke("app:get-parsed-book", [
             filePath,
             sectionNum,
             sectionPage,
@@ -521,6 +521,7 @@ class BookComponent extends HTMLElement {
         this.saveInteractionProgress();
     }
 
+    // TODO Overlord's toc invisible
     /**
      * Hides links' on another pages so they can't be navigated to with keyboard without flipping the page
      * @returns {void}

@@ -1,11 +1,6 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
-import {
-    readConfigRequest,
-    readConfigResponse,
-    writeConfigRequest,
-} from "secure-electron-store";
+import React, { useState, useLayoutEffect } from "react";
+import { writeConfigRequest } from "secure-electron-store";
 
-// todo test if works correctly (needs refresh to save changes for some reason)
 const SettingsList = ({ settings, setSettings }) => {
     const [sections, setSections] = useState([]);
 

@@ -8,6 +8,28 @@ const SecureElectronLicenseKeys = require("secure-electron-license-keys");
 // Create the electron store to be made available in the renderer process
 const store = new Store();
 
+// whitelist channels
+const validChannels = [
+    "app:on-fs-dialog-open",
+    "app:on-file-add",
+    "app:on-file-open",
+    "app:on-file-delete",
+    "app:get-files",
+    "app:file-is-deleted",
+
+    "app:get-parsed-book",
+    "app:receive-parsed-section",
+    "app:get-parsed-book-metadata",
+
+    "app:minimize-window",
+    "app:maximize-window",
+    "app:restore-window",
+    "app:close-window",
+
+    "app:window-is-restored",
+    "app:window-is-maximized",
+];
+
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld("api", {
@@ -20,42 +42,11 @@ contextBridge.exposeInMainWorld("api", {
     licenseKeys: SecureElectronLicenseKeys.preloadBindings(ipcRenderer),
 
     send: (channel, data) => {
-        // whitelist channels
-        const validChannels = [
-            "app:on-fs-dialog-open",
-            "app:get-files",
-            "app:delete-file",
-            "app:on-file-add",
-            "app:on-file-open",
-            "app:on-file-delete",
-            "app:on-book-import",
-            "app:on-book-section-import",
-            "app:on-book-metadata-import",
-            "app:minimize-window",
-            "app:maximize-window",
-            "app:restore-window",
-            "app:close-window",
-            "app:window-is-restored",
-            "app:window-is-maximized",
-        ];
         if (validChannels.includes(channel)) {
-            ipcRenderer.send(channel, data); // todo strip event?
+            ipcRenderer.send(channel, data);
         }
     },
     receive: (channel, func) => {
-        const validChannels = [
-            "app:on-fs-dialog-open",
-            "app:get-files",
-            "app:delete-file",
-            "app:on-file-add",
-            "app:on-file-open",
-            "app:on-file-delete",
-            "app:on-book-import",
-            "app:on-book-section-import",
-            "app:on-book-metadata-import",
-            "app:window-is-restored",
-            "app:window-is-maximized",
-        ];
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`
             ipcRenderer.on(channel, (event, ...args) => func(...args));
@@ -63,40 +54,9 @@ contextBridge.exposeInMainWorld("api", {
     },
 
     invoke: (channel, func) => {
-        const validChannels = [
-            "app:on-fs-dialog-open",
-            "app:get-files",
-            "app:delete-file",
-            "app:on-file-add",
-            "app:on-file-open",
-            "app:on-file-delete",
-            "app:on-book-import",
-            "app:on-book-section-import",
-            "app:on-book-metadata-import",
-        ];
         if (validChannels.includes(channel)) {
             const promise = ipcRenderer.invoke(channel, func);
             return promise;
-        }
-    },
-
-    on(channel, func) {
-        const validChannels = [
-            "app:on-fs-dialog-open",
-            "app:get-files",
-            "app:delete-file",
-            "app:on-file-add",
-            "app:on-file-open",
-            "app:on-file-delete",
-            "app:on-book-import",
-            "app:on-book-section-import",
-            "app:on-book-metadata-import",
-            "app:window-is-maximized",
-            "app:window-is-restored",
-        ];
-        if (validChannels.includes(channel)) {
-            // Deliberately strip event as it includes `sender`
-            ipcRenderer.on(channel, (event, ...args) => func(...args));
         }
     },
 });

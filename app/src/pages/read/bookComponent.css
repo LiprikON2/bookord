@@ -42,7 +42,7 @@ ul.book-ui {
 }
 ul.book-ui > *,
 #book-title {
-    color: #999;
+    color: var(--clr-primary-200);
     height: 1.5em;
 }
 ul.book-ui > #section-name,

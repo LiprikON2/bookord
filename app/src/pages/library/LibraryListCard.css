@@ -17,19 +17,61 @@
     grid-column: 1 / 2;
 }
 
-.card img.card-cover {
+.card > .card-cover {
     width: 100%;
     transition: all 0.2s ease;
-    border-radius: 10px;
     /* TODO test other book covers - aspect-ratio: 1 / 1.6; */
     aspect-ratio: 351 / 500;
     object-fit: cover;
-    box-shadow: 0 0.75rem 1.25rem hsl(var(--hsl-accent) / 0.5);
+    box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-000-hsl) / 0.5);
+    border-radius: 10px;
+}
+.card > .card-cover > * {
+    border-radius: 10px;
 }
 
-span:hover > .card-cover,
-a:focus-visible > .card .card-cover {
+.card > .card-cover:hover,
+a:focus-visible > .card > .card-cover {
     transform: translateY(-1.875rem) scale(1.08);
+}
+
+.no-cover {
+    font-size: var(--fs-700);
+    font-weight: var(--fw-700);
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+
+    color: var(--clr-accent-000);
+    line-height: 1.1;
+}
+
+.no-cover > .clip-path-wrapper {
+    background-color: var(--clr-accent-000);
+    height: 100%;
+    width: 100%;
+    /* filter: drop-shadow(-10px 0 5px black); */
+}
+
+.no-cover > .clip-path-wrapper > .clip-path {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+
+    clip-path: ellipse(85% 95% at 95% 30%);
+    background-color: var(--clr-secondary-300);
+}
+.no-cover > .clip-path-wrapper .clip-path > * {
+    width: 80%;
+    margin-right: 0.35rem;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: clip;
+    text-align: right;
 }
 
 .card > .card-content {
@@ -48,9 +90,9 @@ a:focus-visible > .card .card-cover {
 }
 
 .card-content > *:not(.dropdown) {
-    color: var(--clr-primary);
-    background-color: hsl(var(--hsl-accent) / 0.9);
-    box-shadow: 0 0.3rem 0.5rem hsl(var(--hsl-accent) / 0.25);
+    color: var(--clr-primary-100);
+    background-color: hsl(var(--clr-accent-000-hsl) / 0.9);
+    box-shadow: 0 0.3rem 0.5rem hsl(var(--clr-accent-000-hsl) / 0.25);
     border: none;
 
     transition: all 0.2s ease;
@@ -106,18 +148,33 @@ a:focus-visible > .card .card-cover {
 }
 
 .dropdown > .dropdown-menu > .dropdown-content {
-    /* background-color: var(--clr-bg-secondary); */ /* todo put color in a variable */
-    background-color: #363636;
+    background-color: var(--clr-secondary-300);
     opacity: 0.95;
 }
 
 .dropdown > .dropdown-menu > .dropdown-content > .dropdown-divider {
-    background-color: var(--clr-secondary);
+    background-color: var(--clr-primary-200);
 }
 .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item {
     padding: 0;
 }
 .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .button {
     width: 100%;
+    border-radius: 0;
+
     justify-content: flex-start;
+}
+
+.button {
+    background-color: var(--clr-secondary-300);
+}
+
+/* todo make separate button component */
+.button:hover {
+    transition: all 0.2s ease;
+    background-color: var(--clr-secondary-300);
+    color: var(--clr-primary-000);
+}
+.button:active {
+    filter: brightness(125%);
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import TitlebarButton from "./TitlebarButton";
+import "./Titlebar.css";
 import logo from "resources/icons/icon.svg";
 
 import min10 from "resources/titlebar icons/min-w-10.png";

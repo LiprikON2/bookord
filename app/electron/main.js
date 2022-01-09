@@ -443,7 +443,7 @@ ipcMain.handle("app:on-file-open", (event, file) => {
 });
 
 ipcMain.handle(
-    "app:on-book-import",
+    "app:get-parsed-book",
     async (event, [filePath, sectionNum, page]) => {
         const parsedEpub = await parseEpub(filePath);
         // console.log("_manifest", parsedEpub._manifest, "\n +++\n +++");
@@ -462,7 +462,7 @@ ipcMain.handle(
             initSectionNum: sectionNum,
             initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
         };
-        win.webContents.send("app:on-book-section-import", initBook);
+        win.webContents.send("app:receive-parsed-section", initBook);
 
         // console.time("1");
         const sections = parsedEpub.sections.map((section) =>
@@ -499,7 +499,7 @@ ipcMain.handle(
     }
 );
 
-ipcMain.handle("app:on-book-metadata-import", async (event, filePath) => {
+ipcMain.handle("app:get-parsed-book-metadata", async (event, filePath) => {
     const parsedEpub = await parseEpub(filePath);
     return parsedEpub.info;
 });

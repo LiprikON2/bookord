@@ -1,17 +1,41 @@
 :root {
-    --hsl-accent: 190 29% 35%;
+    /* Colors */
+    --clr-primary-000: white;
+    --clr-primary-100: #dcddde;
+    --clr-primary-200: #8e9297;
+    --clr-primary-300: #48545c;
+    --clr-primary-300-hsl: 204 12% 32%;
 
-    --clr-primary: #dcddde;
-    --clr-secondary: #8e9297;
+    --clr-secondary-000: black;
+    --clr-secondary-100: #17191b;
+    --clr-secondary-200: #202225;
+    --clr-secondary-300: #2f3136;
+
+    --clr-accent-000: #3f6b73;
+    --clr-accent-000-hsl: 190 29% 35%;
     --clr-danger: #d31223;
 
-    --clr-bg-darkest: #17191b;
-    --clr-bg-primary: #202225;
-    --clr-bg-secondary: #2f3136;
-
+    /* Width & hight */
     --titlebar-height: 32px;
     --scrollbar-width: 12px;
     --border-width: 1px;
+
+    /* Font size */
+    --fs-100: 0.64rem;
+    --fs-200: 0.8rem;
+    --fs-300: 1.125rem;
+    --fs-400: 1.325rem;
+    --fs-500: 1.563rem;
+    --fs-600: 1.563rem;
+    --fs-700: 2rem;
+    --fs-800: 2.5rem;
+    --fs-900: 3.2rem;
+    --fs-xl: clamp(4.5rem, 1rem + 8vw, 9rem);
+
+    /* Font weight */
+    --fw-300: 300;
+    --fw-400: 400;
+    --fw-700: 700;
 }
 
 * {
@@ -30,93 +54,20 @@ body,
 }
 
 html {
-    background-color: var(--clr-bg-primary);
+    background-color: var(--clr-secondary-200);
 
     padding-right: var(--border-width);
     padding-bottom: var(--border-width);
 }
 
 body {
-    border: var(--border-width) solid #48545c;
+    border: var(--border-width) solid var(--clr-primary-300);
 
-    color: var(--clr-primary);
-    background-color: var(--clr-bg-primary);
-}
-
-/* todo separate css in files */
-
-#titlebar {
-    height: var(--titlebar-height);
-    width: calc(100% - var(--border-width) * 3);
-
-    display: flex;
-    position: fixed;
-    z-index: 1000;
-    background-color: var(--clr-bg-darkest);
-    user-select: none;
-}
-#titlebar > #drag-region {
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-    align-items: center;
-    gap: 0.25em;
-    overflow: hidden;
-
-    -webkit-app-region: drag;
-}
-#titlebar > #drag-region > .window-title {
-    font-size: 12px;
-    font-family: "Segoe UI", sans-serif;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-#titlebar > .window-control-buttons {
-    display: flex;
-}
-#titlebar > .window-control-buttons > .button {
-    height: 100%;
-    width: 46px;
-    color: inherit;
-    background-color: inherit;
-    border: none;
-    border-radius: 0;
-    padding-top: 5px;
-}
-#titlebar > .window-control-buttons > .button:focus {
-    border-color: inherit;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-}
-#titlebar > .window-control-buttons > .button:hover {
-    transition: all 0.2s ease;
-    background-color: var(--clr-bg-secondary);
-    color: white;
-}
-#titlebar > .window-control-buttons > .button:active {
-    filter: brightness(125%);
+    color: var(--clr-primary-100);
+    background-color: var(--clr-secondary-200);
 }
 
-@media (-webkit-device-pixel-ratio: 1.5),
-    (-webkit-device-pixel-ratio: 2),
-    (-webkit-device-pixel-ratio: 3) {
-    #titlebar > .window-control-buttons > .button > img {
-        width: 10px;
-        height: 10px;
-    }
-}
-#titlebar > .window-control-buttons > #close-button:hover {
-    background-color: var(--clr-danger);
-}
-#titlebar .logo {
-    padding: 4px;
-    height: var(--titlebar-height);
-    width: var(--titlebar-height);
-}
-
-#main {
+main#main {
     width: 100%;
     height: 100%;
 
@@ -135,12 +86,11 @@ body {
     background: transparent;
 }
 :hover::-webkit-scrollbar-thumb {
-    background: transparent;
-    background: hsl(0 0% 29% / 0.75);
+    background: hsl(var(--clr-primary-300-hsl) / 0.5);
     border-radius: 100vw;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 35% / 1);
+    background: hsl(var(--clr-primary-300-hsl) / 1);
 }
 
 #main::-webkit-scrollbar-track {

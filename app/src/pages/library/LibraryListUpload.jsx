@@ -38,7 +38,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
                             // Otherwise parse books for metadata & then save results
                             else {
                                 const metadata = await window.api.invoke(
-                                    "app:on-book-metadata-import",
+                                    "app:get-parsed-book-metadata",
                                     file.path
                                 );
 
@@ -100,7 +100,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
         });
 
         // Listen for chokidar file delete events
-        window.api.receive("app:delete-file", (event, filename) => {
+        window.api.receive("app:file-is-deleted", (event, filename) => {
             updateFiles();
         });
     }, []);

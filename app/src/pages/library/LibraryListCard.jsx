@@ -59,13 +59,19 @@ const LibraryListCard = ({ file }) => {
     return (
         <>
             <li className="card">
-                <span>
-                    <img
-                        className="card-cover"
-                        src={file.info.cover}
-                        alt="book cover"
-                    />
-                </span>
+                {file.info.cover ? (
+                    <span className="card-cover">
+                        <img src={file.info.cover} alt="book cover" />
+                    </span>
+                ) : (
+                    <span className="card-cover no-cover">
+                        <div className="clip-path-wrapper">
+                            <div className="clip-path">
+                                <h3>{file.info.title}</h3>
+                            </div>
+                        </div>
+                    </span>
+                )}
                 <div
                     className="card-content"
                     onClick={(e) => {
