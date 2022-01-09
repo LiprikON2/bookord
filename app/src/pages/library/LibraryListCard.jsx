@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import {
     readConfigRequest,
     readConfigResponse,
@@ -6,33 +6,11 @@ import {
 } from "secure-electron-store";
 
 import Button from "components/Button";
+import Dropdown from "components/Dropdown";
+
 import "./LibraryListCard.css";
 
 const LibraryListCard = ({ file }) => {
-    const dropdownRef = useRef(null);
-
-    useEffect(() => {
-        return function cleanup() {
-            document.body.removeEventListener("click", closeDropdown);
-        };
-    }, []);
-    const closeDropdown = (e) => {
-        if (dropdownRef.current) {
-            const isMenu = dropdownRef.current.contains(e.target);
-            if (!isMenu) {
-                dropdownRef.current.classList.remove("is-active");
-                document.body.removeEventListener("click", closeDropdown);
-            }
-        }
-    };
-
-    const openDropdown = (e) => {
-        e.preventDefault();
-
-        dropdownRef.current.classList.toggle("is-active");
-        document.body.addEventListener("click", closeDropdown);
-    };
-
     const handleDelete = (e, file) => {
         e.preventDefault();
 
@@ -56,7 +34,6 @@ const LibraryListCard = ({ file }) => {
             }
         });
     };
-    /* Make fallback cover image */
     return (
         <>
             <div className="card">
@@ -81,36 +58,15 @@ const LibraryListCard = ({ file }) => {
                     <h3 className="card-content-title" title={file.info.title}>
                         <span>{file.info.title}</span>
                     </h3>
-                    <div ref={dropdownRef} className="dropdown is-up is-right">
-                        <div className="dropdown-trigger">
-                            <Button
-                                aria-haspopup="true"
-                                aria-controls="dropdown-menu-options"
-                                onClick={openDropdown}>
-                                <span>☰</span>
-                            </Button>
-                        </div>
-                        <div
-                            className="dropdown-menu"
-                            id="dropdown-menu-options"
-                            role="menu">
-                            <div className="dropdown-content">
-                                <div className="dropdown-item">
-                                    <Button>Open</Button>
-                                </div>
-                                <div className="dropdown-item">
-                                    <Button>Edit</Button>
-                                </div>
-                                <hr className="dropdown-divider" />
-                                <div className="dropdown-item">
-                                    <Button
-                                        onClick={(e) => handleDelete(e, file)}>
-                                        Delete
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Dropdown>
+                        <Button>Open</Button>
+                        <Button>Edit</Button>
+                        <Button
+                            divider={true}
+                            onClick={(e) => handleDelete(e, file)}>
+                            Delete
+                        </Button>
+                    </Dropdown>
                 </div>
             </div>
         </>

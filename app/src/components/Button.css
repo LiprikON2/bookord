@@ -1,3 +1,4 @@
+/* +++++ Base button +++++ */
 .button.btn {
     background-color: var(--clr-secondary-300);
     color: var(--clr-primary-100);
@@ -5,31 +6,28 @@
 
     border: none;
 }
-
-/* Removes bulmas' outline   */
-.button.btn:focus:not(:active) {
-    color: var(--clr-primary-100);
-    -webkit-box-shadow: none;
-    box-shadow: none;
-}
-
 /* Hovered */
 .button.btn:hover {
     background-color: var(--clr-secondary-100);
     color: var(--clr-primary-100);
 }
-
 /* Pressed */
 .button.btn:active {
     background-color: var(--clr-secondary-100);
     color: var(--clr-primary-100);
     filter: brightness(75%);
 }
-
+/* Removes bulmas' outline   */
+.button.btn:focus:not(:active) {
+    color: var(--clr-primary-100);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
 /* Prevents form image icons inside button from being draggable */
 .button.btn > * {
     pointer-events: none;
 }
+/* +++++ +++++ +++++ +++++ */
 
 /* +++++ Titlebar button +++++ */
 .button.btn-titlebar {
@@ -44,6 +42,7 @@
     background-color: var(--clr-secondary-300);
     color: var(--clr-primary-000);
 }
+/* Close button is red on hover */
 .button.btn-titlebar:last-child:hover {
     background-color: var(--clr-danger);
 }
@@ -51,4 +50,4 @@
 .button.btn-titlebar:active {
     filter: brightness(125%);
 }
-/* +++++                 +++++ */
+/* +++++ +++++ +++++ +++++ */
