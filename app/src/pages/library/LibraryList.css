@@ -1,3 +1,14 @@
+.section.library-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 3rem;
+}
+.spinner {
+    margin-top: min(10rem, 10%);
+}
+
 .card-list {
     display: grid;
     width: min(100%, 60rem);

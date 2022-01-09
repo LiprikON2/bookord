@@ -8,6 +8,19 @@ import {
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
+const Promise = require("bluebird");
+
+const mapInGroups = (arr, iteratee, groupSize) => {
+    const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
+
+    return Object.values(groups).reduce(
+        async (memo, group) => [
+            ...(await memo),
+            ...(await Promise.all(group.map(iteratee))),
+        ],
+        []
+    );
+};
 
 const LibraryListUpload = ({ files, setFiles }) => {
     const handleUpload = () => {
@@ -28,8 +41,11 @@ const LibraryListUpload = ({ files, setFiles }) => {
 
                 files.then(async (files = []) => {
                     const updatedInteractionStateList = [];
-                    const filesWithMetadata = await Promise.all(
-                        files.map(async (file) => {
+
+                    const filesWithMetadata = await mapInGroups(
+                        files,
+                        async (file) => {
+                            console.log(file.name);
                             const savedMetadata =
                                 interactionStates?.[file.path]?.info;
                             // If books were already parsed, retrive saved results
@@ -60,8 +76,43 @@ const LibraryListUpload = ({ files, setFiles }) => {
 
                                 return { ...file, info: metadata };
                             }
-                        })
+                        },
+                        1
                     );
+                    // const filesWithMetadata = await Promise.all(
+                    //     files.map(async (file) => {
+                    //         const savedMetadata =
+                    //             interactionStates?.[file.path]?.info;
+                    //         // If books were already parsed, retrive saved results
+                    //         if (savedMetadata) {
+                    //             return { ...file, info: savedMetadata };
+                    //         }
+                    //         // Otherwise parse books for metadata & then save results
+                    //         else {
+                    //             const metadata = await window.api.invoke(
+                    //                 "app:get-parsed-book-metadata",
+                    //                 file.path
+                    //             );
+
+                    //             const updatedInteractionState = {
+                    //                 [file.path]: {
+                    //                     file,
+                    //                     state: {
+                    //                         section: 0,
+                    //                         sectionPage: 0,
+                    //                     },
+                    //                     ...interactionStates?.[file.path],
+                    //                     info: metadata,
+                    //                 },
+                    //             };
+                    //             updatedInteractionStateList.push(
+                    //                 updatedInteractionState
+                    //             );
+
+                    //             return { ...file, info: metadata };
+                    //         }
+                    //     })
+                    // );
                     const mergedInteractionStates = Object.assign(
                         {},
                         interactionStates,
@@ -107,7 +158,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
     }, []);
     return (
         <>
-            <div className="container">
+            <div>
                 <Button onClick={handleUpload}>Add a book</Button>
             </div>
         </>

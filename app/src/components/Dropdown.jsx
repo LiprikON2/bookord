@@ -50,27 +50,16 @@ const Dropdown = ({ children, className, ...rest }) => {
                     role="menu">
                     <div className="dropdown-content">
                         {children.map((child, index) => {
-                            if (!child.props.divider) {
-                                return (
-                                    <div key={index} className="dropdown-item">
-                                        {child}
-                                    </div>
-                                );
-                            } else {
-                                return (
-                                    <>
-                                        <hr
-                                            key={"divider" + index}
-                                            className="dropdown-divider"
-                                        />
-                                        <div
-                                            key={index}
-                                            className="dropdown-item">
-                                            {child}
-                                        </div>
-                                    </>
-                                );
-                            }
+                            return child.props.divider !== "true" ? (
+                                <div key={index} className="dropdown-item">
+                                    {child}
+                                </div>
+                            ) : (
+                                <React.Fragment key={index}>
+                                    <hr className="dropdown-divider" />
+                                    <div className="dropdown-item">{child}</div>
+                                </React.Fragment>
+                            );
                         })}
                     </div>
                 </div>

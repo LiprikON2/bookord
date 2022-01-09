@@ -521,7 +521,7 @@ class BookComponent extends HTMLElement {
         this.saveInteractionProgress();
     }
 
-    // TODO Overlord's toc invisible
+    // TODO Overlord's toc invisible and Занимательная физика's
     /**
      * Hides links' on another pages so they can't be navigated to with keyboard without flipping the page
      * @returns {void}

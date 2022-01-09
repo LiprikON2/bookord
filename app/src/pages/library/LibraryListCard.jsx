@@ -34,6 +34,7 @@ const LibraryListCard = ({ file }) => {
             }
         });
     };
+    // Todo Занимательная физика has too much height
     return (
         <>
             <div className="card">
@@ -62,7 +63,7 @@ const LibraryListCard = ({ file }) => {
                         <Button>Open</Button>
                         <Button>Edit</Button>
                         <Button
-                            divider={true}
+                            divider="true"
                             onClick={(e) => handleDelete(e, file)}>
                             Delete
                         </Button>
