@@ -30,6 +30,7 @@ const validChannels = [
     "app:window-is-maximized",
 
     "app:stop-watching-files",
+    "test",
 ];
 
 // Expose protected methods that allow the renderer process to use
