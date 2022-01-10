@@ -75,42 +75,8 @@ const LibraryListUpload = ({ files, setFiles }) => {
                                 return { ...file, info: metadata };
                             }
                         },
-                        5
+                        2
                     );
-                    // const filesWithMetadata = await Promise.all(
-                    //     files.map(async (file) => {
-                    //         const savedMetadata =
-                    //             interactionStates?.[file.path]?.info;
-                    //         // If books were already parsed, retrive saved results
-                    //         if (savedMetadata) {
-                    //             return { ...file, info: savedMetadata };
-                    //         }
-                    //         // Otherwise parse books for metadata & then save results
-                    //         else {
-                    //             const metadata = await window.api.invoke(
-                    //                 "app:get-parsed-book-metadata",
-                    //                 file.path
-                    //             );
-
-                    //             const updatedInteractionState = {
-                    //                 [file.path]: {
-                    //                     file,
-                    //                     state: {
-                    //                         section: 0,
-                    //                         sectionPage: 0,
-                    //                     },
-                    //                     ...interactionStates?.[file.path],
-                    //                     info: metadata,
-                    //                 },
-                    //             };
-                    //             updatedInteractionStateList.push(
-                    //                 updatedInteractionState
-                    //             );
-
-                    //             return { ...file, info: metadata };
-                    //         }
-                    //     })
-                    // );
                     const mergedInteractionStates = Object.assign(
                         {},
                         interactionStates,
