@@ -28,8 +28,9 @@ const validChannels = [
 
     "app:window-is-restored",
     "app:window-is-maximized",
+
+    "app:stop-watching-files",
 ];
-const list = [];
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
@@ -50,14 +51,16 @@ contextBridge.exposeInMainWorld("api", {
     receive: (channel, func) => {
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`
-            ipcRenderer.on(channel, (event, ...args) => func(...args));
+            const subscription = (event, ...args) => func(...args);
+            ipcRenderer.on(channel, subscription);
+            return () => {
+                ipcRenderer.removeListener(channel, subscription);
+            };
         }
     },
 
     invoke: (channel, func) => {
         if (validChannels.includes(channel)) {
-            list.push(channel);
-            console.log("list!!", list);
             const promise = ipcRenderer.invoke(channel, func);
             return promise;
         }

@@ -117,9 +117,12 @@ class BookComponent extends HTMLElement {
          * @property {Promise<Book>} initBook - Initial book with only one section parsed
          */
         this.initBook = new Promise((resolve, reject) => {
-            window.api.receive("app:receive-parsed-section", (initBook) => {
-                resolve(initBook);
-            });
+            this.unlisten = window.api.receive(
+                "app:receive-parsed-section",
+                (initBook) => {
+                    resolve(initBook);
+                }
+            );
         });
     }
 
@@ -943,6 +946,7 @@ class BookComponent extends HTMLElement {
     }
 
     disconnectedCallback() {
+        this.unlisten();
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
         nextBtn.removeEventListener("click", this.flipNPages);

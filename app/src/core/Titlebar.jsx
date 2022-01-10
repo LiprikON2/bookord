@@ -93,12 +93,16 @@ const closeSrcSet = getSrcSetString([
 const Titlebar = ({ title, setTitle }) => {
     useEffect(() => {
         // Switch between minimize and restore buttons in titlebar depending on
-        window.api.receive("app:window-is-restored", () => {
+        const unlisten1 = window.api.receive("app:window-is-restored", () => {
             setIsMaximized(false);
         });
-        window.api.receive("app:window-is-maximized", () => {
+        const unlisten2 = window.api.receive("app:window-is-maximized", () => {
             setIsMaximized(true);
         });
+        return () => {
+            unlisten1();
+            unlisten2();
+        };
     }, []);
 
     const [isMaximized, setIsMaximized] = useState(true);

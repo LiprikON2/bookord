@@ -8,7 +8,6 @@ import {
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
-const Promise = require("bluebird");
 
 const mapInGroups = (arr, iteratee, groupSize) => {
     const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
@@ -31,7 +30,6 @@ const LibraryListUpload = ({ files, setFiles }) => {
     };
 
     const updateFiles = () => {
-        console.log("UPDATE FILES CALLED");
         const files = window.api.invoke("app:get-files");
         window.api.store.clearRendererBindings();
         window.api.store.send(readConfigRequest, "interactionStates");
@@ -58,7 +56,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
                                     "app:get-parsed-book-metadata",
                                     file.path
                                 );
-
+                                // TODO change object key to file.name instead?
                                 const updatedInteractionState = {
                                     [file.path]: {
                                         file,
@@ -77,7 +75,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
                                 return { ...file, info: metadata };
                             }
                         },
-                        1
+                        5
                     );
                     // const filesWithMetadata = await Promise.all(
                     //     files.map(async (file) => {
@@ -131,9 +129,12 @@ const LibraryListUpload = ({ files, setFiles }) => {
         });
     };
 
+    const stopWatchingFiles = () => {
+        window.api.send("app:stop-watching-files");
+    };
+
     useLayoutEffect(() => {
         // Initial file load
-        console.log("initial");
         updateFiles();
     }, []);
 
@@ -148,20 +149,28 @@ const LibraryListUpload = ({ files, setFiles }) => {
             });
             // send file(s) add event to the `main` process
             window.api.invoke("app:on-file-add", mappedFiles).then(() => {
-                console.log("added");
                 updateFiles();
             });
         });
 
-        window.api.receive("app:file-is-deleted", (filename) => {
-            console.log("deleted", filename);
-            updateFiles();
-        });
+        const unlisten = window.api.receive(
+            "app:file-is-deleted",
+            (filename) => {
+                updateFiles();
+            }
+        );
+
+        window.addEventListener("beforeunload", stopWatchingFiles);
+        return () => {
+            window.removeEventListener("beforeunload", stopWatchingFiles);
+            unlisten();
+        };
     }, []);
     return (
         <>
             <div>
                 <Button onClick={handleUpload}>Add a book</Button>
+                <Button onClick={updateFiles}>Refresh</Button>
             </div>
         </>
     );
