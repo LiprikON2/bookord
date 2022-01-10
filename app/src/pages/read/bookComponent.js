@@ -521,7 +521,6 @@ class BookComponent extends HTMLElement {
         this.saveInteractionProgress();
     }
 
-    // TODO Overlord's toc invisible and Занимательная физика's
     /**
      * Hides links' on another pages so they can't be navigated to with keyboard without flipping the page
      * @returns {void}
@@ -529,10 +528,14 @@ class BookComponent extends HTMLElement {
     markVisibleLinks() {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            const currentOffset = this.bookState._getCurrentOffset();
-            const anchorOffset = this.getAnchorOffset(a);
+            const currentOffset = Math.abs(this.bookState._getCurrentOffset());
+            const displayWidth = this._getDisplayWidth();
+            const anchorOffset = Math.abs(this.getElementOffset(a));
 
-            if (currentOffset === anchorOffset) {
+            if (
+                anchorOffset >= currentOffset &&
+                anchorOffset < currentOffset + displayWidth
+            ) {
                 a.style.visibility = "initial";
             } else {
                 a.style.visibility = "hidden";
@@ -573,23 +576,6 @@ class BookComponent extends HTMLElement {
         } else {
             return this.findDirectContentChild(elem.parentNode);
         }
-    }
-
-    /**
-     * Returns offset of an anchor element
-     * @param {HTMLElement} anchor
-     * @returns {number}
-     */
-    getAnchorOffset(anchor) {
-        const contentChild = this.findDirectContentChild(anchor);
-        const marker = document.createElement("span");
-        marker.id = "find-marker";
-
-        this._insertAfter(contentChild, marker);
-        const elemOffset = this.getElementOffset(marker);
-        marker.remove();
-
-        return elemOffset;
     }
 
     /**
