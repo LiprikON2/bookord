@@ -28,7 +28,6 @@ const port = 40992; // Hardcoded; needs to match webpack.development.js and pack
 const selfHost = `http://localhost:${port}`;
 
 const { parseEpub } = require("@liprikon/epub-parser");
-const _ = require("lodash");
 // local dependencies
 const io = require("./io");
 
@@ -36,18 +35,6 @@ const io = require("./io");
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let menuBuilder;
-
-const mapInGroups = (arr, iteratee, groupSize) => {
-    const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
-
-    return Object.values(groups).reduce(
-        async (memo, group) => [
-            ...(await memo),
-            ...(await Promise.all(group.map(iteratee))),
-        ],
-        []
-    );
-};
 
 async function createWindow() {
     // If you'd like to set up auto-updating for your app,
@@ -127,57 +114,13 @@ async function createWindow() {
 
     // Sets up main.js bindings for our electron store;
     // callback is optional and allows you to use store in main process
-    const callback = async (success, store) => {
-        const interactionStates = store.interactionStates;
-        const files = await io.getFiles();
-
-        const updatedInteractionStateList = [];
-
-        const filesWithMetadata = await mapInGroups(
-            files,
-            async (file) => {
-                const savedMetadata = interactionStates?.[file.path]?.info;
-                // If books were already parsed, retrive saved results
-                if (savedMetadata) {
-                    return { ...file, info: savedMetadata };
-                }
-                // Otherwise parse books for metadata & then save results
-                else {
-                    const parsedEpub = await parseEpub(file.path);
-                    const metadata = parsedEpub.info;
-
-                    // TODO change object key to file.name instead?
-                    const updatedInteractionState = {
-                        [file.path]: {
-                            file,
-                            state: {
-                                section: 0,
-                                sectionPage: 0,
-                            },
-                            ...interactionStates?.[file.path],
-                            info: metadata,
-                        },
-                    };
-                    updatedInteractionStateList.push(updatedInteractionState);
-                    return { ...file, info: metadata };
-                }
-            },
-            2
+    const callback = function (success, initialStore) {
+        console.log(
+            `${
+                !success ? "Un-s" : "S"
+            }uccessfully retrieved store in main process.`
         );
-
-        const mergedInteractionStates = Object.assign(
-            {},
-            interactionStates,
-            ...updatedInteractionStateList
-        );
-
-        // window.api.store.send(
-        //     writeConfigRequest,
-        //     "interactionStates",
-        //     mergedInteractionStates
-        // );
-
-        win.webContents.send("test", filesWithMetadata);
+        // console.log(initialStore); // {"key1": "value1", ... }
     };
 
     store.mainBindings(ipcMain, win, fs, callback);

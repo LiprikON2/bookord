@@ -6,7 +6,6 @@ import {
     readConfigResponse,
     writeConfigRequest,
     useConfigInMainRequest,
-    useConfigInMainResponse,
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
@@ -32,23 +31,29 @@ const LibraryListUpload = ({ files, setFiles }) => {
     };
 
     const updateFiles = () => {
-        window.api.store.clearRendererBindings();
-
-        // window.api.store.send(useConfigInMainRequest);
-        // const unlisten = window.api.receive("test", (filesWithMetadata) => {
-        //     console.log("+++", filesWithMetadata);
-
-        //     setFiles(filesWithMetadata);
-        // });
-
         const files = window.api.invoke("app:get-files");
+        window.api.store.clearRendererBindings();
         window.api.store.send(readConfigRequest, "interactionStates");
+
         window.api.store.onReceive(readConfigResponse, async (args) => {
             if (args.key === "interactionStates" && args.success) {
                 const interactionStates = args.value;
 
                 files.then(async (files = []) => {
                     const updatedInteractionStateList = [];
+
+                    // window.api.store.send(useConfigInMainRequest);
+
+                    // window.api.store.onReceive(
+                    //     useConfigInMainResponse,
+                    //     (args) => {
+                    //         if (args.success) {
+                    //             console.log(
+                    //                 "Successfully used store in electron main process"
+                    //             );
+                    //         }
+                    //     }
+                    // );
 
                     const filesWithMetadata = await mapInGroups(
                         files,
