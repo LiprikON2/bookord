@@ -5,6 +5,7 @@ import {
     readConfigRequest,
     readConfigResponse,
     writeConfigRequest,
+    useConfigInMainRequest,
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
@@ -34,12 +35,25 @@ const LibraryListUpload = ({ files, setFiles }) => {
         window.api.store.clearRendererBindings();
         window.api.store.send(readConfigRequest, "interactionStates");
 
-        window.api.store.onReceive(readConfigResponse, (args) => {
+        window.api.store.onReceive(readConfigResponse, async (args) => {
             if (args.key === "interactionStates" && args.success) {
                 const interactionStates = args.value;
 
                 files.then(async (files = []) => {
                     const updatedInteractionStateList = [];
+
+                    // window.api.store.send(useConfigInMainRequest);
+
+                    // window.api.store.onReceive(
+                    //     useConfigInMainResponse,
+                    //     (args) => {
+                    //         if (args.success) {
+                    //             console.log(
+                    //                 "Successfully used store in electron main process"
+                    //             );
+                    //         }
+                    //     }
+                    // );
 
                     const filesWithMetadata = await mapInGroups(
                         files,
@@ -71,12 +85,12 @@ const LibraryListUpload = ({ files, setFiles }) => {
                                 updatedInteractionStateList.push(
                                     updatedInteractionState
                                 );
-
                                 return { ...file, info: metadata };
                             }
                         },
                         2
                     );
+
                     const mergedInteractionStates = Object.assign(
                         {},
                         interactionStates,
