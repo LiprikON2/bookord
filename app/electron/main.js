@@ -120,7 +120,7 @@ async function createWindow() {
                 !success ? "Un-s" : "S"
             }uccessfully retrieved store in main process.`
         );
-        console.log(initialStore); // {"key1": "value1", ... }
+        // console.log(initialStore); // {"key1": "value1", ... }
     };
 
     store.mainBindings(ipcMain, win, fs, callback);
@@ -381,8 +381,8 @@ ipcMain.on("app:close-window", () => {
 
 // FILE HANDLING
 // return list of files
-ipcMain.handle("app:get-files", () => {
-    return io.getFiles();
+ipcMain.handle("app:get-files", async () => {
+    return await io.getFiles();
 });
 
 // listen to file(s) add event
@@ -391,9 +391,9 @@ ipcMain.handle("app:on-file-add", (event, files = []) => {
 });
 
 // open filesystem dialog to choose files
-ipcMain.handle("app:on-fs-dialog-open", (event) => {
+ipcMain.handle("app:on-fs-dialog-open", async (event) => {
     const files =
-        dialog.showOpenDialogSync({
+        (await dialog.showOpenDialog({
             properties: ["openFile", "multiSelections"],
             filters: [
                 {
@@ -420,15 +420,16 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
                 { name: "Kindle File Format Files", extensions: ["azw"] },
                 { name: "Portable Document Format Files", extensions: ["pdf"] },
             ],
-        }) || [];
-
+        })) || [];
     io.addFiles(
-        files.map((filepath) => {
-            return {
-                name: path.parse(filepath).base,
-                path: filepath,
-            };
-        })
+        await Promise.all(
+            files.filePaths.map(async (filepath) => {
+                return {
+                    name: path.parse(filepath).base,
+                    path: filepath,
+                };
+            })
+        )
     );
     return files;
 });
@@ -465,11 +466,9 @@ ipcMain.handle(
         };
         win.webContents.send("app:receive-parsed-section", initBook);
 
-        // console.time("1");
         const sections = parsedEpub.sections.map((section) =>
             section.toHtmlObjects()
         );
-        // console.timeLog("1");
 
         // console.log("book", parsedEpub.sections[0].toHtmlObjects());
         // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
