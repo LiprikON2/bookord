@@ -1,7 +1,7 @@
 {
-  "name": "secure-electron-template",
-  "version": "14.0.0",
-  "description": "The best way to build Electron apps with security in mind.",
+  "name": "bookord",
+  "version": "0.0.1",
+  "description": "The book reading app",
   "private": true,
   "main": "app/electron/main.js",
   "scripts": {
@@ -69,12 +69,12 @@
     "i18n",
     "boilerplate"
   ],
-  "author": "reZach",
+  "author": "LiprikON2",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/reZach/secure-electron-template/issues"
+    "url": "https://github.com/LiprikON2/bookord/issues"
   },
-  "homepage": "https://github.com/reZach/secure-electron-template#readme",
+  "homepage": "https://github.com/LiprikON2/bookord",
   "browserslist": [
     "last 2 Chrome versions"
   ],

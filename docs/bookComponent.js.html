@@ -1,85 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>JSDoc: Source: bookComponent.js</title>
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: bookComponent.js</title>
 
-        <script src="scripts/prettify/prettify.js"></script>
-        <script src="scripts/prettify/lang-css.js"></script>
-        <!--[if lt IE 9]>
-            <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
-        <link
-            type="text/css"
-            rel="stylesheet"
-            href="styles/prettify-tomorrow.css"
-        />
-        <link
-            type="text/css"
-            rel="stylesheet"
-            href="styles/jsdoc-default.css"
-        />
-    </head>
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
 
-    <body>
-        <div id="main">
-            <h1 class="page-title">Source: bookComponent.js</h1>
+<body>
 
-            <section>
-                <article>
-                    <pre
-                        class="prettyprint source linenums"
-                    ><code>import { writeConfigRequest } from "secure-electron-store";
+<div id="main">
+
+    <h1 class="page-title">Source: bookComponent.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { writeConfigRequest } from "secure-electron-store";
+import "./bookComponent.css"; // Then used from ReadChunk.css in template
 
 const template = document.createElement("template");
 template.innerHTML = `
     &lt;section id="root" class="book-container">
-        &lt;style>
-            * {box-sizing: border-box}
-            .book-container {
-                width: 400px;
-                margin: auto;
-                overflow: hidden;
-            }
-
-            .book-container > #book-content,
-            .book-container > #page-counter {
-                columns: 1;
-                column-gap: 0;
-                height: 400px;
-            }
-
-            img {
-                display: block;
-                width: 100% !important;
-                height: 400px !important;
-                object-fit: contain;
-            }
-            ul.book-ui {
-                display: flex;
-                gap: 1em;
-                justify-content: space-between;
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-            ul.book-ui > *,
-            #book-title {
-                color: #999;
-                height: 1.5em;
-            }
-            ul.book-ui > #section-name,
-            #book-title {
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-            }
-            ul.book-ui > #section-page,
-            ul.book-ui > #book-page {
-                visibility: hidden;
-            }
-
-        &lt;/style>
+        &lt;link href="ReadChunk.css" rel="stylesheet" type="text/css">  
 
         &lt;style id="book-style">&lt;/style>
         &lt;div id="book-title">&lt;/div>
@@ -192,9 +145,12 @@ class BookComponent extends HTMLElement {
          * @property {Promise&lt;Book>} initBook - Initial book with only one section parsed
          */
         this.initBook = new Promise((resolve, reject) => {
-            window.api.receive("app:receive-parsed-section", (initBook) => {
-                resolve(initBook);
-            });
+            this.unlisten = window.api.receive(
+                "app:receive-parsed-section",
+                (initBook) => {
+                    resolve(initBook);
+                }
+            );
         });
     }
 
@@ -388,7 +344,9 @@ class BookComponent extends HTMLElement {
             this.loadSection(sectionNum, 0, marker);
         } else {
             // Opens link in external browser
-            window.open(e.target.href, "_blank");
+            if (e.currentTarget.href) {
+                window.open(e.currentTarget.href, "_blank");
+            }
         }
     }
 
@@ -434,7 +392,7 @@ class BookComponent extends HTMLElement {
         );
 
         if (currentSectionPage >= 0 &amp;&amp; totalSectioPage > 0) {
-            sectionPageElem.style.visibility = "visible";
+            sectionPageElem.style.visibility = "initial";
 
             currentSectionPageElem.innerHTML = currentSectionPage;
             totalSectionPageElem.innerHTML = totalSectioPage;
@@ -452,7 +410,7 @@ class BookComponent extends HTMLElement {
         const totalBookPages = this.bookState.getTotalBookPages();
 
         if (currentBookPage >= 0 &amp;&amp; totalBookPages > 0) {
-            bookPageElem.style.visibility = "visible";
+            bookPageElem.style.visibility = "initial";
 
             currentBookPageElem.innerHTML = currentBookPage;
             totalBookPagesElem.innerHTML = totalBookPages;
@@ -491,6 +449,34 @@ class BookComponent extends HTMLElement {
     }
 
     /**
+     * Emits "imgClickEvent" when img tag is clicked
+     * @param {Event} e - Event
+     * @listens Event
+     * @return {void}
+     */
+    emitImgClickEvent(e) {
+        const imgClickEvent = new CustomEvent("imgClickEvent", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: { src: e.target.src },
+        });
+
+        this.dispatchEvent(imgClickEvent);
+    }
+
+    /**
+     * Attaches event emitter to img tags to handle open modals on click
+     * @returns {void}
+     */
+    attachImgEventEmitters() {
+        const images = this.shadowRoot.querySelectorAll("img");
+        images.forEach((img) => {
+            img.addEventListener("click", this.emitImgClickEvent);
+        });
+    }
+
+    /**
      * Removes anchor's event handlers before loading another section
      * @returns {void}
      */
@@ -498,6 +484,19 @@ class BookComponent extends HTMLElement {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
             a.removeEventListener("click", this.handleLink);
+        });
+    }
+
+    /**
+     * Removes images' event emitters before loading another section
+     * @returns {void}
+     */
+    removeImgEventEmitters() {
+        const images = this.shadowRoot.querySelectorAll("img");
+        images.forEach((img) => {
+            img.addEventListener("click", (e) => {
+                this.dispatchEvent;
+            });
         });
     }
 
@@ -520,6 +519,7 @@ class BookComponent extends HTMLElement {
         }
 
         this.removeLinkHandlers();
+        this.removeImgEventEmitters();
 
         // console.log("book", currentSection, nPageShift, offsetMarkerId);
 
@@ -529,7 +529,7 @@ class BookComponent extends HTMLElement {
         // In case user traveled back from the subsequent section
         if (offsetMarkerId) {
             const markerElem = this.shadowRoot.getElementById(offsetMarkerId);
-            const markerOffset = -markerElem.offsetLeft;
+            const markerOffset = this.getElementOffset(markerElem);
             // Set offset to the last page (if it's the end-marker) of this section
             this.setCurrentOffset(markerOffset);
         } else {
@@ -547,7 +547,66 @@ class BookComponent extends HTMLElement {
         }
 
         this.attachLinkHandlers(book);
+        this.attachImgEventEmitters();
+
         this.saveInteractionProgress();
+    }
+
+    /**
+     * Hides links' on another pages so they can't be navigated to with keyboard without flipping the page
+     * @returns {void}
+     */
+    markVisibleLinks() {
+        const anchors = this.shadowRoot.querySelectorAll("a");
+        anchors.forEach((a) => {
+            const currentOffset = Math.abs(this.bookState._getCurrentOffset());
+            const displayWidth = this._getDisplayWidth();
+            const anchorOffset = Math.abs(this.getElementOffset(a));
+
+            if (
+                anchorOffset >= currentOffset &amp;&amp;
+                anchorOffset &lt; currentOffset + displayWidth
+            ) {
+                a.style.visibility = "initial";
+            } else {
+                a.style.visibility = "hidden";
+            }
+        });
+    }
+
+    /**
+     * Returns element's offset
+     * @param {HTMLElement} elem
+     * @returns {number}
+     */
+    getElementOffset(elem) {
+        return -elem.offsetLeft;
+    }
+
+    /**
+     * Inserts element right after target element
+     * @param {HTMLElement} referenceNode
+     * @param {HTMLElement} newNode
+     * @returns {void}
+     */
+    _insertAfter(referenceNode, newNode) {
+        referenceNode.parentNode.insertBefore(
+            newNode,
+            referenceNode.nextSibling
+        );
+    }
+
+    /**
+     * Returns top most element's parent, but which is still a child to the book content element
+     * @param {HTMLElement} elem
+     * @returns {HTMLElement}
+     */
+    findDirectContentChild(elem) {
+        if (elem.parentNode === this.contentElem) {
+            return elem;
+        } else {
+            return this.findDirectContentChild(elem.parentNode);
+        }
     }
 
     /**
@@ -557,6 +616,7 @@ class BookComponent extends HTMLElement {
      */
     setCurrentOffset(nextOffset) {
         this.contentElem.style.transform = `translate(${nextOffset}px)`;
+        this.markVisibleLinks();
     }
 
     /**
@@ -565,10 +625,9 @@ class BookComponent extends HTMLElement {
      * @returns {number}
      */
     calcNextOffset(nPageShift) {
-        const displayWidth = this.contentElem.offsetWidth;
+        const displayWidth = this._getDisplayWidth();
         const currentOffset = this.bookState._getCurrentOffset();
         const shiftOffset = -(nPageShift * displayWidth);
-
         return currentOffset + shiftOffset;
     }
 
@@ -579,17 +638,40 @@ class BookComponent extends HTMLElement {
     _getMaxOffset() {
         const markerId = this.contentElem.id + "-end-marker";
         const markerElem = this.shadowRoot.getElementById(markerId);
-        const markerOffset = -markerElem.offsetLeft;
+        const markerOffset = this.getElementOffset(markerElem);
+
         return markerOffset;
     }
 
     /**
-     * Returns the total of current section pages
+     * Returns book content's width
      * @returns {number}
      */
-    calcTotalSectionPages() {
-        const displayWidth = this.contentElem.offsetWidth;
-        const maxPageNum = Math.abs(this._getMaxOffset() / displayWidth);
+    _getDisplayWidth() {
+        return this.contentElem.offsetWidth;
+    }
+
+    /**
+     * Returns a magic number of pixels that counteracts counter component's error
+     * @returns {number}
+     */
+    _getCounterErrorCorrection() {
+        const displayWidth = this._getDisplayWidth();
+        return displayWidth - 1.5 * displayWidth + 713;
+    }
+    /**
+     * Returns the total of current section pages
+     * @param {bool} [correctCounterError] - Wether or not correct for counter component's error
+     * @returns {number}
+     */
+    calcTotalSectionPages(correctCounterError = false) {
+        const displayWidth = this._getDisplayWidth();
+        let maxOffset = this._getMaxOffset();
+        if (correctCounterError) {
+            const counterError = this._getCounterErrorCorrection();
+            maxOffset += counterError;
+        }
+        const maxPageNum = Math.abs(maxOffset / displayWidth) + 1;
         return parseInt(maxPageNum);
     }
 
@@ -603,7 +685,7 @@ class BookComponent extends HTMLElement {
         const totalSections = this.bookState.totalSections;
 
         const minPageNum = 0;
-        const maxPageNum = this.calcTotalSectionPages();
+        const maxPageNum = this.calcTotalSectionPages() - 1;
         const currentPage = this.bookState.getCurrentSectionPage(this);
         const nextSectionPage = currentPage + nPageShift;
 
@@ -728,6 +810,7 @@ class BookComponent extends HTMLElement {
                 port2.postMessage("");
             });
         };
+
         const book = await parentComponent.book;
 
         parentComponent.bookState.sectionPagesArr = [];
@@ -739,7 +822,7 @@ class BookComponent extends HTMLElement {
                 this.loadStyles(book, section);
                 this.loadContent(section);
 
-                const totalSectionPages = this.calcTotalSectionPages();
+                const totalSectionPages = this.calcTotalSectionPages(true);
                 parentComponent.bookState.sectionPagesArr.push(
                     totalSectionPages
                 );
@@ -790,7 +873,7 @@ class BookComponent extends HTMLElement {
             },
 
             getCurrentSectionPage: function (that) {
-                const displayWidth = that.contentElem.offsetWidth;
+                const displayWidth = that._getDisplayWidth();
                 const currentOffset = this._getCurrentOffset();
                 const currentPage = Math.abs(currentOffset / displayWidth);
                 return currentPage;
@@ -891,6 +974,7 @@ class BookComponent extends HTMLElement {
     }
 
     disconnectedCallback() {
+        this.unlisten();
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
         nextBtn.removeEventListener("click", this.flipNPages);
@@ -915,30 +999,25 @@ class BookComponent extends HTMLElement {
 
 window.customElements.define("book-component", BookComponent);
 </code></pre>
-                </article>
-            </section>
-        </div>
+        </article>
+    </section>
 
-        <nav>
-            <h2><a href="index.html">Home</a></h2>
-            <h3>Classes</h3>
-            <ul>
-                <li><a href="BookComponent.html">BookComponent</a></li>
-            </ul>
-            <h3><a href="global.html">Bookord Docs</a></h3>
-        </nav>
 
-        <br class="clear" />
 
-        <footer>
-            Documentation generated by
-            <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Jan
-            04 2022 03:33:31 GMT+0300 (Москва, стандартное время)
-        </footer>
 
-        <script>
-            prettyPrint();
-        </script>
-        <script src="scripts/linenumber.js"></script>
-    </body>
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BookComponent.html">BookComponent</a></li></ul><h3><a href="global.html">Bookord Docs</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Mar 28 2022 18:14:33 GMT+0300 (Москва, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
 </html>

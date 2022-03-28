@@ -26,6 +26,7 @@ const crypto = require("crypto");
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
+const productName = "Bookord";
 
 const { parseEpub } = require("@liprikon/epub-parser");
 // local dependencies
@@ -73,7 +74,7 @@ async function createWindow() {
         minHeight: 500,
         minWidth: 500,
         backgroundColor: "#202225",
-        icon: getAssetPath("icons/256x256.png"),
+        icon: getAssetPath("icons/256x256.png"), // TODO taskbar icon is tiny
         title: "Application is currently initializing...",
         frame: false,
         webPreferences: {
@@ -116,9 +117,7 @@ async function createWindow() {
     // callback is optional and allows you to use store in main process
     const callback = function (success, initialStore) {
         console.log(
-            `${
-                !success ? "Un-s" : "S"
-            }uccessfully retrieved store in main process.`
+            `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
         );
         console.log(initialStore); // {"key1": "value1", ... }
     };
@@ -155,9 +154,12 @@ async function createWindow() {
     }
 
     win.webContents.on("did-finish-load", () => {
-        win.setTitle("Bookord");
+        win.setTitle(productName);
         io.watchFiles(win);
     });
+    if (process.platform === "win32") {
+        app.setAppUserModelId(productName);
+    }
 
     // Only do these things when in development
     if (isDev) {
@@ -188,24 +190,20 @@ async function createWindow() {
     // https://electronjs.org/docs/tutorial/security#4-handle-session-permission-requests-from-remote-content
     const ses = session;
     const partition = "default";
-    ses.fromPartition(
-        partition
-    ) /* eng-disable PERMISSION_REQUEST_HANDLER_JS_CHECK */
-        .setPermissionRequestHandler(
-            (webContents, permission, permCallback) => {
-                const allowedPermissions = []; // Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest
+    ses.fromPartition(partition) /* eng-disable PERMISSION_REQUEST_HANDLER_JS_CHECK */
+        .setPermissionRequestHandler((webContents, permission, permCallback) => {
+            const allowedPermissions = []; // Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest
 
-                if (allowedPermissions.includes(permission)) {
-                    permCallback(true); // Approve permission request
-                } else {
-                    console.error(
-                        `The application tried to request permission for '${permission}'. This permission was not whitelisted and has been blocked.`
-                    );
+            if (allowedPermissions.includes(permission)) {
+                permCallback(true); // Approve permission request
+            } else {
+                console.error(
+                    `The application tried to request permission for '${permission}'. This permission was not whitelisted and has been blocked.`
+                );
 
-                    permCallback(false); // Deny
-                }
+                permCallback(false); // Deny
             }
-        );
+        });
 
     // https://electronjs.org/docs/tutorial/security#1-only-load-secure-content;
     // The below code can only run when a scheme and host are defined, I thought
@@ -304,17 +302,14 @@ app.on("web-contents-created", (event, contents) => {
     });
 
     // https://electronjs.org/docs/tutorial/security#11-verify-webview-options-before-creation
-    contents.on(
-        "will-attach-webview",
-        (contentsEvent, webPreferences, params) => {
-            // Strip away preload scripts if unused or verify their location is legitimate
-            delete webPreferences.preload;
-            delete webPreferences.preloadURL;
+    contents.on("will-attach-webview", (contentsEvent, webPreferences, params) => {
+        // Strip away preload scripts if unused or verify their location is legitimate
+        delete webPreferences.preload;
+        delete webPreferences.preloadURL;
 
-            // Disable Node.js integration
-            webPreferences.nodeIntegration = false;
-        }
-    );
+        // Disable Node.js integration
+        webPreferences.nodeIntegration = false;
+    });
 
     // https://electronjs.org/docs/tutorial/security#13-disable-or-limit-creation-of-new-windows
     // This code replaces the old "new-window" event handling;
@@ -443,62 +438,57 @@ ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
 });
 
-ipcMain.handle(
-    "app:get-parsed-book",
-    async (event, [filePath, sectionNum, page]) => {
-        const parsedEpub = await parseEpub(filePath);
-        // console.log("_manifest", parsedEpub._manifest, "\n +++\n +++");
-        // console.log("_spine", parsedEpub._spine, "\n +++\n +++");
-        // console.log("_toc", parsedEpub._toc, "\n +++\n +++");
-        // console.log("structure", parsedEpub.structure, "\n +++\n +++");
-        // console.log("_manifest", parsedEpub._metadata, "\n +++\n +++");
+ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum, page]) => {
+    const parsedEpub = await parseEpub(filePath);
+    // console.log("_manifest", parsedEpub._manifest, "\n +++\n +++");
+    // console.log("_spine", parsedEpub._spine, "\n +++\n +++");
+    // console.log("_toc", parsedEpub._toc, "\n +++\n +++");
+    // console.log("structure", parsedEpub.structure, "\n +++\n +++");
+    // console.log("_manifest", parsedEpub._metadata, "\n +++\n +++");
 
-        const sectionNames = parsedEpub.sections.map((section) => section.id);
-        const initBook = {
-            info: parsedEpub.info,
-            styles: parsedEpub.styles,
-            structure: parsedEpub.structure,
-            sectionsTotal: parsedEpub.sections.length,
-            sectionNames,
-            initSectionNum: sectionNum,
-            initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
-        };
-        win.webContents.send("app:receive-parsed-section", initBook);
+    const sectionNames = parsedEpub.sections.map((section) => section.id);
+    const initBook = {
+        info: parsedEpub.info,
+        styles: parsedEpub.styles,
+        structure: parsedEpub.structure,
+        sectionsTotal: parsedEpub.sections.length,
+        sectionNames,
+        initSectionNum: sectionNum,
+        initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
+    };
+    win.webContents.send("app:receive-parsed-section", initBook);
 
-        // console.time("1");
-        const sections = parsedEpub.sections.map((section) =>
-            section.toHtmlObjects()
-        );
-        // console.timeLog("1");
+    // console.time("1");
+    const sections = parsedEpub.sections.map((section) => section.toHtmlObjects());
+    // console.timeLog("1");
 
-        // console.log("book", parsedEpub.sections[0].toHtmlObjects());
-        // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
-        // console.log("book", JSON.stringify(parsedEpub._toc.ncx.navMap, null, 4));
+    // console.log("book", parsedEpub.sections[0].toHtmlObjects());
+    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
+    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.navMap, null, 4));
 
-        // console.log(
-        //     "book",
-        //     JSON.stringify(parsedEpub._manifest, null, 4),
-        //     parsedEpub._manifest.length
-        // );
-        const book = {
-            ...initBook,
-            sections,
-        };
-        return book;
-        // console.log("book", book.info);
-        // console.log("book", JSON.stringify(book._metadata[0], null, 4));
-        // console.log("book", book.styles);
+    // console.log(
+    //     "book",
+    //     JSON.stringify(parsedEpub._manifest, null, 4),
+    //     parsedEpub._manifest.length
+    // );
+    const book = {
+        ...initBook,
+        sections,
+    };
+    return book;
+    // console.log("book", book.info);
+    // console.log("book", JSON.stringify(book._metadata[0], null, 4));
+    // console.log("book", book.styles);
 
-        // ++
-        // const sections = book.sections.map((section) => section.toHtmlObjects());
-        // return [sections, book.styles];
-        // ++
+    // ++
+    // const sections = book.sections.map((section) => section.toHtmlObjects());
+    // return [sections, book.styles];
+    // ++
 
-        // console.log("book", book.structure);
-        // console.log("book", book.sections.length);
-        // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
-    }
-);
+    // console.log("book", book.structure);
+    // console.log("book", book.sections.length);
+    // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
+});
 
 ipcMain.handle("app:get-parsed-book-metadata", async (event, filePath) => {
     const parsedEpub = await parseEpub(filePath);

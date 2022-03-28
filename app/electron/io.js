@@ -8,7 +8,7 @@ const chokidar = require("chokidar");
 const notification = require("./notification");
 
 // get application directory
-const appDir = path.resolve(os.homedir(), "electron-app-files");
+const appDir = path.resolve(os.homedir(), "Bookord Books");
 
 // get the list of files
 exports.getFiles = () => {

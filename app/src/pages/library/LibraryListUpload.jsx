@@ -21,7 +21,7 @@ const mapInGroups = (arr, iteratee, groupSize) => {
     );
 };
 
-const LibraryListUpload = ({ files, setFiles }) => {
+const LibraryListUpload = ({ setFiles, setLoading }) => {
     const handleUpload = () => {
         const promise = window.api.invoke("app:on-fs-dialog-open");
         promise.then(() => {
@@ -44,11 +44,13 @@ const LibraryListUpload = ({ files, setFiles }) => {
                     const filesWithMetadata = await mapInGroups(
                         files,
                         async (file) => {
-                            const savedMetadata =
-                                interactionStates?.[file.path]?.info;
+                            const savedMetadata = interactionStates?.[file.path]?.info;
                             // If books were already parsed, retrive saved results
                             if (savedMetadata) {
-                                return { ...file, info: savedMetadata };
+                                return {
+                                    ...file,
+                                    info: savedMetadata,
+                                };
                             }
                             // Otherwise parse books for metadata & then save results
                             else {
@@ -68,11 +70,12 @@ const LibraryListUpload = ({ files, setFiles }) => {
                                         info: metadata,
                                     },
                                 };
-                                updatedInteractionStateList.push(
-                                    updatedInteractionState
-                                );
+                                updatedInteractionStateList.push(updatedInteractionState);
 
-                                return { ...file, info: metadata };
+                                return {
+                                    ...file,
+                                    info: metadata,
+                                };
                             }
                         },
                         2
@@ -90,6 +93,7 @@ const LibraryListUpload = ({ files, setFiles }) => {
                     );
 
                     setFiles(filesWithMetadata);
+                    setLoading(true);
                 });
             }
         });
@@ -119,12 +123,9 @@ const LibraryListUpload = ({ files, setFiles }) => {
             });
         });
 
-        const unlisten = window.api.receive(
-            "app:file-is-deleted",
-            (filename) => {
-                updateFiles();
-            }
-        );
+        const unlisten = window.api.receive("app:file-is-deleted", (filename) => {
+            updateFiles();
+        });
 
         window.addEventListener("beforeunload", stopWatchingFiles);
         return () => {

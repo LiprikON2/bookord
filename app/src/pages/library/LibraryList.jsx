@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
@@ -9,13 +9,14 @@ import "./LibraryList.css";
 import Spinner from "components/Spinner";
 
 const LibraryList = ({ files, setFiles }) => {
-    // todo Link component
+    const [loading, setLoading] = useState(false);
+
     return (
         <>
             <section className="section library-list" id="uploader">
-                <LibraryListUpload files={files} setFiles={setFiles} />
+                <LibraryListUpload setFiles={setFiles} setLoading={setLoading} />
 
-                {files.length > 0 ? (
+                {loading ? (
                     <div className="card-list" role="list">
                         {files.map((file, index) => (
                             <Link
