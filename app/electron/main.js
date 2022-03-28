@@ -36,6 +36,7 @@ const io = require("./io");
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let menuBuilder;
+let storeData;
 
 async function createWindow() {
     // If you'd like to set up auto-updating for your app,
@@ -51,7 +52,7 @@ async function createWindow() {
             Protocol.requestHandler
         ); /* eng-disable PROTOCOL_HANDLER_JS_CHECK */
     }
-    const store = new Store({ path: app.getPath("userData") });
+    const store = new Store({ debug: isDev, path: app.getPath("userData") });
 
     const RESOURCES_PATH = app.isPackaged
         ? path.join(process.resourcesPath, "resources")
@@ -115,11 +116,8 @@ async function createWindow() {
 
     // Sets up main.js bindings for our electron store;
     // callback is optional and allows you to use store in main process
-    const callback = function (success, initialStore) {
-        console.log(
-            `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
-        );
-        console.log(initialStore); // {"key1": "value1", ... }
+    const callback = function (success, currentStore) {
+        storeData = currentStore;
     };
 
     store.mainBindings(ipcMain, win, fs, callback);
@@ -375,9 +373,16 @@ ipcMain.on("app:close-window", () => {
 });
 
 // FILE HANDLING
-// return list of files
-ipcMain.handle("app:get-files", () => {
-    return io.getFiles();
+
+ipcMain.handle("app:get-books", async () => {
+    const interactionStates = storeData?.["interactionStates"];
+    const files = io.getFiles();
+
+    const [filesWithMetadata, mergedInteractionStates] = await io.getBooks(
+        files,
+        interactionStates
+    );
+    return [filesWithMetadata, mergedInteractionStates];
 });
 
 // listen to file(s) add event
@@ -488,9 +493,4 @@ ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum, page]
     // console.log("book", book.structure);
     // console.log("book", book.sections.length);
     // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
-});
-
-ipcMain.handle("app:get-parsed-book-metadata", async (event, filePath) => {
-    const parsedEpub = await parseEpub(filePath);
-    return parsedEpub.info;
 });

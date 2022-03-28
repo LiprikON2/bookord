@@ -2,24 +2,24 @@ import React, { useEffect, useLayoutEffect } from "react";
 
 import Button from "components/Button";
 import {
-    readConfigRequest,
-    readConfigResponse,
     writeConfigRequest,
+    useConfigInMainRequest,
+    useConfigInMainResponse,
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
 
-const mapInGroups = (arr, iteratee, groupSize) => {
-    const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
+// const mapInGroups = (arr, iteratee, groupSize) => {
+//     const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
 
-    return Object.values(groups).reduce(
-        async (memo, group) => [
-            ...(await memo),
-            ...(await Promise.all(group.map(iteratee))),
-        ],
-        []
-    );
-};
+//     return Object.values(groups).reduce(
+//         async (memo, group) => [
+//             ...(await memo),
+//             ...(await Promise.all(group.map(iteratee))),
+//         ],
+//         []
+//     );
+// };
 
 const LibraryListUpload = ({ setFiles, setLoading }) => {
     const handleUpload = () => {
@@ -30,71 +30,21 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
     };
 
     const updateFiles = () => {
-        const files = window.api.invoke("app:get-files");
-        window.api.store.clearRendererBindings();
-        window.api.store.send(readConfigRequest, "interactionStates");
+        // Updates store in main
+        window.api.store.send(useConfigInMainRequest);
 
-        window.api.store.onReceive(readConfigResponse, (args) => {
-            if (args.key === "interactionStates" && args.success) {
-                const interactionStates = args.value;
+        window.api.store.onReceive(useConfigInMainResponse, async (args) => {
+            if (args.success) {
+                const [filesWithMetadata, mergedInteractionStates] =
+                    await window.api.invoke("app:get-books");
 
-                files.then(async (files = []) => {
-                    const updatedInteractionStateList = [];
-
-                    const filesWithMetadata = await mapInGroups(
-                        files,
-                        async (file) => {
-                            const savedMetadata = interactionStates?.[file.path]?.info;
-                            // If books were already parsed, retrive saved results
-                            if (savedMetadata) {
-                                return {
-                                    ...file,
-                                    info: savedMetadata,
-                                };
-                            }
-                            // Otherwise parse books for metadata & then save results
-                            else {
-                                const metadata = await window.api.invoke(
-                                    "app:get-parsed-book-metadata",
-                                    file.path
-                                );
-                                // TODO change object key to file.name instead?
-                                const updatedInteractionState = {
-                                    [file.path]: {
-                                        file,
-                                        state: {
-                                            section: 0,
-                                            sectionPage: 0,
-                                        },
-                                        ...interactionStates?.[file.path],
-                                        info: metadata,
-                                    },
-                                };
-                                updatedInteractionStateList.push(updatedInteractionState);
-
-                                return {
-                                    ...file,
-                                    info: metadata,
-                                };
-                            }
-                        },
-                        2
-                    );
-                    const mergedInteractionStates = Object.assign(
-                        {},
-                        interactionStates,
-                        ...updatedInteractionStateList
-                    );
-
-                    window.api.store.send(
-                        writeConfigRequest,
-                        "interactionStates",
-                        mergedInteractionStates
-                    );
-
-                    setFiles(filesWithMetadata);
-                    setLoading(false);
-                });
+                setFiles(filesWithMetadata);
+                setLoading(false);
+                window.api.store.send(
+                    writeConfigRequest,
+                    "interactionStates",
+                    mergedInteractionStates
+                );
             }
         });
     };

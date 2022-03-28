@@ -14,12 +14,11 @@ const validChannels = [
     "app:on-file-add",
     "app:on-file-open",
     "app:on-file-delete",
-    "app:get-files",
     "app:file-is-deleted",
 
     "app:get-parsed-book",
     "app:receive-parsed-section",
-    "app:get-parsed-book-metadata",
+    "app:get-books",
 
     "app:minimize-window",
     "app:maximize-window",
