@@ -28,6 +28,7 @@ const port = 40992; // Hardcoded; needs to match webpack.development.js and pack
 const selfHost = `http://localhost:${port}`;
 const productName = "Bookord";
 
+const { fork } = require("child_process");
 const { parseEpub } = require("@liprikon/epub-parser");
 // local dependencies
 const io = require("./io");
@@ -378,11 +379,25 @@ ipcMain.handle("app:get-books", async () => {
     const interactionStates = storeData?.["interactionStates"];
     const files = io.getFiles();
 
+    const child = fork(path.join(__dirname, "child.js"), {
+        env: Object.assign(process.env, {
+            interactionStates: interactionStates,
+            files: files,
+        }),
+    });
+
+    /*
+    child.send("start");
+    child.on("message", (response) => {
+        console.log("response!!", response);
+    });
+    /*/
     const [filesWithMetadata, mergedInteractionStates] = await io.getBooks(
         files,
         interactionStates
     );
     return [filesWithMetadata, mergedInteractionStates];
+    //*/
 });
 
 // listen to file(s) add event
