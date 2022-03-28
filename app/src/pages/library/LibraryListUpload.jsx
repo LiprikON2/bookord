@@ -5,6 +5,7 @@ import {
     readConfigRequest,
     readConfigResponse,
     writeConfigRequest,
+    useConfigInMainRequest,
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
@@ -29,68 +30,103 @@ const LibraryListUpload = ({ files, setFiles }) => {
         });
     };
 
-    const updateFiles = () => {
-        const files = window.api.invoke("app:get-files");
+    const sortFiles = (files, interactionStates) => {
+        const unparsedFiles = [];
+        const parsedFiles = [];
+
+        const savedMetadata = interactionStates?.[file.path]?.info;
+        files.forEach((file) => {
+            // If books were already parsed, retrive saved results
+            if (savedMetadata) {
+                parsedFiles.push({ ...file, info: savedMetadata });
+            } else {
+                unparsedFiles.push({ ...file, info: savedMetadata });
+            }
+        });
+
+        return [parsedFiles, unparsedFiles];
+    };
+    const parseFiles = async (unparsedFiles) => {
+        const filesWithMetadata = await window.api.invoke(
+            "app:get-parsed-book-metadata",
+            unparsedFiles
+        );
+
+        return filesWithMetadata;
+    };
+
+    const updateFiles = async () => {
+        const files = await window.api.invoke("app:get-files");
         window.api.store.clearRendererBindings();
         window.api.store.send(readConfigRequest, "interactionStates");
 
-        window.api.store.onReceive(readConfigResponse, (args) => {
+        window.api.store.onReceive(readConfigResponse, async (args) => {
             if (args.key === "interactionStates" && args.success) {
                 const interactionStates = args.value;
 
-                files.then(async (files = []) => {
-                    const updatedInteractionStateList = [];
+                let [parsedFiles, unparsedFiles] = sortFiles(
+                    files,
+                    interactionStates
+                );
+                parsedFiles = [
+                    ...parsedFiles,
+                    ...(await parseFiles(unparsedFiles)),
+                ];
 
-                    const filesWithMetadata = await mapInGroups(
-                        files,
-                        async (file) => {
-                            const savedMetadata =
-                                interactionStates?.[file.path]?.info;
-                            // If books were already parsed, retrive saved results
-                            if (savedMetadata) {
-                                return { ...file, info: savedMetadata };
-                            }
-                            // Otherwise parse books for metadata & then save results
-                            else {
-                                const metadata = await window.api.invoke(
-                                    "app:get-parsed-book-metadata",
-                                    file.path
-                                );
-                                // TODO change object key to file.name instead?
-                                const updatedInteractionState = {
-                                    [file.path]: {
-                                        file,
-                                        state: {
-                                            section: 0,
-                                            sectionPage: 0,
-                                        },
-                                        ...interactionStates?.[file.path],
-                                        info: metadata,
-                                    },
-                                };
-                                updatedInteractionStateList.push(
-                                    updatedInteractionState
-                                );
+                console.log(parsedFiles);
+                setFiles(parsedFiles);
 
-                                return { ...file, info: metadata };
-                            }
-                        },
-                        2
-                    );
-                    const mergedInteractionStates = Object.assign(
-                        {},
-                        interactionStates,
-                        ...updatedInteractionStateList
-                    );
+                // const updatedInteractionStateList = [];
 
-                    window.api.store.send(
-                        writeConfigRequest,
-                        "interactionStates",
-                        mergedInteractionStates
-                    );
+                // const filesWithMetadata = await mapInGroups(
+                //     files,
+                //     async (file) => {
+                //         const savedMetadata =
+                //             interactionStates?.[file.path]?.info;
+                //         // If books were already parsed, retrive saved results
+                //         if (savedMetadata) {
+                //             return { ...file, info: savedMetadata };
+                //         }
+                //         // Otherwise parse books for metadata & then save results
+                //         else {
+                //             const metadata = await window.api.invoke(
+                //                 "app:get-parsed-book-metadata",
+                //                 file.path
+                //             );
+                //             // TODO change object key to file.name instead?
+                //             const updatedInteractionState = {
+                //                 [file.path]: {
+                //                     file,
+                //                     state: {
+                //                         section: 0,
+                //                         sectionPage: 0,
+                //                     },
+                //                     ...interactionStates?.[file.path],
+                //                     info: metadata,
+                //                 },
+                //             };
+                //             updatedInteractionStateList.push(
+                //                 updatedInteractionState
+                //             );
+                //             return { ...file, info: metadata };
+                //         }
+                //     },
+                //     2
+                // );
 
-                    setFiles(filesWithMetadata);
-                });
+                // const mergedInteractionStates = Object.assign(
+                //     {},
+                //     interactionStates,
+                //     ...updatedInteractionStateList
+                // );
+
+                // window.api.store.send(
+                //     writeConfigRequest,
+                //     "interactionStates",
+                //     mergedInteractionStates
+                // );
+
+                // setFiles(filesWithMetadata);
             }
         });
     };

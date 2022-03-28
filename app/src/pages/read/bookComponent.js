@@ -825,7 +825,6 @@ class BookComponent extends HTMLElement {
             this.currInteractionState.state.section,
             this.currInteractionState.state.sectionPage
         );
-
         this.bookState = {
             currentSection: this.currInteractionState.state.section,
             totalSections: 0,

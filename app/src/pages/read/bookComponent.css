@@ -31,6 +31,7 @@
     width: 100% !important;
     height: var(--book-component-width) !important;
     object-fit: contain;
+    cursor: zoom-in;
 }
 ul.book-ui {
     display: flex;
