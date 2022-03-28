@@ -27,22 +27,7 @@ const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 
-const { fork } = require("child_process");
-
 const { parseEpub } = require("@liprikon/epub-parser");
-const _ = require("lodash");
-
-const mapInGroups = (arr, iteratee, groupSize) => {
-    const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
-
-    return Object.values(groups).reduce(
-        async (memo, group) => [
-            ...(await memo),
-            ...(await Promise.all(group.map(iteratee))),
-        ],
-        []
-    );
-};
 // local dependencies
 const io = require("./io");
 
@@ -515,37 +500,7 @@ ipcMain.handle(
     }
 );
 
-ipcMain.handle("app:get-parsed-book-metadata", async (event, files) => {
-    console.log("Starting child...");
-    const child = fork(path.join(__dirname, "child.js"), ["hello"], {
-        stdio: ["pipe", "pipe", "pipe", "ipc"],
-    });
-    // child.stdout.on("data", (data) => {
-    //     console.log("DATA stdout", data);
-    //     // event.reply("data", "[stdout-main-fork] " + data.toString());
-    // });
-    // child.stderr.on("data", (data) => {
-    //     console.log("DATA stderr", data);
-    //     // event.reply("data", "[stderr-main-fork] " + data.toString());
-    // });
-    child.send(files[0]);
-    // const s = io.openFile(files[0].path).buffer;
-    // console.log("s", s);
-    child.on("message", (message) => {
-        console.log("MESSAGE message", message);
-        // event.reply("data", "[ipc-main-fork] " + message);
-    });
-
-    return [];
-
-    // cons`t filesWithMetadata = mapInGroups(
-    //     files,
-    //     async (file) => {
-    //         const metadata = (await parseEpub(file.path)).info;
-    //         return { ...file, info: metadata };
-    //     },
-    //     4
-    // );`
-
-    // return filesWithMetadata;
+ipcMain.handle("app:get-parsed-book-metadata", async (event, filePath) => {
+    const parsedEpub = await parseEpub(filePath);
+    return parsedEpub.info;
 });
