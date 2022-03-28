@@ -515,18 +515,36 @@ ipcMain.handle(
 );
 
 ipcMain.handle("app:get-parsed-book-metadata", async (event, files) => {
-    fork(path.join(__dirname, "child.js"), ["args"], {
-        stdio: "pipe",
+    console.log("Starting child...");
+    const child = fork(path.join(__dirname, "child.js"), ["hello"], {
+        stdio: ["pipe", "pipe", "pipe", "ipc"],
+    });
+    // child.stdout.on("data", (data) => {
+    //     console.log("DATA stdout", data);
+    //     // event.reply("data", "[stdout-main-fork] " + data.toString());
+    // });
+    // child.stderr.on("data", (data) => {
+    //     console.log("DATA stderr", data);
+    //     // event.reply("data", "[stderr-main-fork] " + data.toString());
+    // });
+    child.send(files[0]);
+    // const s = io.openFile(files[0].path).buffer;
+    // console.log("s", s);
+    child.on("message", (message) => {
+        console.log("MESSAGE message", message);
+        // event.reply("data", "[ipc-main-fork] " + message);
     });
 
-    const filesWithMetadata = mapInGroups(
-        files,
-        async (file) => {
-            const metadata = (await parseEpub(file.path)).info;
-            return { ...file, info: metadata };
-        },
-        4
-    );
+    return [];
 
-    return filesWithMetadata;
+    // cons`t filesWithMetadata = mapInGroups(
+    //     files,
+    //     async (file) => {
+    //         const metadata = (await parseEpub(file.path)).info;
+    //         return { ...file, info: metadata };
+    //     },
+    //     4
+    // );`
+
+    // return filesWithMetadata;
 });
