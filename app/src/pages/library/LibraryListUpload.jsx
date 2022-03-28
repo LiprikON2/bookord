@@ -93,7 +93,7 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
                     );
 
                     setFiles(filesWithMetadata);
-                    setLoading(true);
+                    setLoading(false);
                 });
             }
         });

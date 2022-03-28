@@ -9,14 +9,14 @@ import "./LibraryList.css";
 import Spinner from "components/Spinner";
 
 const LibraryList = ({ files, setFiles }) => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     return (
         <>
             <section className="section library-list" id="uploader">
                 <LibraryListUpload setFiles={setFiles} setLoading={setLoading} />
 
-                {loading ? (
+                {!loading ? (
                     <div className="card-list" role="list">
                         {files.map((file, index) => (
                             <Link

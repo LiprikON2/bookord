@@ -74,7 +74,7 @@ async function createWindow() {
         minHeight: 500,
         minWidth: 500,
         backgroundColor: "#202225",
-        icon: getAssetPath("icons/256x256.png"), // TODO taskbar icon is tiny
+        icon: getAssetPath("icons/256x256.png"), // TODO taskbar icon is tiny; No notification icon
         title: "Application is currently initializing...",
         frame: false,
         webPreferences: {
