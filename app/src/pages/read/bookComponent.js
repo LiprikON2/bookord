@@ -1,3 +1,5 @@
+// @ts-check
+
 import { writeConfigRequest } from "secure-electron-store";
 import "./bookComponent.css"; // Then used from ReadChunk.css in template
 
@@ -67,12 +69,14 @@ template.innerHTML = `
 /** Contains interaction states of all of the books; path to the book's file is used to access individual InteractionState objects
  * @typedef {Object} InteractionStates
  * @property {BookFile} lastOpenedBook - Book file of last opened book
- * @property {InteractionState} * - Path to the book is used as a key
+ * @property {InteractionState} path - Path to the book is used as a key
  */
 
 /** HTML & XML parsed to the JavaScript object
- * @typedef {Object} HtmlObject
+ * @typedef {Object[]} HtmlObject
  * @property {string|undefined} [name]
+ * @property {string|undefined} [text]
+ * @property {Attrs|undefined} [attrs]
  * @property {string|undefined} [sectionId]
  * @property {string|undefined} [href]
  * @property {string|undefined} [_data] - HTML content as a string
@@ -81,15 +85,29 @@ template.innerHTML = `
  * @property {HtmlObject|undefined} [children]
  */
 
+/** HtmlObject Attributes
+ * @typedef {Object} Attrs
+ * @property {string|undefined} [id]
+ * @property {string|undefined} [href]
+ * @property {string|undefined} [src]
+ *
+ */
+
 /** Parsed book object which consists of sections
  * @typedef {Object} Book
  * @property {Info} info - Book metadata information
  * @property {Array<HtmlObject>} initSection - Initially parsed book section
  * @property {number} initSectionNum - Number that corresponds the book's initally parsed section
+ * @property {Array<HtmlObject>} sections - Sections
  * @property {Array<string>} sectionNames - List of section ids (names)
- * @property {number} sectionTotal - Book's total number of section
- * @property {Array<HtmlObject>} structure - Book's parsed Table Of Contents (TOC)
+ * @property {number} sectionsTotal - Book's total number of section
+ * @property {HtmlObject} structure - Book's parsed Table Of Contents (TOC)
  * @property {Array<HtmlObject>} styles - Book's stylesheets
+ */
+
+/**
+ * @typedef {Object} Event
+ * @param {HTMLInputElement} currentTarget
  */
 
 /**
@@ -110,7 +128,7 @@ class BookComponent extends HTMLElement {
         this.contentElem = this.shadowRoot.getElementById("book-content");
 
         /**
-         * @property {bool} isInit - Status of initialization of the book, true when all of the book's sections are parsed
+         * @property {boolean} isInit - Status of initialization of the book, true when all of the book's sections are parsed
          */
         this.isInit = false;
         /**
@@ -175,9 +193,9 @@ class BookComponent extends HTMLElement {
     /**
      * Recursively extracts section (chapter) title from book's TOC
      * @param {Book} book
-     * @param {Array<HtmlObject>} toc
+     * @param {HtmlObject} toc
      * @param {number} sectionNum
-     * @param {bool} root - A way to differentiate between recursive and non-recursive function call
+     * @param {boolean} root - A way to differentiate between recursive and non-recursive function call
      * @returns {string}
      */
     getSectionTitle(book, toc, sectionNum, root = true) {
@@ -203,16 +221,8 @@ class BookComponent extends HTMLElement {
             return descendantSectionTitle;
         } else if (sectionTitle) {
             return sectionTitle;
-        } else if (
-            root &&
-            sectionNum >= 0 &&
-            sectionNum < this.bookState.totalSections
-        ) {
-            const prevSectionTitle = this.getSectionTitle(
-                book,
-                toc,
-                sectionNum - 1
-            );
+        } else if (root && sectionNum >= 0 && sectionNum < this.bookState.totalSections) {
+            const prevSectionTitle = this.getSectionTitle(book, toc, sectionNum - 1);
             return prevSectionTitle;
         } else {
             return "";
@@ -303,10 +313,7 @@ class BookComponent extends HTMLElement {
      */
     handleLink(e, book) {
         e.preventDefault();
-        const [sectionName, marker] = e.currentTarget.href
-            .split("#")
-            .pop()
-            .split(",");
+        const [sectionName, marker] = e.currentTarget.href.split("#").pop().split(",");
 
         const sectionNum = book.sectionNames.findIndex(
             (section) => section === sectionName
@@ -351,14 +358,11 @@ class BookComponent extends HTMLElement {
         sectionNameElem.title = this.bookState.currentSectionTitle;
 
         const sectionPageElem = this.shadowRoot.getElementById("section-page");
-        const currentSectionPageElem = this.shadowRoot.getElementById(
-            "current-section-page"
-        );
-        const totalSectionPageElem = this.shadowRoot.getElementById(
-            "total-section-pages"
-        );
-        const currentSectionPage =
-            this.bookState.getCurrentSectionPage(this) + 1;
+        const currentSectionPageElem =
+            this.shadowRoot.getElementById("current-section-page");
+        const totalSectionPageElem =
+            this.shadowRoot.getElementById("total-section-pages");
+        const currentSectionPage = this.bookState.getCurrentSectionPage(this) + 1;
         const totalSectioPage = this.bookState.getTotalSectionPages(
             this.bookState.currentSection
         );
@@ -366,17 +370,15 @@ class BookComponent extends HTMLElement {
         if (currentSectionPage >= 0 && totalSectioPage > 0) {
             sectionPageElem.style.visibility = "initial";
 
-            currentSectionPageElem.innerHTML = currentSectionPage;
-            totalSectionPageElem.innerHTML = totalSectioPage;
+            currentSectionPageElem.innerHTML = currentSectionPage.toString();
+            totalSectionPageElem.innerHTML = totalSectioPage.toString();
         } else {
             sectionPageElem.style.visibility = "hidden";
         }
 
         const bookPageElem = this.shadowRoot.getElementById("book-page");
-        const currentBookPageElem =
-            this.shadowRoot.getElementById("current-book-page");
-        const totalBookPagesElem =
-            this.shadowRoot.getElementById("total-book-pages");
+        const currentBookPageElem = this.shadowRoot.getElementById("current-book-page");
+        const totalBookPagesElem = this.shadowRoot.getElementById("total-book-pages");
 
         const currentBookPage = this.bookState.getCurrentBookPage(this) + 1;
         const totalBookPages = this.bookState.getTotalBookPages();
@@ -384,8 +386,8 @@ class BookComponent extends HTMLElement {
         if (currentBookPage >= 0 && totalBookPages > 0) {
             bookPageElem.style.visibility = "initial";
 
-            currentBookPageElem.innerHTML = currentBookPage;
-            totalBookPagesElem.innerHTML = totalBookPages;
+            currentBookPageElem.innerHTML = currentBookPage.toString();
+            totalBookPagesElem.innerHTML = totalBookPages.toString();
         } else {
             bookPageElem.style.visibility = "hidden";
         }
@@ -455,7 +457,7 @@ class BookComponent extends HTMLElement {
     removeLinkHandlers() {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            a.removeEventListener("click", this.handleLink);
+            a.removeEventListener("click", this.handleLink.bind(this));
         });
     }
 
@@ -477,17 +479,18 @@ class BookComponent extends HTMLElement {
      * @param {number} currentSection
      * @param {number} nPageShift
      * @param {string} offsetMarkerId
-     * @returns {void}
+     * @returns {Promise<void>}
      */
     async loadSection(currentSection, nPageShift, offsetMarkerId = "") {
+        let book, section;
         if (!this.isInit) {
-            var book = await this.initBook;
+            book = await this.initBook;
 
-            var section = book.initSection;
+            section = book.initSection;
             currentSection = book.initSectionNum;
         } else {
-            var book = await this.book;
-            var section = this.getSection(book, currentSection);
+            book = await this.book;
+            section = this.getSection(book, currentSection);
         }
 
         this.removeLinkHandlers();
@@ -562,10 +565,7 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     _insertAfter(referenceNode, newNode) {
-        referenceNode.parentNode.insertBefore(
-            newNode,
-            referenceNode.nextSibling
-        );
+        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
 
     /**
@@ -577,7 +577,7 @@ class BookComponent extends HTMLElement {
         if (elem.parentNode === this.contentElem) {
             return elem;
         } else {
-            return this.findDirectContentChild(elem.parentNode);
+            return this.findDirectContentChild(elem.parentElement); // TODO parentNode -> parentElement: remove comment if it doesnt break anything
         }
     }
 
@@ -633,7 +633,7 @@ class BookComponent extends HTMLElement {
     }
     /**
      * Returns the total of current section pages
-     * @param {bool} [correctCounterError] - Wether or not correct for counter component's error
+     * @param {boolean} [correctCounterError] - Wether or not correct for counter component's error
      * @returns {number}
      */
     calcTotalSectionPages(correctCounterError = false) {
@@ -644,7 +644,7 @@ class BookComponent extends HTMLElement {
             maxOffset += counterError;
         }
         const maxPageNum = Math.abs(maxOffset / displayWidth) + 1;
-        return parseInt(maxPageNum);
+        return maxPageNum;
     }
 
     /**
@@ -715,8 +715,7 @@ class BookComponent extends HTMLElement {
         const currentPage = this.bookState.getCurrentBookPage(this);
         const nPageShift = validPage - currentPage - 1;
 
-        const nextSection =
-            this.bookState.getSectionBookPageBelongsTo(validPage);
+        const nextSection = this.bookState.getSectionBookPageBelongsTo(validPage);
         const currentSection = this.bookState.currentSection;
 
         if (nextSection === currentSection && nPageShift !== 0) {
@@ -748,10 +747,12 @@ class BookComponent extends HTMLElement {
         const counterComponent = document.createElement("book-component");
         this.shadowRoot.appendChild(counterComponent);
 
+        // Hide counter
         const rootElem = counterComponent.shadowRoot.getElementById("root");
         rootElem.style.visibility = "hidden";
         rootElem.style.maxHeight = "0";
 
+        // @ts-ignore
         counterComponent._countBookPages(this);
     }
 
@@ -759,7 +760,7 @@ class BookComponent extends HTMLElement {
      * Asynchronous version of a forEach
      * @param {Array} array
      * @param {*} callback
-     * @returns {void}
+     * @returns {Promise<void>}
      */
     async _asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
@@ -769,13 +770,18 @@ class BookComponent extends HTMLElement {
 
     /**
      * Asynchronously and non-blockingly counts pages of a book with a help of a parent web component
-     * @param {HTMLElement} parentComponent - instance of a parent web component which created this counter web component
-     * @returns {void}
+     * @param {BookComponent} parentComponent - instance of a parent web component which created this counter web component
+     * @returns {Promise<void>}
      */
     async _countBookPages(parentComponent) {
+        /**
+         * Splits code in chunks
+         * https://stackoverflow.com/a/67135932/10744339
+         * @returns {Promise<void>}
+         */
         const _waitForNextTask = () => {
-            const { port1, port2 } = (_waitForNextTask.channel ??=
-                new MessageChannel());
+            // @ts-ignore
+            const { port1, port2 } = (_waitForNextTask.channel ??= new MessageChannel());
             return new Promise((res) => {
                 port1.addEventListener("message", () => res(), { once: true });
                 port1.start();
@@ -787,24 +793,19 @@ class BookComponent extends HTMLElement {
 
         parentComponent.bookState.sectionPagesArr = [];
 
-        await this._asyncForEach(
-            book.sectionNames,
-            async (sectionName, sectionIndex) => {
-                const section = this.getSection(book, sectionIndex);
-                this.loadStyles(book, section);
-                this.loadContent(section);
+        await this._asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
+            const section = this.getSection(book, sectionIndex);
+            this.loadStyles(book, section);
+            this.loadContent(section);
 
-                const totalSectionPages = this.calcTotalSectionPages(true);
-                parentComponent.bookState.sectionPagesArr.push(
-                    totalSectionPages
-                );
-                // Update page count every 10 sections
-                if (sectionIndex % 10 === 0) {
-                    parentComponent.updateBookUI();
-                }
-                await _waitForNextTask();
+            const totalSectionPages = this.calcTotalSectionPages(true);
+            parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
+            // Update page count every 10 sections
+            if (sectionIndex % 10 === 0) {
+                parentComponent.updateBookUI();
             }
-        );
+            await _waitForNextTask();
+        });
         parentComponent.updateBookUI();
 
         this.remove();
@@ -832,10 +833,7 @@ class BookComponent extends HTMLElement {
 
             getSectionBookPageBelongsTo: function (page) {
                 const sliceOfPages = [];
-                for (const [
-                    index,
-                    pageCount,
-                ] of this.sectionPagesArr.entries()) {
+                for (const [index, pageCount] of this.sectionPagesArr.entries()) {
                     sliceOfPages.push(pageCount);
                     const sumOfPages = sliceOfPages.reduce(
                         (prevValue, currValue) => prevValue + currValue
@@ -889,9 +887,8 @@ class BookComponent extends HTMLElement {
             _getCurrentOffset: function () {
                 // Strips all non-numeric characters from a string
                 return (
-                    parseInt(
-                        this.contentElem.style.transform.replace(/[^\d.-]/g, "")
-                    ) || 0
+                    parseInt(this.contentElem.style.transform.replace(/[^\d.-]/g, "")) ||
+                    0
                 );
             }.bind(this),
         };
@@ -949,8 +946,8 @@ class BookComponent extends HTMLElement {
         this.unlisten();
         const nextBtn = this.shadowRoot.querySelector("button#next");
         const backBtn = this.shadowRoot.querySelector("button#back");
-        nextBtn.removeEventListener("click", this.flipNPages);
-        backBtn.removeEventListener("click", this.flipNPages);
+        nextBtn.removeEventListener("click", this.flipNPages.bind(this));
+        backBtn.removeEventListener("click", this.flipNPages.bind(this));
 
         this.removeLinkHandlers();
     }
