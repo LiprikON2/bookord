@@ -78,8 +78,7 @@ const Read = () => {
         bookComponentRef.current = bookComponent;
 
         return () => {
-            console.log("THISSS NEVER EXITS");
-            bookComponentRef.current.removeEventListener("imgClickEvent", handleImgClick);
+            console.log("SSSSSSSS");
         };
     }, []);
 
@@ -119,11 +118,13 @@ const Read = () => {
 
     useEffect(() => {
         return () => {
+            console.log("bookComponentRef", !!bookComponentRef.current);
+            // bookComponentRef.current.removeEventListener("imgClickEvent", handleImgClick);
             console.log("trying to kill a child");
             window.api.send("app:on-stop-parsing");
             window.api.store.clearRendererBindings();
         };
-    }, []);
+    }, [bookComponentRef.current]);
 
     return (
         <>

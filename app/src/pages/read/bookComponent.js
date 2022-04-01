@@ -152,11 +152,9 @@ class BookComponent extends HTMLElement {
      * @returns {Promise<Book>}
      */
     importBook(filePath, sectionNum, sectionPage) {
-        const book = window.api.invoke("app:get-parsed-book", [
-            filePath,
-            sectionNum,
-            sectionPage,
-        ]);
+        const book = window.api
+            .invoke("app:get-parsed-book", [filePath, sectionNum, sectionPage])
+            .catch((error) => {});
         book.then(() => {
             this.isInit = true;
         });
@@ -805,7 +803,9 @@ class BookComponent extends HTMLElement {
             if (sectionIndex % 10 === 0) {
                 parentComponent.updateBookUI();
             }
-            await _waitForNextTask();
+            await _waitForNextTask().catch((error) => {
+                console.log("wait error", error);
+            });
         });
         parentComponent.updateBookUI();
 
@@ -816,17 +816,21 @@ class BookComponent extends HTMLElement {
      * Loads book to the web component, as well as runs a page counter
      * @param {string} filePath - Path to the book file, also serves as the key to InteractionStates object
      * @param {InteractionStates} interactionStates - interaction states of all of the books
-     * @return {void}
+     * @return {Promise<void>}
      */
-    loadBook(filePath, interactionStates) {
+    async loadBook(filePath, interactionStates) {
         this.currInteractionState = interactionStates[filePath];
         this.interactionStates = interactionStates;
 
-        this.book = this.importBook(
+        this.book = await this.importBook(
             this.currInteractionState.file.path,
             this.currInteractionState.state.section,
             this.currInteractionState.state.sectionPage
         );
+        if (!this.book) {
+            console.log("EXITI");
+            return;
+        }
 
         this.bookState = {
             currentSection: this.currInteractionState.state.section,
@@ -893,7 +897,6 @@ class BookComponent extends HTMLElement {
                 );
             }.bind(this),
         };
-
         this.createCounterComponent();
         this.loadSection(
             this.bookState.currentSection,
@@ -951,6 +954,11 @@ class BookComponent extends HTMLElement {
         backBtn.removeEventListener("click", this.flipNPages.bind(this));
 
         this.removeLinkHandlers();
+
+        delete this.initBook;
+        delete this.book;
+        delete this.bookState;
+        delete this.contentElem;
     }
 
     /**

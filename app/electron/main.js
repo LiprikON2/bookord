@@ -379,39 +379,6 @@ ipcMain.on("app:close-window", () => {
 
 // FILE HANDLING
 
-const getChildResponse = async (child) => {
-    let promiseResolve;
-    const promise = new Promise((resolve, reject) => {
-        promiseResolve = resolve;
-    });
-    child.on("message", (response) => {
-        promiseResolve(response);
-    });
-    return promise;
-};
-
-ipcMain.handle("app:get-books", async () => {
-    // Forked child process for parsing book file.
-    // It is needed to offload main thread and not to block UI
-    const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
-
-    const interactionStates = storeData?.["interactionStates"];
-    const files = io.getFiles();
-
-    metadataParseChild.send({
-        parseMetadata: {
-            interactionStates: interactionStates,
-            files: files,
-        },
-    });
-    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(
-        metadataParseChild
-    );
-
-    metadataParseChild.disconnect();
-    return [filesWithMetadata, mergedInteractionStates];
-});
-
 // listen to file(s) add event
 ipcMain.handle("app:on-file-add", (event, files = []) => {
     io.addFiles(files);
@@ -468,6 +435,38 @@ ipcMain.on("app:on-file-delete", (event, file) => {
 // listen to file open event
 ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
+});
+
+const getChildResponse = async (child) => {
+    let promiseResolve;
+    const promise = new Promise((resolve, reject) => {
+        promiseResolve = resolve;
+    });
+    child.on("message", (response) => {
+        promiseResolve(response);
+    });
+    return promise;
+};
+
+// Forked child process for parsing book file.
+// It is needed to offload main thread and not to block UI
+const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
+
+ipcMain.handle("app:get-books", async () => {
+    const interactionStates = storeData?.["interactionStates"];
+    const files = io.getFiles();
+
+    metadataParseChild.send({
+        parseMetadata: {
+            interactionStates: interactionStates,
+            files: files,
+        },
+    });
+    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(
+        metadataParseChild
+    );
+
+    return [filesWithMetadata, mergedInteractionStates];
 });
 
 let parseChild;
