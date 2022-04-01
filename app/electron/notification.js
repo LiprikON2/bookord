@@ -1,10 +1,11 @@
-const { Notification } = require('electron');
+const { Notification } = require("electron");
 
 // display files added notification
 exports.filesAdded = (size) => {
     const notif = new Notification({
-        title: 'Files added',
-        body: `${size} file(s) has been successfully added.`,
+        title: "Adding books",
+        body:
+            size == 1 ? `${size} book is being added.` : `${size} books are being added.`,
     });
 
     notif.show();

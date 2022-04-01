@@ -1,9 +1,4 @@
-import React, { useEffect } from "react";
-import {
-    readConfigRequest,
-    readConfigResponse,
-    writeConfigRequest,
-} from "secure-electron-store";
+import React from "react";
 
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
@@ -13,29 +8,12 @@ import "./LibraryListCard.css";
 const LibraryListCard = ({ file }) => {
     const handleDelete = (e, file) => {
         e.preventDefault();
-
-        window.api.store.clearRendererBindings();
-
-        // Send an IPC request to get config
-        window.api.store.send(readConfigRequest, "interactionStates");
-
-        // Listen for responses from the electron store
-        window.api.store.onReceive(readConfigResponse, (args) => {
-            if (args.key === "interactionStates" && args.success) {
-                const interactionStates = args.value;
-                delete interactionStates[file.path];
-
-                window.api.store.send(
-                    writeConfigRequest,
-                    "interactionStates",
-                    interactionStates
-                );
-                window.api.send("app:on-file-delete", file);
-            }
-        });
+        window.api.send("app:on-file-delete", file);
+        // Chokidar then triggers removeFromInteractionState
     };
     // Todo Занимательная физика has too much height
     // Todo when only one book its too big
+    // TODO Overlord - Volume 13 - Paladin of the Holy Kingdom (Second Part) cant find image
     return (
         <>
             <div className="card">
@@ -63,9 +41,7 @@ const LibraryListCard = ({ file }) => {
                     <Dropdown>
                         <Button>Open</Button>
                         <Button>Edit</Button>
-                        <Button
-                            divider="true"
-                            onClick={(e) => handleDelete(e, file)}>
+                        <Button divider="true" onClick={(e) => handleDelete(e, file)}>
                             Delete
                         </Button>
                     </Dropdown>

@@ -375,29 +375,42 @@ ipcMain.on("app:close-window", () => {
 
 // FILE HANDLING
 
+const pr = () => {
+    return new Promise((resolve, reject) => {
+        let sum = 0;
+        for (let i = 0; i < 1e9; i++) {
+            sum += i;
+        }
+        resolve(sum);
+    });
+};
+
+const getChildResponse = async (child) => {
+    let promiseResolve;
+    const promise = new Promise(function (resolve, reject) {
+        promiseResolve = resolve;
+    });
+
+    child.on("message", (response) => {
+        promiseResolve(response);
+    });
+    return promise;
+};
+
 ipcMain.handle("app:get-books", async () => {
     const interactionStates = storeData?.["interactionStates"];
     const files = io.getFiles();
 
-    const child = fork(path.join(__dirname, "child.js"), {
-        env: Object.assign(process.env, {
-            interactionStates: interactionStates,
-            files: files,
-        }),
-    });
+    const child = fork(path.join(__dirname, "child.js"));
 
-    /*
-    child.send("start");
-    child.on("message", (response) => {
-        console.log("response!!", response);
+    child.send({
+        interactionStates: interactionStates,
+        files: files,
     });
-    /*/
-    const [filesWithMetadata, mergedInteractionStates] = await io.getBooks(
-        files,
-        interactionStates
-    );
+    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(child);
+
+    child.disconnect();
     return [filesWithMetadata, mergedInteractionStates];
-    //*/
 });
 
 // listen to file(s) add event

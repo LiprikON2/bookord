@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Button from "components/Button";
+import ROUTES from "Constants/routes";
 
 import "./Titlebar.css";
 import logo from "resources/icons/icon.svg";
@@ -90,8 +91,39 @@ const closeSrcSet = getSrcSetString([
     [close30, "3.5x"],
 ]);
 
-const Titlebar = ({ title, setTitle }) => {
+const getKeyByValue = (object, value) => {
+    return Object.keys(object).find((key) => object[key] === value);
+};
+const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+};
+
+const getTitleFromLocation = (location) => {
+    const baseTitle = "Bookord app";
+
+    const routeKey =
+        getKeyByValue(ROUTES, location.pathname) ||
+        getKeyByValue(ROUTES, location.hash.substring(1)) ||
+        "";
+    const sectionTitle = toTitleCase(routeKey);
+
+    const title = sectionTitle ? `${baseTitle} - ${sectionTitle}` : baseTitle;
+
+    return title;
+};
+
+const Titlebar = ({ history }) => {
+    const [title, setTitle] = useState(getTitleFromLocation(location));
+
     useEffect(() => {
+        // Listen for history change to update titlebar's title accrodingly
+        const unlisten = history.listen((location) => {
+            const newTitle = getTitleFromLocation(location);
+            setTitle(newTitle);
+        });
+
         // Switch between minimize and restore buttons in titlebar depending on
         const unlisten1 = window.api.receive("app:window-is-restored", () => {
             setIsMaximized(false);
@@ -100,6 +132,7 @@ const Titlebar = ({ title, setTitle }) => {
             setIsMaximized(true);
         });
         return () => {
+            unlisten();
             unlisten1();
             unlisten2();
         };

@@ -568,6 +568,7 @@ class BookComponent extends HTMLElement {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
 
+    // TODO remove
     /**
      * Returns top most element's parent, but which is still a child to the book content element
      * @param {HTMLElement} elem
@@ -644,7 +645,7 @@ class BookComponent extends HTMLElement {
             maxOffset += counterError;
         }
         const maxPageNum = Math.abs(maxOffset / displayWidth) + 1;
-        return maxPageNum;
+        return Math.floor(maxPageNum);
     }
 
     /**

@@ -5,21 +5,11 @@ import {
     writeConfigRequest,
     useConfigInMainRequest,
     useConfigInMainResponse,
+    readConfigRequest,
+    readConfigResponse,
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
-
-// const mapInGroups = (arr, iteratee, groupSize) => {
-//     const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
-
-//     return Object.values(groups).reduce(
-//         async (memo, group) => [
-//             ...(await memo),
-//             ...(await Promise.all(group.map(iteratee))),
-//         ],
-//         []
-//     );
-// };
 
 const LibraryListUpload = ({ setFiles, setLoading }) => {
     const handleUpload = () => {
@@ -39,18 +29,41 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
                     await window.api.invoke("app:get-books");
 
                 setFiles(filesWithMetadata);
-                setLoading(false);
+
                 window.api.store.send(
                     writeConfigRequest,
                     "interactionStates",
                     mergedInteractionStates
                 );
             }
+            setLoading(false);
         });
     };
 
     const stopWatchingFiles = () => {
         window.api.send("app:stop-watching-files");
+    };
+
+    const removeFromInteractionState = (filePath) => {
+        window.api.store.clearRendererBindings();
+
+        // Send an IPC request to get config
+        window.api.store.send(readConfigRequest, "interactionStates");
+
+        // Listen for responses from the electron store
+        window.api.store.onReceive(readConfigResponse, (args) => {
+            if (args.key === "interactionStates" && args.success) {
+                console.log("removing filePath", filePath);
+                const interactionStates = args.value;
+                delete interactionStates[filePath];
+
+                window.api.store.send(
+                    writeConfigRequest,
+                    "interactionStates",
+                    interactionStates
+                );
+            }
+        });
     };
 
     useLayoutEffect(() => {
@@ -73,7 +86,8 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
             });
         });
 
-        const unlisten = window.api.receive("app:file-is-deleted", (filename) => {
+        const unlisten = window.api.receive("app:file-is-deleted", (filePath) => {
+            removeFromInteractionState(filePath);
             updateFiles();
         });
 

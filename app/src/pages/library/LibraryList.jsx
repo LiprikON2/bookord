@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
@@ -11,6 +11,7 @@ import Spinner from "components/Spinner";
 const LibraryList = ({ files, setFiles }) => {
     const [loading, setLoading] = useState(true);
 
+    // TODO handle clicking on deleted books
     return (
         <>
             <section className="section library-list" id="uploader">

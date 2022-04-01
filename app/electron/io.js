@@ -2,10 +2,10 @@ const { ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs-extra");
 const os = require("os");
-const open = require("open");
 const chokidar = require("chokidar");
-const _ = require("lodash");
+
 const { parseEpub } = require("@liprikon/epub-parser");
+const _ = require("lodash");
 
 const mapInGroups = (arr, iteratee, groupSize) => {
     const groups = _.groupBy(arr, (_v, i) => Math.floor(i / groupSize));
@@ -140,7 +140,7 @@ exports.getBooks = async (files, interactionStates) => {
                 };
             }
         },
-        5
+        2
     );
     const mergedInteractionStates = Object.assign(
         {},
