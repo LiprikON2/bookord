@@ -66,7 +66,7 @@ exports.addFiles = (files = []) => {
     notification.filesAdded(filesNum);
 };
 
-// delete a file
+// delete a file; triggers chokirar in `watchFiles`
 exports.deleteFile = (filename) => {
     const filePath = path.resolve(appDir, filename);
 
@@ -82,7 +82,7 @@ exports.openFile = (filename) => {
 
     // open a file using default application
     if (fs.existsSync(filePath)) {
-        const file = require("fs").readFileSync(filePath);
+        const file = fs.readFileSync(filePath);
         return file;
     }
 };
@@ -98,13 +98,24 @@ exports.watchFiles = (win) => {
     });
 };
 
-const parseBookMetadata = async (filePath) => {
+const parseBook = async (filePath) => {
     const parsedEpub = await parseEpub(filePath);
     return parsedEpub.info;
 };
 
+const removeDeletedBooks = (files, interactionStates) => {
+    if (interactionStates) {
+        return files.map((file) => {
+            if (file.path in Object.keys(interactionStates))
+                return interactionStates[file.path];
+        });
+    } else return interactionStates;
+};
+
 exports.getBooks = async (files, interactionStates) => {
     const updatedInteractionStateList = [];
+
+    interactionStates = removeDeletedBooks(files, interactionStates);
 
     const filesWithMetadata = await mapInGroups(
         files,
@@ -119,7 +130,7 @@ exports.getBooks = async (files, interactionStates) => {
             }
             // Otherwise parse books for metadata & then save results
             else {
-                const metadata = await parseBookMetadata(file.path);
+                const metadata = await parseBook(file.path);
                 // TODO change object key to file.name instead?
                 const updatedInteractionState = {
                     [file.path]: {
@@ -142,6 +153,7 @@ exports.getBooks = async (files, interactionStates) => {
         },
         2
     );
+
     const mergedInteractionStates = Object.assign(
         {},
         interactionStates,

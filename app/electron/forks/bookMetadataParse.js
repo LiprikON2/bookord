@@ -1,8 +1,8 @@
-const io = require("./io");
+const io = require("../io");
 
-const send = (str, data) => {
-    process.send(str + JSON.stringify(data, null, 2));
-};
+// const send = (str, data) => {
+//     process.send(str + JSON.stringify(data, null, 2));
+// };
 
 process.on("message", (message) => {
     const { interactionStates, files } = message;

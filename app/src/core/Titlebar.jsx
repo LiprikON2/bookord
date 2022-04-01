@@ -34,6 +34,8 @@ import close20 from "resources/titlebar icons/close-w-20.png";
 import close24 from "resources/titlebar icons/close-w-24.png";
 import close30 from "resources/titlebar icons/close-w-30.png";
 
+// TODO test on different resolutions
+
 const getSrcSetString = (srcSizePairList) => {
     let srcSet = "";
     srcSizePairList.forEach((srcSizePair) => {

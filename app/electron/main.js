@@ -375,16 +375,6 @@ ipcMain.on("app:close-window", () => {
 
 // FILE HANDLING
 
-const pr = () => {
-    return new Promise((resolve, reject) => {
-        let sum = 0;
-        for (let i = 0; i < 1e9; i++) {
-            sum += i;
-        }
-        resolve(sum);
-    });
-};
-
 const getChildResponse = async (child) => {
     let promiseResolve;
     const promise = new Promise(function (resolve, reject) {
@@ -401,7 +391,7 @@ ipcMain.handle("app:get-books", async () => {
     const interactionStates = storeData?.["interactionStates"];
     const files = io.getFiles();
 
-    const child = fork(path.join(__dirname, "child.js"));
+    const child = fork(path.join(__dirname, "forks/bookMetadataParse.js"));
 
     child.send({
         interactionStates: interactionStates,
@@ -472,12 +462,9 @@ ipcMain.handle("app:on-file-open", (event, file) => {
 });
 
 ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum, page]) => {
+    //*
+
     const parsedEpub = await parseEpub(filePath);
-    // console.log("_manifest", parsedEpub._manifest, "\n +++\n +++");
-    // console.log("_spine", parsedEpub._spine, "\n +++\n +++");
-    // console.log("_toc", parsedEpub._toc, "\n +++\n +++");
-    // console.log("structure", parsedEpub.structure, "\n +++\n +++");
-    // console.log("_manifest", parsedEpub._metadata, "\n +++\n +++");
 
     const sectionNames = parsedEpub.sections.map((section) => section.id);
     const initBook = {
@@ -489,36 +476,28 @@ ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum, page]
         initSectionNum: sectionNum,
         initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
     };
+    // Send book with single section parsed
     win.webContents.send("app:receive-parsed-section", initBook);
 
-    // console.time("1");
     const sections = parsedEpub.sections.map((section) => section.toHtmlObjects());
-    // console.timeLog("1");
-
-    // console.log("book", parsedEpub.sections[0].toHtmlObjects());
-    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.head, null, 4));
-    // console.log("book", JSON.stringify(parsedEpub._toc.ncx.navMap, null, 4));
-
-    // console.log(
-    //     "book",
-    //     JSON.stringify(parsedEpub._manifest, null, 4),
-    //     parsedEpub._manifest.length
-    // );
     const book = {
         ...initBook,
         sections,
     };
     return book;
-    // console.log("book", book.info);
-    // console.log("book", JSON.stringify(book._metadata[0], null, 4));
-    // console.log("book", book.styles);
+    /*/
+    const interactionStates = storeData?.["interactionStates"];
+    const files = io.getFiles();
 
-    // ++
-    // const sections = book.sections.map((section) => section.toHtmlObjects());
-    // return [sections, book.styles];
-    // ++
+    const child = fork(path.join(__dirname, "forks/bookMetadataParse.js"));
 
-    // console.log("book", book.structure);
-    // console.log("book", book.sections.length);
-    // console.log("book", JSON.stringify(book.sections[6].toHtmlObjects()));
+    child.send({
+        interactionStates: interactionStates,
+        files: files,
+    });
+    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(child);
+
+    child.disconnect();
+    return [filesWithMetadata, mergedInteractionStates];
+    //*/
 });

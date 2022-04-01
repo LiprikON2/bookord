@@ -9,7 +9,7 @@ const LibraryListCard = ({ file }) => {
     const handleDelete = (e, file) => {
         e.preventDefault();
         window.api.send("app:on-file-delete", file);
-        // Chokidar then triggers removeFromInteractionState
+        // Chokidar (from `io.js`) then triggers removeFromInteractionState
     };
     // Todo Занимательная физика has too much height
     // Todo when only one book its too big

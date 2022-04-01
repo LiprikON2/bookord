@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Switch, Route, Redirect } from "react-router";
-import { writeConfigRequest } from "secure-electron-store";
 
 import ROUTES from "Constants/routes";
 import DEFAULT_SETTINGS from "Constants/defaultSettings";
@@ -50,10 +49,11 @@ const getInitSettings = () => {
 };
 
 const Routes = () => {
+    const [settings, setSettings] = useState(getInitSettings());
+
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [settings, setSettings] = useState(getInitSettings());
     return (
         <main id="main">
             <Switch>

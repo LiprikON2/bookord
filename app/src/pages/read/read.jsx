@@ -71,10 +71,7 @@ const Read = () => {
                     }
 
                     bookComponent.loadBook(bookFile.path, interactionStates);
-                    bookComponent.addEventListener(
-                        "imgClickEvent",
-                        handleImgClick
-                    );
+                    bookComponent.addEventListener("imgClickEvent", handleImgClick);
                 }
             });
         }
@@ -83,10 +80,7 @@ const Read = () => {
 
         return () => {
             console.log("bookComponentRef clean", bookComponentRef.current);
-            bookComponentRef.current.removeEventListener(
-                "imgClickEvent",
-                handleImgClick
-            );
+            bookComponentRef.current.removeEventListener("imgClickEvent", handleImgClick);
         };
     }, []);
 
@@ -107,7 +101,7 @@ const Read = () => {
         setImageModalSrc(e.detail.src);
     };
 
-    // Add event listener using custom hook
+    // Keypress listener using custom hook
     useEventListener("keydown", handleKeypress);
 
     const goNext = () => {
@@ -120,9 +114,7 @@ const Read = () => {
     const flipNPages = (nPageShift) => {
         const bookRef = bookComponentRef.current;
         const currentPage = bookRef.bookState.getCurrentBookPage(bookRef) + 1;
-        const validNextPage = bookRef.enforcePageRange(
-            currentPage + nPageShift
-        );
+        const validNextPage = bookRef.enforcePageRange(currentPage + nPageShift);
         setPage(validNextPage);
     };
 
@@ -134,17 +126,11 @@ const Read = () => {
                 <div
                     className="book-container"
                     style={{
-                        visibility:
-                            bookComponentRef !== null ? "visible" : "hidden",
+                        visibility: bookComponentRef !== null ? "visible" : "hidden",
                     }}>
-                    <book-component
-                        ref={setBookComponentRef}
-                        book-page={page}
-                    />
+                    <book-component ref={setBookComponentRef} book-page={page} />
                 </div>
-                <ImageModal
-                    src={imageModalSrc}
-                    setSrc={setImageModalSrc}></ImageModal>
+                <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
                 <div className="button-group">
                     <Button onClick={goBack}>Back</Button>
                     <Button onClick={goNext}>Next</Button>

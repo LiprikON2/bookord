@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 
 import Button from "components/Button";
 import {
@@ -39,31 +39,47 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
             setLoading(false);
         });
     };
+    // const addToRemoveQueue = (filePath) => {
+    //     setInteractionStatesToBeRemoved((interactionStatesToBeRemoved) => [
+    //         ...interactionStatesToBeRemoved,
+    //         filePath,
+    //     ]);
+    // };
+    // const removeFromInteractionState = () => {
+    //     window.api.store.clearRendererBindings();
+
+    //     // Send an IPC request to get config
+    //     window.api.store.send(readConfigRequest, "interactionStates");
+
+    //     // Listen for responses from the electron store
+    //     window.api.store.onReceive(readConfigResponse, (args) => {
+    //         if (
+    //             args.key === "interactionStates" &&
+    //             args.success &&
+    //             interactionStatesToBeRemoved
+    //         ) {
+    //             console.log("bilo:", interactionStates);
+    //             const interactionStates = args.value;
+    //             interactionStatesToBeRemoved.forEach((filePath) => {
+    //                 delete interactionStates[filePath];
+
+    //                 const index = interactionStatesToBeRemoved.indexOf(filePath);
+    //                 setInteractionStatesToBeRemoved(
+    //                     interactionStatesToBeRemoved.splice(index, 1)
+    //                 );
+    //             });
+    //             console.log("stalo:", interactionStates);
+    //             window.api.store.send(
+    //                 writeConfigRequest,
+    //                 "interactionStates",
+    //                 interactionStates
+    //             );
+    //         }
+    //     });
+    // };
 
     const stopWatchingFiles = () => {
         window.api.send("app:stop-watching-files");
-    };
-
-    const removeFromInteractionState = (filePath) => {
-        window.api.store.clearRendererBindings();
-
-        // Send an IPC request to get config
-        window.api.store.send(readConfigRequest, "interactionStates");
-
-        // Listen for responses from the electron store
-        window.api.store.onReceive(readConfigResponse, (args) => {
-            if (args.key === "interactionStates" && args.success) {
-                console.log("removing filePath", filePath);
-                const interactionStates = args.value;
-                delete interactionStates[filePath];
-
-                window.api.store.send(
-                    writeConfigRequest,
-                    "interactionStates",
-                    interactionStates
-                );
-            }
-        });
     };
 
     useLayoutEffect(() => {
@@ -87,7 +103,7 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
         });
 
         const unlisten = window.api.receive("app:file-is-deleted", (filePath) => {
-            removeFromInteractionState(filePath);
+            // addToRemoveQueue(filePath);
             updateFiles();
         });
 
@@ -97,6 +113,7 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
             unlisten();
         };
     }, []);
+
     return (
         <>
             <div>
