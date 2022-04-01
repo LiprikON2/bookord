@@ -1,5 +1,5 @@
 // @ts-check
-
+///<reference path="../types/index.d.ts" />
 import { writeConfigRequest } from "secure-electron-store";
 import "./bookComponent.css"; // Then used from ReadChunk.css in template
 
