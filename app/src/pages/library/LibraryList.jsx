@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
@@ -8,9 +8,7 @@ import "./LibraryList.css";
 
 import Spinner from "components/Spinner";
 
-const LibraryList = ({ files, setFiles }) => {
-    const [loading, setLoading] = useState(true);
-
+const LibraryList = ({ files, setFiles, loading, setLoading }) => {
     // TODO handle clicking on deleted books
     return (
         <>

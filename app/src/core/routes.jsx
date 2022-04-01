@@ -23,17 +23,13 @@ const Motd = loadable(() =>
     import(/* webpackChunkName: "MotdChunk" */ "Pages/motd/motd")
 );
 const Localization = loadable(() =>
-    import(
-        /* webpackChunkName: "LocalizationChunk" */ "Pages/localization/localization"
-    )
+    import(/* webpackChunkName: "LocalizationChunk" */ "Pages/localization/localization")
 );
 const UndoRedo = loadable(() =>
     import(/* webpackChunkName: "UndoRedoChunk" */ "Pages/undoredo/undoredo")
 );
 const ContextMenu = loadable(() =>
-    import(
-        /* webpackChunkName: "ContextMenuChunk" */ "Pages/contextmenu/contextmenu"
-    )
+    import(/* webpackChunkName: "ContextMenuChunk" */ "Pages/contextmenu/contextmenu")
 );
 
 const initStorage = window.api.store.initial();
@@ -41,8 +37,7 @@ const initStorage = window.api.store.initial();
 const toContinueReading = () => {
     const lastOpenedBook = initStorage.interactionStates?.lastOpenedBook;
 
-    const continueReadingSetting =
-        initStorage?.settings?.continueReading?.value;
+    const continueReadingSetting = initStorage?.settings?.continueReading?.value;
 
     return lastOpenedBook !== undefined && continueReadingSetting;
 };
@@ -56,6 +51,8 @@ const getInitSettings = () => {
 
 const Routes = () => {
     const [files, setFiles] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const [settings, setSettings] = useState(getInitSettings());
     return (
         <main id="main">
@@ -71,18 +68,19 @@ const Routes = () => {
                     <Settings settings={settings} setSettings={setSettings} />
                 </Route>
                 <Route path={ROUTES.LIBRARY}>
-                    <Library files={files} setFiles={setFiles} />
+                    <Library
+                        files={files}
+                        setFiles={setFiles}
+                        loading={loading}
+                        setLoading={setLoading}
+                    />
                 </Route>
                 <Route path={ROUTES.READ} component={Read}></Route>
                 <Route path={ROUTES.ABOUT} component={About}></Route>
                 <Route path={ROUTES.MOTD} component={Motd}></Route>
-                <Route
-                    path={ROUTES.LOCALIZATION}
-                    component={Localization}></Route>
+                <Route path={ROUTES.LOCALIZATION} component={Localization}></Route>
                 <Route path={ROUTES.UNDOREDO} component={UndoRedo}></Route>
-                <Route
-                    path={ROUTES.CONTEXTMENU}
-                    component={ContextMenu}></Route>
+                <Route path={ROUTES.CONTEXTMENU} component={ContextMenu}></Route>
             </Switch>
         </main>
     );

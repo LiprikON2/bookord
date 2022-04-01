@@ -5,7 +5,7 @@ import ROUTES from "Constants/routes";
 import LibraryList from "./LibraryList";
 import "./Library.css";
 
-const Library = ({ files, setFiles }) => {
+const Library = ({ files, setFiles, loading, setLoading }) => {
     return (
         <>
             <section className="section">
@@ -18,7 +18,12 @@ const Library = ({ files, setFiles }) => {
                 </div>
             </section>
 
-            <LibraryList files={files} setFiles={setFiles} />
+            <LibraryList
+                files={files}
+                setFiles={setFiles}
+                loading={loading}
+                setLoading={setLoading}
+            />
         </>
     );
 };
