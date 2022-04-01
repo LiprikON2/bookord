@@ -803,9 +803,7 @@ class BookComponent extends HTMLElement {
             if (sectionIndex % 10 === 0) {
                 parentComponent.updateBookUI();
             }
-            await _waitForNextTask().catch((error) => {
-                console.log("wait error", error);
-            });
+            await _waitForNextTask();
         });
         parentComponent.updateBookUI();
 
@@ -828,7 +826,6 @@ class BookComponent extends HTMLElement {
             this.currInteractionState.state.sectionPage
         );
         if (!this.book) {
-            console.log("EXITI");
             return;
         }
 

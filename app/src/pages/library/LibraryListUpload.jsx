@@ -18,7 +18,7 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
     };
 
     const updateFiles = () => {
-        console.time("LOG");
+        console.time("updateFiles");
         // Updates store in main
         window.api.store.send(useConfigInMainRequest);
 
@@ -29,7 +29,7 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
                 const [filesWithMetadata, mergedInteractionStates] =
                     await window.api.invoke("app:get-books");
 
-                console.timeEnd("LOG");
+                console.timeEnd("updateFiles");
                 setFiles(filesWithMetadata);
 
                 window.api.store.send(
