@@ -98,7 +98,7 @@ exports.watchFiles = (win) => {
     });
 };
 
-const parseBook = async (filePath) => {
+const parseMetadata = async (filePath) => {
     const parsedEpub = await parseEpub(filePath);
     return parsedEpub.info;
 };
@@ -137,7 +137,7 @@ exports.getBooks = async (files, interactionStates) => {
             }
             // Otherwise parse books for metadata & then save results
             else {
-                const metadata = await parseBook(file.path);
+                const metadata = await parseMetadata(file.path);
                 // TODO change object key to file.name instead?
                 const updatedInteractionState = {
                     [file.path]: {
@@ -168,4 +168,33 @@ exports.getBooks = async (files, interactionStates) => {
     );
 
     return [filesWithMetadata, mergedInteractionStates];
+};
+
+exports.parseBook = async (filePath, sectionNum) => {
+    const parsedEpub = await parseEpub(filePath);
+
+    const sectionNames = parsedEpub.sections.map((section) => section.id);
+    const initBook = {
+        info: parsedEpub.info,
+        styles: parsedEpub.styles,
+        structure: parsedEpub.structure,
+        sectionsTotal: parsedEpub.sections.length,
+        sectionNames,
+        initSectionNum: sectionNum,
+        initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
+    };
+    return [initBook, parsedEpub];
+};
+
+exports.parseSections = async (initBook, parsedEpub) => {
+    const sections = await mapInGroups(
+        parsedEpub.sections,
+        async (section) => section.toHtmlObjects(),
+        4
+    );
+    const book = {
+        ...initBook,
+        sections,
+    };
+    return book;
 };

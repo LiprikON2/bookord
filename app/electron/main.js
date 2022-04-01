@@ -233,8 +233,6 @@ async function createWindow() {
     });
 }
 
-const child = fork(path.join(__dirname, "forks/bookMetadataParse.js"));
-
 // Needs to be called before app is ready;
 // gives our scheme access to load relative files,
 // as well as local storage, cookies, etc.
@@ -256,8 +254,6 @@ app.on("ready", createWindow);
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
-    child.disconnect();
-
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
@@ -385,7 +381,7 @@ ipcMain.on("app:close-window", () => {
 
 const getChildResponse = async (child) => {
     let promiseResolve;
-    const promise = new Promise(function (resolve, reject) {
+    const promise = new Promise((resolve, reject) => {
         promiseResolve = resolve;
     });
     child.on("message", (response) => {
@@ -395,15 +391,24 @@ const getChildResponse = async (child) => {
 };
 
 ipcMain.handle("app:get-books", async () => {
+    // Forked child process for parsing book file.
+    // It is needed to offload main thread and not to block UI
+    const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
+
     const interactionStates = storeData?.["interactionStates"];
     const files = io.getFiles();
 
-    child.send({
-        interactionStates: interactionStates,
-        files: files,
+    metadataParseChild.send({
+        parseMetadata: {
+            interactionStates: interactionStates,
+            files: files,
+        },
     });
-    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(child);
+    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(
+        metadataParseChild
+    );
 
+    metadataParseChild.disconnect();
     return [filesWithMetadata, mergedInteractionStates];
 });
 
@@ -465,43 +470,32 @@ ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
 });
 
+let parseChild;
+
 ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum, page]) => {
-    //*
+    // Forked child process for parsing book file.
+    // It is needed to offload main thread and not to block UI
+    parseChild = fork(path.join(__dirname, "forks/child.js"));
 
-    const parsedEpub = await parseEpub(filePath);
+    parseChild.send({
+        parse: {
+            filePath,
+            sectionNum,
+        },
+    });
 
-    const sectionNames = parsedEpub.sections.map((section) => section.id);
-    const initBook = {
-        info: parsedEpub.info,
-        styles: parsedEpub.styles,
-        structure: parsedEpub.structure,
-        sectionsTotal: parsedEpub.sections.length,
-        sectionNames,
-        initSectionNum: sectionNum,
-        initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
-    };
     // Send book with single section parsed
+    const { initBook } = await getChildResponse(parseChild);
     win.webContents.send("app:receive-parsed-section", initBook);
 
-    const sections = parsedEpub.sections.map((section) => section.toHtmlObjects());
-    const book = {
-        ...initBook,
-        sections,
-    };
+    // Return the fully parsed book
+    const { book } = await getChildResponse(parseChild);
+
+    parseChild.disconnect();
     return book;
-    /*/
-    const interactionStates = storeData?.["interactionStates"];
-    const files = io.getFiles();
+});
 
-    const child = fork(path.join(__dirname, "forks/bookMetadataParse.js"));
-
-    child.send({
-        interactionStates: interactionStates,
-        files: files,
-    });
-    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(child);
-
-    child.disconnect();
-    return [filesWithMetadata, mergedInteractionStates];
-    //*/
+// Kills parsing child process when user leaves the reading page
+ipcMain.on("app:on-stop-parsing", (event, file) => {
+    if (parseChild) parseChild.kill();
 });

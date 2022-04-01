@@ -78,7 +78,7 @@ const Read = () => {
         bookComponentRef.current = bookComponent;
 
         return () => {
-            window.api.store.clearRendererBindings();
+            console.log("THISSS NEVER EXITS");
             bookComponentRef.current.removeEventListener("imgClickEvent", handleImgClick);
         };
     }, []);
@@ -116,6 +116,14 @@ const Read = () => {
         const validNextPage = bookRef.enforcePageRange(currentPage + nPageShift);
         setPage(validNextPage);
     };
+
+    useEffect(() => {
+        return () => {
+            console.log("trying to kill a child");
+            window.api.send("app:on-stop-parsing");
+            window.api.store.clearRendererBindings();
+        };
+    }, []);
 
     return (
         <>

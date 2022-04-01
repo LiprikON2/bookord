@@ -19,6 +19,7 @@ const validChannels = [
     "app:get-parsed-book",
     "app:receive-parsed-section",
     "app:get-books",
+    "app:on-stop-parsing",
 
     "app:minimize-window",
     "app:maximize-window",
