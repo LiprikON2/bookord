@@ -6,7 +6,6 @@ const io = require("../io");
 
 process.on("message", (message) => {
     const { interactionStates, files } = message;
-
     const promise = io.getBooks(files, interactionStates);
 
     promise.then(([filesWithMetadata, mergedInteractionStates]) => {

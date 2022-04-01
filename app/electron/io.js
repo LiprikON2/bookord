@@ -105,10 +105,17 @@ const parseBook = async (filePath) => {
 
 const removeDeletedBooks = (files, interactionStates) => {
     if (interactionStates) {
-        return files.map((file) => {
-            if (file.path in Object.keys(interactionStates))
-                return interactionStates[file.path];
+        let newInteractionStates = {};
+
+        files.forEach((file) => {
+            if (file.path in interactionStates) {
+                newInteractionStates = {
+                    ...newInteractionStates,
+                    [file.path]: interactionStates[file.path],
+                };
+            }
         });
+        return newInteractionStates;
     } else return interactionStates;
 };
 
@@ -151,7 +158,7 @@ exports.getBooks = async (files, interactionStates) => {
                 };
             }
         },
-        2
+        4
     );
 
     const mergedInteractionStates = Object.assign(

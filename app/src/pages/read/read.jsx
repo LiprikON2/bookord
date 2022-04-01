@@ -48,14 +48,13 @@ const Read = () => {
     const bookComponentRef = useRef(null);
     const setBookComponentRef = useCallback((bookComponent) => {
         if (bookComponent) {
-            window.api.store.clearRendererBindings();
-
             // Send an IPC request to get config
             window.api.store.send(readConfigRequest, "interactionStates");
 
             // Listen for responses from the electron store
             window.api.store.onReceive(readConfigResponse, (args) => {
                 if (args.key === "interactionStates" && args.success) {
+                    window.api.store.clearRendererBindings();
                     const interactionStates = args.value;
 
                     let bookFile;
@@ -79,7 +78,7 @@ const Read = () => {
         bookComponentRef.current = bookComponent;
 
         return () => {
-            console.log("bookComponentRef clean", bookComponentRef.current);
+            window.api.store.clearRendererBindings();
             bookComponentRef.current.removeEventListener("imgClickEvent", handleImgClick);
         };
     }, []);

@@ -53,7 +53,11 @@ async function createWindow() {
             Protocol.requestHandler
         ); /* eng-disable PROTOCOL_HANDLER_JS_CHECK */
     }
-    const store = new Store({ debug: isDev, path: app.getPath("userData") });
+    const store = new Store({
+        debug: isDev,
+        reset: isDev,
+        path: app.getPath("userData"),
+    });
 
     const RESOURCES_PATH = app.isPackaged
         ? path.join(process.resourcesPath, "resources")
@@ -229,6 +233,8 @@ async function createWindow() {
     });
 }
 
+const child = fork(path.join(__dirname, "forks/bookMetadataParse.js"));
+
 // Needs to be called before app is ready;
 // gives our scheme access to load relative files,
 // as well as local storage, cookies, etc.
@@ -250,6 +256,8 @@ app.on("ready", createWindow);
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
+    child.disconnect();
+
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
@@ -380,7 +388,6 @@ const getChildResponse = async (child) => {
     const promise = new Promise(function (resolve, reject) {
         promiseResolve = resolve;
     });
-
     child.on("message", (response) => {
         promiseResolve(response);
     });
@@ -391,15 +398,12 @@ ipcMain.handle("app:get-books", async () => {
     const interactionStates = storeData?.["interactionStates"];
     const files = io.getFiles();
 
-    const child = fork(path.join(__dirname, "forks/bookMetadataParse.js"));
-
     child.send({
         interactionStates: interactionStates,
         files: files,
     });
     const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(child);
 
-    child.disconnect();
     return [filesWithMetadata, mergedInteractionStates];
 });
 
