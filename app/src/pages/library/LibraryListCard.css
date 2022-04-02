@@ -45,7 +45,7 @@ a:focus-visible > .card > .card-cover {
     line-height: 1;
 
     /* border: 2px solid var(--clr-accent-000); */
-    background-color: var(--clr-accent-000);
+    background: var(--grad-primary-lin);
     color: var(--clr-accent-000);
 }
 
@@ -76,16 +76,16 @@ a:focus-visible > .card > .card-cover {
     text-overflow: clip;
     text-align: right;
 
-    background-color: var(--clr-secondary-300);
     border-radius: 10px 0 0 10px;
-
-    transition: all 0.1s ease;
-    transition-delay: 0.05s;
 }
 .no-cover:hover .clip-path > h3,
 a:focus-visible .no-cover .clip-path > h3 {
-    background-color: var(--clr-accent-000);
     color: var(--clr-secondary-300);
+    background: radial-gradient(
+        farthest-corner at 200% -300%,
+        var(--clr-accent-100) 25%,
+        var(--clr-accent-000) 100%
+    );
 }
 
 .card > .card-content {
@@ -170,19 +170,19 @@ a:focus-visible .no-cover .clip-path > h3 {
 
 @keyframes skeleton-loading {
     0% {
-        filter: grayscale(40%) contrast(100%);
+        filter: grayscale(60%) contrast(100%);
     }
     100% {
-        filter: grayscale(40%) contrast(50%);
+        filter: grayscale(60%) contrast(80%);
     }
 }
 @keyframes skeleton-text-loading {
     0% {
-        background-color: hsl(210, 3%, 50%);
-        opacity: 1;
+        background-color: hsl(210, 3%, 60%);
+        opacity: 0.9;
     }
     100% {
-        background-color: hsl(210, 3%, 50%);
-        opacity: 0.2;
+        background-color: hsl(210, 3%, 60%);
+        opacity: 0.5;
     }
 }
