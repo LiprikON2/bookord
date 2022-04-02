@@ -7,9 +7,9 @@ const Link = ({ children, className, onAuxClick, draggable, ...rest }) => {
     return (
         <>
             <ReactRouterLink
-                className={className ? className : "button btn"}
+                className={className ?? "button btn"}
                 onAuxClick={onAuxClick ? onAuxClick : (e) => e.preventDefault()}
-                draggable={draggable ? draggable : "false"}
+                draggable={draggable ?? "false"}
                 {...rest}>
                 {children}
             </ReactRouterLink>

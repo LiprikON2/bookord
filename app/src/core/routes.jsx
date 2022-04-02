@@ -52,6 +52,7 @@ const Routes = () => {
     const [settings, setSettings] = useState(getInitSettings());
 
     const [files, setFiles] = useState([]);
+    const [skeletontFileCount, setSkeletontFileCount] = useState(0);
     const [loading, setLoading] = useState(true);
 
     return (
@@ -71,6 +72,8 @@ const Routes = () => {
                     <Library
                         files={files}
                         setFiles={setFiles}
+                        skeletontFileCount={skeletontFileCount}
+                        setSkeletontFileCount={setSkeletontFileCount}
                         loading={loading}
                         setLoading={setLoading}
                     />

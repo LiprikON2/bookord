@@ -8,12 +8,27 @@ import "./LibraryList.css";
 
 import Spinner from "components/Spinner";
 
-const LibraryList = ({ files, setFiles, loading, setLoading }) => {
+const LibraryList = ({
+    files,
+    setFiles,
+    skeletontFileCount,
+    setSkeletontFileCount,
+    loading,
+    setLoading,
+}) => {
+    const ghostFile = {
+        info: { title: "ghost" },
+    };
     // TODO handle clicking on deleted books
+    // TODO add drag and drop overlay
     return (
         <>
             <section className="section library-list" id="uploader">
-                <LibraryListUpload setFiles={setFiles} setLoading={setLoading} />
+                <LibraryListUpload
+                    setFiles={setFiles}
+                    setLoading={setLoading}
+                    setSkeletontFileCount={setSkeletontFileCount}
+                />
 
                 {!loading ? (
                     <div className="card-list" role="list">
@@ -25,11 +40,16 @@ const LibraryList = ({ files, setFiles, loading, setLoading }) => {
                                         book: file,
                                     },
                                 }}
-                                className="a"
+                                className=""
                                 role="listitem"
                                 key={file.path}>
                                 <LibraryListCard file={file}></LibraryListCard>
                             </Link>
+                        ))}
+                        {[...Array(skeletontFileCount)].map((e, index) => (
+                            <div role="listitem" key={"ghost" + index}>
+                                <LibraryListCard file={ghostFile}></LibraryListCard>
+                            </div>
                         ))}
                     </div>
                 ) : (

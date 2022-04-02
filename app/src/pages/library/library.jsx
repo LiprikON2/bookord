@@ -5,7 +5,14 @@ import ROUTES from "Constants/routes";
 import LibraryList from "./LibraryList";
 import "./Library.css";
 
-const Library = ({ files, setFiles, loading, setLoading }) => {
+const Library = ({
+    files,
+    setFiles,
+    skeletontFileCount,
+    setSkeletontFileCount,
+    loading,
+    setLoading,
+}) => {
     return (
         <>
             <section className="section">
@@ -21,6 +28,8 @@ const Library = ({ files, setFiles, loading, setLoading }) => {
             <LibraryList
                 files={files}
                 setFiles={setFiles}
+                skeletontFileCount={skeletontFileCount}
+                setSkeletontFileCount={setSkeletontFileCount}
                 loading={loading}
                 setLoading={setLoading}
             />

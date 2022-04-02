@@ -33,7 +33,7 @@ const Dropdown = ({ children, className, ...rest }) => {
     return (
         <>
             <div
-                className={className ? className : "dropdown is-up is-right"}
+                className={className ?? "dropdown is-up is-right"}
                 ref={dropdownRef}
                 {...rest}>
                 <div className="dropdown-trigger">
@@ -44,10 +44,7 @@ const Dropdown = ({ children, className, ...rest }) => {
                         <span>☰</span>
                     </Button>
                 </div>
-                <div
-                    className="dropdown-menu"
-                    id="dropdown-menu-options"
-                    role="menu">
+                <div className="dropdown-menu" id="dropdown-menu-options" role="menu">
                     <div className="dropdown-content">
                         {children.map((child, index) => {
                             return child.props.divider !== "true" ? (

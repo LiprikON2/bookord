@@ -381,7 +381,8 @@ ipcMain.on("app:close-window", () => {
 
 // listen to file(s) add event
 ipcMain.handle("app:on-file-add", (event, files = []) => {
-    io.addFiles(files);
+    const fileCount = io.addFiles(files);
+    return fileCount;
 });
 
 // open filesystem dialog to choose files
@@ -416,7 +417,7 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
             ],
         }) || [];
 
-    io.addFiles(
+    const fileCount = io.addFiles(
         files.map((filepath) => {
             return {
                 name: path.parse(filepath).base,
@@ -424,7 +425,7 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
             };
         })
     );
-    return files;
+    return fileCount;
 });
 
 // listen to file delete event

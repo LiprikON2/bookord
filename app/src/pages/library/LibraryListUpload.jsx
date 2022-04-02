@@ -10,7 +10,7 @@ import {
 
 const dragDrop = require("drag-drop");
 
-const LibraryListUpload = ({ setFiles, setLoading }) => {
+const LibraryListUpload = ({ setFiles, setLoading, setSkeletontFileCount }) => {
     const [uploading, setUploading] = useState(false);
 
     const handleUpload = () => {
@@ -18,7 +18,8 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
         if (!uploading) {
             setUploading(true);
             const promise = window.api.invoke("app:on-fs-dialog-open");
-            promise.then(() => {
+            promise.then((fileCount) => {
+                setSkeletontFileCount(fileCount);
                 updateFiles();
                 setUploading(false);
             });
@@ -47,6 +48,7 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
                 );
             }
             setLoading(false);
+            setSkeletontFileCount(0);
         });
     }, 100);
 
@@ -73,13 +75,14 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
                 };
             });
             // send file(s) add event to the `main` process
-            window.api.invoke("app:on-file-add", mappedFiles).then(() => {
+            const promise = window.api.invoke("app:on-file-add", mappedFiles);
+            promise.then((fileCount) => {
+                setSkeletontFileCount(fileCount);
                 updateFiles();
             });
         });
 
-        const unlisten = window.api.receive("app:file-is-deleted", (filePath) => {
-            // addToRemoveQueue(filePath);
+        const unlisten = window.api.receive("app:file-is-deleted", () => {
             updateFiles();
         });
 

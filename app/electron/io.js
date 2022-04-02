@@ -64,6 +64,7 @@ exports.addFiles = (files = []) => {
     }
     // display notification
     notification.filesAdded(filesNum);
+    return filesNum;
 };
 
 // delete a file; triggers chokirar in `watchFiles`

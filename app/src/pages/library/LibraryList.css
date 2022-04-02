@@ -21,6 +21,7 @@
     /* margin-inline: auto; */
 }
 
-.card-list > a {
-    padding: 1rem 1rem 0 1rem; /* For nicely lining up card's tabbing outline */
+.card-list > * {
+    /* For nicely lining up card's tabbing outline */
+    padding: 1rem 1rem 0 1rem;
 }
