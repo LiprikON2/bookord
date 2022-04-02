@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import Link from "components/Link";
-import Spinner from "components/Spinner";
 import ImageModal from "components/ImageModal";
 
 import LibraryListCard from "./LibraryListCard";
@@ -25,7 +24,6 @@ const LibraryList = ({
     };
     const [showDropzone, setShowDropzone] = useState(false);
 
-    // TODO handle clicking on deleted books
     return (
         <>
             <section className="section library-list" id="uploader">
@@ -41,31 +39,37 @@ const LibraryList = ({
                     setShowDropzone={setShowDropzone}
                 />
 
-                {!loading ? (
-                    <div className="card-list" role="list">
-                        {files.map((file, index) => (
-                            <Link
-                                to={{
-                                    pathname: ROUTES.READ,
-                                    state: {
-                                        book: file,
-                                    },
-                                }}
-                                className=""
-                                role="listitem"
-                                key={file.path}>
-                                <LibraryListCard file={file}></LibraryListCard>
-                            </Link>
-                        ))}
-                        {[...Array(skeletontFileCount)].map((e, index) => (
-                            <div role="listitem" key={"skeleton" + index}>
-                                <LibraryListCard file={skeletonFile}></LibraryListCard>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <Spinner></Spinner>
-                )}
+                <div className="card-list" role="list">
+                    {files.length !== 0 || skeletontFileCount !== 0 ? (
+                        <>
+                            {files.map((file, index) => (
+                                <Link
+                                    to={{
+                                        pathname: ROUTES.READ,
+                                        state: {
+                                            book: file,
+                                        },
+                                    }}
+                                    className=""
+                                    role="listitem"
+                                    key={file.path}>
+                                    <LibraryListCard file={file}></LibraryListCard>
+                                </Link>
+                            ))}
+                            {[...Array(skeletontFileCount)].map((e, index) => (
+                                <div role="listitem" key={"skeleton" + index}>
+                                    <LibraryListCard
+                                        file={skeletonFile}></LibraryListCard>
+                                </div>
+                            ))}
+                        </>
+                    ) : (
+                        <div className="no-cards">
+                            <img src={dropzoneImg} alt="" />
+                            <span>Add some books =)</span>
+                        </div>
+                    )}
+                </div>
             </section>
         </>
     );

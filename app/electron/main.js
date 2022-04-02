@@ -29,7 +29,6 @@ const selfHost = `http://localhost:${port}`;
 const productName = "Bookord";
 
 const { fork } = require("child_process");
-const { parseEpub } = require("@liprikon/epub-parser");
 // local dependencies
 const io = require("./io");
 
@@ -38,6 +37,7 @@ const io = require("./io");
 let win;
 let menuBuilder;
 let storeData;
+let isInitLoad;
 
 async function createWindow() {
     // If you'd like to set up auto-updating for your app,
@@ -159,6 +159,7 @@ async function createWindow() {
     win.webContents.on("did-finish-load", () => {
         win.setTitle(productName);
         io.watchFiles(win);
+        isInitLoad = true;
     });
     if (process.platform === "win32") {
         app.setAppUserModelId(productName);
@@ -456,6 +457,12 @@ const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
 ipcMain.handle("app:get-books", async () => {
     const interactionStates = storeData?.["interactionStates"];
     const files = io.getFiles();
+
+    // Force show skeletons for alreaddy added books on initial app load (or refresh)
+    if (isInitLoad) {
+        win.webContents.send("app:receive-skeleton-count", files.length);
+        isInitLoad = false;
+    }
 
     metadataParseChild.send({
         parseMetadata: {

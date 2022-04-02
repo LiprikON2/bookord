@@ -25,3 +25,26 @@
     /* For nicely lining up card's tabbing outline */
     padding: 1rem 1rem 0 1rem;
 }
+
+.card-list > .no-cards {
+    display: flex;
+    flex-direction: column;
+
+    place-self: center;
+    /* background-color: var(--clr-accent-000); */
+    border: 9px dotted var(--clr-accent-000);
+    padding-inline: 2rem;
+    gap: 0.3rem;
+}
+
+.card-list > .no-cards > span {
+    text-align: center;
+    padding: 0.8rem;
+    margin-bottom: 0.2rem;
+
+    font-family: var(--ff-exo);
+    line-height: var(--line-height);
+    color: var(--clr-accent-000);
+    font-weight: 1000;
+    /* font-size: 1rem; */
+}

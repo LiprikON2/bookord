@@ -59,11 +59,10 @@ exports.addFiles = (files = []) => {
     });
 
     // Don't display notification if all files are duplicates
-    if (filesNum === 0) {
-        return;
+    if (filesNum !== 0) {
+        // Display notification
+        notification.filesAdded(filesNum);
     }
-    // display notification
-    notification.filesAdded(filesNum);
     return filesNum;
 };
 

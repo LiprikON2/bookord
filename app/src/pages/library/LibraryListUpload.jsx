@@ -67,13 +67,19 @@ const LibraryListUpload = ({
     useLayoutEffect(() => {
         // Initial file load
         updateFiles();
+        const unlisten = window.api.receive("app:receive-skeleton-count", (count) => {
+            console.log("NONONO");
+            setSkeletontFileCount(count);
+        });
+        return () => {
+            unlisten();
+        };
     }, []);
 
     useEffect(() => {
         // Initial file drag and drop event litener
         dragDrop("#uploader", {
             onDrop: (files) => {
-                console.log("onDrop");
                 const mappedFiles = files.map((file) => {
                     return {
                         name: file.name,
@@ -112,7 +118,6 @@ const LibraryListUpload = ({
         <>
             <div>
                 <Button onClick={handleUpload}>Add a book</Button>
-                <Button onClick={updateFiles}>Refresh</Button>
             </div>
         </>
     );
