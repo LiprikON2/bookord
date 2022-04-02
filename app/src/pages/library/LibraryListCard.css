@@ -44,7 +44,7 @@ a:focus-visible > .card > .card-cover {
     text-transform: uppercase;
     line-height: 1;
 
-    border: 2px solid var(--clr-accent-000);
+    /* border: 2px solid var(--clr-accent-000); */
     background-color: var(--clr-accent-000);
     color: var(--clr-accent-000);
 }
@@ -145,6 +145,9 @@ a:focus-visible .no-cover .clip-path > h3 {
     opacity: 0.7;
     animation: skeleton-loading 1s linear infinite alternate;
 }
+.skeleton.no-cover .clip-path > h3 {
+    border-radius: 0;
+}
 .skeleton-text {
     animation: skeleton-text-loading 1s linear infinite alternate;
 
@@ -152,6 +155,10 @@ a:focus-visible .no-cover .clip-path > h3 {
     opacity: 1;
     border-radius: 4px;
     height: 1.2rem;
+}
+/* Last but one skeleton text is shorter */
+.skeleton-text:nth-last-child(2) + .skeleton-text {
+    width: 80%;
 }
 
 .dropdown.skeleton-dropdown {

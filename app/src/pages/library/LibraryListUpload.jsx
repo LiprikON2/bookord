@@ -48,7 +48,7 @@ const LibraryListUpload = ({ setFiles, setLoading, setSkeletontFileCount }) => {
                 );
             }
             setLoading(false);
-            setSkeletontFileCount(0);
+            setSkeletontFileCount(3);
         });
     }, 100);
 
