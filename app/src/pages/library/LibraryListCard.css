@@ -138,3 +138,44 @@ a:focus-visible .no-cover .clip-path > h3 {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Skeleton loading animation */
+
+.skeleton {
+    opacity: 0.7;
+    animation: skeleton-loading 1s linear infinite alternate;
+}
+.skeleton-text {
+    animation: skeleton-text-loading 1s linear infinite alternate;
+
+    width: 100%;
+    opacity: 1;
+    border-radius: 4px;
+    height: 1.2rem;
+}
+
+.dropdown.skeleton-dropdown {
+    aspect-ratio: 1 / 1;
+    padding: 0.7rem;
+    background-color: var(--clr-secondary-300);
+    border: none;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        filter: grayscale(40%) contrast(100%);
+    }
+    100% {
+        filter: grayscale(40%) contrast(50%);
+    }
+}
+@keyframes skeleton-text-loading {
+    0% {
+        background-color: hsl(210, 3%, 50%);
+        opacity: 1;
+    }
+    100% {
+        background-color: hsl(210, 3%, 50%);
+        opacity: 0.2;
+    }
+}

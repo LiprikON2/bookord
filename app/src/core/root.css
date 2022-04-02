@@ -1,7 +1,6 @@
 @font-face {
     font-family: "Exo";
-    src: url("resources/fonts/Exo-Italic-VariableFont_wght.ttf")
-        format("truetype");
+    src: url("resources/fonts/Exo-Italic-VariableFont_wght.ttf") format("truetype");
     font-style: italic, oblique;
 }
 @font-face {
@@ -17,6 +16,7 @@
     /* Colors */
     --clr-primary-000: white;
     --clr-primary-100: #dcddde;
+    --clr-primary-100-hsl: 210, 3%, 87%;
     --clr-primary-200: #8e9297;
     --clr-primary-300: #48545c;
     --clr-primary-300-hsl: 204 12% 32%;
@@ -112,7 +112,5 @@ main#main {
 }
 
 #main::-webkit-scrollbar-track {
-    margin-top: var(
-        --titlebar-height
-    ); /* Scrollbar adjusted for titlebar height */
+    margin-top: var(--titlebar-height); /* Scrollbar adjusted for titlebar height */
 }

@@ -4,7 +4,7 @@ import Button from "components/Button";
 
 import "./Dropdown.css";
 
-const Dropdown = ({ children, className, ...rest }) => {
+const Dropdown = ({ children, className, disabled, ...rest }) => {
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -40,7 +40,7 @@ const Dropdown = ({ children, className, ...rest }) => {
                     <Button
                         aria-haspopup="true"
                         aria-controls="dropdown-menu-options"
-                        onClick={openDropdown}>
+                        onClick={!disabled ? openDropdown : null}>
                         <span>☰</span>
                     </Button>
                 </div>

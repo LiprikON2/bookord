@@ -16,8 +16,9 @@ const LibraryList = ({
     loading,
     setLoading,
 }) => {
-    const ghostFile = {
-        info: { title: "ghost" },
+    const skeletonFile = {
+        isSkeleton: true,
+        info: { title: "" },
     };
     // TODO handle clicking on deleted books
     // TODO add drag and drop overlay
@@ -47,8 +48,8 @@ const LibraryList = ({
                             </Link>
                         ))}
                         {[...Array(skeletontFileCount)].map((e, index) => (
-                            <div role="listitem" key={"ghost" + index}>
-                                <LibraryListCard file={ghostFile}></LibraryListCard>
+                            <div role="listitem" key={"skeleton" + index}>
+                                <LibraryListCard file={skeletonFile}></LibraryListCard>
                             </div>
                         ))}
                     </div>
