@@ -11,9 +11,6 @@ const LibraryListCard = ({ file }) => {
         window.api.send("app:on-file-delete", file);
         // Chokidar (from `io.js`) then triggers removeFromInteractionState
     };
-    // Todo Занимательная физика has too much height
-    // Todo when only one book its too big
-    // TODO Overlord - Volume 13 - Paladin of the Holy Kingdom (Second Part) cant find image
     return (
         <>
             <div className="card">

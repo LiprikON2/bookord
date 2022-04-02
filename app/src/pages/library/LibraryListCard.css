@@ -3,6 +3,8 @@
     display: grid;
     justify-items: center;
     aspect-ratio: 351 / 575;
+    width: 100%;
+    height: 100%;
 
     background-color: transparent;
     box-shadow: none;
@@ -16,15 +18,19 @@
     grid-column: 1 / 2;
 }
 .card > .card-cover {
-    width: 100%;
+    min-width: 100%;
+    max-height: 85%;
     aspect-ratio: 351 / 500;
-    object-fit: cover;
     border-radius: 10px;
     transition: all 0.2s ease;
 }
 .card > .card-cover > * {
+    aspect-ratio: 351 / 500;
+    width: 100%;
+    object-fit: cover;
     border-radius: 10px;
     box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-000-hsl) / 0.5);
+    transition: all 0.4s ease;
 }
 
 .card > .card-cover:hover,
@@ -85,7 +91,7 @@ a:focus-visible .no-cover .clip-path > h3 {
 .card > .card-content {
     align-self: end;
 
-    width: calc(110% + 4% * 2);
+    min-width: calc(110% + 4% * 2);
     padding-inline: 4%; /* Prevents clicks on underlying link's padding */
     padding-block: 7.5%; /* Prevents clicks on underlying link's padding */
 

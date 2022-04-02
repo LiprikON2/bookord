@@ -11,11 +11,14 @@
 
 .card-list {
     display: grid;
-    width: min(100%, 60rem);
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    max-width: min(90vw, 90rem);
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(14rem, 1fr)
+    ); /* TODO 14rem as a card size setting */
     gap: 1.5rem;
     row-gap: 3rem;
-    margin-inline: auto;
+    /* margin-inline: auto; */
 }
 
 .card-list > a {

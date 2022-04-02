@@ -111,7 +111,7 @@ async function createWindow() {
     });
 
     win.webContents.setWindowOpenHandler(({ url }) => {
-        // TODO unsecure
+        // TODO unsecure, add follow link confirmation option
         shell.openExternal(url);
         return { action: "deny" };
     });

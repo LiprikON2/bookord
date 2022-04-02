@@ -1,4 +1,5 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import debounce from "lodash.debounce";
 
 import Button from "components/Button";
 import {
@@ -10,14 +11,21 @@ import {
 const dragDrop = require("drag-drop");
 
 const LibraryListUpload = ({ setFiles, setLoading }) => {
+    const [uploading, setUploading] = useState(false);
+
     const handleUpload = () => {
-        const promise = window.api.invoke("app:on-fs-dialog-open");
-        promise.then(() => {
-            updateFiles();
-        });
+        // Prevets queueing up explorer windows
+        if (!uploading) {
+            setUploading(true);
+            const promise = window.api.invoke("app:on-fs-dialog-open");
+            promise.then(() => {
+                updateFiles();
+                setUploading(false);
+            });
+        }
     };
 
-    const updateFiles = () => {
+    const debouncedUpdate = debounce(() => {
         console.time("updateFiles");
         // Updates store in main
         window.api.store.send(useConfigInMainRequest);
@@ -40,6 +48,10 @@ const LibraryListUpload = ({ setFiles, setLoading }) => {
             }
             setLoading(false);
         });
+    }, 100);
+
+    const updateFiles = () => {
+        debouncedUpdate();
     };
 
     const stopWatchingFiles = () => {
