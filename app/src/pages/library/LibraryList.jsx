@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Link from "components/Link";
+import Spinner from "components/Spinner";
+import ImageModal from "components/ImageModal";
+
 import LibraryListCard from "./LibraryListCard";
 import LibraryListUpload from "./LibraryListUpload";
 import ROUTES from "Constants/routes";
 import "./LibraryList.css";
 
-import Spinner from "components/Spinner";
+import dropzoneImg from "resources/upload-accent.svg";
 
 const LibraryList = ({
     files,
@@ -20,15 +23,22 @@ const LibraryList = ({
         isSkeleton: true,
         info: { title: "" },
     };
+    const [showDropzone, setShowDropzone] = useState(false);
+
     // TODO handle clicking on deleted books
-    // TODO add drag and drop overlay
     return (
         <>
             <section className="section library-list" id="uploader">
+                <ImageModal
+                    toggle={showDropzone}
+                    src={dropzoneImg}
+                    showButton={false}></ImageModal>
+
                 <LibraryListUpload
                     setFiles={setFiles}
                     setLoading={setLoading}
                     setSkeletontFileCount={setSkeletontFileCount}
+                    setShowDropzone={setShowDropzone}
                 />
 
                 {!loading ? (

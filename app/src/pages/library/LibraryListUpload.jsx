@@ -9,8 +9,12 @@ import {
 } from "secure-electron-store";
 
 const dragDrop = require("drag-drop");
-
-const LibraryListUpload = ({ setFiles, setLoading, setSkeletontFileCount }) => {
+const LibraryListUpload = ({
+    setFiles,
+    setLoading,
+    setSkeletontFileCount,
+    setShowDropzone,
+}) => {
     const [uploading, setUploading] = useState(false);
 
     const handleUpload = () => {
@@ -48,7 +52,7 @@ const LibraryListUpload = ({ setFiles, setLoading, setSkeletontFileCount }) => {
                 );
             }
             setLoading(false);
-            setSkeletontFileCount(3);
+            setSkeletontFileCount(0);
         });
     }, 100);
 
@@ -67,19 +71,28 @@ const LibraryListUpload = ({ setFiles, setLoading, setSkeletontFileCount }) => {
 
     useEffect(() => {
         // Initial file drag and drop event litener
-        dragDrop("#uploader", (files) => {
-            const mappedFiles = files.map((file) => {
-                return {
-                    name: file.name,
-                    path: file.path,
-                };
-            });
-            // send file(s) add event to the `main` process
-            const promise = window.api.invoke("app:on-file-add", mappedFiles);
-            promise.then((fileCount) => {
-                setSkeletontFileCount(fileCount);
-                updateFiles();
-            });
+        dragDrop("#uploader", {
+            onDrop: (files) => {
+                console.log("onDrop");
+                const mappedFiles = files.map((file) => {
+                    return {
+                        name: file.name,
+                        path: file.path,
+                    };
+                });
+                // send file(s) add event to the `main` process
+                const promise = window.api.invoke("app:on-file-add", mappedFiles);
+                promise.then((fileCount) => {
+                    setSkeletontFileCount(fileCount);
+                    updateFiles();
+                });
+            },
+            onDragEnter: () => {
+                setShowDropzone(true);
+            },
+            onDragLeave: () => {
+                setShowDropzone(false);
+            },
         });
 
         const unlisten = window.api.receive("app:file-is-deleted", () => {

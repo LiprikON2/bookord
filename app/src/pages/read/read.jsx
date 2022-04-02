@@ -5,7 +5,7 @@ import { readConfigRequest, readConfigResponse } from "secure-electron-store";
 
 import Link from "components/Link";
 import Button from "components/Button";
-import ImageModal from "./ImageModal";
+import ImageModal from "components/ImageModal";
 import ROUTES from "Constants/routes";
 import "./bookComponent";
 import "./Read.css";

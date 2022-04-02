@@ -3,17 +3,22 @@ import React, { useEffect, useRef } from "react";
 import Button from "components/Button";
 import "./ImageModal.css";
 
-const ImageModal = ({ src, setSrc }) => {
+const ImageModal = ({ src, setSrc, toggle, showButton = true }) => {
     const modalRef = useRef(null);
 
     useEffect(() => {
-        if (src) {
-            modalRef.current.classList.add("is-active");
+        if (src && toggle) {
+            openModal();
+        } else {
+            closeModal();
         }
-    }, [src]);
+    }, [src, toggle]);
+    const openModal = () => {
+        modalRef.current.classList.add("is-active");
+    };
     const closeModal = () => {
         modalRef.current.classList.remove("is-active");
-        setSrc(null);
+        if (setSrc) setSrc(null);
     };
     return (
         <>
@@ -24,10 +29,12 @@ const ImageModal = ({ src, setSrc }) => {
                         <img src={src} alt="" />
                     </p>
                 </div>
-                <Button
-                    className="modal-close is-large"
-                    aria-label="close"
-                    onClick={closeModal}></Button>
+                {showButton && (
+                    <Button
+                        className="modal-close is-large"
+                        aria-label="close"
+                        onClick={closeModal}></Button>
+                )}
             </div>
         </>
     );
