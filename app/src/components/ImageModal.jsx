@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useHotkeys } from "@mantine/hooks";
 
 import Button from "components/Button";
 import "./ImageModal.css";
@@ -20,6 +21,8 @@ const ImageModal = ({ src, setSrc, toggle = true, showButton = true }) => {
         modalRef.current.classList.remove("is-active");
         if (setSrc) setSrc(null);
     };
+
+    useHotkeys([["Escape", closeModal]]);
     return (
         <>
             <div ref={modalRef} className="modal">

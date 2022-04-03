@@ -64,20 +64,26 @@ const Read = () => {
     const goBack = () => {
         flipNPages(-1);
     };
+    const resize = () => {
+        const bookRef = bookComponentRef.current;
+        bookRef.resize(600);
+    };
 
     const flipNPages = (nPageShift) => {
         const bookRef = bookComponentRef.current;
+        if (!bookRef.isInit) return;
+
         const currentPage = bookRef.bookState.getCurrentBookPage(bookRef) + 1;
         const validNextPage = bookRef.enforcePageRange(currentPage + nPageShift);
         setPage(validNextPage);
     };
 
-    // useHotkeys([
-    //     ["ArrowRight", () => goNext()],
-    //     ["ArrowLeft", () => goBack()],
-    //     ["ctrl + ArrowRight", () => flipNPages(5)],
-    //     ["ctrl + ArrowLeft", () => flipNPages(-5)],
-    // ]);
+    useHotkeys([
+        ["ArrowRight", () => goNext()],
+        ["ArrowLeft", () => goBack()],
+        ["ctrl + ArrowRight", () => flipNPages(5)],
+        ["ctrl + ArrowLeft", () => flipNPages(-5)],
+    ]);
 
     useEffect(() => {
         return () => {
@@ -102,6 +108,7 @@ const Read = () => {
                 <div className="button-group">
                     <Button onClick={goBack}>Back</Button>
                     <Button onClick={goNext}>Next</Button>
+                    <Button onClick={resize}>resize</Button>
                 </div>
             </section>
         </>

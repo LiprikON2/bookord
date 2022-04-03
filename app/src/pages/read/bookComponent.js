@@ -126,6 +126,7 @@ class BookComponent extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.contentElem = this.shadowRoot.getElementById("book-content");
+        this.rootStyle = getComputedStyle(this.contentElem);
 
         /**
          * @property {boolean} isInit - Status of initialization of the book, true when all of the book's sections are parsed
@@ -494,7 +495,12 @@ class BookComponent extends HTMLElement {
         this.removeLinkHandlers();
         this.removeImgEventEmitters();
 
-        // console.log("book", currentSection, nPageShift, offsetMarkerId);
+        console.log(
+            "book",
+            currentSection,
+            nPageShift,
+            this.book.sectionNames[currentSection]
+        );
 
         this.loadStyles(book, section);
         this.loadContent(section);
@@ -619,7 +625,8 @@ class BookComponent extends HTMLElement {
      * @returns {number}
      */
     _getDisplayWidth() {
-        return this.contentElem.offsetWidth;
+        const columnGap = this.rootStyle.getPropertyValue("--column-gap");
+        return this.contentElem.offsetWidth + parseInt(columnGap);
     }
 
     /**
@@ -628,11 +635,11 @@ class BookComponent extends HTMLElement {
      */
     _getCounterErrorCorrection() {
         const displayWidth = this._getDisplayWidth();
-        return displayWidth - 1.5 * displayWidth + 713;
+        return 713 - 0.5 * displayWidth;
     }
     /**
      * Returns the total of current section pages
-     * @param {boolean} [correctCounterError] - Wether or not correct for counter component's error
+     * @param {boolean} [correctCounterError] - Whether or not correct for counter component's error
      * @returns {number}
      */
     calcTotalSectionPages(correctCounterError = false) {
@@ -652,6 +659,7 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     flipNPages(nPageShift) {
+        if (!this.isInit) return;
         const currentSection = this.bookState.currentSection;
         const totalSections = this.bookState.totalSections;
 
@@ -709,6 +717,8 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     jumpToPage(page) {
+        if (!this.isInit) return;
+
         const validPage = this.enforcePageRange(page);
 
         const currentPage = this.bookState.getCurrentBookPage(this);
@@ -797,7 +807,7 @@ class BookComponent extends HTMLElement {
             this.loadStyles(book, section);
             this.loadContent(section);
 
-            const totalSectionPages = this.calcTotalSectionPages(true);
+            const totalSectionPages = this.calcTotalSectionPages();
             parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
             // Update page count every 10 sections
             if (sectionIndex % 10 === 0) {
@@ -943,6 +953,28 @@ class BookComponent extends HTMLElement {
         );
     }
 
+    /**
+     * Resizes book component and recalculates page count
+     * @param {number} size - book component width in px, will be set height is 1.6 of that
+     */
+    resize(size) {
+        console.log(this.shadowRoot.querySelectorAll("*"));
+        const dir = (object) => {
+            return Object.getOwnPropertyNames(object).filter(function (property) {
+                return typeof object[property] == "function";
+            });
+        };
+        console.log("dir", this);
+        console.log("dir", this.shadowRoot);
+        const root = this.shadowRoot.getElementById("root");
+
+        root.style.setProperty("--book-component-width", size + "px");
+        // root.style.setProperty("--book-component-height", size * 1.6 + "px");
+        root.style.setProperty("--book-component-height", size + "px");
+        this.createCounterComponent();
+        this.setCurrentOffset(0);
+    }
+
     disconnectedCallback() {
         this.unlisten();
         const nextBtn = this.shadowRoot.querySelector("button#next");
@@ -954,8 +986,6 @@ class BookComponent extends HTMLElement {
 
         delete this.initBook;
         delete this.book;
-        delete this.bookState;
-        delete this.contentElem;
     }
 
     /**
