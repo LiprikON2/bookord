@@ -53,7 +53,7 @@ const Routes = () => {
 
     const [files, setFiles] = useState([]);
     const [skeletontFileCount, setSkeletontFileCount] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [isInitLoad, setIsInitLoad] = useState(true);
 
     return (
         <main id="main">
@@ -74,8 +74,8 @@ const Routes = () => {
                         setFiles={setFiles}
                         skeletontFileCount={skeletontFileCount}
                         setSkeletontFileCount={setSkeletontFileCount}
-                        loading={loading}
-                        setLoading={setLoading}
+                        isInitLoad={isInitLoad}
+                        setIsInitLoad={setIsInitLoad}
                     />
                 </Route>
                 <Route path={ROUTES.READ} component={Read}></Route>

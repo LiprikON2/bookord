@@ -10,8 +10,8 @@ const Library = ({
     setFiles,
     skeletontFileCount,
     setSkeletontFileCount,
-    loading,
-    setLoading,
+    isInitLoad,
+    setIsInitLoad,
 }) => {
     return (
         <>
@@ -30,8 +30,8 @@ const Library = ({
                 setFiles={setFiles}
                 skeletontFileCount={skeletontFileCount}
                 setSkeletontFileCount={setSkeletontFileCount}
-                loading={loading}
-                setLoading={setLoading}
+                isInitLoad={isInitLoad}
+                setIsInitLoad={setIsInitLoad}
             />
         </>
     );

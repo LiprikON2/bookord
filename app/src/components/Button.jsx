@@ -1,13 +1,14 @@
 import React from "react";
+import { Button as MantineButton } from "@mantine/core";
 
 import "./Button.css";
 
 const Button = ({ children, className, ...rest }) => {
     return (
         <>
-            <button className={className ?? "button btn"} {...rest}>
+            <MantineButton className={className ?? "button btn"} {...rest}>
                 {children}
-            </button>
+            </MantineButton>
         </>
     );
 };

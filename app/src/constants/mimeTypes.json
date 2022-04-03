@@ -1,0 +1,14 @@
+{
+    "EBOOK_MIME_TYPES": [
+        "application/epub+zip",
+        "application/fb2",
+        "text/plain",
+        "text/html",
+        "text/html",
+        "application/xhtml+xml",
+        "application/xml",
+        "application/x-mobipocket-ebook",
+        "application/vnd.amazon.ebook",
+        "application/pdf"
+    ]
+}

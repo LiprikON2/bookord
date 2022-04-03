@@ -1,6 +1,7 @@
 import React from "react";
 import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
+import { MantineProvider } from "@mantine/core";
 
 import Routes from "Core/Routes";
 import Titlebar from "./Titlebar";
@@ -13,8 +14,10 @@ const Root = ({ store, history }) => {
         <>
             <Provider store={store}>
                 <ConnectedRouter history={history}>
-                    <Titlebar history={history}></Titlebar>
-                    <Routes></Routes>
+                    <MantineProvider theme={{ colorScheme: "dark" }}>
+                        <Titlebar history={history}></Titlebar>
+                        <Routes></Routes>
+                    </MantineProvider>
                 </ConnectedRouter>
             </Provider>
         </>
