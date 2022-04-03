@@ -43,8 +43,7 @@ const LibraryList = ({
         }
     };
 
-    // todo use debounce hook
-    const debouncedUpdate = debounce(() => {
+    const updateFiles = debounce(() => {
         console.time("updateFiles");
         // Updates store in main
         window.api.store.send(useConfigInMainRequest);
@@ -69,10 +68,6 @@ const LibraryList = ({
             setSkeletontFileCount(0);
         });
     }, 100);
-
-    const updateFiles = () => {
-        debouncedUpdate();
-    };
 
     const handleDrop = (files) => {
         const mappedFiles = files.map((file) => {

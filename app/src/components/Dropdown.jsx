@@ -8,7 +8,7 @@ const Dropdown = ({ children, className, disabled, ...rest }) => {
     const dropdownRef = useRef(null);
 
     useEffect(() => {
-        return function cleanup() {
+        return () => {
             document.body.removeEventListener("click", closeDropdown);
         };
     }, []);

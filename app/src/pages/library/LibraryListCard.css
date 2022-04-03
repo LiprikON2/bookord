@@ -75,6 +75,7 @@ a:focus-visible > .card > .card-cover {
     overflow: hidden;
     text-overflow: clip;
     text-align: right;
+    word-break: break-word;
 
     border-radius: 10px 0 0 10px;
 }
@@ -92,6 +93,7 @@ a:focus-visible .no-cover .clip-path > h3 {
     align-self: end;
 
     min-width: calc(110% + 4% * 2);
+    max-width: 100%;
     padding-inline: 4%; /* Prevents clicks on underlying link's padding */
     padding-block: 7.5%; /* Prevents clicks on underlying link's padding */
 
@@ -137,6 +139,7 @@ a:focus-visible .no-cover .clip-path > h3 {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: break-word;
 }
 
 /* Skeleton loading animation */

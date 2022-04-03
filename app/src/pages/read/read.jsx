@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-
+import { useHotkeys } from "@mantine/hooks";
 import { readConfigRequest, readConfigResponse } from "secure-electron-store";
 
 import Link from "components/Link";
@@ -9,35 +9,6 @@ import ImageModal from "components/ImageModal";
 import ROUTES from "Constants/routes";
 import "./bookComponent";
 import "./Read.css";
-
-function useEventListener(eventName, handler, element = window) {
-    // Create a ref that stores handler
-    const savedHandler = useRef();
-    // Update ref.current value if handler changes.
-    // This allows our effect below to always get latest handler ...
-    // ... without us needing to pass it in effect deps array ...
-    // ... and potentially cause effect to re-run every render.
-    useEffect(() => {
-        savedHandler.current = handler;
-    }, [handler]);
-    useEffect(
-        () => {
-            // Make sure element supports addEventListener
-            // On
-            const isSupported = element && element.addEventListener;
-            if (!isSupported) return;
-            // Create event listener that calls handler function stored in ref
-            const eventListener = (event) => savedHandler.current(event);
-            // Add event listener
-            element.addEventListener(eventName, eventListener);
-            // Remove event listener on cleanup
-            return () => {
-                element.removeEventListener(eventName, eventListener);
-            };
-        },
-        [eventName, element] // Re-run if eventName or element changes
-    );
-}
 
 const Read = () => {
     const location = useLocation();
@@ -82,25 +53,10 @@ const Read = () => {
         };
     }, []);
 
-    const handleKeypress = (e) => {
-        if (e.key === "ArrowRight" && e.ctrlKey) {
-            flipNPages(5);
-        } else if (e.key === "ArrowLeft" && e.ctrlKey) {
-            flipNPages(-5);
-        } else if (e.key === "ArrowRight") {
-            goNext();
-        } else if (e.key === "ArrowLeft") {
-            goBack();
-        }
-    };
-
     const [imageModalSrc, setImageModalSrc] = useState();
     const handleImgClick = (e) => {
         setImageModalSrc(e.detail.src);
     };
-
-    // Keypress listener using custom hook
-    useEventListener("keydown", handleKeypress);
 
     const goNext = () => {
         flipNPages(1);
@@ -115,6 +71,13 @@ const Read = () => {
         const validNextPage = bookRef.enforcePageRange(currentPage + nPageShift);
         setPage(validNextPage);
     };
+
+    // useHotkeys([
+    //     ["ArrowRight", () => goNext()],
+    //     ["ArrowLeft", () => goBack()],
+    //     ["ctrl + ArrowRight", () => flipNPages(5)],
+    //     ["ctrl + ArrowLeft", () => flipNPages(-5)],
+    // ]);
 
     useEffect(() => {
         return () => {

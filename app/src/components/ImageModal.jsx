@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import Button from "components/Button";
 import "./ImageModal.css";
 
-const ImageModal = ({ src, setSrc, toggle, showButton = true }) => {
+const ImageModal = ({ src, setSrc, toggle = true, showButton = true }) => {
     const modalRef = useRef(null);
 
     useEffect(() => {
@@ -33,6 +33,7 @@ const ImageModal = ({ src, setSrc, toggle, showButton = true }) => {
                     <Button
                         className="modal-close is-large"
                         aria-label="close"
+                        style={{ padding: 0 }}
                         onClick={closeModal}></Button>
                 )}
             </div>
