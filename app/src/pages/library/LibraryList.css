@@ -1,7 +1,5 @@
 .section.library-list {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
     gap: 3rem;
 }
@@ -11,14 +9,14 @@
 
 .card-list {
     display: grid;
-    max-width: min(90vw, 90rem);
+    max-width: min(calc(100% - 2rem), 90rem);
+    margin-inline: auto;
     grid-template-columns: repeat(
         auto-fit,
         minmax(14rem, 1fr)
     ); /* TODO 14rem as a card size setting */
     gap: 1.5rem;
     row-gap: 3rem;
-    /* margin-inline: auto; */
 }
 
 .card-list > * {

@@ -1,6 +1,7 @@
 // @ts-check
 ///<reference path="../types/index.d.ts" />
 import { writeConfigRequest } from "secure-electron-store";
+import debounce from "lodash.debounce";
 import "./bookComponent.css"; // Then used from ReadChunk.css in template
 
 const template = document.createElement("template");
@@ -528,7 +529,7 @@ class BookComponent extends HTMLElement {
         this.attachLinkHandlers(book);
         this.attachImgEventEmitters();
 
-        this.saveInteractionProgress();
+        this.debouncedSaveInteractionProgress();
     }
 
     /**
@@ -674,7 +675,7 @@ class BookComponent extends HTMLElement {
 
             this.setCurrentOffset(newOffset);
             this.updateBookUI();
-            this.saveInteractionProgress();
+            this.debouncedSaveInteractionProgress();
         }
         // Else if it's possible to jump to the next or previous sections
         else if (
@@ -952,6 +953,8 @@ class BookComponent extends HTMLElement {
             mergedInteractionStates
         );
     }
+
+    debouncedSaveInteractionProgress = debounce(this.saveInteractionProgress, 500);
 
     /**
      * Resizes book component and recalculates page count
