@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useHotkeys } from "@mantine/hooks";
+import { useHotkeys, useViewportSize, useDidUpdate } from "@mantine/hooks";
 import { readConfigRequest, readConfigResponse } from "secure-electron-store";
 
 import Link from "components/Link";
@@ -9,6 +9,10 @@ import ImageModal from "components/ImageModal";
 import ROUTES from "Constants/routes";
 import "./bookComponent";
 import "./Read.css";
+
+const clamp = (min, value, max) => {
+    return Math.min(Math.max(value, min), max);
+};
 
 const Read = () => {
     const location = useLocation();
@@ -64,15 +68,6 @@ const Read = () => {
     const goBack = () => {
         flipNPages(-1);
     };
-    const resize = () => {
-        const book = bookComponentRef.current;
-        book.resize(600);
-    };
-
-    const f = () => {
-        const book = bookComponentRef.current;
-        book.updateBookUI();
-    };
 
     const flipNPages = (nPageShift) => {
         const book = bookComponentRef.current;
@@ -97,9 +92,42 @@ const Read = () => {
         };
     }, []);
 
+    const { height, width } = useViewportSize();
+    const [size, setSize] = useState(400);
+
+    const resize = () => {
+        const book = bookComponentRef.current;
+        const aspectRatio = book.aspectRatio;
+
+        const lowerbound = 200;
+        const upperbound = Math.max(Math.ceil(height / (aspectRatio * 1.6)), lowerbound);
+
+        const newSize = clamp(lowerbound, Math.ceil(width / 2), upperbound);
+
+        console.log("newsize", lowerbound, newSize, upperbound);
+
+        // Get the precentage difference between two values
+        const percentageDiff = Math.abs(newSize - size) / ((newSize + size) / 2);
+        // Check if size change is in more than 10%
+        if (percentageDiff > 0.1) {
+            setSize(newSize);
+            book.resize(newSize);
+        }
+        return newSize;
+    };
+
+    useDidUpdate(() => {
+        resize();
+    }, [width, height]);
+
     return (
         <>
             <section className="section">
+                <code>w:{width}</code>
+                <code>h:{height}</code>
+                <br />
+                <code>size:{size}</code>
+
                 <h1>Read</h1>
                 <Link to={ROUTES.LIBRARY}>Home</Link>
                 <div
@@ -113,8 +141,6 @@ const Read = () => {
                 <div className="button-group">
                     <Button onClick={goBack}>Back</Button>
                     <Button onClick={goNext}>Next</Button>
-                    <Button onClick={resize}>resize</Button>
-                    <Button onClick={f}>update</Button>
                 </div>
             </section>
         </>

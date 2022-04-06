@@ -1,7 +1,7 @@
 // @ts-check
 ///<reference path="../types/index.d.ts" />
 import { writeConfigRequest } from "secure-electron-store";
-import debounce from "lodash.debounce";
+import debounce from "lodash/debounce";
 
 const style = /*css*/ `
     :host {
@@ -18,7 +18,7 @@ const style = /*css*/ `
 
     .book-container {
         margin: auto;
-        width: min-content;
+        width: var(--book-component-width);
         height: min-content;
         overflow: hidden;
     }
@@ -576,7 +576,7 @@ class BookComponent extends HTMLElement {
         // In case user traveled back from the subsequent section
         if (offsetMarkerId) {
             const markerElem = this.shadowRoot.getElementById(offsetMarkerId);
-            const markerOffset = this.getElementOffset(markerElem);
+            const markerOffset = this.getElementOffset(markerElem, true);
             // Set offset to the last page (if it's the end-marker) of this section
             this.setOffset(markerOffset);
         } else {
@@ -622,12 +622,27 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     * Returns element's offset
+     * Returns element's offset (a negative value)
      * @param {HTMLElement} elem
+     * @param {boolean} [round] - rounds elements offset to the left page edge
      * @returns {number}
      */
-    getElementOffset(elem) {
-        return -elem.offsetLeft;
+    getElementOffset(elem, round = false) {
+        const elemOffset = elem.offsetLeft;
+        if (!round) {
+            return -elemOffset;
+        }
+
+        const displayWidth = this._getDisplayWidth();
+        const columnGap = this._getColumnGap();
+
+        let width = 0;
+        while (width - columnGap < elemOffset) {
+            width += displayWidth;
+        }
+        const leftEdge = -width + displayWidth;
+        console.log("leftEdge", leftEdge, elemOffset);
+        return leftEdge;
     }
 
     /**
@@ -638,20 +653,6 @@ class BookComponent extends HTMLElement {
      */
     _insertAfter(referenceNode, newNode) {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-    }
-
-    // TODO remove
-    /**
-     * Returns top most element's parent, but which is still a child to the book content element
-     * @param {HTMLElement} elem
-     * @returns {HTMLElement}
-     */
-    findDirectContentChild(elem) {
-        if (elem.parentNode === this.rootElem) {
-            return elem;
-        } else {
-            return this.findDirectContentChild(elem.parentElement); // TODO parentNode -> parentElement: remove comment if it doesnt break anything
-        }
     }
 
     /**
@@ -680,12 +681,19 @@ class BookComponent extends HTMLElement {
      * Returns end-marker's offset which is maximum possible offset
      * @returns {number}
      */
-    _getMaxOffset() {
-        const markerId = this.contentElem.id + "-end-marker";
-        const markerElem = this.shadowRoot.getElementById(markerId);
-        const markerOffset = this.getElementOffset(markerElem);
+    _getTotalDisplayWidth() {
+        const columnGap = this.componentStyle.getPropertyValue("--column-gap");
+        const totalWidth = this.contentElem.scrollWidth + parseInt(columnGap);
 
-        return markerOffset;
+        return totalWidth;
+    }
+
+    /**
+     * Returns the invisible column gap between the pages
+     * @returns {number}
+     */
+    _getColumnGap() {
+        return parseInt(this.componentStyle.getPropertyValue("--column-gap"));
     }
 
     /**
@@ -693,8 +701,8 @@ class BookComponent extends HTMLElement {
      * @returns {number}
      */
     _getDisplayWidth() {
-        const columnGap = this.componentStyle.getPropertyValue("--column-gap");
-        return this.contentElem.offsetWidth + parseInt(columnGap);
+        const columnGap = this._getColumnGap();
+        return this.contentElem.offsetWidth + columnGap;
     }
 
     /**
@@ -702,10 +710,8 @@ class BookComponent extends HTMLElement {
      * @returns {number}
      */
     countSectionPages() {
-        const columnGap = this.componentStyle.getPropertyValue("--column-gap");
-        const totalWidth = this.contentElem.scrollWidth + parseInt(columnGap);
+        const totalWidth = this._getTotalDisplayWidth();
         const width = this._getDisplayWidth();
-        console.log(width, "/", totalWidth, "is", totalWidth / width);
 
         return Math.ceil(totalWidth / width);
     }
@@ -769,7 +775,6 @@ class BookComponent extends HTMLElement {
             this._flipNPages(nPageShift);
         } else if (nextSection !== currentSection && this.status === "ready") {
             const sectionPagesArr = this.bookState.sectionPagesArr;
-            console.log("sectionPagesArr", sectionPagesArr);
 
             // Prevents the change of a section before the section is counted
             if (!this.bookState.isSectionCounted(nextSection)) {
@@ -793,7 +798,7 @@ class BookComponent extends HTMLElement {
      * @param {HTMLElement} [root] - element containig styles
      * @return {void}
      */
-    setSize(size, root = this.contentElem) {
+    setSize(size, root = this.rootElem) {
         root.style.setProperty("--book-component-width", size + "px");
         root.style.setProperty("--book-component-height", size * this.aspectRatio + "px");
     }
@@ -804,10 +809,16 @@ class BookComponent extends HTMLElement {
      * @return {void}
      */
     createCounterComponent(size = 0) {
+        if (this.status === "resizing") {
+            return;
+        }
+        this.status = "resizing";
+
+        console.log("created counter");
         const counterComponent = document.createElement("book-component");
         this.shadowRoot.appendChild(counterComponent);
 
-        // Hide counter
+        // Make it hidden
         const rootElem = counterComponent.shadowRoot.getElementById("root");
         rootElem.style.visibility = "hidden";
         rootElem.style.height = "0";
@@ -818,6 +829,7 @@ class BookComponent extends HTMLElement {
 
         // @ts-ignore
         counterComponent._countBookPages(this);
+        console.log("removed counter");
     }
 
     /**
@@ -863,6 +875,12 @@ class BookComponent extends HTMLElement {
             this.loadContent(section);
 
             const totalSectionPages = this.countSectionPages();
+            // Stop counting if another counter is created
+            if (!totalSectionPages) {
+                console.log("Stopping");
+                return;
+            }
+
             parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
             // Update page count every 10 sections
             if (sectionIndex % 10 === 0) {
@@ -872,7 +890,6 @@ class BookComponent extends HTMLElement {
         });
         parentComponent.updateBookUI();
         parentComponent.status = "ready";
-
         this.remove();
     }
 
@@ -1006,14 +1023,15 @@ class BookComponent extends HTMLElement {
      * @param {number} size - book component width in px, height will be `size * aspectRatio`
      * @returns {void}
      */
-    resize(size) {
-        this.status = "resizing";
+    res(size) {
+        console.log("resizing!");
 
         this.setSize(size);
         this.createCounterComponent(size);
 
         this.setOffset(0);
     }
+    resize = debounce(this.res, 500);
 
     disconnectedCallback() {
         this.unlisten();

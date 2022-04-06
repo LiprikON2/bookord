@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useWindowEvent } from "@mantine/hooks";
-import debounce from "lodash.debounce";
+import debounce from "lodash/debounce";
 import {
     writeConfigRequest,
     useConfigInMainRequest,
