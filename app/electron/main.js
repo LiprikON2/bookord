@@ -493,7 +493,7 @@ ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum, page]
 
     // Send book with single section parsed
     const { initBook } = await getChildResponse(parseChild);
-    win.webContents.send("app:receive-parsed-section", initBook);
+    win.webContents.send("app:receive-init-book", initBook);
 
     // Return the fully parsed book
     const { book } = await getChildResponse(parseChild);

@@ -8,6 +8,7 @@ const SecureElectronLicenseKeys = require("secure-electron-license-keys");
 // Create the electron store to be made available in the renderer process
 const store = new Store();
 
+// TODO mass rename channel names
 // whitelist channels
 const validChannels = [
     "app:on-fs-dialog-open",
@@ -17,7 +18,7 @@ const validChannels = [
     "app:file-is-deleted",
 
     "app:get-parsed-book",
-    "app:receive-parsed-section",
+    "app:receive-init-book",
     "app:get-books",
     "app:on-stop-parsing",
     "app:receive-skeleton-count",

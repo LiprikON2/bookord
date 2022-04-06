@@ -2,14 +2,80 @@
 ///<reference path="../types/index.d.ts" />
 import { writeConfigRequest } from "secure-electron-store";
 import debounce from "lodash.debounce";
-import "./bookComponent.css"; // Then used from ReadChunk.css in template
+
+const style = /*css*/ `
+    :host {
+        --book-component-width: 400px;
+        --book-component-height: 600px;
+        --column-gap: 100px;
+
+        --clr-link: #4dabf7; /* todo move to somewhere */
+    }
+
+    :any-link {
+        color: var(--clr-link);
+    }
+
+    .book-container {
+        margin: auto;
+        width: min-content;
+        height: min-content;
+        overflow: hidden;
+    }
+    .book-container > #book-content {
+        /* transform: translate(0); */
+        /* transition: all 0.2s ease-out; */
+        columns: 1;
+        column-gap: var(--column-gap);
+        width: var(--book-component-width);
+        height: var(--book-component-height);
+        /* overflow: hidden; */
+    }
+
+    /* TODO detect decorative images*/
+    /* TODO svg */
+    .book-container img {
+        /* max-width: 100% !important; */
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: var(--book-component-height) !important;
+        object-fit: contain;
+        cursor: zoom-in;
+    }
+    ul.book-ui {
+        display: flex;
+        gap: 1em;
+        justify-content: space-between;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    ul.book-ui > *,
+    #book-title {
+        color: var(--clr-primary-200);
+        height: 1.5em;
+    }
+    ul.book-ui > #section-name,
+    #book-title {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    ul.book-ui > #section-page,
+    ul.book-ui > #book-page {
+        visibility: hidden;
+    }
+`;
 
 const template = document.createElement("template");
-template.innerHTML = `
+template.innerHTML = /*html*/ `
     <section id="root" class="book-container">
-        <link href="ReadChunk.css" rel="stylesheet" type="text/css">  
-
         <style id="book-style"></style>
+        <style id="component-style">
+            ${style}
+        </style>
         <div id="book-title"></div>
         <div id="book-content"></div>
         
@@ -25,7 +91,6 @@ template.innerHTML = `
 
         <button role="button" id="back" hidden>Back</button>
         <button role="button" id="next" hidden>Next</button>
-        
     </section>
 `;
 
@@ -126,23 +191,23 @@ class BookComponent extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
+        this.rootElem = this.shadowRoot.getElementById("root");
         this.contentElem = this.shadowRoot.getElementById("book-content");
-        this.rootStyle = getComputedStyle(this.contentElem);
+
+        this.componentStyle = getComputedStyle(this.rootElem);
+        this.aspectRatio = 1.5;
 
         /**
-         * @property {boolean} isInit - Status of initialization of the book, true when all of the book's sections are parsed
+         * @property {('loading'|'sectionReady'|'ready'|'resizing')} status - Status of initialization of the book, true when all of the book's sections are parsed
          */
-        this.isInit = false;
+        this.status = "loading";
         /**
          * @property {Promise<Book>} initBook - Initial book with only one section parsed
          */
         this.initBook = new Promise((resolve, reject) => {
-            this.unlisten = window.api.receive(
-                "app:receive-parsed-section",
-                (initBook) => {
-                    resolve(initBook);
-                }
-            );
+            this.unlisten = window.api.receive("app:receive-init-book", (initBook) => {
+                resolve(initBook);
+            });
         });
     }
 
@@ -158,7 +223,7 @@ class BookComponent extends HTMLElement {
             .invoke("app:get-parsed-book", [filePath, sectionNum, sectionPage])
             .catch((error) => {});
         book.then(() => {
-            this.isInit = true;
+            this.status = "ready";
         });
         return book;
     }
@@ -195,7 +260,7 @@ class BookComponent extends HTMLElement {
      * @param {Book} book
      * @param {HtmlObject} toc
      * @param {number} sectionNum
-     * @param {boolean} root - A way to differentiate between recursive and non-recursive function call
+     * @param {boolean} [root] - A way to differentiate between recursive and non-recursive function call
      * @returns {string}
      */
     getSectionTitle(book, toc, sectionNum, root = true) {
@@ -476,21 +541,22 @@ class BookComponent extends HTMLElement {
 
     /**
      * Loads specified book section along with its styles, sets event listeners, updates UI and saves interaction progress
-     * @param {number} currentSection
-     * @param {number} nPageShift
-     * @param {string} offsetMarkerId
+     * @param {number} sectionNum - sections number
+     * @param {number} sectionPage - page within section
+     * @param {string} [offsetMarkerId] - shift to marker instead of specific page
      * @returns {Promise<void>}
      */
-    async loadSection(currentSection, nPageShift, offsetMarkerId = "") {
+    async loadSection(sectionNum, sectionPage, offsetMarkerId = "") {
         let book, section;
-        if (!this.isInit) {
+        if (this.status === "loading") {
             book = await this.initBook;
+            this.status = "sectionReady";
 
             section = book.initSection;
-            currentSection = book.initSectionNum;
+            sectionNum = book.initSectionNum;
         } else {
             book = await this.book;
-            section = this.getSection(book, currentSection);
+            section = this.getSection(book, sectionNum);
         }
 
         this.removeLinkHandlers();
@@ -498,9 +564,10 @@ class BookComponent extends HTMLElement {
 
         console.log(
             "book",
-            currentSection,
-            nPageShift,
-            this.book.sectionNames[currentSection]
+            sectionNum,
+            sectionPage,
+            offsetMarkerId,
+            book.sectionNames[sectionNum]
         );
 
         this.loadStyles(book, section);
@@ -511,19 +578,19 @@ class BookComponent extends HTMLElement {
             const markerElem = this.shadowRoot.getElementById(offsetMarkerId);
             const markerOffset = this.getElementOffset(markerElem);
             // Set offset to the last page (if it's the end-marker) of this section
-            this.setCurrentOffset(markerOffset);
+            this.setOffset(markerOffset);
         } else {
             // Set offset to the first page of this section
-            this.setCurrentOffset(0);
+            this.setOffset(0);
         }
 
-        this.updateBookSectionState(book, currentSection);
+        this.updateBookSectionState(book, sectionNum);
         this.updateBookUI();
 
         // In case user traveled from previous section and
         // still had pages pending to shift through
-        if (nPageShift !== 0) {
-            this.flipNPages(nPageShift);
+        if (sectionPage !== 0) {
+            this._flipNPages(sectionPage);
         }
 
         this.attachLinkHandlers(book);
@@ -580,7 +647,7 @@ class BookComponent extends HTMLElement {
      * @returns {HTMLElement}
      */
     findDirectContentChild(elem) {
-        if (elem.parentNode === this.contentElem) {
+        if (elem.parentNode === this.rootElem) {
             return elem;
         } else {
             return this.findDirectContentChild(elem.parentElement); // TODO parentNode -> parentElement: remove comment if it doesnt break anything
@@ -592,7 +659,7 @@ class BookComponent extends HTMLElement {
      * @param {string|number} nextOffset
      * @returns {void}
      */
-    setCurrentOffset(nextOffset) {
+    setOffset(nextOffset) {
         this.contentElem.style.transform = `translate(${nextOffset}px)`;
         this.markVisibleLinks();
     }
@@ -602,7 +669,7 @@ class BookComponent extends HTMLElement {
      * @param {number} nPageShift
      * @returns {number}
      */
-    calcNextOffset(nPageShift) {
+    calcShiftedOffset(nPageShift) {
         const displayWidth = this._getDisplayWidth();
         const currentOffset = this.bookState._getCurrentOffset();
         const shiftOffset = -(nPageShift * displayWidth);
@@ -626,32 +693,21 @@ class BookComponent extends HTMLElement {
      * @returns {number}
      */
     _getDisplayWidth() {
-        const columnGap = this.rootStyle.getPropertyValue("--column-gap");
+        const columnGap = this.componentStyle.getPropertyValue("--column-gap");
         return this.contentElem.offsetWidth + parseInt(columnGap);
     }
 
     /**
-     * Returns a magic number of pixels that counteracts counter component's error
-     * @returns {number}
-     */
-    _getCounterErrorCorrection() {
-        const displayWidth = this._getDisplayWidth();
-        return 713 - 0.5 * displayWidth;
-    }
-    /**
      * Returns the total of current section pages
-     * @param {boolean} [correctCounterError] - Whether or not correct for counter component's error
      * @returns {number}
      */
-    calcTotalSectionPages(correctCounterError = false) {
-        const displayWidth = this._getDisplayWidth();
-        let maxOffset = this._getMaxOffset();
-        if (correctCounterError) {
-            const counterError = this._getCounterErrorCorrection();
-            maxOffset += counterError;
-        }
-        const maxPageNum = Math.abs(maxOffset / displayWidth) + 1;
-        return Math.floor(maxPageNum);
+    countSectionPages() {
+        const columnGap = this.componentStyle.getPropertyValue("--column-gap");
+        const totalWidth = this.contentElem.scrollWidth + parseInt(columnGap);
+        const width = this._getDisplayWidth();
+        console.log(width, "/", totalWidth, "is", totalWidth / width);
+
+        return Math.ceil(totalWidth / width);
     }
 
     /**
@@ -659,40 +715,21 @@ class BookComponent extends HTMLElement {
      * @param {number} nPageShift
      * @returns {void}
      */
-    flipNPages(nPageShift) {
-        if (!this.isInit) return;
-        const currentSection = this.bookState.currentSection;
-        const totalSections = this.bookState.totalSections;
+    _flipNPages(nPageShift) {
+        if (this.status === "loading") return;
 
         const minPageNum = 0;
-        const maxPageNum = this.calcTotalSectionPages() - 1;
+        const maxPageNum = this.countSectionPages();
         const currentPage = this.bookState.getCurrentSectionPage(this);
         const nextSectionPage = currentPage + nPageShift;
 
         // Checks if requested page is in range of this section
         if (nextSectionPage >= minPageNum && nextSectionPage <= maxPageNum) {
-            const newOffset = this.calcNextOffset(nPageShift);
+            const newOffset = this.calcShiftedOffset(nPageShift);
 
-            this.setCurrentOffset(newOffset);
+            this.setOffset(newOffset);
             this.updateBookUI();
             this.debouncedSaveInteractionProgress();
-        }
-        // Else if it's possible to jump to the next or previous sections
-        else if (
-            (currentSection + 1 < totalSections && nPageShift > 0) ||
-            (currentSection - 1 >= 0 && nPageShift < 0)
-        ) {
-            const currentBookPage = this.bookState.getCurrentBookPage(this);
-            const nextBookPage = currentBookPage + nPageShift + 1;
-
-            this.jumpToPage(nextBookPage);
-        }
-        // Else the page is out of range
-        else {
-            const firstPage = 1;
-            const lastPage = this.bookState.getTotalBookPages();
-            const edgePage = nPageShift > 0 ? lastPage : firstPage;
-            this.jumpToPage(edgePage);
         }
     }
 
@@ -718,8 +755,7 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     jumpToPage(page) {
-        if (!this.isInit) return;
-
+        if (this.status === "loading") return;
         const validPage = this.enforcePageRange(page);
 
         const currentPage = this.bookState.getCurrentBookPage(this);
@@ -728,12 +764,14 @@ class BookComponent extends HTMLElement {
         const nextSection = this.bookState.getSectionBookPageBelongsTo(validPage);
         const currentSection = this.bookState.currentSection;
 
+        // Avoid loading the loaded section again by flipping pages instead
         if (nextSection === currentSection && nPageShift !== 0) {
-            this.flipNPages(nPageShift);
-        } else if (nextSection !== currentSection) {
+            this._flipNPages(nPageShift);
+        } else if (nextSection !== currentSection && this.status === "ready") {
             const sectionPagesArr = this.bookState.sectionPagesArr;
+            console.log("sectionPagesArr", sectionPagesArr);
 
-            // Prevents the change of a section before the book is fully loaded
+            // Prevents the change of a section before the section is counted
             if (!this.bookState.isSectionCounted(nextSection)) {
                 return;
             }
@@ -741,6 +779,7 @@ class BookComponent extends HTMLElement {
                 sectionPagesArr,
                 nextSection
             );
+            // TODO rename
             const totalNextSectionPage = sectionPagesArr[nextSection];
             const currentNextSectionPage =
                 currentPage + nPageShift - sumOfPages + totalNextSectionPage;
@@ -748,19 +787,34 @@ class BookComponent extends HTMLElement {
             this.loadSection(nextSection, currentNextSectionPage);
         }
     }
+    /**
+     * Overrides css variables that determines book component's dimentions
+     * @param {number} size - book component width in px, height will be `size * aspectRatio`
+     * @param {HTMLElement} [root] - element containig styles
+     * @return {void}
+     */
+    setSize(size, root = this.contentElem) {
+        root.style.setProperty("--book-component-width", size + "px");
+        root.style.setProperty("--book-component-height", size * this.aspectRatio + "px");
+    }
 
     /**
      * Creates another web component which is used to count pages of a book, and then destroys it
+     * @param {number} [size=0] - book component width in px, will be set height is 1.6 of that
      * @return {void}
      */
-    createCounterComponent() {
+    createCounterComponent(size = 0) {
         const counterComponent = document.createElement("book-component");
         this.shadowRoot.appendChild(counterComponent);
 
         // Hide counter
         const rootElem = counterComponent.shadowRoot.getElementById("root");
         rootElem.style.visibility = "hidden";
-        rootElem.style.maxHeight = "0";
+        rootElem.style.height = "0";
+
+        if (size) {
+            this.setSize(size, rootElem);
+        }
 
         // @ts-ignore
         counterComponent._countBookPages(this);
@@ -808,7 +862,7 @@ class BookComponent extends HTMLElement {
             this.loadStyles(book, section);
             this.loadContent(section);
 
-            const totalSectionPages = this.calcTotalSectionPages();
+            const totalSectionPages = this.countSectionPages();
             parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
             // Update page count every 10 sections
             if (sectionIndex % 10 === 0) {
@@ -817,6 +871,7 @@ class BookComponent extends HTMLElement {
             await _waitForNextTask();
         });
         parentComponent.updateBookUI();
+        parentComponent.status = "ready";
 
         this.remove();
     }
@@ -828,10 +883,10 @@ class BookComponent extends HTMLElement {
      * @return {Promise<void>}
      */
     async loadBook(filePath, interactionStates) {
-        this.currInteractionState = interactionStates[filePath];
         this.interactionStates = interactionStates;
+        this.currInteractionState = interactionStates[filePath];
 
-        this.book = await this.importBook(
+        this.book = this.importBook(
             this.currInteractionState.file.path,
             this.currInteractionState.state.section,
             this.currInteractionState.state.sectionPage
@@ -910,15 +965,6 @@ class BookComponent extends HTMLElement {
             this.bookState.currentSection,
             this.currInteractionState.state.sectionPage
         );
-
-        const nextBtn = this.shadowRoot.querySelector("button#next");
-        const backBtn = this.shadowRoot.querySelector("button#back");
-        nextBtn.addEventListener("click", () => {
-            this.flipNPages(1);
-        });
-        backBtn.addEventListener("click", () => {
-            this.flipNPages(-1);
-        });
     }
 
     /**
@@ -953,38 +999,24 @@ class BookComponent extends HTMLElement {
             mergedInteractionStates
         );
     }
-
     debouncedSaveInteractionProgress = debounce(this.saveInteractionProgress, 500);
 
     /**
      * Resizes book component and recalculates page count
-     * @param {number} size - book component width in px, will be set height is 1.6 of that
+     * @param {number} size - book component width in px, height will be `size * aspectRatio`
+     * @returns {void}
      */
     resize(size) {
-        console.log(this.shadowRoot.querySelectorAll("*"));
-        const dir = (object) => {
-            return Object.getOwnPropertyNames(object).filter(function (property) {
-                return typeof object[property] == "function";
-            });
-        };
-        console.log("dir", this);
-        console.log("dir", this.shadowRoot);
-        const root = this.shadowRoot.getElementById("root");
+        this.status = "resizing";
 
-        root.style.setProperty("--book-component-width", size + "px");
-        // root.style.setProperty("--book-component-height", size * 1.6 + "px");
-        root.style.setProperty("--book-component-height", size + "px");
-        this.createCounterComponent();
-        this.setCurrentOffset(0);
+        this.setSize(size);
+        this.createCounterComponent(size);
+
+        this.setOffset(0);
     }
 
     disconnectedCallback() {
         this.unlisten();
-        const nextBtn = this.shadowRoot.querySelector("button#next");
-        const backBtn = this.shadowRoot.querySelector("button#back");
-        nextBtn.removeEventListener("click", this.flipNPages.bind(this));
-        backBtn.removeEventListener("click", this.flipNPages.bind(this));
-
         this.removeLinkHandlers();
 
         delete this.initBook;

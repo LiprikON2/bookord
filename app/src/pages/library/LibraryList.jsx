@@ -36,7 +36,7 @@ const LibraryList = ({
             setUploading(true);
             const promise = window.api.invoke("app:on-fs-dialog-open");
             promise.then((fileCount) => {
-                setSkeletontFileCount(fileCount);
+                setSkeletontFileCount(skeletontFileCount + fileCount);
                 updateFiles();
                 setUploading(false);
             });
@@ -147,6 +147,7 @@ const LibraryList = ({
                             ))}
                         </>
                     ) : (
+                        // TODO this dropzone has different explorer uploader onClick
                         <Dropzone onDrop={handleDrop}></Dropzone>
                     )}
                 </div>

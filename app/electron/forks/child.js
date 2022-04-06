@@ -17,10 +17,12 @@ process.on("message", (message) => {
         const promise = io.parseBook(filePath, sectionNum);
 
         promise.then(([initBook, parsedEpub]) => {
+            // Sending init book
             process.send({ initBook: initBook });
 
             const promise2 = io.parseSections(initBook, parsedEpub);
 
+            // Sending fully parsed book
             promise2.then((book) => {
                 process.send({ book: book });
             });

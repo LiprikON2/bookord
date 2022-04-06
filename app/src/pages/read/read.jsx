@@ -65,16 +65,21 @@ const Read = () => {
         flipNPages(-1);
     };
     const resize = () => {
-        const bookRef = bookComponentRef.current;
-        bookRef.resize(600);
+        const book = bookComponentRef.current;
+        book.resize(600);
+    };
+
+    const f = () => {
+        const book = bookComponentRef.current;
+        book.updateBookUI();
     };
 
     const flipNPages = (nPageShift) => {
-        const bookRef = bookComponentRef.current;
-        if (!bookRef.isInit) return;
+        const book = bookComponentRef.current;
+        console.log("==========", book.status, "==========");
 
-        const currentPage = bookRef.bookState.getCurrentBookPage(bookRef) + 1;
-        const validNextPage = bookRef.enforcePageRange(currentPage + nPageShift);
+        const currentPage = book.bookState.getCurrentBookPage(book) + 1;
+        const validNextPage = book.enforcePageRange(currentPage + nPageShift);
         setPage(validNextPage);
     };
 
@@ -98,7 +103,7 @@ const Read = () => {
                 <h1>Read</h1>
                 <Link to={ROUTES.LIBRARY}>Home</Link>
                 <div
-                    className="book-container"
+                    className="component-container"
                     style={{
                         visibility: bookComponentRef !== null ? "visible" : "hidden",
                     }}>
@@ -109,6 +114,7 @@ const Read = () => {
                     <Button onClick={goBack}>Back</Button>
                     <Button onClick={goNext}>Next</Button>
                     <Button onClick={resize}>resize</Button>
+                    <Button onClick={f}>update</Button>
                 </div>
             </section>
         </>

@@ -98,6 +98,7 @@ exports.watchFiles = (win) => {
     });
 };
 
+// TODO make more performant
 const parseMetadata = async (filePath) => {
     const parsedEpub = await parseEpub(filePath);
     return parsedEpub.info;
