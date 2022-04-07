@@ -71,7 +71,6 @@ const Read = () => {
 
     const flipNPages = (nPageShift) => {
         const book = bookComponentRef.current;
-        console.log("==========", book.status, "==========");
 
         const currentPage = book.bookState.getCurrentBookPage(book) + 1;
         const validNextPage = book.enforcePageRange(currentPage + nPageShift);
@@ -103,8 +102,6 @@ const Read = () => {
         const upperbound = Math.max(Math.ceil(height / (aspectRatio * 1.6)), lowerbound);
 
         const newSize = clamp(lowerbound, Math.ceil(width / 2), upperbound);
-
-        console.log("newsize", lowerbound, newSize, upperbound);
 
         // Get the precentage difference between two values
         const percentageDiff = Math.abs(newSize - size) / ((newSize + size) / 2);

@@ -11,6 +11,11 @@ const style = /*css*/ `
 
         --clr-link: #4dabf7; /* todo move to somewhere */
     }
+    * {
+        orphans: unset !important;
+        widows: unset !important;
+        word-spacing: unset !important;
+    }
 
     :any-link {
         color: var(--clr-link);
@@ -29,18 +34,20 @@ const style = /*css*/ `
         column-gap: var(--column-gap);
         width: var(--book-component-width);
         height: var(--book-component-height);
-        /* overflow: hidden; */
     }
 
     /* TODO detect decorative images*/
     /* TODO svg */
     .book-container img {
-        /* max-width: 100% !important; */
         display: block !important;
         padding: 0 !important;
         margin: 0 !important;
-        width: 100% !important;
-        height: var(--book-component-height) !important;
+        max-width: 100% !important;
+
+
+        /* This makes images inconsistent on resize */
+        /* width: 100% !important;
+        height: var(--book-component-height) !important; */
         object-fit: contain;
         cursor: zoom-in;
     }
@@ -641,7 +648,6 @@ class BookComponent extends HTMLElement {
             width += displayWidth;
         }
         const leftEdge = -width + displayWidth;
-        console.log("leftEdge", leftEdge, elemOffset);
         return leftEdge;
     }
 
@@ -678,8 +684,8 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     * Returns end-marker's offset which is maximum possible offset
-     * @returns {number}
+     * Returns offset to the right edge of content
+     * @returns {number} - a positive number of pixels
      */
     _getTotalDisplayWidth() {
         const columnGap = this.componentStyle.getPropertyValue("--column-gap");
@@ -773,7 +779,10 @@ class BookComponent extends HTMLElement {
         // Avoid loading the loaded section again by flipping pages instead
         if (nextSection === currentSection && nPageShift !== 0) {
             this._flipNPages(nPageShift);
-        } else if (nextSection !== currentSection && this.status === "ready") {
+        } else if (
+            nextSection !== currentSection &&
+            (this.status === "ready" || this.status === "resizing")
+        ) {
             const sectionPagesArr = this.bookState.sectionPagesArr;
 
             // Prevents the change of a section before the section is counted
@@ -806,15 +815,11 @@ class BookComponent extends HTMLElement {
     /**
      * Creates another web component which is used to count pages of a book, and then destroys it
      * @param {number} [size=0] - book component width in px, will be set height is 1.6 of that
-     * @return {void}
+     * @return {Promise<any>}
      */
-    createCounterComponent(size = 0) {
-        if (this.status === "resizing") {
-            return;
-        }
+    async createCounterComponent(size = 0) {
         this.status = "resizing";
-
-        console.log("created counter");
+        // Create a counter`component inside the current component
         const counterComponent = document.createElement("book-component");
         this.shadowRoot.appendChild(counterComponent);
 
@@ -823,13 +828,15 @@ class BookComponent extends HTMLElement {
         rootElem.style.visibility = "hidden";
         rootElem.style.height = "0";
 
+        // Set counter compoent's size
         if (size) {
             this.setSize(size, rootElem);
         }
 
         // @ts-ignore
-        counterComponent._countBookPages(this);
-        console.log("removed counter");
+        await counterComponent._countBookPages(this);
+        this.status = "ready";
+        counterComponent.remove();
     }
 
     /**
@@ -858,8 +865,9 @@ class BookComponent extends HTMLElement {
         const _waitForNextTask = () => {
             // @ts-ignore
             const { port1, port2 } = (_waitForNextTask.channel ??= new MessageChannel());
-            return new Promise((res) => {
-                port1.addEventListener("message", () => res(), { once: true });
+
+            return new Promise((resolve) => {
+                port1.addEventListener("message", () => resolve(), { once: true });
                 port1.start();
                 port2.postMessage("");
             });
@@ -875,11 +883,6 @@ class BookComponent extends HTMLElement {
             this.loadContent(section);
 
             const totalSectionPages = this.countSectionPages();
-            // Stop counting if another counter is created
-            if (!totalSectionPages) {
-                console.log("Stopping");
-                return;
-            }
 
             parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
             // Update page count every 10 sections
@@ -888,9 +891,8 @@ class BookComponent extends HTMLElement {
             }
             await _waitForNextTask();
         });
+
         parentComponent.updateBookUI();
-        parentComponent.status = "ready";
-        this.remove();
     }
 
     /**
@@ -1023,15 +1025,21 @@ class BookComponent extends HTMLElement {
      * @param {number} size - book component width in px, height will be `size * aspectRatio`
      * @returns {void}
      */
-    res(size) {
-        console.log("resizing!");
+    resize = debounce(
+        (size) => {
+            console.log("resizing!", this.status);
 
-        this.setSize(size);
-        this.createCounterComponent(size);
-
-        this.setOffset(0);
-    }
-    resize = debounce(this.res, 500);
+            if (this.status !== "resizing") {
+                this.setSize(size);
+                this.setOffset(0);
+                this.createCounterComponent(size);
+            } else {
+                this.resize(size);
+            }
+        },
+        1000,
+        { trailing: true }
+    );
 
     disconnectedCallback() {
         this.unlisten();
