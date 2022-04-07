@@ -11,11 +11,6 @@ const style = /*css*/ `
 
         --clr-link: #4dabf7; /* todo move to somewhere */
     }
-    * {
-        orphans: unset !important;
-        widows: unset !important;
-        word-spacing: unset !important;
-    }
 
     :any-link {
         color: var(--clr-link);
@@ -36,18 +31,12 @@ const style = /*css*/ `
         height: var(--book-component-height);
     }
 
-    /* TODO detect decorative images*/
     /* TODO svg */
     .book-container img {
         display: block !important;
         padding: 0 !important;
         margin: 0 !important;
         max-width: 100% !important;
-
-
-        /* This makes images inconsistent on resize */
-        /* width: 100% !important;
-        height: var(--book-component-height) !important; */
         object-fit: contain;
         cursor: zoom-in;
     }
@@ -583,7 +572,7 @@ class BookComponent extends HTMLElement {
         // In case user traveled back from the subsequent section
         if (offsetMarkerId) {
             const markerElem = this.shadowRoot.getElementById(offsetMarkerId);
-            const markerOffset = this.getElementOffset(markerElem, true);
+            const markerOffset = this.getElementOffset(markerElem);
             // Set offset to the last page (if it's the end-marker) of this section
             this.setOffset(markerOffset);
         } else {
@@ -607,20 +596,26 @@ class BookComponent extends HTMLElement {
     }
 
     /**
+     * Checks if element is currently visible
+     * @param {HTMLElement} elem
+     * @returns {boolean}
+     */
+    isVisible(elem) {
+        const currentOffset = Math.abs(this.bookState._getCurrentOffset());
+        const displayWidth = this._getDisplayWidth();
+        const elemOffset = Math.abs(this.getElementOffset(elem));
+
+        return elemOffset >= currentOffset && elemOffset < currentOffset + displayWidth;
+    }
+
+    /**
      * Hides links' on another pages so they can't be navigated to with keyboard without flipping the page
      * @returns {void}
      */
     markVisibleLinks() {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            const currentOffset = Math.abs(this.bookState._getCurrentOffset());
-            const displayWidth = this._getDisplayWidth();
-            const anchorOffset = Math.abs(this.getElementOffset(a));
-
-            if (
-                anchorOffset >= currentOffset &&
-                anchorOffset < currentOffset + displayWidth
-            ) {
+            if (this.isVisible(a)) {
                 a.style.visibility = "initial";
             } else {
                 a.style.visibility = "hidden";
@@ -632,9 +627,9 @@ class BookComponent extends HTMLElement {
      * Returns element's offset (a negative value)
      * @param {HTMLElement} elem
      * @param {boolean} [round] - rounds elements offset to the left page edge
-     * @returns {number}
+     * @returns {number} - a negative value
      */
-    getElementOffset(elem, round = false) {
+    getElementOffset(elem, round = true) {
         const elemOffset = elem.offsetLeft;
         if (!round) {
             return -elemOffset;
@@ -704,7 +699,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Returns book content's width
-     * @returns {number}
+     * @returns {number} - a positive number
      */
     _getDisplayWidth() {
         const columnGap = this._getColumnGap();
@@ -930,6 +925,7 @@ class BookComponent extends HTMLElement {
             },
 
             getCurrentSectionPage: function (that) {
+                // todo refactor
                 const displayWidth = that._getDisplayWidth();
                 const currentOffset = this._getCurrentOffset();
                 const currentPage = Math.abs(currentOffset / displayWidth);
@@ -1020,6 +1016,33 @@ class BookComponent extends HTMLElement {
     }
     debouncedSaveInteractionProgress = debounce(this.saveInteractionProgress, 500);
 
+    isOverflown({ clientWidth, clientHeight, scrollWidth, scrollHeight }) {
+        console.log("scrollHeight", scrollHeight, "clientHeight", clientHeight);
+        console.log("scrollWidth", scrollWidth, "clientWidth", clientWidth);
+        return scrollHeight > clientHeight || scrollWidth > clientWidth;
+    }
+
+    // TODO use binary search
+    /**
+     *
+     * @param {*} [elements]
+     * @returns {HTMLElement}
+     */
+    recGetVisibleElement(elements) {
+        if (!elements) {
+            elements = this.contentElem.children;
+        }
+        for (let element of elements) {
+            if (this.isVisible(element)) {
+                return element;
+            } else {
+                const descendantElem = this.recGetVisibleElement(element.children);
+                if (descendantElem) return descendantElem;
+            }
+        }
+        return null;
+    }
+
     /**
      * Resizes book component and recalculates page count
      * @param {number} size - book component width in px, height will be `size * aspectRatio`
@@ -1030,8 +1053,15 @@ class BookComponent extends HTMLElement {
             console.log("resizing!", this.status);
 
             if (this.status !== "resizing") {
+                // Get a reference to a visible element
+                const element = this.recGetVisibleElement();
+                console.log(element);
+
+                // Resize
                 this.setSize(size);
-                this.setOffset(0);
+                const newOffset = this.getElementOffset(element);
+                this.setOffset(newOffset);
+
                 this.createCounterComponent(size);
             } else {
                 this.resize(size);

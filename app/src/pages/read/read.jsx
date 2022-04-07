@@ -86,12 +86,14 @@ const Read = () => {
 
     useEffect(() => {
         return () => {
+            // Terminate child process when user leaves page during book parsing
             window.api.send("app:on-stop-parsing");
             window.api.store.clearRendererBindings();
         };
     }, []);
 
     const { height, width } = useViewportSize();
+    // todo set init value
     const [size, setSize] = useState(400);
 
     const resize = () => {
