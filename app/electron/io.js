@@ -109,10 +109,10 @@ const removeDeletedBooks = (files, interactionStates) => {
         let newInteractionStates = {};
 
         files.forEach((file) => {
-            if (file.path in interactionStates) {
+            if (file.name in interactionStates) {
                 newInteractionStates = {
                     ...newInteractionStates,
-                    [file.path]: interactionStates[file.path],
+                    [file.name]: interactionStates[file.name],
                 };
             }
         });
@@ -128,7 +128,7 @@ exports.getBooks = async (files, interactionStates) => {
     const filesWithMetadata = await mapInGroups(
         files,
         async (file) => {
-            const savedMetadata = interactionStates?.[file.path]?.info;
+            const savedMetadata = interactionStates?.[file.name]?.info;
             // If books were already parsed, retrive saved results
             if (savedMetadata) {
                 return {
@@ -139,15 +139,14 @@ exports.getBooks = async (files, interactionStates) => {
             // Otherwise parse books for metadata & then save results
             else {
                 const metadata = await parseMetadata(file.path);
-                // TODO change object key to file.name instead?
                 const updatedInteractionState = {
-                    [file.path]: {
+                    [file.name]: {
                         file,
                         state: {
                             section: 0,
                             sectionPage: 0,
                         },
-                        ...interactionStates?.[file.path],
+                        ...interactionStates?.[file.name],
                         info: metadata,
                     },
                 };

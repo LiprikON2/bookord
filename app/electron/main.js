@@ -479,7 +479,7 @@ ipcMain.handle("app:get-books", async () => {
 
 let parseChild;
 
-ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum, page]) => {
+ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum]) => {
     // Forked child process for parsing book file.
     // It is needed to offload main thread and not to block UI
     parseChild = fork(path.join(__dirname, "forks/child.js"));

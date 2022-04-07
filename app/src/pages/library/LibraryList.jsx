@@ -135,7 +135,7 @@ const LibraryList = ({
                                     }}
                                     className=""
                                     role="listitem"
-                                    key={file.path}>
+                                    key={file.name}>
                                     <LibraryListCard file={file}></LibraryListCard>
                                 </Link>
                             ))}

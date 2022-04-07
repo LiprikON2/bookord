@@ -131,7 +131,7 @@ template.innerHTML = /*html*/ `
 /** Contains interaction states of all of the books; path to the book's file is used to access individual InteractionState objects
  * @typedef {Object} InteractionStates
  * @property {BookFile} lastOpenedBook - Book file of last opened book
- * @property {InteractionState} path - Path to the book is used as a key
+ * @property {InteractionState} filename - Filename of the book is used as a key
  */
 
 /** HTML & XML parsed to the JavaScript object
@@ -211,15 +211,19 @@ class BookComponent extends HTMLElement {
      * Imports book using IPC, completes initialization as soon as promise is resolved
      * @param  {string} filePath
      * @param  {number} sectionNum
-     * @param  {number} sectionPage
      * @returns {Promise<Book>}
      */
-    importBook(filePath, sectionNum, sectionPage) {
+    importBook(filePath, sectionNum) {
         const book = window.api
-            .invoke("app:get-parsed-book", [filePath, sectionNum, sectionPage])
+            .invoke("app:get-parsed-book", [filePath, sectionNum])
             .catch((error) => {});
-        book.then(() => {
+        book.then((book) => {
             this.status = "ready";
+            // window.api.store.send(writeConfigRequest, "appState", {
+            //     recentBooks: {
+            //         recent: [book],
+            //     },
+            // });
         });
         return book;
     }
@@ -690,7 +694,7 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     * Returns the invisible column gap between the pages
+     * Returns the invisible column gap between the pages in pixels
      * @returns {number}
      */
     _getColumnGap() {
@@ -707,7 +711,7 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     * Returns the total of current section pages
+     * Returns the total amount of pages in section
      * @returns {number}
      */
     countSectionPages() {
@@ -718,7 +722,7 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     * Flips N pages of a book, when it is discovered that N page shift would land in different section, calls jumpToPage function instead
+     * Flips N pages of a book
      * @param {number} nPageShift
      * @returns {void}
      */
@@ -796,6 +800,7 @@ class BookComponent extends HTMLElement {
             this.loadSection(nextSection, currentNextSectionPage);
         }
     }
+
     /**
      * Overrides css variables that determines book component's dimentions
      * @param {number} size - book component width in px, height will be `size * aspectRatio`
@@ -892,18 +897,19 @@ class BookComponent extends HTMLElement {
 
     /**
      * Loads book to the web component, as well as runs a page counter
-     * @param {string} filePath - Path to the book file, also serves as the key to InteractionStates object
+     * @param {string} filename - filename of the book, also serves as the key to InteractionStates object
      * @param {InteractionStates} interactionStates - interaction states of all of the books
      * @return {Promise<void>}
      */
-    async loadBook(filePath, interactionStates) {
+    async loadBook(filename, interactionStates, test = false) {
         this.interactionStates = interactionStates;
-        this.currInteractionState = interactionStates[filePath];
+        this.currInteractionState = interactionStates[filename];
+        console.log(interactionStates);
+        console.log("lastopenedBook", this.currInteractionState.file);
 
         this.book = this.importBook(
             this.currInteractionState.file.path,
-            this.currInteractionState.state.section,
-            this.currInteractionState.state.sectionPage
+            this.currInteractionState.state.section
         );
         if (!this.book) {
             return;
@@ -983,22 +989,44 @@ class BookComponent extends HTMLElement {
     }
 
     /**
+     * Returns selector of an element based on nth-child with respect to content element
+     * @param {HTMLElement} element
+     * @returns {string}
+     */
+    getCSSSelector(element) {
+        let selector = element.tagName.toLowerCase();
+        const allElems = this.contentElem.querySelectorAll(selector);
+        let nthChild = 1;
+        for (let elem of allElems) {
+            nthChild++;
+            if (elem === element) {
+                break;
+            }
+        }
+        return `${selector}:nth-child(${nthChild})`;
+    }
+
+    /**
      * Saves interaction state progress in electron store
      * @returns {void}
      */
     saveInteractionProgress() {
+        const elem = this.recGetVisibleElement();
+        const selector = this.getCSSSelector(elem);
+        console.log("selector", selector);
+
         const state = {
             section: this.bookState.currentSection,
             sectionPage: this.bookState.getCurrentSectionPage(this),
         };
-        const filePath = this.currInteractionState.file.path;
+        const filename = this.currInteractionState.file.name;
 
         const prevInteractionStates = this.interactionStates;
         const updatedInteractionStates = {
             lastOpenedBook: this.currInteractionState.file,
-            [filePath]: {
+            [filename]: {
                 file: this.currInteractionState.file,
-                ...prevInteractionStates[filePath],
+                ...prevInteractionStates[filename],
                 state,
             },
         };
@@ -1015,12 +1043,6 @@ class BookComponent extends HTMLElement {
         );
     }
     debouncedSaveInteractionProgress = debounce(this.saveInteractionProgress, 500);
-
-    isOverflown({ clientWidth, clientHeight, scrollWidth, scrollHeight }) {
-        console.log("scrollHeight", scrollHeight, "clientHeight", clientHeight);
-        console.log("scrollWidth", scrollWidth, "clientWidth", clientWidth);
-        return scrollHeight > clientHeight || scrollWidth > clientWidth;
-    }
 
     // TODO use binary search
     /**

@@ -25,6 +25,7 @@ const Read = () => {
         if (bookComponent) {
             // Send an IPC request to get config
             window.api.store.send(readConfigRequest, "interactionStates");
+            // window.api.store.send(readConfigRequest, "appState");
 
             // Listen for responses from the electron store
             window.api.store.onReceive(readConfigResponse, (args) => {
@@ -44,9 +45,15 @@ const Read = () => {
                         return;
                     }
 
-                    bookComponent.loadBook(bookFile.path, interactionStates);
+                    bookComponent.loadBook(bookFile.name, interactionStates);
                     bookComponent.addEventListener("imgClickEvent", handleImgClick);
                 }
+                // if (args.key === "appState" && args.success) {
+                //     window.api.store.clearRendererBindings();
+
+                //     const appState = args.value;
+                //     bookComponent.test(appState.recentBooks.recent[0]);
+                // }
             });
         }
 
