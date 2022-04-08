@@ -219,11 +219,11 @@ class BookComponent extends HTMLElement {
             .catch((error) => {});
         book.then((book) => {
             this.status = "ready";
-            // window.api.store.send(writeConfigRequest, "appState", {
-            //     recentBooks: {
-            //         recent: [book],
-            //     },
-            // });
+            window.api.store.send(writeConfigRequest, "appState", {
+                recentBooks: {
+                    recent: [book],
+                },
+            });
         });
         return book;
     }
@@ -596,7 +596,7 @@ class BookComponent extends HTMLElement {
         this.attachLinkHandlers(book);
         this.attachImgEventEmitters();
 
-        this.debouncedSaveInteractionProgress();
+        // this.debouncedSaveInteractionProgress();
     }
 
     /**
@@ -740,7 +740,7 @@ class BookComponent extends HTMLElement {
 
             this.setOffset(newOffset);
             this.updateBookUI();
-            this.debouncedSaveInteractionProgress();
+            // this.debouncedSaveInteractionProgress();
         }
     }
 
@@ -902,17 +902,27 @@ class BookComponent extends HTMLElement {
      * @return {Promise<void>}
      */
     async loadBook(filename, interactionStates, test = false) {
-        this.interactionStates = interactionStates;
-        this.currInteractionState = interactionStates[filename];
-        console.log(interactionStates);
-        console.log("lastopenedBook", this.currInteractionState.file);
+        if (!test) {
+            this.interactionStates = interactionStates;
+            this.currInteractionState = interactionStates[filename];
+            console.log(interactionStates);
+            console.log("lastopenedBook", this.currInteractionState.file);
 
-        this.book = this.importBook(
-            this.currInteractionState.file.path,
-            this.currInteractionState.state.section
-        );
-        if (!this.book) {
-            return;
+            this.book = this.importBook(
+                this.currInteractionState.file.path,
+                this.currInteractionState.state.section
+            );
+            if (!this.book) {
+                return;
+            }
+        } else {
+            console.log("HOHOHO", filename);
+            this.book = filename;
+            this.currInteractionState = {
+                file: this.book.file,
+                state: { section: 0, sectionPage: 0 },
+            };
+            this.status = "ready";
         }
 
         this.bookState = {
@@ -1013,7 +1023,6 @@ class BookComponent extends HTMLElement {
     saveInteractionProgress() {
         const elem = this.recGetVisibleElement();
         const selector = this.getCSSSelector(elem);
-        console.log("selector", selector);
 
         const state = {
             section: this.bookState.currentSection,
