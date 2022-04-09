@@ -361,18 +361,6 @@ class BookComponent extends HTMLElement {
         });
     }
 
-    // TODO Deprecate
-    /**
-     * Creates a marker that signifies the end of a section which is used in calculating max offset value
-     * @param {string} markerId - ID of to-be-created HTML element
-     * @returns {void}
-     */
-    createMarker(markerId) {
-        const marker = document.createElement("span");
-        marker.id = markerId;
-        this.contentElem.appendChild(marker);
-    }
-
     /**
      * Handles clicks on book navigation links and website links
      * @param {Event} e - Event
@@ -409,10 +397,6 @@ class BookComponent extends HTMLElement {
         // Remove head tag from section
         section = section.slice(1);
         this.recCreateElements(this.contentElem, section);
-
-        // TODO Deprecate
-        const markerId = this.contentElem.id + "-end-marker";
-        this.createMarker(markerId);
     }
 
     /**
@@ -486,18 +470,15 @@ class BookComponent extends HTMLElement {
      * @param {Bookmark} [newBookmark]
      */
     updateBookmarkList(newBookmark) {
-        const element = this.recGetVisibleElement();
+        const element = this.getVisibleElement();
+        if (!element) return;
 
-        const currentSelector = this.getCSSSelector(element);
-        console.log("got", currentSelector, element);
-        console.log(
-            "but selector is for",
-            this.shadowRoot.querySelector(currentSelector)
-        );
+        const elementIndex = this.getElementIndex(element);
         const currentSection = this.bookState.currentSection;
 
+        // TODO add abstraction to 0th bookmark
         this.bookmarkList[0].sectionIndex = currentSection;
-        this.bookmarkList[0].selector = currentSelector;
+        this.bookmarkList[0].elementIndex = elementIndex;
         if (newBookmark) {
             this.bookmarkList.push(newBookmark);
         }
@@ -522,9 +503,10 @@ class BookComponent extends HTMLElement {
      * @param {number} sectionIndex - sections number
      * @param {number} sectionPage - page within section
      * @param {string} [offsetSelector] - shift to marker instead of specific page
+     * @param {string} [elementIndex] - shift to element by index of content elements instead of specific page
      * @returns {Promise<void>}
      */
-    async loadSection(sectionIndex, sectionPage, offsetSelector = "") {
+    async loadSection(sectionIndex, sectionPage, offsetSelector = "", elementIndex = 0) {
         let book, section;
         if (this.status === "loading") {
             book = await this.initBook;
@@ -555,6 +537,11 @@ class BookComponent extends HTMLElement {
             const targetOffset = this.getElementOffset(targetElem);
             // Set offset to the last page (if it's the end-marker) of this section
             this.setOffset(targetOffset);
+        } else if (elementIndex) {
+            const targetElem = this.getElementByIndex(elementIndex);
+            const targetOffset = this.getElementOffset(targetElem);
+
+            this.setOffset(targetOffset);
         } else {
             // Set offset to the first page of this section
             this.setOffset(0);
@@ -569,34 +556,37 @@ class BookComponent extends HTMLElement {
             this._flipNPages(sectionPage);
         }
 
-        this.attachLinkHandlers(book);
+        // this.attachLinkHandlers(book);
         this.attachImgEventEmitters();
 
         this.emitSaveBookmarks();
     }
 
     /**
-     * Checks if element's begining is currently visible
+     * Checks visibility of the element
      * @param {HTMLElement} elem
-     * @returns {boolean}
+     * @returns {boolean[]} [isFullyVisible, isAtLeastPartiallyVisible]
      */
-    hasVisibleBeginning(elem) {
-        // TODO handle giant paragraph text
+    checkVisibility(elem) {
         const currentOffset = Math.abs(this.bookState._getCurrentOffset());
         const displayWidth = this._getDisplayWidth();
-        const elemOffset = Math.abs(this.getElementOffset(elem));
+        const columnGap = this._getColumnGap();
+        const elemOffset = this.getElementOffset(elem);
+        const elemWidth = elem.getBoundingClientRect().width;
 
-        console.log(
-            elem,
-            "currentOffset",
-            currentOffset,
-            "elemOffset",
-            elemOffset,
-            "currentOffset + displayWidth",
-            currentOffset + displayWidth,
-            elemOffset >= currentOffset && elemOffset < currentOffset + displayWidth
-        );
-        return elemOffset >= currentOffset && elemOffset < currentOffset + displayWidth;
+        const elemStart = elemOffset;
+        const elemEnd = elemOffset + elemWidth + columnGap;
+        const visibleStart = currentOffset;
+        const visibleEnd = currentOffset + displayWidth;
+
+        const isFullyVisible = elemStart >= visibleStart && elemEnd <= visibleEnd;
+
+        const partialVisibleStart = visibleStart - elemWidth - columnGap;
+        const partialVisibleEnd = visibleEnd + elemWidth + columnGap;
+
+        const isAtLeastPartiallyVisible =
+            elemStart > partialVisibleStart && elemEnd < partialVisibleEnd;
+        return [isFullyVisible, isAtLeastPartiallyVisible];
     }
 
     /**
@@ -606,7 +596,8 @@ class BookComponent extends HTMLElement {
     markVisibleLinks() {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            if (this.hasVisibleBeginning(a)) {
+            const [_, isAtLeastPartiallyVisible] = this.checkVisibility(a);
+            if (isAtLeastPartiallyVisible) {
                 a.style.visibility = "initial";
             } else {
                 a.style.visibility = "hidden";
@@ -615,15 +606,15 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     * Returns element's offset (a negative value)
+     * Returns element's offset
      * @param {HTMLElement} elem
      * @param {boolean} [round] - rounds elements offset to the left page edge
-     * @returns {number} - a negative value
+     * @returns {number}
      */
     getElementOffset(elem, round = true) {
         const elemOffset = elem.offsetLeft;
         if (!round) {
-            return -elemOffset;
+            return elemOffset;
         }
 
         const displayWidth = this._getDisplayWidth();
@@ -633,7 +624,7 @@ class BookComponent extends HTMLElement {
         while (width - columnGap < elemOffset) {
             width += displayWidth;
         }
-        const leftEdge = -width + displayWidth;
+        const leftEdge = width - displayWidth;
         return leftEdge;
     }
 
@@ -653,10 +644,11 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     setOffset(nextOffset) {
-        this.contentElem.style.transform = `translate(${nextOffset}px)`;
+        this.contentElem.style.transform = `translate(-${nextOffset}px)`;
         this.markVisibleLinks();
     }
 
+    // TODO refactor
     /**
      * Calculates how many pixels text needs to be offsetted in order to shift N section pages
      * @param {number} nPageShift
@@ -664,8 +656,8 @@ class BookComponent extends HTMLElement {
      */
     calcShiftedOffset(nPageShift) {
         const displayWidth = this._getDisplayWidth();
-        const currentOffset = this.bookState._getCurrentOffset();
-        const shiftOffset = -(nPageShift * displayWidth);
+        const currentOffset = -this.bookState._getCurrentOffset();
+        const shiftOffset = nPageShift * displayWidth;
         return currentOffset + shiftOffset;
     }
 
@@ -886,14 +878,17 @@ class BookComponent extends HTMLElement {
      * Loads book to the web component, as well as runs a page counter
      * @param {string} filename - filename of the book, also serves as the key to InteractionStates object
      * @param {InteractionStates} interactionStates - interaction states of all of the books
+     * @param {number} initSize
+     * @param {boolean} [isAlreadyParsed=false]
      * @return {Promise<void>}
      */
-    async loadBook(bookObj, bookmarkList, isAlreadyParsed = false) {
+    async loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed = false) {
         this.bookmarkList = bookmarkList.length
             ? bookmarkList
-            : [{ sectionIndex: 0, selector: "" }];
+            : [{ sectionIndex: 0, elementIndex: 0 }];
         const initSectionIndex = this.bookmarkList[0].sectionIndex;
-        const initSelector = this.bookmarkList[0].selector;
+        const initElementIndex = this.bookmarkList[0].elementIndex;
+        this.setSize(initSize);
 
         if (!isAlreadyParsed) {
             const bookPath = bookObj.bookFile.path;
@@ -967,6 +962,7 @@ class BookComponent extends HTMLElement {
                 return arraySum;
             },
             _getCurrentOffset: function () {
+                // TODO make positive
                 // Strips all non-numeric characters from a string
                 return (
                     parseInt(this.contentElem.style.transform.replace(/[^\d.-]/g, "")) ??
@@ -974,26 +970,31 @@ class BookComponent extends HTMLElement {
                 );
             }.bind(this),
         };
-        this.createCounterComponent();
-        this.loadSection(this.bookState.currentSection, 0, initSelector);
+        this.createCounterComponent(initSize);
+        this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
     }
 
     /**
      * Returns selector of an element based on nth-child with respect to content element
      * @param {HTMLElement} element
-     * @returns {string}
+     * @returns {number}
      */
-    getCSSSelector(element) {
-        let selector = element.tagName.toLowerCase();
-        const allElems = this.contentElem.querySelectorAll(selector);
-        let nthChild = 1;
-        for (let elem of allElems) {
-            nthChild++;
-            if (elem === element) {
-                break;
+    getElementIndex(element) {
+        const allElems = this.contentElem.querySelectorAll("*");
+        let nthElement;
+        [...allElems].some((elem, index) => {
+            const isFound = elem === element;
+            if (isFound) {
+                nthElement = index;
             }
-        }
-        return `${selector}:nth-child(${nthChild})`;
+            return isFound;
+        });
+        return nthElement;
+    }
+
+    getElementByIndex(index) {
+        const allElems = this.contentElem.querySelectorAll("*");
+        return allElems[index];
     }
 
     /**
@@ -1055,23 +1056,36 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    getVisibleElement() {
+        return this.recGetVisibleElement() ?? this.recGetVisibleElement(null, false);
+    }
+
     // TODO use binary search
     /**
      *
      * @param {*} [elements]
      * @returns {HTMLElement}
      */
-    recGetVisibleElement(elements) {
+    recGetVisibleElement(elements, strict = true) {
         if (!elements) {
             elements = this.contentElem.children;
         }
+
         for (let element of elements) {
-            if (this.hasVisibleBeginning(element)) {
-                console.log("Returning", element);
+            const [isFullyVis, isAtLeastPartVis] = this.checkVisibility(element);
+            const requiredVisibility = strict ? isFullyVis : isAtLeastPartVis;
+            const hasChildren = element.children.length;
+
+            if (requiredVisibility && !hasChildren) {
                 return element;
-            } else {
-                const descendantElem = this.recGetVisibleElement(element.children);
-                if (descendantElem) return descendantElem;
+            } else if (hasChildren) {
+                const descendantElem = this.recGetVisibleElement(
+                    element.children,
+                    strict
+                );
+                if (descendantElem) {
+                    return descendantElem;
+                }
             }
         }
         return null;
@@ -1088,7 +1102,7 @@ class BookComponent extends HTMLElement {
 
             if (this.status !== "resizing") {
                 // Get a reference to a visible element
-                const element = this.recGetVisibleElement();
+                const element = this.getVisibleElement();
 
                 // Resize
                 this.setSize(size);

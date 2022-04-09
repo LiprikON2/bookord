@@ -15,6 +15,7 @@ import "./bookComponent";
 import "./Read.css";
 
 const clamp = (min, value, max) => {
+    return 200; // todo uncomment
     return Math.min(Math.max(value, min), max);
 };
 
@@ -44,9 +45,11 @@ const Read = () => {
         const bookRef = bookComponentRef.current;
         const bookName = bookObj.bookFile.name;
         const promise = retriveBookmarks(bookName);
+        const initSize = getSize();
+        setSize(initSize);
 
         promise.then((bookmarkList) => {
-            bookRef.loadBook(bookObj, bookmarkList, isAlreadyParsed);
+            bookRef.loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed);
             bookRef.addEventListener("imgClickEvent", handleImgClick);
             bookRef.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
             bookRef.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
@@ -172,10 +175,9 @@ const Read = () => {
     }, []);
 
     const { height, width } = useViewportSize();
-    // todo set init value
-    const [size, setSize] = useState(400);
+    const [size, setSize] = useState(0);
 
-    const resize = () => {
+    const getSize = () => {
         const book = bookComponentRef.current;
         const aspectRatio = book.aspectRatio;
 
@@ -183,6 +185,12 @@ const Read = () => {
         const upperbound = Math.max(Math.ceil(height / (aspectRatio * 1.6)), lowerbound);
 
         const newSize = clamp(lowerbound, Math.ceil(width / 2), upperbound);
+        return newSize;
+    };
+
+    const resize = () => {
+        const book = bookComponentRef.current;
+        const newSize = getSize();
 
         // Get the precentage difference between two values
         const percentageDiff = Math.abs(newSize - size) / ((newSize + size) / 2);
