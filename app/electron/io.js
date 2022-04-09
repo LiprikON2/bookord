@@ -18,6 +18,9 @@ const mapInGroups = (arr, iteratee, groupSize) => {
         []
     );
 };
+const getFilenameFromPath = (filePath) => {
+    return path.parse(filePath).base;
+};
 
 // local dependencies
 const notification = require("./notification");
@@ -46,7 +49,7 @@ exports.addFiles = (files = []) => {
     // ensure `appDir` exists
     fs.ensureDirSync(appDir);
 
-    let filesNum = files.length;
+    let newFilesCount = files.length;
     // copy `files` recursively (ignore duplicate file names)
     files.forEach((file) => {
         const filePath = path.resolve(appDir, file.name);
@@ -54,16 +57,16 @@ exports.addFiles = (files = []) => {
         if (!fs.existsSync(filePath)) {
             fs.copyFileSync(file.path, filePath);
         } else {
-            filesNum--;
+            newFilesCount--;
         }
     });
 
     // Don't display notification if all files are duplicates
-    if (filesNum !== 0) {
+    if (newFilesCount !== 0) {
         // Display notification
-        notification.filesAdded(filesNum);
+        notification.filesAdded(newFilesCount);
     }
-    return filesNum;
+    return newFilesCount;
 };
 
 // delete a file; triggers chokirar in `watchFiles`
@@ -90,7 +93,8 @@ exports.openFile = (filename) => {
 // watch files from the application's storage directory
 exports.watchFiles = (win) => {
     const watcher = chokidar.watch(appDir).on("unlink", (filePath) => {
-        win.webContents.send("app:file-is-deleted", path.parse(filePath).base);
+        const fileName = getFilenameFromPath(filePath);
+        win.webContents.send("app:file-is-deleted", fileName);
     });
 
     ipcMain.on("app:stop-watching-files", () => {
@@ -104,31 +108,32 @@ const parseMetadata = async (filePath) => {
     return parsedEpub.info;
 };
 
-const removeDeletedBooks = (files, interactionStates) => {
-    if (interactionStates) {
-        let newInteractionStates = {};
+const removeDeletedBooks = (files, allBooks) => {
+    if (allBooks) {
+        let newAllBooks = {};
 
         files.forEach((file) => {
-            if (file.name in interactionStates) {
-                newInteractionStates = {
-                    ...newInteractionStates,
-                    [file.name]: interactionStates[file.name],
+            if (file.name in allBooks) {
+                newAllBooks = {
+                    ...newAllBooks,
+                    [file.name]: allBooks[file.name],
                 };
             }
         });
-        return newInteractionStates;
-    } else return interactionStates;
+        return newAllBooks;
+    } else return allBooks;
 };
 
-exports.getBooks = async (files, interactionStates) => {
-    const updatedInteractionStateList = [];
+exports.getBooks = async (files, allBooks) => {
+    const updatedAllBooksList = [];
 
-    interactionStates = removeDeletedBooks(files, interactionStates);
+    allBooks = removeDeletedBooks(files, allBooks);
 
+    // TODO rename info to metadata
     const filesWithMetadata = await mapInGroups(
         files,
         async (file) => {
-            const savedMetadata = interactionStates?.[file.name]?.info;
+            const savedMetadata = allBooks?.[file.name]?.info;
             // If books were already parsed, retrive saved results
             if (savedMetadata) {
                 return {
@@ -139,18 +144,14 @@ exports.getBooks = async (files, interactionStates) => {
             // Otherwise parse books for metadata & then save results
             else {
                 const metadata = await parseMetadata(file.path);
-                const updatedInteractionState = {
+                const updatedBookObj = {
                     [file.name]: {
-                        file,
-                        state: {
-                            section: 0,
-                            sectionPage: 0,
-                        },
-                        ...interactionStates?.[file.name],
+                        bookFile: file,
+                        ...allBooks?.[file.name],
                         info: metadata,
                     },
                 };
-                updatedInteractionStateList.push(updatedInteractionState);
+                updatedAllBooksList.push(updatedBookObj);
 
                 return {
                     ...file,
@@ -161,27 +162,24 @@ exports.getBooks = async (files, interactionStates) => {
         4
     );
 
-    const mergedInteractionStates = Object.assign(
-        {},
-        interactionStates,
-        ...updatedInteractionStateList
-    );
+    const mergedAllBooks = Object.assign({}, allBooks, ...updatedAllBooksList);
 
-    return [filesWithMetadata, mergedInteractionStates];
+    return [filesWithMetadata, mergedAllBooks];
 };
 
-exports.parseBook = async (filePath, sectionNum) => {
-    const parsedEpub = await parseEpub(filePath);
+exports.parseBook = async (bookPath, initSectionIndex) => {
+    const parsedEpub = await parseEpub(bookPath);
 
     const sectionNames = parsedEpub.sections.map((section) => section.id);
     const initBook = {
+        name: getFilenameFromPath(bookPath),
         info: parsedEpub.info,
         styles: parsedEpub.styles,
         structure: parsedEpub.structure,
         sectionsTotal: parsedEpub.sections.length,
         sectionNames,
-        initSectionNum: sectionNum,
-        initSection: parsedEpub.sections[sectionNum].toHtmlObjects(),
+        initSectionIndex,
+        initSection: parsedEpub.sections[initSectionIndex].toHtmlObjects(),
     };
     return [initBook, parsedEpub];
 };

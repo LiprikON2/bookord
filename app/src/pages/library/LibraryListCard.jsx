@@ -9,7 +9,7 @@ const LibraryListCard = ({ file }) => {
     const handleDelete = (e, file) => {
         e.preventDefault();
         window.api.send("app:on-file-delete", file);
-        // Chokidar (from `io.js`) then triggers removeFromInteractionState
+        // Chokidar (from `io.js`) then triggers file update
     };
     return (
         <>

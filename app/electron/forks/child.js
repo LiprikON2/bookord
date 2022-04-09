@@ -6,25 +6,25 @@ const io = require("../io");
 
 process.on("message", (message) => {
     if ("parseMetadata" in message) {
-        const { interactionStates, files } = message.parseMetadata;
-        const promise = io.getBooks(files, interactionStates);
+        const { files, allBooks } = message.parseMetadata;
+        const promise = io.getBooks(files, allBooks);
 
-        promise.then(([filesWithMetadata, mergedInteractionStates]) => {
-            process.send({ mergedInteractionStates, filesWithMetadata });
+        promise.then(([filesWithMetadata, mergedAllbooks]) => {
+            process.send({ filesWithMetadata, mergedAllbooks });
         });
     } else if ("parse" in message) {
-        const { filePath, sectionNum } = message.parse;
-        const promise = io.parseBook(filePath, sectionNum);
+        const { filePath, initSectionIndex } = message.parse;
+        const promise = io.parseBook(filePath, initSectionIndex);
 
         promise.then(([initBook, parsedEpub]) => {
             // Sending init book
-            process.send({ initBook: initBook });
+            process.send({ initBook });
 
             const promise2 = io.parseSections(initBook, parsedEpub);
 
             // Sending fully parsed book
             promise2.then((book) => {
-                process.send({ book: book });
+                process.send({ book });
             });
         });
     }

@@ -52,17 +52,14 @@ const LibraryList = ({
             if (args.success) {
                 window.api.store.clearRendererBindings();
 
-                const [filesWithMetadata, mergedInteractionStates] =
-                    await window.api.invoke("app:get-books");
+                const [filesWithMetadata, mergedAllBooks] = await window.api.invoke(
+                    "app:get-books"
+                );
 
                 console.timeEnd("updateFiles");
                 setFiles(filesWithMetadata);
 
-                window.api.store.send(
-                    writeConfigRequest,
-                    "interactionStates",
-                    mergedInteractionStates
-                );
+                window.api.store.send(writeConfigRequest, "allBooks", mergedAllBooks);
             }
             setIsInitLoad(false);
             setSkeletontFileCount(0);
@@ -156,8 +153,5 @@ const LibraryList = ({
     );
 };
 
-// <div className="no-cards">
-//     <img src={dropzoneImg} alt="" />
-//     <span>Add some books =)</span>
-// </div>
+// TODO prevent click on skeleton
 export default LibraryList;

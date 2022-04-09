@@ -34,11 +34,12 @@ const ContextMenu = loadable(() =>
 const initStorage = window.api.store.initial();
 
 const toContinueReading = () => {
-    const lastOpenedBook = initStorage.interactionStates?.lastOpenedBook;
+    const recentBooks = initStorage.recentBooks;
+    // The last book in the list of recent books is the last opened book
+    const lastOpenedBook = recentBooks?.[recentBooks?.length - 1];
+    const continueReadingSetting = initStorage.settings?.continueReading?.value;
 
-    const continueReadingSetting = initStorage?.settings?.continueReading?.value;
-
-    return lastOpenedBook !== undefined && continueReadingSetting;
+    return lastOpenedBook && continueReadingSetting;
 };
 
 const getInitSettings = () => {

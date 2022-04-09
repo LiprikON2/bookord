@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { useHotkeys, useViewportSize, useDidUpdate } from "@mantine/hooks";
-import { readConfigRequest, readConfigResponse } from "secure-electron-store";
+import { useHotkeys, useViewportSize, useDidUpdate, useListState } from "@mantine/hooks";
+import {
+    readConfigRequest,
+    readConfigResponse,
+    writeConfigRequest,
+} from "secure-electron-store";
 
 import Link from "components/Link";
 import Button from "components/Button";
@@ -15,6 +19,40 @@ const clamp = (min, value, max) => {
 };
 
 const Read = () => {
+    const [bookmarks, setBookmarks] = useState({});
+    const [recentBooks, setRecentBooks] = useListState([]);
+
+    const retriveBookmarks = (bookName) => {
+        return new Promise((resolve, reject) => {
+            window.api.store.send(readConfigRequest, "bookmarks");
+
+            window.api.store.onReceive(readConfigResponse, (args) => {
+                if (args.key === "bookmarks" && args.success) {
+                    const retrivedBookmarks = args.value ?? {};
+                    setBookmarks(retrivedBookmarks);
+
+                    const bookmarkList = retrivedBookmarks?.[bookName] ?? [];
+                    resolve(bookmarkList);
+                }
+            });
+        });
+    };
+
+    const loadBookComponent = (bookObj, isAlreadyParsed = false) => {
+        // Stop handling config respones if the book is being loaded
+        window.api.store.clearRendererBindings();
+        const bookRef = bookComponentRef.current;
+        const bookName = bookObj.bookFile.name;
+        const promise = retriveBookmarks(bookName);
+
+        promise.then((bookmarkList) => {
+            bookRef.loadBook(bookObj, bookmarkList, isAlreadyParsed);
+            bookRef.addEventListener("imgClickEvent", handleImgClick);
+            bookRef.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
+            bookRef.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
+        });
+    };
+    // TODO ensure refresh is properly handled
     const location = useLocation();
 
     const [page, setPage] = useState(1);
@@ -23,47 +61,52 @@ const Read = () => {
     const bookComponentRef = useRef(null);
     const setBookComponentRef = useCallback((bookComponent) => {
         if (bookComponent) {
+            const bookSource = location?.state?.book ? "location" : "last";
+
             // Send an IPC request to get config
-            window.api.store.send(readConfigRequest, "interactionStates");
-            window.api.store.send(readConfigRequest, "appState");
+            window.api.store.send(readConfigRequest, "recentBooks");
+            window.api.store.send(readConfigRequest, "allBooks");
 
             // Listen for responses from the electron store
             window.api.store.onReceive(readConfigResponse, (args) => {
-                if (args.key === "appState" && args.success) {
-                    console.log("GOT APP");
-                    // window.api.store.clearRendererBindings();
+                // Check first if the requested book is already parsed
+                // i.e. is currently in recent books
+                if (args.key === "recentBooks" && args.success) {
+                    const retrivedRecentBooks = args.value ?? [];
+                    setRecentBooks.setState(retrivedRecentBooks);
 
-                    const appState = args.value;
-                    if (appState?.recentBooks?.recent[0]) {
-                        bookComponent.loadBook(
-                            appState.recentBooks.recent[0],
-                            null,
-                            true
-                        );
-                        window.api.store.clearRendererBindings();
-                    } else {
-                        console.log("fail");
+                    if (retrivedRecentBooks) {
+                        let parsedBook;
+                        if (bookSource === "location") {
+                            // Check if book from location is in recent books
+                            const bookName = location.state.book.name;
+                            retrivedRecentBooks.forEach((bookObj) => {
+                                if (bookObj.bookFile.name === bookName) {
+                                    parsedBook = bookObj;
+                                }
+                            });
+                        } else if (bookSource === "last") {
+                            // The last book in the list of recent books is the last opened book
+                            parsedBook =
+                                retrivedRecentBooks[retrivedRecentBooks.length - 1];
+                        }
+                        if (parsedBook) {
+                            loadBookComponent(parsedBook, true);
+                        }
                     }
                 }
-                if (args.key === "interactionStates" && args.success) {
-                    console.log("GOT INT");
-                    window.api.store.clearRendererBindings();
-                    const interactionStates = args.value;
+                // Provide unparsed book, last opened book are always parsed
+                if (
+                    args.key === "allBooks" &&
+                    args.success &&
+                    bookSource === "location"
+                ) {
+                    const allBooks = args.value;
+                    console.log("GOT allBooks", allBooks);
+                    const bookName = location.state.book.name;
+                    const bookObj = allBooks[bookName];
 
-                    let bookFile;
-                    // Tries to get book file from link's location
-                    if (location?.state?.book) {
-                        bookFile = location.state.book;
-                    }
-                    // If no book is specified, open last opened bok
-                    else if (interactionStates?.lastOpenedBook) {
-                        bookFile = interactionStates.lastOpenedBook;
-                    } else {
-                        return;
-                    }
-
-                    bookComponent.loadBook(bookFile.name, interactionStates);
-                    bookComponent.addEventListener("imgClickEvent", handleImgClick);
+                    loadBookComponent(bookObj);
                 }
             });
         }
@@ -78,6 +121,24 @@ const Read = () => {
     const [imageModalSrc, setImageModalSrc] = useState();
     const handleImgClick = (e) => {
         setImageModalSrc(e.detail.src);
+    };
+    const handleSavingBookmarks = (e) => {
+        const bookName = e.detail.bookName;
+        const bookmarkList = e.detail.bookmarkList;
+
+        const updatedBookmarks = {
+            [bookName]: bookmarkList,
+        };
+        const mergedBookmarks = Object.assign({}, bookmarks, updatedBookmarks);
+        window.api.store.send(writeConfigRequest, "bookmarks", mergedBookmarks);
+        setBookmarks(mergedBookmarks);
+    };
+    const handleSavingParsedBook = (e) => {
+        const parsedBook = e.detail.parsedBook;
+
+        setRecentBooks.append(parsedBook);
+        // console.log("sending", parsedBook, "vs", recentBooks);
+        window.api.store.send(writeConfigRequest, "recentBooks", recentBooks);
     };
 
     const goNext = () => {
@@ -163,5 +224,9 @@ const Read = () => {
         </>
     );
 };
+// TODO check tf visibilty for
+// TODO move UI to react
+// TODO add skeleton loading animation
+// TODO add page counting loading animation
 
 export default Read;

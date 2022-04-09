@@ -455,7 +455,7 @@ const getChildResponse = async (child) => {
 const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
 
 ipcMain.handle("app:get-books", async () => {
-    const interactionStates = storeData?.["interactionStates"];
+    const allBooks = storeData?.["allBooks"];
     const files = io.getFiles();
 
     // Force show skeletons for alreaddy added books on initial app load (or refresh)
@@ -466,20 +466,20 @@ ipcMain.handle("app:get-books", async () => {
 
     metadataParseChild.send({
         parseMetadata: {
-            interactionStates: interactionStates,
             files: files,
+            allBooks: allBooks,
         },
     });
-    const { filesWithMetadata, mergedInteractionStates } = await getChildResponse(
+    const { filesWithMetadata, mergedAllbooks } = await getChildResponse(
         metadataParseChild
     );
 
-    return [filesWithMetadata, mergedInteractionStates];
+    return [filesWithMetadata, mergedAllbooks];
 });
 
 let parseChild;
 
-ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum]) => {
+ipcMain.handle("app:get-parsed-book", async (event, [filePath, initSectionIndex]) => {
     // Forked child process for parsing book file.
     // It is needed to offload main thread and not to block UI
     parseChild = fork(path.join(__dirname, "forks/child.js"));
@@ -487,7 +487,7 @@ ipcMain.handle("app:get-parsed-book", async (event, [filePath, sectionNum]) => {
     parseChild.send({
         parse: {
             filePath,
-            sectionNum,
+            initSectionIndex,
         },
     });
 
