@@ -15,7 +15,6 @@ import "./bookComponent";
 import "./Read.css";
 
 const clamp = (min, value, max) => {
-    return 200; // todo uncomment
     return Math.min(Math.max(value, min), max);
 };
 
@@ -43,7 +42,7 @@ const Read = () => {
         // Stop handling config respones if the book is being loaded
         window.api.store.clearRendererBindings();
         const bookRef = bookComponentRef.current;
-        const bookName = bookObj.bookFile.name;
+        const bookName = bookObj?.bookFile?.name ?? bookObj.name;
         const promise = retriveBookmarks(bookName);
         const initSize = getSize();
         setSize(initSize);
@@ -64,11 +63,10 @@ const Read = () => {
     const bookComponentRef = useRef(null);
     const setBookComponentRef = useCallback((bookComponent) => {
         if (bookComponent) {
-            const bookSource = location?.state?.book ? "location" : "last";
+            const bookSource = location?.state?.bookFile ? "location" : "last";
 
             // Send an IPC request to get config
             window.api.store.send(readConfigRequest, "recentBooks");
-            window.api.store.send(readConfigRequest, "allBooks");
 
             // Listen for responses from the electron store
             window.api.store.onReceive(readConfigResponse, (args) => {
@@ -78,13 +76,13 @@ const Read = () => {
                     const retrivedRecentBooks = args.value ?? [];
                     setRecentBooks.setState(retrivedRecentBooks);
 
-                    if (retrivedRecentBooks) {
-                        let parsedBook;
+                    let parsedBook;
+                    if (retrivedRecentBooks.length) {
                         if (bookSource === "location") {
                             // Check if book from location is in recent books
-                            const bookName = location.state.book.name;
+                            const bookName = location.state.bookFile.name;
                             retrivedRecentBooks.forEach((bookObj) => {
-                                if (bookObj.bookFile.name === bookName) {
+                                if (bookObj.name === bookName) {
                                     parsedBook = bookObj;
                                 }
                             });
@@ -97,6 +95,9 @@ const Read = () => {
                             loadBookComponent(parsedBook, true);
                         }
                     }
+                    if (!parsedBook) {
+                        window.api.store.send(readConfigRequest, "allBooks");
+                    }
                 }
                 // Provide unparsed book, last opened book are always parsed
                 if (
@@ -105,8 +106,8 @@ const Read = () => {
                     bookSource === "location"
                 ) {
                     const allBooks = args.value;
-                    console.log("GOT allBooks", allBooks);
-                    const bookName = location.state.book.name;
+
+                    const bookName = location.state.bookFile.name;
                     const bookObj = allBooks[bookName];
 
                     loadBookComponent(bookObj);
@@ -115,10 +116,6 @@ const Read = () => {
         }
 
         bookComponentRef.current = bookComponent;
-
-        return () => {
-            bookComponent.removeEventListener("imgClickEvent", handleImgClick);
-        };
     }, []);
 
     const [imageModalSrc, setImageModalSrc] = useState();
@@ -132,16 +129,22 @@ const Read = () => {
         const updatedBookmarks = {
             [bookName]: bookmarkList,
         };
+        // useEffect(() => {
+        // TODO setMovies(prevMovies => ([...prevMovies, ...result]));
         const mergedBookmarks = Object.assign({}, bookmarks, updatedBookmarks);
+        console.log(bookmarks, "->", mergedBookmarks);
+
         window.api.store.send(writeConfigRequest, "bookmarks", mergedBookmarks);
         setBookmarks(mergedBookmarks);
+        // }, [bookmarks]);
     };
     const handleSavingParsedBook = (e) => {
         const parsedBook = e.detail.parsedBook;
+        const updatedRecentBooks = [...recentBooks];
+        updatedRecentBooks.push(parsedBook);
 
-        setRecentBooks.append(parsedBook);
-        // console.log("sending", parsedBook, "vs", recentBooks);
-        window.api.store.send(writeConfigRequest, "recentBooks", recentBooks);
+        window.api.store.send(writeConfigRequest, "recentBooks", updatedRecentBooks);
+        setRecentBooks.setState(updatedRecentBooks);
     };
 
     const goNext = () => {
@@ -177,6 +180,7 @@ const Read = () => {
     const { height, width } = useViewportSize();
     const [size, setSize] = useState(0);
 
+    // TODO finetune for the final design
     const getSize = () => {
         const book = bookComponentRef.current;
         const aspectRatio = book.aspectRatio;

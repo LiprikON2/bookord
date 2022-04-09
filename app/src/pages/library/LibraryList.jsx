@@ -127,7 +127,7 @@ const LibraryList = ({
                                     to={{
                                         pathname: ROUTES.READ,
                                         state: {
-                                            book: file,
+                                            bookFile: file,
                                         },
                                     }}
                                     className=""

@@ -219,8 +219,8 @@ class BookComponent extends HTMLElement {
     importBook(filePath, sectionIndex) {
         const book = window.api
             .invoke("app:get-parsed-book", [filePath, sectionIndex])
-            .catch((error) => {});
-        book.then((book) => {
+            .catch(() => {});
+        book.then(() => {
             this.status = "ready";
             this.emitSaveParsedBook();
         });
@@ -556,7 +556,7 @@ class BookComponent extends HTMLElement {
             this._flipNPages(sectionPage);
         }
 
-        // this.attachLinkHandlers(book);
+        this.attachLinkHandlers(book);
         this.attachImgEventEmitters();
 
         this.emitSaveBookmarks();
@@ -856,6 +856,7 @@ class BookComponent extends HTMLElement {
 
         parentComponent.bookState.sectionPagesArr = [];
 
+        // TODO start counting pages near where user left off (0th bookmark)
         await this._asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
             const section = this.getSection(book, sectionIndex);
             this.loadStyles(book, section);
@@ -891,6 +892,7 @@ class BookComponent extends HTMLElement {
         this.setSize(initSize);
 
         if (!isAlreadyParsed) {
+            console.log("Parsing");
             const bookPath = bookObj.bookFile.path;
 
             this.book = this.importBook(bookPath, initSectionIndex);
@@ -899,7 +901,9 @@ class BookComponent extends HTMLElement {
                 return;
             }
         } else {
-            this.book = bookObj;
+            console.log("Is already parsed");
+            // Make it a promise to match the interface of unparsed book
+            this.book = Promise.resolve(bookObj);
             this.status = "ready";
         }
 
@@ -1031,12 +1035,12 @@ class BookComponent extends HTMLElement {
      * @listens Event
      * @return {void}
      */
-    emitSaveParsedBook(e) {
+    async emitSaveParsedBook(e) {
         const saveParsedBookEvent = new CustomEvent("saveParsedBookEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
-            detail: { parsedBook: this.book },
+            detail: { parsedBook: await this.book },
         });
 
         this.dispatchEvent(saveParsedBookEvent);
@@ -1098,7 +1102,7 @@ class BookComponent extends HTMLElement {
      */
     resize = debounce(
         (size) => {
-            console.log("resizing!", this.status);
+            console.log("resizing!", size, this.status);
 
             if (this.status !== "resizing") {
                 // Get a reference to a visible element
