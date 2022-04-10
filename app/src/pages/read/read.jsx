@@ -18,45 +18,10 @@ const clamp = (min, value, max) => {
     return Math.min(Math.max(value, min), max);
 };
 
+// TODO use useContext hook https://youtu.be/TNhaISOUy6Q?t=355
+
 const Read = () => {
-    const [bookmarks, setBookmarks] = useState({});
-    const [recentBooks, setRecentBooks] = useListState([]);
-
-    const retriveBookmarks = (bookName) => {
-        return new Promise((resolve, reject) => {
-            window.api.store.send(readConfigRequest, "bookmarks");
-
-            window.api.store.onReceive(readConfigResponse, (args) => {
-                if (args.key === "bookmarks" && args.success) {
-                    const retrivedBookmarks = args.value ?? {};
-                    setBookmarks(retrivedBookmarks);
-
-                    const bookmarkList = retrivedBookmarks?.[bookName] ?? [];
-                    resolve(bookmarkList);
-                }
-            });
-        });
-    };
-
-    const loadBookComponent = (bookObj, isAlreadyParsed = false) => {
-        // Stop handling config respones if the book is being loaded
-        window.api.store.clearRendererBindings();
-        const bookRef = bookComponentRef.current;
-        const bookName = bookObj?.bookFile?.name ?? bookObj.name;
-        const promise = retriveBookmarks(bookName);
-        const initSize = getSize();
-        setSize(initSize);
-
-        promise.then((bookmarkList) => {
-            bookRef.loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed);
-            bookRef.addEventListener("imgClickEvent", handleImgClick);
-            bookRef.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
-            bookRef.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
-        });
-    };
-    // TODO ensure refresh is properly handled
     const location = useLocation();
-
     const [page, setPage] = useState(1);
 
     // Callback ref for passing object to the web component
@@ -74,6 +39,7 @@ const Read = () => {
                 // i.e. is currently in recent books
                 if (args.key === "recentBooks" && args.success) {
                     const retrivedRecentBooks = args.value ?? [];
+                    console.log("Got retrivedRecentBooks", retrivedRecentBooks);
                     setRecentBooks.setState(retrivedRecentBooks);
 
                     let parsedBook;
@@ -118,10 +84,49 @@ const Read = () => {
         bookComponentRef.current = bookComponent;
     }, []);
 
+    const loadBookComponent = (bookObj, isAlreadyParsed = false) => {
+        // Stop handling config respones if the book is being loaded
+        window.api.store.clearRendererBindings();
+        const bookRef = bookComponentRef.current;
+        const bookName = bookObj?.bookFile?.name ?? bookObj.name;
+        const promise = retriveBookmarks(bookName);
+
+        const initSize = getSize();
+        setSize(initSize);
+
+        promise.then((bookmarkList) => {
+            bookRef.loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed);
+            bookRef.addEventListener("imgClickEvent", handleImgClick);
+            bookRef.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
+            bookRef.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
+        });
+    };
+
+    const [bookmarks, setBookmarks] = useState({});
+    const [recentBooks, setRecentBooks] = useListState([]);
+
+    const retriveBookmarks = (bookName) => {
+        return new Promise((resolve, reject) => {
+            window.api.store.send(readConfigRequest, "bookmarks");
+
+            window.api.store.onReceive(readConfigResponse, (args) => {
+                if (args.key === "bookmarks" && args.success) {
+                    const retrivedBookmarks = args.value ?? {};
+                    setBookmarks(retrivedBookmarks);
+
+                    const bookmarkList = retrivedBookmarks?.[bookName] ?? [];
+                    resolve(bookmarkList);
+                }
+            });
+        });
+    };
+
     const [imageModalSrc, setImageModalSrc] = useState();
+
     const handleImgClick = (e) => {
         setImageModalSrc(e.detail.src);
     };
+
     const handleSavingBookmarks = (e) => {
         const bookName = e.detail.bookName;
         const bookmarkList = e.detail.bookmarkList;
@@ -129,29 +134,17 @@ const Read = () => {
         const updatedBookmarks = {
             [bookName]: bookmarkList,
         };
-        // useEffect(() => {
         // TODO setMovies(prevMovies => ([...prevMovies, ...result]));
-        const mergedBookmarks = Object.assign({}, bookmarks, updatedBookmarks);
-        console.log(bookmarks, "->", mergedBookmarks);
-
-        window.api.store.send(writeConfigRequest, "bookmarks", mergedBookmarks);
-        setBookmarks(mergedBookmarks);
-        // }, [bookmarks]);
+        // const mergedBookmarks = Object.assign({}, bookmarks, updatedBookmarks);
+        setBookmarks((prevBookmarks) => ({ ...prevBookmarks, ...updatedBookmarks }));
     };
+
     const handleSavingParsedBook = (e) => {
         const parsedBook = e.detail.parsedBook;
-        const updatedRecentBooks = [...recentBooks];
-        updatedRecentBooks.push(parsedBook);
-
-        window.api.store.send(writeConfigRequest, "recentBooks", updatedRecentBooks);
-        setRecentBooks.setState(updatedRecentBooks);
-    };
-
-    const goNext = () => {
-        flipNPages(1);
-    };
-    const goBack = () => {
-        flipNPages(-1);
+        // TODO add bookFile property to recentBooks' ParsedBook
+        // TODO check bookfile size property to determine amount of recent books to be kept
+        // setRecentBooks.append(parsedBook);
+        setRecentBooks.setState(parsedBook);
     };
 
     const flipNPages = (nPageShift) => {
@@ -161,21 +154,12 @@ const Read = () => {
         const validNextPage = book.enforcePageRange(currentPage + nPageShift);
         setPage(validNextPage);
     };
-
-    useHotkeys([
-        ["ArrowRight", () => goNext()],
-        ["ArrowLeft", () => goBack()],
-        ["ctrl + ArrowRight", () => flipNPages(5)],
-        ["ctrl + ArrowLeft", () => flipNPages(-5)],
-    ]);
-
-    useEffect(() => {
-        return () => {
-            // Terminate child process when user leaves page during book parsing
-            window.api.send("app:on-stop-parsing");
-            window.api.store.clearRendererBindings();
-        };
-    }, []);
+    const goNext = () => {
+        flipNPages(1);
+    };
+    const goBack = () => {
+        flipNPages(-1);
+    };
 
     const { height, width } = useViewportSize();
     const [size, setSize] = useState(0);
@@ -191,7 +175,6 @@ const Read = () => {
         const newSize = clamp(lowerbound, Math.ceil(width / 2), upperbound);
         return newSize;
     };
-
     const resize = () => {
         const book = bookComponentRef.current;
         const newSize = getSize();
@@ -209,6 +192,34 @@ const Read = () => {
     useDidUpdate(() => {
         resize();
     }, [width, height]);
+    useDidUpdate(() => {
+        const bookRef = bookComponentRef.current;
+        if (bookRef.status === "ready") {
+            window.api.store.send(writeConfigRequest, "bookmarks", bookmarks);
+        }
+    }, [bookmarks]);
+    useDidUpdate(() => {
+        const bookRef = bookComponentRef.current;
+        if (bookRef.status === "ready") {
+            console.log("updating recentBooks", recentBooks);
+            window.api.store.send(writeConfigRequest, "recentBooks", recentBooks);
+        }
+    }, [recentBooks]);
+
+    useHotkeys([
+        ["ArrowRight", () => goNext()],
+        ["ArrowLeft", () => goBack()],
+        ["ctrl + ArrowRight", () => flipNPages(5)],
+        ["ctrl + ArrowLeft", () => flipNPages(-5)],
+    ]);
+
+    useEffect(() => {
+        return () => {
+            // Terminate child process when user leaves page during book parsing
+            window.api.send("app:on-stop-parsing");
+            window.api.store.clearRendererBindings();
+        };
+    }, []);
 
     return (
         <>

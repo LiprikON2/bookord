@@ -59,6 +59,7 @@ const LibraryList = ({
                 console.timeEnd("updateFiles");
                 setFiles(filesWithMetadata);
 
+                // TODO delete relevant recent book as well
                 window.api.store.send(writeConfigRequest, "allBooks", mergedAllBooks);
             }
             setIsInitLoad(false);

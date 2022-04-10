@@ -1,4 +1,4 @@
-// /*@ts-check
+//@ts-check
 ///<reference path="../types/index.d.ts" />
 import debounce from "lodash/debounce";
 
@@ -15,7 +15,7 @@ const style = /*css*/ `
     }
 
     :any-link {
-        color: var(--clr-link);
+        color: var(--clr-link) !important;
     }
 
     .book-container {
@@ -117,23 +117,65 @@ template.innerHTML = /*html*/ `
  * @property {string} author - Author (creator) of the book
  */
 
-/** Book section state
- * @typedef {Object} State
- * @property {number} section - Section number of a book
- * @property {number} sectionPage - Page number of a book's section
+/** Dictionary of books which contains information about book file and book metadata.
+ * Book filename is used as a key
+ * @typedef {Object} AllBooks
+ * @property {Book} BookFile.name - Name of the book file, used as a key to the book entry
  */
 
-/** Interaction state of the book which contains information about file, metadata and reading progress
- * @typedef {Object} InteractionState
- * @property {BookFile} file - Book file
+/** An entry of AllBooks object; contains information about book file and book metadata
+ * @typedef {Object} Book
+ * @property {BookFile} bookFile - Book file
+ * @property {Info} info - Book metadata
+ */
+
+/** List of recently visited (and parsed) books, 0th is last opened book
+ * @typedef {ParsedBook[]} RecentBooks
+ */
+
+/** Book object which contains parsed sections
+ * @typedef {Object} ParsedBook
  * @property {Info} info - Book metadata information
- * @property {State} state - Book section state
+ * @property {Array<HtmlObject>} styles - Book's stylesheets
+ * @property {HtmlObject} structure - Book's parsed Table Of Contents (TOC)
+ * @property {number} sectionsTotal - Book's total number of section
+ * @property {Array<string>} sectionNames - List of section ids (names)
+ * @property {number} initSectionIndex - Number that corresponds the book's initally parsed section
+ * @property {Array<HtmlObject>} initSection - Initially parsed book section
+ * @property {Array<HtmlObject>} sections - Sections
+ * @property {string} name - Book's filename
  */
 
-/** Contains interaction states of all of the books; path to the book's file is used to access individual InteractionState objects
- * @typedef {Object} InteractionStates
- * @property {BookFile} lastOpenedBook - Book file of last opened book
- * @property {InteractionState} filename - Filename of the book is used as a key
+/** Book with only one section parsed, used while the rest of the book is being parsed
+ * @typedef {Object} InitBook
+ * @property {Info} info - Book metadata information
+ * @property {Array<HtmlObject>} styles - Book's stylesheets
+ * @property {HtmlObject} structure - Book's parsed Table Of Contents (TOC)
+ * @property {number} sectionsTotal - Book's total number of section
+ * @property {Array<string>} sectionNames - List of section ids (names)
+ * @property {number} initSectionIndex - Number that corresponds the book's initally parsed section
+ * @property {Array<HtmlObject>} initSection - Initially parsed book section
+ * @property {string} name - Book's filename
+ */
+
+/** Dictionary of books' bookmarks. Book filename is used as a key to a specific book's bookmark list
+ * @typedef {Object} Bookmarks
+ * @property {BookmarkList} BookFile.name
+ */
+
+/** List of all of the bookmarks a particular book has
+ * @typedef {Bookmark[]} BookmarkList
+ */
+
+/** A bookmark, used to indicate a specific part of the specific section of the book
+ * @typedef {Object} Bookmark
+ * @property {number} sectionIndex - Index of the book's section
+ * @property {number} elementIndex - Index of descendant elements of contentElem, which is used to mark a specific part of a section
+ */
+
+/**
+ * @typedef {Object} Event
+ * @param {HTMLInputElement} currentTarget
  */
 
 /** HTML & XML parsed to the JavaScript object
@@ -149,29 +191,12 @@ template.innerHTML = /*html*/ `
  * @property {HtmlObject|undefined} [children]
  */
 
-/** HtmlObject Attributes
+/** HtmlObject's Attributes
  * @typedef {Object} Attrs
  * @property {string|undefined} [id]
  * @property {string|undefined} [href]
  * @property {string|undefined} [src]
  *
- */
-
-/** Parsed book object which consists of sections
- * @typedef {Object} Book
- * @property {Info} info - Book metadata information
- * @property {Array<HtmlObject>} initSection - Initially parsed book section
- * @property {number} initSectionIndex - Number that corresponds the book's initally parsed section
- * @property {Array<HtmlObject>} sections - Sections
- * @property {Array<string>} sectionNames - List of section ids (names)
- * @property {number} sectionsTotal - Book's total number of section
- * @property {HtmlObject} structure - Book's parsed Table Of Contents (TOC)
- * @property {Array<HtmlObject>} styles - Book's stylesheets
- */
-
-/**
- * @typedef {Object} Event
- * @param {HTMLInputElement} currentTarget
  */
 
 /**
@@ -200,10 +225,11 @@ class BookComponent extends HTMLElement {
          */
         this.status = "loading";
         /**
-         * @property {Promise<Book>} initBook - Initial book with only one section parsed
+         * @property {Promise<InitBook>} initBook
          */
         this.initBook = new Promise((resolve, reject) => {
             this.unlisten = window.api.receive("app:receive-init-book", (initBook) => {
+                console.log("TEST");
                 // TODO runs twice???
                 resolve(initBook);
             });
@@ -214,7 +240,7 @@ class BookComponent extends HTMLElement {
      * Imports book using IPC, completes initialization as soon as promise is resolved
      * @param  {string} filePath
      * @param  {number} sectionIndex
-     * @returns {Promise<Book>}
+     * @returns {Promise<ParsedBook>}
      */
     importBook(filePath, sectionIndex) {
         const book = window.api
@@ -256,9 +282,9 @@ class BookComponent extends HTMLElement {
 
     /**
      * Recursively extracts section (chapter) title from book's TOC
-     * @param {Book} book
-     * @param {HtmlObject} toc
-     * @param {number} sectionIndex - section index
+     * @param {ParsedBook} book
+     * @param {HtmlObject} toc - Table of Contents
+     * @param {number} sectionIndex - Section index
      * @param {boolean} [root] - A way to differentiate between recursive and non-recursive function call
      * @returns {string}
      */
@@ -299,7 +325,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Returns book's section object
-     * @param {Book} book
+     * @param {ParsedBook|any} book
      * @param {number} sectionIndex
      * @returns {HtmlObject}
      */
@@ -309,7 +335,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Collects book's styles and applies them to the web component
-     * @param {Book} book
+     * @param {ParsedBook} book
      * @param {HtmlObject} section
      * @returns {void}
      */
@@ -364,7 +390,7 @@ class BookComponent extends HTMLElement {
     /**
      * Handles clicks on book navigation links and website links
      * @param {Event} e - Event
-     * @param {Book} book
+     * @param {ParsedBook} book
      * @listens Event
      * @returns {void}
      */
@@ -450,7 +476,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Updates book's state
-     * @param {Book} book
+     * @param {ParsedBook} book
      * @param {number} currentSection
      * @returns {void}
      */
@@ -466,8 +492,9 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     *
+     * Updates current position inside the book and, optionally, adds additional bookmark
      * @param {Bookmark} [newBookmark]
+     * @returns {void}
      */
     updateBookmarkList(newBookmark) {
         const element = this.getVisibleElement();
@@ -486,7 +513,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Attaches event handlers to anchor tags to handle book navigation
-     * @param {Book} book
+     * @param {ParsedBook} book
      * @returns {void}
      */
     attachLinkHandlers(book) {
@@ -503,7 +530,7 @@ class BookComponent extends HTMLElement {
      * @param {number} sectionIndex - sections number
      * @param {number} sectionPage - page within section
      * @param {string} [offsetSelector] - shift to marker instead of specific page
-     * @param {string} [elementIndex] - shift to element by index of content elements instead of specific page
+     * @param {number} [elementIndex] - shift to element by index of content elements instead of specific page
      * @returns {Promise<void>}
      */
     async loadSection(sectionIndex, sectionPage, offsetSelector = "", elementIndex = 0) {
@@ -564,7 +591,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Checks visibility of the element
-     * @param {HTMLElement} elem
+     * @param {HTMLElement|any} elem
      * @returns {boolean[]} [isFullyVisible, isAtLeastPartiallyVisible]
      */
     checkVisibility(elem) {
@@ -607,7 +634,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Returns element's offset
-     * @param {HTMLElement} elem
+     * @param {HTMLElement|any} elem
      * @param {boolean} [round] - rounds elements offset to the left page edge
      * @returns {number}
      */
@@ -725,7 +752,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Returns page that is guranteed to be withing the borders of a book
-     * @param {number} page
+     * @param {number} page - book page
      * @returns {number}
      */
     enforcePageRange(page) {
@@ -741,7 +768,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Jumps straight to the particular book page
-     * @param {number} page
+     * @param {number} page - book page
      * @returns {void}
      */
     jumpToPage(page) {
@@ -798,7 +825,10 @@ class BookComponent extends HTMLElement {
      */
     async createCounterComponent(size = 0) {
         this.status = "resizing";
-        // Create a counter`component inside the current component
+        /** Create a counter`component inside the current component
+         * @type {BookComponent}
+         */
+        // @ts-ignore
         const counterComponent = document.createElement("book-component");
         this.shadowRoot.appendChild(counterComponent);
 
@@ -812,7 +842,6 @@ class BookComponent extends HTMLElement {
             this.setSize(size, rootElem);
         }
 
-        // @ts-ignore
         await counterComponent._countBookPages(this);
         this.status = "ready";
         counterComponent.remove();
@@ -877,10 +906,10 @@ class BookComponent extends HTMLElement {
 
     /**
      * Loads book to the web component, as well as runs a page counter
-     * @param {string} filename - filename of the book, also serves as the key to InteractionStates object
-     * @param {InteractionStates} interactionStates - interaction states of all of the books
-     * @param {number} initSize
-     * @param {boolean} [isAlreadyParsed=false]
+     * @param {Book|ParsedBook|any} bookObj - Entry of AllBooks object; contains information about book file and book metadata
+     * @param {BookmarkList} bookmarkList - Interaction states of all of the books
+     * @param {number} initSize - Initial width of the book content, height is times aspectRation of that
+     * @param {boolean} [isAlreadyParsed=false] - specifies which type of book object is passed: Book or ParsedBook
      * @return {Promise<void>}
      */
     async loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed = false) {
@@ -892,16 +921,19 @@ class BookComponent extends HTMLElement {
         this.setSize(initSize);
 
         if (!isAlreadyParsed) {
-            console.log("Parsing");
+            console.log("###> Parsing");
             const bookPath = bookObj.bookFile.path;
 
+            /**
+             * @type {Promise<ParsedBook>}
+             */
             this.book = this.importBook(bookPath, initSectionIndex);
 
             if (!this.book) {
                 return;
             }
         } else {
-            console.log("Is already parsed");
+            console.log("###> Is already parsed");
             // Make it a promise to match the interface of unparsed book
             this.book = Promise.resolve(bookObj);
             this.status = "ready";
@@ -996,6 +1028,11 @@ class BookComponent extends HTMLElement {
         return nthElement;
     }
 
+    /**
+     * Returns element by the index of descendant elements of contentElem
+     * @param {number} index - index of element
+     * @returns {Element}
+     */
     getElementByIndex(index) {
         const allElems = this.contentElem.querySelectorAll("*");
         return allElems[index];
@@ -1033,7 +1070,7 @@ class BookComponent extends HTMLElement {
      * Emits "saveBookmarksEvent" when the book is fully parsed
      * @param {Event} e - Event
      * @listens Event
-     * @return {void}
+     * @return {Promise<void>}
      */
     async emitSaveParsedBook(e) {
         const saveParsedBookEvent = new CustomEvent("saveParsedBookEvent", {
@@ -1060,15 +1097,19 @@ class BookComponent extends HTMLElement {
         });
     }
 
+    /**
+     * Returns currently fully visible or partially visible element
+     * @returns {HTMLElement}
+     */
     getVisibleElement() {
         return this.recGetVisibleElement() ?? this.recGetVisibleElement(null, false);
     }
 
     // TODO use binary search
     /**
-     *
-     * @param {*} [elements]
-     * @returns {HTMLElement}
+     * Recus
+     * @param {HTMLCollection} [elements]
+     * @returns {HTMLElement|any}
      */
     recGetVisibleElement(elements, strict = true) {
         if (!elements) {

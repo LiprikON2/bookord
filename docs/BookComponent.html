@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line98">line 98</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line205">line 205</a>
     </li></ul></dd>
     
 
@@ -143,6 +143,136 @@
 
         
             
+<h4 class="name" id="book"><span class="type-signature"></span>book<span class="type-signature"> :Promise.&lt;<a href="global.html#ParsedBook">ParsedBook</a>></span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Promise.&lt;<a href="global.html#ParsedBook">ParsedBook</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line930">line 930</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="emitSaveBookmarks"><span class="type-signature"></span>emitSaveBookmarks<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Emits &quot;saveBookmarksEvent&quot; when page is turned</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1047">line 1047</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="initBook"><span class="type-signature"></span>initBook<span class="type-signature"></span></h4>
 
 
@@ -186,7 +316,7 @@
             <td class="type">
             
                 
-<span class="param-type">Promise.&lt;<a href="global.html#Book">Book</a>></span>
+<span class="param-type">Promise.&lt;<a href="global.html#InitBook">InitBook</a>></span>
 
 
             
@@ -196,7 +326,7 @@
 
             
 
-            <td class="description last"><p>Initial book with only one section parsed</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -235,7 +365,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line119">line 119</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line230">line 230</a>
     </li></ul></dd>
     
 
@@ -253,7 +383,69 @@
 
         
             
-<h4 class="name" id="isInit"><span class="type-signature"></span>isInit<span class="type-signature"></span></h4>
+<h4 class="name" id="resize"><span class="type-signature"></span>resize<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Resizes book component and recalculates page count</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1144">line 1144</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="status"><span class="type-signature"></span>status<span class="type-signature"></span></h4>
 
 
 
@@ -290,13 +482,22 @@
 
         <tr>
             
-                <td class="name"><code>isInit</code></td>
+                <td class="name"><code>status</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">bool</span>
+<span class="param-type">'loading'</span>
+|
+
+<span class="param-type">'sectionReady'</span>
+|
+
+<span class="param-type">'ready'</span>
+|
+
+<span class="param-type">'resizing'</span>
 
 
             
@@ -345,7 +546,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line115">line 115</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line226">line 226</a>
     </li></ul></dd>
     
 
@@ -373,7 +574,7 @@
     
 
     
-    <h4 class="name" id="_asyncForEach"><span class="type-signature">(async) </span>_asyncForEach<span class="signature">(array, callback)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="_asyncForEach"><span class="type-signature">(async) </span>_asyncForEach<span class="signature">(array, callback)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
     
@@ -497,7 +698,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line764">line 764</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line856">line 856</a>
     </li></ul></dd>
     
 
@@ -533,7 +734,7 @@
     </dt>
     <dd>
         
-<span class="param-type">void</span>
+<span class="param-type">Promise.&lt;void></span>
 
 
     </dd>
@@ -551,7 +752,7 @@
     
 
     
-    <h4 class="name" id="_countBookPages"><span class="type-signature">(async) </span>_countBookPages<span class="signature">(parentComponent)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="_countBookPages"><span class="type-signature">(async) </span>_countBookPages<span class="signature">(parentComponent)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
     
@@ -601,7 +802,7 @@
             <td class="type">
             
                 
-<span class="param-type">HTMLElement</span>
+<span class="param-type"><a href="BookComponent.html">BookComponent</a></span>
 
 
             
@@ -652,7 +853,162 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line775">line 775</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line867">line 867</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_flipNPages"><span class="type-signature"></span>_flipNPages<span class="signature">(nPageShift)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Flips N pages of a book</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nPageShift</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line735">line 735</a>
     </li></ul></dd>
     
 
@@ -706,7 +1062,7 @@
     
 
     
-    <h4 class="name" id="_getCounterErrorCorrection"><span class="type-signature"></span>_getCounterErrorCorrection<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="_getColumnGap"><span class="type-signature"></span>_getColumnGap<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -714,7 +1070,7 @@
 
 
 <div class="description">
-    <p>Returns a magic number of pixels that counteracts counter component's error</p>
+    <p>Returns the invisible column gap between the pages in pixels</p>
 </div>
 
 
@@ -758,7 +1114,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line630">line 630</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line706">line 706</a>
     </li></ul></dd>
     
 
@@ -864,7 +1220,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line622">line 622</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line714">line 714</a>
     </li></ul></dd>
     
 
@@ -892,6 +1248,12 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <ul>
+<li>a positive number</li>
+</ul>
+</div>
+
 
 
 <dl>
@@ -918,7 +1280,7 @@
     
 
     
-    <h4 class="name" id="_getMaxOffset"><span class="type-signature"></span>_getMaxOffset<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="_getTotalDisplayWidth"><span class="type-signature"></span>_getTotalDisplayWidth<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -926,7 +1288,7 @@
 
 
 <div class="description">
-    <p>Returns end-marker's offset which is maximum possible offset</p>
+    <p>Returns offset to the right edge of content</p>
 </div>
 
 
@@ -970,7 +1332,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line610">line 610</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line695">line 695</a>
     </li></ul></dd>
     
 
@@ -998,6 +1360,12 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <ul>
+<li>a positive number of pixels</li>
+</ul>
+</div>
+
 
 
 <dl>
@@ -1148,7 +1516,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line564">line 564</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line664">line 664</a>
     </li></ul></dd>
     
 
@@ -1254,7 +1622,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line444">line 444</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1090">line 1090</a>
     </li></ul></dd>
     
 
@@ -1358,7 +1726,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Book">Book</a></span>
+<span class="param-type"><a href="global.html#ParsedBook">ParsedBook</a></span>
 
 
             
@@ -1409,7 +1777,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line416">line 416</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line519">line 519</a>
     </li></ul></dd>
     
 
@@ -1616,7 +1984,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line964">line 964</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1180">line 1180</a>
     </li></ul></dd>
     
 
@@ -1652,7 +2020,7 @@
     
 
     
-    <h4 class="name" id="calcNextOffset"><span class="type-signature"></span>calcNextOffset<span class="signature">(nPageShift)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="calcShiftedOffset"><span class="type-signature"></span>calcShiftedOffset<span class="signature">(nPageShift)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -1753,7 +2121,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line599">line 599</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line684">line 684</a>
     </li></ul></dd>
     
 
@@ -1807,7 +2175,7 @@
     
 
     
-    <h4 class="name" id="calcTotalSectionPages"><span class="type-signature"></span>calcTotalSectionPages<span class="signature">(correctCounterError<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="checkVisibility"><span class="type-signature"></span>checkVisibility<span class="signature">(elem)</span><span class="type-signature"> &rarr; {Array.&lt;boolean>}</span></h4>
     
 
     
@@ -1815,7 +2183,275 @@
 
 
 <div class="description">
-    <p>Returns the total of current section pages</p>
+    <p>Checks visibility of the element</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>elem</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line597">line 597</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>[isFullyVisible, isAtLeastPartiallyVisible]</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;boolean></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="countSectionPages"><span class="type-signature"></span>countSectionPages<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Returns the total amount of pages in section</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line723">line 723</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="createCounterComponent"><span class="type-signature">(async) </span>createCounterComponent<span class="signature">(size<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;any>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Creates another web component which is used to count pages of a book, and then destroys it</p>
 </div>
 
 
@@ -1855,13 +2491,13 @@
 
         <tr>
             
-                <td class="name"><code>correctCounterError</code></td>
+                <td class="name"><code>size</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">bool</span>
+<span class="param-type">number</span>
 
 
             
@@ -1882,12 +2518,12 @@
             
                 <td class="default">
                 
-                    false
+                    0
                 
                 </td>
             
 
-            <td class="description last"><p>Wether or not correct for counter component's error</p></td>
+            <td class="description last"><p>book component width in px, will be set height is 1.6 of that</p></td>
         </tr>
 
     
@@ -1928,7 +2564,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line639">line 639</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line826">line 826</a>
     </li></ul></dd>
     
 
@@ -1964,7 +2600,7 @@
     </dt>
     <dd>
         
-<span class="param-type">number</span>
+<span class="param-type">Promise.&lt;any></span>
 
 
     </dd>
@@ -1982,7 +2618,7 @@
     
 
     
-    <h4 class="name" id="createCounterComponent"><span class="type-signature"></span>createCounterComponent<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="emitSaveParsedBook"><span class="type-signature">(async) </span>emitSaveParsedBook<span class="signature">(e)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
     
@@ -1990,268 +2626,7 @@
 
 
 <div class="description">
-    <p>Creates another web component which is used to count pages of a book, and then destroys it</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line747">line 747</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">void</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="createMarker"><span class="type-signature"></span>createMarker<span class="signature">(markerId)</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Creates a marker that signifies the end of a section which is used in calculating max offset value</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>markerId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>ID of to-be-created HTML element</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line291">line 291</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">void</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="emitImgClickEvent"><span class="type-signature"></span>emitImgClickEvent<span class="signature">(e)</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Emits &quot;imgClickEvent&quot; when img tag is clicked</p>
+    <p>Emits &quot;saveBookmarksEvent&quot; when the book is fully parsed</p>
 </div>
 
 
@@ -2293,7 +2668,7 @@
             <td class="type">
             
                 
-<span class="param-type">Event</span>
+<span class="param-type"><a href="global.html#Event">Event</a></span>
 
 
             
@@ -2344,7 +2719,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line429">line 429</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1075">line 1075</a>
     </li></ul></dd>
     
 
@@ -2385,7 +2760,7 @@
     </dt>
     <dd>
         
-<span class="param-type">void</span>
+<span class="param-type">Promise.&lt;void></span>
 
 
     </dd>
@@ -2463,7 +2838,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>book page</p></td>
         </tr>
 
     
@@ -2504,7 +2879,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line696">line 696</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line758">line 758</a>
     </li></ul></dd>
     
 
@@ -2558,7 +2933,7 @@
     
 
     
-    <h4 class="name" id="findDirectContentChild"><span class="type-signature"></span>findDirectContentChild<span class="signature">(elem)</span><span class="type-signature"> &rarr; {HTMLElement}</span></h4>
+    <h4 class="name" id="getElementByIndex"><span class="type-signature"></span>getElementByIndex<span class="signature">(index)</span><span class="type-signature"> &rarr; {Element}</span></h4>
     
 
     
@@ -2566,7 +2941,7 @@
 
 
 <div class="description">
-    <p>Returns top most element's parent, but which is still a child to the book content element</p>
+    <p>Returns element by the index of descendant elements of contentElem</p>
 </div>
 
 
@@ -2602,7 +2977,162 @@
 
         <tr>
             
-                <td class="name"><code>elem</code></td>
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>index of element</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1036">line 1036</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getElementIndex"><span class="type-signature"></span>getElementIndex<span class="signature">(element)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Returns selector of an element based on nth-child with respect to content element</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
             
 
             <td class="type">
@@ -2659,7 +3189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line576">line 576</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1018">line 1018</a>
     </li></ul></dd>
     
 
@@ -2695,164 +3225,9 @@
     </dt>
     <dd>
         
-<span class="param-type">HTMLElement</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="flipNPages"><span class="type-signature"></span>flipNPages<span class="signature">(nPageShift)</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Flips N pages of a book, when it is discovered that N page shift would land in different section, calls jumpToPage function instead</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>nPageShift</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">number</span>
 
 
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line655">line 655</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">void</span>
-
-
     </dd>
 </dl>
 
@@ -2868,7 +3243,7 @@
     
 
     
-    <h4 class="name" id="getElementOffset"><span class="type-signature"></span>getElementOffset<span class="signature">(elem)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="getElementOffset"><span class="type-signature"></span>getElementOffset<span class="signature">(elem, round<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -2900,7 +3275,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -2919,16 +3298,70 @@
             
                 
 <span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">any</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>round</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>rounds elements offset to the left page edge</p></td>
         </tr>
 
     
@@ -2969,7 +3402,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line554">line 554</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line641">line 641</a>
     </li></ul></dd>
     
 
@@ -3023,7 +3456,7 @@
     
 
     
-    <h4 class="name" id="getSection"><span class="type-signature"></span>getSection<span class="signature">(book, sectionNum)</span><span class="type-signature"> &rarr; {<a href="global.html#HtmlObject">HtmlObject</a>}</span></h4>
+    <h4 class="name" id="getSection"><span class="type-signature"></span>getSection<span class="signature">(book, sectionIndex)</span><span class="type-signature"> &rarr; {<a href="global.html#HtmlObject">HtmlObject</a>}</span></h4>
     
 
     
@@ -3073,7 +3506,10 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Book">Book</a></span>
+<span class="param-type"><a href="global.html#ParsedBook">ParsedBook</a></span>
+|
+
+<span class="param-type">any</span>
 
 
             
@@ -3090,7 +3526,7 @@
 
         <tr>
             
-                <td class="name"><code>sectionNum</code></td>
+                <td class="name"><code>sectionIndex</code></td>
             
 
             <td class="type">
@@ -3147,7 +3583,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line228">line 228</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line332">line 332</a>
     </li></ul></dd>
     
 
@@ -3302,7 +3738,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line168">line 168</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line276">line 276</a>
     </li></ul></dd>
     
 
@@ -3457,7 +3893,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line153">line 153</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line261">line 261</a>
     </li></ul></dd>
     
 
@@ -3511,7 +3947,7 @@
     
 
     
-    <h4 class="name" id="getSectionTitle"><span class="type-signature"></span>getSectionTitle<span class="signature">(book, toc, sectionNum, root)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="getSectionTitle"><span class="type-signature"></span>getSectionTitle<span class="signature">(book, toc, sectionIndex, root<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -3543,6 +3979,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
         <th>Default</th>
@@ -3563,12 +4001,20 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Book">Book</a></span>
+<span class="param-type"><a href="global.html#ParsedBook">ParsedBook</a></span>
 
 
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -3590,12 +4036,20 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
+<span class="param-type"><a href="global.html#HtmlObject">HtmlObject</a></span>
 
 
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -3604,14 +4058,14 @@
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Table of Contents</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>sectionNum</code></td>
+                <td class="name"><code>sectionIndex</code></td>
             
 
             <td class="type">
@@ -3624,6 +4078,14 @@
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
                 <td class="default">
@@ -3631,7 +4093,7 @@
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Section index</p></td>
         </tr>
 
     
@@ -3644,12 +4106,22 @@
             <td class="type">
             
                 
-<span class="param-type">bool</span>
+<span class="param-type">boolean</span>
 
 
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -3701,7 +4173,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line183">line 183</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line291">line 291</a>
     </li></ul></dd>
     
 
@@ -3738,6 +4210,112 @@
     <dd>
         
 <span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getVisibleElement"><span class="type-signature"></span>getVisibleElement<span class="signature">()</span><span class="type-signature"> &rarr; {HTMLElement}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Returns currently fully visible or partially visible element</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1104">line 1104</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">HTMLElement</span>
 
 
     </dd>
@@ -3805,7 +4383,7 @@
             <td class="type">
             
                 
-<span class="param-type">Event</span>
+<span class="param-type"><a href="global.html#Event">Event</a></span>
 
 
             
@@ -3828,7 +4406,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Book">Book</a></span>
+<span class="param-type"><a href="global.html#ParsedBook">ParsedBook</a></span>
 
 
             
@@ -3879,7 +4457,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line304">line 304</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line397">line 397</a>
     </li></ul></dd>
     
 
@@ -3938,7 +4516,7 @@
     
 
     
-    <h4 class="name" id="importBook"><span class="type-signature"></span>importBook<span class="signature">(filePath, sectionNum, sectionPage)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#Book">Book</a>>}</span></h4>
+    <h4 class="name" id="importBook"><span class="type-signature"></span>importBook<span class="signature">(filePath, sectionIndex)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#ParsedBook">ParsedBook</a>>}</span></h4>
     
 
     
@@ -4005,30 +4583,7 @@
 
         <tr>
             
-                <td class="name"><code>sectionNum</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sectionPage</code></td>
+                <td class="name"><code>sectionIndex</code></td>
             
 
             <td class="type">
@@ -4085,7 +4640,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line136">line 136</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line245">line 245</a>
     </li></ul></dd>
     
 
@@ -4121,7 +4676,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="global.html#Book">Book</a>></span>
+<span class="param-type">Promise.&lt;<a href="global.html#ParsedBook">ParsedBook</a>></span>
 
 
     </dd>
@@ -4199,7 +4754,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>book page</p></td>
         </tr>
 
     
@@ -4240,7 +4795,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line712">line 712</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line774">line 774</a>
     </li></ul></dd>
     
 
@@ -4294,7 +4849,7 @@
     
 
     
-    <h4 class="name" id="loadBook"><span class="type-signature"></span>loadBook<span class="signature">(filePath, interactionStates)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="loadBook"><span class="type-signature">(async) </span>loadBook<span class="signature">(bookObj, bookmarkList, initSize, isAlreadyParsed<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
     
@@ -4326,7 +4881,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -4338,46 +4897,150 @@
 
         <tr>
             
-                <td class="name"><code>filePath</code></td>
+                <td class="name"><code>bookObj</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="global.html#Book">Book</a></span>
+|
+
+<span class="param-type"><a href="global.html#ParsedBook">ParsedBook</a></span>
+|
+
+<span class="param-type">any</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>Path to the book file, also serves as the key to InteractionStates object</p></td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Entry of AllBooks object; contains information about book file and book metadata</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>interactionStates</code></td>
+                <td class="name"><code>bookmarkList</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#InteractionStates">InteractionStates</a></span>
+<span class="param-type"><a href="global.html#BookmarkList">BookmarkList</a></span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>interaction states of all of the books</p></td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Interaction states of all of the books</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>initSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Initial width of the book content, height is times aspectRation of that</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isAlreadyParsed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>specifies which type of book object is passed: Book or ParsedBook</p></td>
         </tr>
 
     
@@ -4418,7 +5081,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line819">line 819</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line915">line 915</a>
     </li></ul></dd>
     
 
@@ -4454,7 +5117,7 @@
     </dt>
     <dd>
         
-<span class="param-type">void</span>
+<span class="param-type">Promise.&lt;void></span>
 
 
     </dd>
@@ -4573,7 +5236,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line330">line 330</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line421">line 421</a>
     </li></ul></dd>
     
 
@@ -4627,7 +5290,7 @@
     
 
     
-    <h4 class="name" id="loadSection"><span class="type-signature">(async) </span>loadSection<span class="signature">(currentSection, nPageShift, offsetMarkerId)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="loadSection"><span class="type-signature">(async) </span>loadSection<span class="signature">(sectionIndex, sectionPage, offsetSelector<span class="signature-attributes">opt</span>, elementIndex<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
     
@@ -4659,7 +5322,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -4671,7 +5338,7 @@
 
         <tr>
             
-                <td class="name"><code>currentSection</code></td>
+                <td class="name"><code>sectionIndex</code></td>
             
 
             <td class="type">
@@ -4684,17 +5351,29 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"></td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>sections number</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>nPageShift</code></td>
+                <td class="name"><code>sectionPage</code></td>
             
 
             <td class="type">
@@ -4707,17 +5386,29 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"></td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>page within section</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>offsetMarkerId</code></td>
+                <td class="name"><code>offsetSelector</code></td>
             
 
             <td class="type">
@@ -4730,10 +5421,63 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"></td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>shift to marker instead of specific page</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>elementIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>shift to element by index of content elements instead of specific page</p></td>
         </tr>
 
     
@@ -4774,7 +5518,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line482">line 482</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line536">line 536</a>
     </li></ul></dd>
     
 
@@ -4810,7 +5554,7 @@
     </dt>
     <dd>
         
-<span class="param-type">void</span>
+<span class="param-type">Promise.&lt;void></span>
 
 
     </dd>
@@ -4878,7 +5622,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Book">Book</a></span>
+<span class="param-type"><a href="global.html#ParsedBook">ParsedBook</a></span>
 
 
             
@@ -4952,7 +5696,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line238">line 238</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line342">line 342</a>
     </li></ul></dd>
     
 
@@ -5058,7 +5802,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line531">line 531</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line623">line 623</a>
     </li></ul></dd>
     
 
@@ -5236,7 +5980,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line262">line 262</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line366">line 366</a>
     </li></ul></dd>
     
 
@@ -5290,7 +6034,7 @@
     
 
     
-    <h4 class="name" id="removeImgEventEmitters"><span class="type-signature"></span>removeImgEventEmitters<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="recGetVisibleElement"><span class="type-signature"></span>recGetVisibleElement<span class="signature">(elements<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {HTMLElement|any}</span></h4>
     
 
     
@@ -5298,7 +6042,7 @@
 
 
 <div class="description">
-    <p>Removes images' event emitters before loading another section</p>
+    <p>Recus</p>
 </div>
 
 
@@ -5307,6 +6051,67 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>elements</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLCollection</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -5342,7 +6147,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line466">line 466</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line1114">line 1114</a>
     </li></ul></dd>
     
 
@@ -5378,7 +6183,10 @@
     </dt>
     <dd>
         
-<span class="param-type">void</span>
+<span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">any</span>
 
 
     </dd>
@@ -5396,219 +6204,7 @@
     
 
     
-    <h4 class="name" id="removeLinkHandlers"><span class="type-signature"></span>removeLinkHandlers<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Removes anchor's event handlers before loading another section</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line455">line 455</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">void</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="saveInteractionProgress"><span class="type-signature"></span>saveInteractionProgress<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Saves interaction state progress in electron store</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line919">line 919</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">void</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="setCurrentOffset"><span class="type-signature"></span>setCurrentOffset<span class="signature">(nextOffset)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="setOffset"><span class="type-signature"></span>setOffset<span class="signature">(nextOffset)</span><span class="type-signature"> &rarr; {void}</span></h4>
     
 
     
@@ -5712,7 +6308,372 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line589">line 589</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line673">line 673</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="setSize"><span class="type-signature"></span>setSize<span class="signature">(size, root<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Overrides css variables that determines book component's dimentions</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>size</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>book component width in px, height will be <code>size * aspectRatio</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>root</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>element containig styles</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line816">line 816</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="updateBookmarkList"><span class="type-signature"></span>updateBookmarkList<span class="signature">(newBookmark<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Updates current position inside the book and, optionally, adds additional bookmark</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>newBookmark</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Bookmark">Bookmark</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line499">line 499</a>
     </li></ul></dd>
     
 
@@ -5816,7 +6777,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Book">Book</a></span>
+<span class="param-type"><a href="global.html#ParsedBook">ParsedBook</a></span>
 
 
             
@@ -5890,7 +6851,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line400">line 400</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line483">line 483</a>
     </li></ul></dd>
     
 
@@ -5996,7 +6957,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line344">line 344</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line432">line 432</a>
     </li></ul></dd>
     
 
@@ -6066,7 +7027,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Mar 28 2022 18:14:33 GMT+0300 (Москва, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sun Apr 10 2022 21:56:09 GMT+0300 (Москва, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

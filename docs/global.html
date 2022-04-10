@@ -102,13 +102,14 @@
 
         
                 
-<h4 class="name" id="Book">Book</h4>
+<h4 class="name" id="AllBooks">AllBooks</h4>
 
 
 
 
 <div class="description">
-    <p>Parsed book object which consists of sections</p>
+    <p>Dictionary of books which contains information about book file and book metadata.
+Book filename is used as a key</p>
 </div>
 
 
@@ -153,13 +154,13 @@
 
         <tr>
             
-                <td class="name"><code>info</code></td>
+                <td class="name"><code>BookFile.name</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Info">Info</a></span>
+<span class="param-type"><a href="global.html#Book">Book</a></span>
 
 
             
@@ -169,145 +170,7 @@
 
             
 
-            <td class="description last"><p>Book metadata information</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>initSection</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Initially parsed book section</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>initSectionNum</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Number that corresponds the book's initally parsed section</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sectionNames</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;string></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>List of section ids (names)</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sectionTotal</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Book's total number of section</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>structure</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Book's parsed Table Of Contents (TOC)</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>styles</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Book's stylesheets</p></td>
+            <td class="description last"><p>Name of the book file, used as a key to the book entry</p></td>
         </tr>
 
     
@@ -346,7 +209,359 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line84">line 84</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line120">line 120</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Attrs">Attrs</h4>
+
+
+
+
+<div class="description">
+    <p>HtmlObject's Attributes</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>href</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>src</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line194">line 194</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Book">Book</h4>
+
+
+
+
+<div class="description">
+    <p>An entry of AllBooks object; contains information about book file and book metadata</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bookFile</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#BookFile">BookFile</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book file</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>info</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Info">Info</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book metadata</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -516,7 +731,418 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line29">line 29</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line95">line 95</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Bookmark">Bookmark</h4>
+
+
+
+
+<div class="description">
+    <p>A bookmark, used to indicate a specific part of the specific section of the book</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sectionIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Index of the book's section</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>elementIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Index of descendant elements of contentElem, which is used to mark a specific part of a section</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line170">line 170</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="BookmarkList">BookmarkList</h4>
+
+
+
+
+<div class="description">
+    <p>List of all of the bookmarks a particular book has</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;<a href="global.html#Bookmark">Bookmark</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line166">line 166</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Bookmarks">Bookmarks</h4>
+
+
+
+
+<div class="description">
+    <p>Dictionary of books' bookmarks. Book filename is used as a key to a specific book's bookmark list</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>BookFile.name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#BookmarkList">BookmarkList</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line161">line 161</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Event">Event</h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line176">line 176</a>
     </li></ul></dd>
     
 
@@ -549,7 +1175,7 @@
     <ul>
         <li>
             
-<span class="param-type">Object</span>
+<span class="param-type">Array.&lt;Object></span>
 
 
         </li>
@@ -594,6 +1220,74 @@
             
                 
 <span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>attrs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Attrs">Attrs</a></span>
 |
 
 <span class="param-type">undefined</span>
@@ -857,7 +1551,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line73">line 73</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line181">line 181</a>
     </li></ul></dd>
     
 
@@ -1280,7 +1974,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line36">line 36</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -1298,13 +1992,13 @@
 
             
                 
-<h4 class="name" id="InteractionState">InteractionState</h4>
+<h4 class="name" id="InitBook">InitBook</h4>
 
 
 
 
 <div class="description">
-    <p>Interaction state of the book which contains information about file, metadata and reading progress</p>
+    <p>Book with only one section parsed, used while the rest of the book is being parsed</p>
 </div>
 
 
@@ -1345,29 +2039,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>file</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#BookFile">BookFile</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Book file</p></td>
-        </tr>
-
     
 
         <tr>
@@ -1395,13 +2066,13 @@
 
         <tr>
             
-                <td class="name"><code>state</code></td>
+                <td class="name"><code>styles</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#State">State</a></span>
+<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
 
 
             
@@ -1411,7 +2082,145 @@
 
             
 
-            <td class="description last"><p>Book section state</p></td>
+            <td class="description last"><p>Book's stylesheets</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>structure</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#HtmlObject">HtmlObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book's parsed Table Of Contents (TOC)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sectionsTotal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book's total number of section</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sectionNames</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>List of section ids (names)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>initSectionIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Number that corresponds the book's initally parsed section</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>initSection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Initially parsed book section</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book's filename</p></td>
         </tr>
 
     
@@ -1450,7 +2259,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line60">line 60</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -1468,13 +2277,13 @@
 
             
                 
-<h4 class="name" id="InteractionStates">InteractionStates</h4>
+<h4 class="name" id="ParsedBook">ParsedBook</h4>
 
 
 
 
 <div class="description">
-    <p>Contains interaction states of all of the books; path to the book's file is used to access individual InteractionState objects</p>
+    <p>Book object which contains parsed sections</p>
 </div>
 
 
@@ -1519,13 +2328,13 @@
 
         <tr>
             
-                <td class="name"><code>lastOpenedBook</code></td>
+                <td class="name"><code>info</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#BookFile">BookFile</a></span>
+<span class="param-type"><a href="global.html#Info">Info</a></span>
 
 
             
@@ -1535,20 +2344,20 @@
 
             
 
-            <td class="description last"><p>Book file of last opened book</p></td>
+            <td class="description last"><p>Book metadata information</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>*</code></td>
+                <td class="name"><code>styles</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#InteractionState">InteractionState</a></span>
+<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
 
 
             
@@ -1558,7 +2367,168 @@
 
             
 
-            <td class="description last"><p>Path to the book is used as a key</p></td>
+            <td class="description last"><p>Book's stylesheets</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>structure</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#HtmlObject">HtmlObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book's parsed Table Of Contents (TOC)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sectionsTotal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book's total number of section</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sectionNames</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>List of section ids (names)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>initSectionIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Number that corresponds the book's initally parsed section</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>initSection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Initially parsed book section</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sections</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#HtmlObject">HtmlObject</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Sections</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Book's filename</p></td>
         </tr>
 
     
@@ -1597,7 +2567,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line67">line 67</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line136">line 136</a>
     </li></ul></dd>
     
 
@@ -1615,13 +2585,13 @@
 
             
                 
-<h4 class="name" id="State">State</h4>
+<h4 class="name" id="RecentBooks">RecentBooks</h4>
 
 
 
 
 <div class="description">
-    <p>Book section state</p>
+    <p>List of recently visited (and parsed) books, 0th is last opened book</p>
 </div>
 
 
@@ -1630,87 +2600,12 @@
     <ul>
         <li>
             
-<span class="param-type">Object</span>
+<span class="param-type">Array.&lt;<a href="global.html#ParsedBook">ParsedBook</a>></span>
 
 
         </li>
     </ul>
 
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>section</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Section number of a book</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sectionPage</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Page number of a book's section</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -1744,7 +2639,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line54">line 54</a>
+        <a href="bookComponent.js.html">bookComponent.js</a>, <a href="bookComponent.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -1780,7 +2675,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Mar 28 2022 18:14:33 GMT+0300 (Москва, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sun Apr 10 2022 21:56:09 GMT+0300 (Москва, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
