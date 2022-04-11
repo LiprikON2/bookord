@@ -39,7 +39,6 @@ const Read = () => {
                 // i.e. is currently in recent books
                 if (args.key === "recentBooks" && args.success) {
                     const retrivedRecentBooks = args.value ?? [];
-                    console.log("Got retrivedRecentBooks", retrivedRecentBooks);
                     setRecentBooks.setState(retrivedRecentBooks);
 
                     let parsedBook;
@@ -144,7 +143,7 @@ const Read = () => {
         // TODO add bookFile property to recentBooks' ParsedBook
         // TODO check bookfile size property to determine amount of recent books to be kept
         // setRecentBooks.append(parsedBook);
-        setRecentBooks.setState(parsedBook);
+        setRecentBooks.setState([parsedBook]);
     };
 
     const flipNPages = (nPageShift) => {
@@ -201,7 +200,6 @@ const Read = () => {
     useDidUpdate(() => {
         const bookRef = bookComponentRef.current;
         if (bookRef.status === "ready") {
-            console.log("updating recentBooks", recentBooks);
             window.api.store.send(writeConfigRequest, "recentBooks", recentBooks);
         }
     }, [recentBooks]);

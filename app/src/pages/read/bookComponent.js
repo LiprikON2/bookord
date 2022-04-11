@@ -224,18 +224,9 @@ class BookComponent extends HTMLElement {
          * @property {('loading'|'sectionReady'|'ready'|'resizing')} status - Status of initialization of the book, true when all of the book's sections are parsed
          */
         this.status = "loading";
-        /**
-         * @property {Promise<InitBook>} initBook
-         */
-        this.initBook = new Promise((resolve, reject) => {
-            this.unlisten = window.api.receive("app:receive-init-book", (initBook) => {
-                console.log("TEST");
-                // TODO runs twice???
-                resolve(initBook);
-            });
-        });
     }
 
+    // TODO breaks SOLID principle
     /**
      * Imports book using IPC, completes initialization as soon as promise is resolved
      * @param  {string} filePath
@@ -655,6 +646,7 @@ class BookComponent extends HTMLElement {
         return leftEdge;
     }
 
+    // TODO deprecate
     /**
      * Inserts element right after target element
      * @param {HTMLElement} referenceNode
@@ -847,6 +839,7 @@ class BookComponent extends HTMLElement {
         counterComponent.remove();
     }
 
+    // TODO move to utility
     /**
      * Asynchronous version of a forEach
      * @param {Array} array
@@ -865,6 +858,7 @@ class BookComponent extends HTMLElement {
      * @returns {Promise<void>}
      */
     async _countBookPages(parentComponent) {
+        // TODO move to utility
         /**
          * Splits code in chunks
          * https://stackoverflow.com/a/67135932/10744339
@@ -913,6 +907,7 @@ class BookComponent extends HTMLElement {
      * @return {Promise<void>}
      */
     async loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed = false) {
+        console.log("isAlreadyParsed", isAlreadyParsed);
         this.bookmarkList = bookmarkList.length
             ? bookmarkList
             : [{ sectionIndex: 0, elementIndex: 0 }];
@@ -922,6 +917,18 @@ class BookComponent extends HTMLElement {
 
         if (!isAlreadyParsed) {
             console.log("###> Parsing");
+
+            /**
+             * @property {Promise<InitBook>} initBook
+             */
+            this.initBook = new Promise((resolve, reject) => {
+                this.unlisten = window.api.receive(
+                    "app:receive-init-book",
+                    (initBook) => {
+                        resolve(initBook);
+                    }
+                );
+            });
             const bookPath = bookObj.bookFile.path;
 
             /**
@@ -939,6 +946,7 @@ class BookComponent extends HTMLElement {
             this.status = "ready";
         }
 
+        // TODO make a class
         this.bookState = {
             currentSection: initSectionIndex,
             totalSections: 0,
@@ -1164,7 +1172,7 @@ class BookComponent extends HTMLElement {
     );
 
     disconnectedCallback() {
-        this.unlisten();
+        if (this.unlisten) this.unlisten();
 
         // TODO check if it can to be removed
         delete this.initBook;
