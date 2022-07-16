@@ -123,6 +123,7 @@ const Read = () => {
     const [imageModalSrc, setImageModalSrc] = useState();
 
     const handleImgClick = (e) => {
+        console.log("handle");
         setImageModalSrc(e.detail.src);
     };
 

@@ -1099,10 +1099,27 @@ class BookComponent extends HTMLElement {
         const images = this.shadowRoot.querySelectorAll("img");
 
         images.forEach((img) => {
-            img.addEventListener("click", (e) => {
-                this.dispatchEvent;
-            });
+            img.addEventListener("click", (e) =>
+                img.addEventListener("click", this.emitImgClickEvent)
+            );
         });
+    }
+
+    /**
+     * Emits "imgClickEvent" for when the img tag is clicked
+     * @param {Event} e - Event
+     * @listens Event
+     * @return {void}
+     */
+    emitImgClickEvent(e) {
+        const imgClickEvent = new CustomEvent("imgClickEvent", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: { src: e.target.src },
+        });
+
+        this.dispatchEvent(imgClickEvent);
     }
 
     /**
