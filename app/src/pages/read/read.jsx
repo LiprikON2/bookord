@@ -98,7 +98,14 @@ const Read = () => {
             bookRef.addEventListener("imgClickEvent", handleImgClick);
             bookRef.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
             bookRef.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
+            bookRef.addEventListener("UIStateUpdate", handleUIUpdate);
         });
+    };
+    const [UIState, setUIState] = useState({});
+
+    const handleUIUpdate = (e) => {
+        const newState = e.detail.state;
+        setUIState(() => newState);
     };
 
     const [bookmarks, setBookmarks] = useState({});
@@ -123,7 +130,6 @@ const Read = () => {
     const [imageModalSrc, setImageModalSrc] = useState();
 
     const handleImgClick = (e) => {
-        console.log("handle");
         setImageModalSrc(e.detail.src);
     };
 
@@ -220,34 +226,55 @@ const Read = () => {
         };
     }, []);
 
+    const handleBookmark = () => {};
+
     return (
         <>
             <section className="section">
-                <code>w:{width}</code>
+                {/* <code>w:{width}</code>
                 <code>h:{height}</code>
                 <br />
-                <code>size:{size}</code>
+                <code>size:{size}</code> */}
 
                 <h1>Read</h1>
+
                 <Link to={ROUTES.LIBRARY}>Home</Link>
-                <div
-                    className="component-container"
-                    style={{
-                        visibility: bookComponentRef !== null ? "visible" : "hidden",
-                    }}>
-                    <book-component ref={setBookComponentRef} book-page={page} />
-                </div>
-                <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
-                <div className="button-group">
-                    <Button onClick={goBack}>Back</Button>
-                    <Button onClick={goNext}>Next</Button>
-                </div>
+                <div id="book-title"></div>
+                <>
+                    <div
+                        className="component-container"
+                        style={{
+                            visibility: bookComponentRef !== null ? "visible" : "hidden",
+                        }}>
+                        <book-component ref={setBookComponentRef} book-page={page} />
+                    </div>
+                    <ImageModal
+                        src={imageModalSrc}
+                        setSrc={setImageModalSrc}></ImageModal>
+                    <div className="button-group">
+                        <Button onClick={goBack}>Back</Button>
+                        <Button onClick={goNext}>Next</Button>
+                        <Button onClick={handleBookmark}>Add bookmark</Button>
+                    </div>
+                </>
+                <ul className="book-ui">
+                    <li id="section-name">{UIState.sectionName}</li>
+                    <li id="section-page" title="Section page">
+                        <span id="current-section-page">
+                            {UIState.currentSectionPage}
+                        </span>
+                        /<span id="total-section-pages">{UIState.totalSectionPages}</span>
+                    </li>
+                    <li id="book-page" title="Book page">
+                        <span id="current-book-page">{UIState.currentBookPage}</span>/
+                        <span id="total-book-pages">{UIState.totalBookPages}</span>
+                    </li>
+                </ul>
             </section>
         </>
     );
 };
-// TODO check tf visibilty for
-// TODO move UI to react
+// TODO check tf visibilty is for
 // TODO add skeleton loading animation
 // TODO add page counting loading animation
 

@@ -25,8 +25,6 @@ const style = /*css*/ `
         overflow: hidden;
     }
     .book-container > #book-content {
-        /* transform: translate(0); */
-        /* transition: all 0.2s ease-out; */
         columns: 1;
         column-gap: var(--column-gap);
         width: var(--book-component-width);
@@ -74,21 +72,9 @@ template.innerHTML = /*html*/ `
         <style id="component-style">
             ${style}
         </style>
-        <div id="book-title"></div>
+      
         <div id="book-content"></div>
         
-        <ul class="book-ui">
-            <li id="section-name"></li>
-            <li id="section-page" title="Section page">
-                <span id="current-section-page"></span>/<span id="total-section-pages"></span>
-            </li>
-            <li id="book-page" title="Book page">
-                <span id="current-book-page"></span>/<span id="total-book-pages"></span>
-            </li>
-        </ul>
-
-        <button role="button" id="back" hidden>Back</button>
-        <button role="button" id="next" hidden>Next</button>
     </section>
 `;
 
@@ -421,48 +407,78 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     updateBookUI() {
-        const bookTitleElem = this.shadowRoot.getElementById("book-title");
-        bookTitleElem.innerHTML = this.bookState.bookTitle;
-        bookTitleElem.title = this.bookState.bookTitle;
+        // const bookTitleElem = this.shadowRoot.getElementById("book-title");
+        // bookTitleElem.innerHTML = this.bookState.bookTitle;
+        // bookTitleElem.title = this.bookState.bookTitle;
 
-        const sectionNameElem = this.shadowRoot.getElementById("section-name");
-        sectionNameElem.innerHTML = this.bookState.currentSectionTitle;
-        sectionNameElem.title = this.bookState.currentSectionTitle;
+        // const sectionNameElem = this.shadowRoot.getElementById("section-name");
+        // sectionNameElem.innerHTML = this.bookState.currentSectionTitle;
+        // sectionNameElem.title = this.bookState.currentSectionTitle;
 
-        const sectionPageElem = this.shadowRoot.getElementById("section-page");
-        const currentSectionPageElem =
-            this.shadowRoot.getElementById("current-section-page");
-        const totalSectionPageElem =
-            this.shadowRoot.getElementById("total-section-pages");
+        // const sectionPageElem = this.shadowRoot.getElementById("section-page");
+        // const currentSectionPageElem =
+        //     this.shadowRoot.getElementById("current-section-page");
+        // const totalSectionPageElem =
+        //     this.shadowRoot.getElementById("total-section-pages");
         const currentSectionPage = this.bookState.getCurrentSectionPage(this) + 1;
         const totalSectioPage = this.bookState.getTotalSectionPages(
             this.bookState.currentSection
         );
 
-        if (currentSectionPage >= 0 && totalSectioPage > 0) {
-            sectionPageElem.style.visibility = "initial";
+        // if (currentSectionPage >= 0 && totalSectioPage > 0) {
+        //     sectionPageElem.style.visibility = "initial";
 
-            currentSectionPageElem.innerHTML = currentSectionPage.toString();
-            totalSectionPageElem.innerHTML = totalSectioPage.toString();
-        } else {
-            sectionPageElem.style.visibility = "hidden";
-        }
+        //     currentSectionPageElem.innerHTML = currentSectionPage.toString();
+        //     totalSectionPageElem.innerHTML = totalSectioPage.toString();
+        // } else {
+        //     sectionPageElem.style.visibility = "hidden";
+        // }
 
-        const bookPageElem = this.shadowRoot.getElementById("book-page");
-        const currentBookPageElem = this.shadowRoot.getElementById("current-book-page");
-        const totalBookPagesElem = this.shadowRoot.getElementById("total-book-pages");
+        // const bookPageElem = this.shadowRoot.getElementById("book-page");
+        // const currentBookPageElem = this.shadowRoot.getElementById("current-book-page");
+        // const totalBookPagesElem = this.shadowRoot.getElementById("total-book-pages");
 
         const currentBookPage = this.bookState.getCurrentBookPage(this) + 1;
         const totalBookPages = this.bookState.getTotalBookPages();
 
-        if (currentBookPage >= 0 && totalBookPages > 0) {
-            bookPageElem.style.visibility = "initial";
+        // if (currentBookPage >= 0 && totalBookPages > 0) {
+        //     bookPageElem.style.visibility = "initial";
 
-            currentBookPageElem.innerHTML = currentBookPage.toString();
-            totalBookPagesElem.innerHTML = totalBookPages.toString();
-        } else {
-            bookPageElem.style.visibility = "hidden";
-        }
+        //     currentBookPageElem.innerHTML = currentBookPage.toString();
+        //     totalBookPagesElem.innerHTML = totalBookPages.toString();
+        // } else {
+        //     bookPageElem.style.visibility = "hidden";
+        // }
+
+        const UIState = {
+            bookTitle: this.bookState.bookTitle,
+            currentSectionTitle: this.bookState.currentSectionTitle,
+            isSectionLoaded: currentSectionPage >= 0 && totalSectioPage > 0,
+            currentSectionPageElem: currentSectionPage ?? 0,
+            totalSectionPageElem: totalSectioPage ?? 0,
+            isBookLoaded: currentBookPage >= 0 && totalBookPages > 0,
+            currentBookPageElem: currentBookPage ?? 0,
+            totalBookPagesElem: totalBookPages ?? 0,
+        };
+        console.log("updateBookUI emit");
+        this.emitUIStateUpdate(UIState);
+    }
+
+    /**
+     * Emits "UIStateUpdate"
+     * @param {*} state //todo
+     * @listens Event
+     * @return {void}
+     */
+    emitUIStateUpdate(state) {
+        const UIStateUpdateEvent = new CustomEvent("UIStateUpdate", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: { state },
+        });
+
+        this.dispatchEvent(UIStateUpdateEvent);
     }
 
     /**
@@ -1047,7 +1063,7 @@ class BookComponent extends HTMLElement {
     }
 
     /**
-     * Emits "saveBookmarksEvent" when page is turned
+     * Emits "saveBookmarksEvent" when the page is turned
      * @param {Event} e - Event
      * @listens Event
      * @return {void}
