@@ -11,7 +11,7 @@ const style = /*css*/ `
         --book-component-height: 600px;
         --column-gap: 100px;
 
-        --clr-link: #4dabf7; /* todo move to somewhere */
+        --clr-link: #4dabf7; /* todo move it to somewhere else */
     }
 
     :any-link {
@@ -19,7 +19,7 @@ const style = /*css*/ `
     }
 
     .book-container {
-        margin: auto;
+        // margin: auto;
         width: var(--book-component-width);
         height: min-content;
         overflow: hidden;
@@ -39,29 +39,6 @@ const style = /*css*/ `
         max-width: 100% !important;
         object-fit: contain;
         cursor: zoom-in;
-    }
-    ul.book-ui {
-        display: flex;
-        gap: 1em;
-        justify-content: space-between;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    ul.book-ui > *,
-    #book-title {
-        color: var(--clr-primary-200);
-        height: 1.5em;
-    }
-    ul.book-ui > #section-name,
-    #book-title {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    ul.book-ui > #section-page,
-    ul.book-ui > #book-page {
-        visibility: hidden;
     }
 `;
 
@@ -421,7 +398,7 @@ class BookComponent extends HTMLElement {
         // const totalSectionPageElem =
         //     this.shadowRoot.getElementById("total-section-pages");
         const currentSectionPage = this.bookState.getCurrentSectionPage(this) + 1;
-        const totalSectioPage = this.bookState.getTotalSectionPages(
+        const totalSectionPages = this.bookState.getTotalSectionPages(
             this.bookState.currentSection
         );
 
@@ -450,15 +427,14 @@ class BookComponent extends HTMLElement {
         //     bookPageElem.style.visibility = "hidden";
         // }
 
+        //
         const UIState = {
             bookTitle: this.bookState.bookTitle,
             currentSectionTitle: this.bookState.currentSectionTitle,
-            isSectionLoaded: currentSectionPage >= 0 && totalSectioPage > 0,
-            currentSectionPageElem: currentSectionPage ?? 0,
-            totalSectionPageElem: totalSectioPage ?? 0,
-            isBookLoaded: currentBookPage >= 0 && totalBookPages > 0,
-            currentBookPageElem: currentBookPage ?? 0,
-            totalBookPagesElem: totalBookPages ?? 0,
+            currentSectionPage: currentSectionPage,
+            totalSectionPages: totalSectionPages,
+            currentBookPage: currentBookPage,
+            totalBookPages: totalBookPages,
         };
         console.log("updateBookUI emit");
         this.emitUIStateUpdate(UIState);

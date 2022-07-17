@@ -10,6 +10,7 @@ import {
 import Link from "components/Link";
 import Button from "components/Button";
 import ImageModal from "components/ImageModal";
+import BookUI from "./BookUI";
 import ROUTES from "Constants/routes";
 import "./bookComponent";
 import "./Read.css";
@@ -235,12 +236,9 @@ const Read = () => {
                 <code>h:{height}</code>
                 <br />
                 <code>size:{size}</code> */}
-
                 <h1>Read</h1>
-
                 <Link to={ROUTES.LIBRARY}>Home</Link>
-                <div id="book-title"></div>
-                <>
+                <BookUI UIState={UIState}>
                     <div
                         className="component-container"
                         style={{
@@ -248,28 +246,13 @@ const Read = () => {
                         }}>
                         <book-component ref={setBookComponentRef} book-page={page} />
                     </div>
-                    <ImageModal
-                        src={imageModalSrc}
-                        setSrc={setImageModalSrc}></ImageModal>
-                    <div className="button-group">
-                        <Button onClick={goBack}>Back</Button>
-                        <Button onClick={goNext}>Next</Button>
-                        <Button onClick={handleBookmark}>Add bookmark</Button>
-                    </div>
-                </>
-                <ul className="book-ui">
-                    <li id="section-name">{UIState.sectionName}</li>
-                    <li id="section-page" title="Section page">
-                        <span id="current-section-page">
-                            {UIState.currentSectionPage}
-                        </span>
-                        /<span id="total-section-pages">{UIState.totalSectionPages}</span>
-                    </li>
-                    <li id="book-page" title="Book page">
-                        <span id="current-book-page">{UIState.currentBookPage}</span>/
-                        <span id="total-book-pages">{UIState.totalBookPages}</span>
-                    </li>
-                </ul>
+                </BookUI>
+                <div className="button-group">
+                    <Button onClick={goBack}>Back</Button>
+                    <Button onClick={goNext}>Next</Button>
+                    <Button onClick={handleBookmark}>Add bookmark</Button>
+                </div>
+                <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
             </section>
         </>
     );

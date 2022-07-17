@@ -55,7 +55,7 @@ async function createWindow() {
     }
     const store = new Store({
         debug: isDev,
-        reset: isDev,
+        reset: isDev || !"todo",
         path: app.getPath("userData"),
     });
 
