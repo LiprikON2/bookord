@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { useHotkeys, useViewportSize, useDidUpdate, useListState } from "@mantine/hooks";
 import {
     readConfigRequest,
@@ -177,10 +177,11 @@ const Read = () => {
         const aspectRatio = book.aspectRatio;
 
         const lowerbound = 200;
-        const upperbound = Math.max(Math.ceil(height / (aspectRatio * 1.6)), lowerbound);
+        // const upperbound = Math.max(Math.ceil(height / (aspectRatio * 1.6)), lowerbound);
+        const upperbound = Math.ceil(height / (aspectRatio * 1.6));
 
         const newSize = clamp(lowerbound, Math.ceil(width / 2), upperbound);
-        return newSize;
+        return newSize * 1.25;
     };
     const resize = () => {
         const book = bookComponentRef.current;
@@ -212,11 +213,13 @@ const Read = () => {
         }
     }, [recentBooks]);
 
+    const history = useHistory();
     useHotkeys([
         ["ArrowRight", () => goNext()],
         ["ArrowLeft", () => goBack()],
         ["ctrl + ArrowRight", () => flipNPages(5)],
         ["ctrl + ArrowLeft", () => flipNPages(-5)],
+        ["Backspace", () => history.push(ROUTES.LIBRARY)],
     ]);
 
     useEffect(() => {
@@ -231,13 +234,7 @@ const Read = () => {
 
     return (
         <>
-            <section className="section">
-                {/* <code>w:{width}</code>
-                <code>h:{height}</code>
-                <br />
-                <code>size:{size}</code> */}
-                <h1>Read</h1>
-                <Link to={ROUTES.LIBRARY}>Home</Link>
+            <section className="section read-section">
                 <BookUI UIState={UIState}>
                     <div
                         className="component-container"
@@ -247,11 +244,6 @@ const Read = () => {
                         <book-component ref={setBookComponentRef} book-page={page} />
                     </div>
                 </BookUI>
-                <div className="button-group">
-                    <Button onClick={goBack}>Back</Button>
-                    <Button onClick={goNext}>Next</Button>
-                    <Button onClick={handleBookmark}>Add bookmark</Button>
-                </div>
                 <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
             </section>
         </>

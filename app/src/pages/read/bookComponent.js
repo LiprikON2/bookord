@@ -19,7 +19,7 @@ const style = /*css*/ `
     }
 
     .book-container {
-        // margin: auto;
+        margin: auto;
         width: var(--book-component-width);
         height: min-content;
         overflow: hidden;
@@ -384,50 +384,14 @@ class BookComponent extends HTMLElement {
      * @returns {void}
      */
     updateBookUI() {
-        // const bookTitleElem = this.shadowRoot.getElementById("book-title");
-        // bookTitleElem.innerHTML = this.bookState.bookTitle;
-        // bookTitleElem.title = this.bookState.bookTitle;
-
-        // const sectionNameElem = this.shadowRoot.getElementById("section-name");
-        // sectionNameElem.innerHTML = this.bookState.currentSectionTitle;
-        // sectionNameElem.title = this.bookState.currentSectionTitle;
-
-        // const sectionPageElem = this.shadowRoot.getElementById("section-page");
-        // const currentSectionPageElem =
-        //     this.shadowRoot.getElementById("current-section-page");
-        // const totalSectionPageElem =
-        //     this.shadowRoot.getElementById("total-section-pages");
         const currentSectionPage = this.bookState.getCurrentSectionPage(this) + 1;
         const totalSectionPages = this.bookState.getTotalSectionPages(
             this.bookState.currentSection
         );
 
-        // if (currentSectionPage >= 0 && totalSectioPage > 0) {
-        //     sectionPageElem.style.visibility = "initial";
-
-        //     currentSectionPageElem.innerHTML = currentSectionPage.toString();
-        //     totalSectionPageElem.innerHTML = totalSectioPage.toString();
-        // } else {
-        //     sectionPageElem.style.visibility = "hidden";
-        // }
-
-        // const bookPageElem = this.shadowRoot.getElementById("book-page");
-        // const currentBookPageElem = this.shadowRoot.getElementById("current-book-page");
-        // const totalBookPagesElem = this.shadowRoot.getElementById("total-book-pages");
-
         const currentBookPage = this.bookState.getCurrentBookPage(this) + 1;
         const totalBookPages = this.bookState.getTotalBookPages();
 
-        // if (currentBookPage >= 0 && totalBookPages > 0) {
-        //     bookPageElem.style.visibility = "initial";
-
-        //     currentBookPageElem.innerHTML = currentBookPage.toString();
-        //     totalBookPagesElem.innerHTML = totalBookPages.toString();
-        // } else {
-        //     bookPageElem.style.visibility = "hidden";
-        // }
-
-        //
         const UIState = {
             bookTitle: this.bookState.bookTitle,
             currentSectionTitle: this.bookState.currentSectionTitle,
@@ -436,7 +400,6 @@ class BookComponent extends HTMLElement {
             currentBookPage: currentBookPage,
             totalBookPages: totalBookPages,
         };
-        console.log("updateBookUI emit");
         this.emitUIStateUpdate(UIState);
     }
 

@@ -1,11 +1,9 @@
 .ui {
     display: flex;
     flex-direction: column;
-    width: min-content;
-    /* flex: 1; */
     margin-inline: auto;
+    max-width: min-content;
 }
-
 .ui-block {
     display: flex;
     gap: 1em;
