@@ -197,9 +197,9 @@ const Read = () => {
         return newSize;
     };
 
-    useDidUpdate(() => {
-        resize();
-    }, [width, height]);
+    // useDidUpdate(() => {
+    //     resize();
+    // }, [width, height]);
     useDidUpdate(() => {
         const bookRef = bookComponentRef.current;
         if (bookRef.status === "ready") {

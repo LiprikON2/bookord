@@ -19,16 +19,20 @@ const style = /*css*/ `
     }
 
     .book-container {
+        max-width: 30rem;
+        height: 85vh;
+        height: 80vh;
+        height: 100%;
+
         margin: auto;
-        width: var(--book-component-width);
-        height: min-content;
         overflow: hidden;
     }
     .book-container > #book-content {
+        width: 100%;
+        height: 100%;
+
         columns: 1;
         column-gap: var(--column-gap);
-        width: var(--book-component-width);
-        height: var(--book-component-height);
     }
 
     /* TODO svg */
@@ -785,9 +789,9 @@ class BookComponent extends HTMLElement {
         rootElem.style.height = "0";
 
         // Set counter compoent's size
-        if (size) {
-            this.setSize(size, rootElem);
-        }
+        // if (size) {
+        //     this.setSize(size, rootElem);
+        // }
 
         await counterComponent._countBookPages(this);
         this.status = "ready";
@@ -868,7 +872,7 @@ class BookComponent extends HTMLElement {
             : [{ sectionIndex: 0, elementIndex: 0 }];
         const initSectionIndex = this.bookmarkList[0].sectionIndex;
         const initElementIndex = this.bookmarkList[0].elementIndex;
-        this.setSize(initSize);
+        // this.setSize(initSize);
 
         if (!isAlreadyParsed) {
             console.log("###> Parsing");

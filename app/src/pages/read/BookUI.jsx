@@ -15,13 +15,13 @@ const BookUI = ({ UIState, children }) => {
             <ul className="ui-block">
                 <TextElem className="ui-elem">{UIState.currentSectionTitle}</TextElem>
                 <PageElem
-                    className="ui-elem"
+                    className="ui-elem digit-elem"
                     count={UIState.currentSectionPage}
                     total={UIState.totalSectionPages}
                     title="Section page"></PageElem>
 
                 <PageElem
-                    className="ui-elem"
+                    className="ui-elem digit-elem"
                     count={UIState.currentBookPage}
                     total={UIState.totalBookPages}
                     title="Book page"></PageElem>

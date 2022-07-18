@@ -1,8 +1,11 @@
 .ui {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     margin-inline: auto;
-    max-width: min-content;
+
+    height: 100%;
+    width: 100%;
 }
 .ui-block {
     display: flex;
@@ -14,11 +17,25 @@
     padding: 0;
     margin: 0;
 }
-
+.ui-block > * {
+    flex: 1;
+}
+.ui-block > .digit-elem {
+    flex: 0.2;
+}
+.page-elem {
+    display: flex;
+    justify-content: center;
+}
 .ui-elem {
     color: var(--clr-primary-200);
     height: 1.5em;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+.component-container {
+    flex-grow: 1;
+    height: 0;
 }
