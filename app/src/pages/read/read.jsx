@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import { useHotkeys, useViewportSize, useDidUpdate, useListState } from "@mantine/hooks";
+import { useHotkeys, useDidUpdate, useListState } from "@mantine/hooks";
 import {
     readConfigRequest,
     readConfigResponse,
@@ -91,11 +91,8 @@ const Read = () => {
         const bookName = bookObj?.bookFile?.name ?? bookObj.name;
         const promise = retriveBookmarks(bookName);
 
-        const initSize = getSize();
-        setSize(initSize);
-
         promise.then((bookmarkList) => {
-            bookRef.loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed);
+            bookRef.loadBook(bookObj, bookmarkList, isAlreadyParsed);
             bookRef.addEventListener("imgClickEvent", handleImgClick);
             bookRef.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
             bookRef.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
@@ -168,38 +165,6 @@ const Read = () => {
         flipNPages(-1);
     };
 
-    const { height, width } = useViewportSize();
-    const [size, setSize] = useState(0);
-
-    // TODO finetune for the final design
-    const getSize = () => {
-        const book = bookComponentRef.current;
-        const aspectRatio = book.aspectRatio;
-
-        const lowerbound = 200;
-        // const upperbound = Math.max(Math.ceil(height / (aspectRatio * 1.6)), lowerbound);
-        const upperbound = Math.ceil(height / (aspectRatio * 1.6));
-
-        const newSize = clamp(lowerbound, Math.ceil(width / 2), upperbound);
-        return newSize * 1.25;
-    };
-    const resize = () => {
-        const book = bookComponentRef.current;
-        const newSize = getSize();
-
-        // Get the precentage difference between two values
-        const percentageDiff = Math.abs(newSize - size) / ((newSize + size) / 2);
-        // Check if size change is in more than 10%
-        if (percentageDiff > 0.1) {
-            setSize(newSize);
-            book.resize(newSize);
-        }
-        return newSize;
-    };
-
-    // useDidUpdate(() => {
-    //     resize();
-    // }, [width, height]);
     useDidUpdate(() => {
         const bookRef = bookComponentRef.current;
         if (bookRef.status === "ready") {

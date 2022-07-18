@@ -760,21 +760,20 @@ class BookComponent extends HTMLElement {
 
     /**
      * Overrides css variables that determines book component's dimentions
-     * @param {number} size - book component width in px, height will be `size * aspectRatio`
+     * {*}
      * @param {HTMLElement} [root] - element containig styles
      * @return {void}
      */
-    setSize(size, root = this.rootElem) {
-        root.style.setProperty("--book-component-width", size + "px");
-        root.style.setProperty("--book-component-height", size * this.aspectRatio + "px");
+    setSize(width, height, root = this.rootElem) {
+        root.style.setProperty("width", width + "px");
+        root.style.setProperty("height", height + "px");
     }
 
     /**
      * Creates another web component which is used to count pages of a book, and then destroys it
-     * @param {number} [size=0] - book component width in px, will be set height is 1.6 of that
      * @return {Promise<any>}
      */
-    async createCounterComponent(size = 0) {
+    async createCounterComponent(size) {
         this.status = "resizing";
         /** Create a counter`component inside the current component
          * @type {BookComponent}
@@ -788,10 +787,7 @@ class BookComponent extends HTMLElement {
         rootElem.style.visibility = "hidden";
         rootElem.style.height = "0";
 
-        // Set counter compoent's size
-        // if (size) {
-        //     this.setSize(size, rootElem);
-        // }
+        if (size) this.setSize(size.width, size.height);
 
         await counterComponent._countBookPages(this);
         this.status = "ready";
@@ -861,18 +857,16 @@ class BookComponent extends HTMLElement {
      * Loads book to the web component, as well as runs a page counter
      * @param {Book|ParsedBook|any} bookObj - Entry of AllBooks object; contains information about book file and book metadata
      * @param {BookmarkList} bookmarkList - Interaction states of all of the books
-     * @param {number} initSize - Initial width of the book content, height is times aspectRation of that
      * @param {boolean} [isAlreadyParsed=false] - specifies which type of book object is passed: Book or ParsedBook
      * @return {Promise<void>}
      */
-    async loadBook(bookObj, bookmarkList, initSize, isAlreadyParsed = false) {
+    async loadBook(bookObj, bookmarkList, isAlreadyParsed = false) {
         console.log("isAlreadyParsed", isAlreadyParsed);
         this.bookmarkList = bookmarkList.length
             ? bookmarkList
             : [{ sectionIndex: 0, elementIndex: 0 }];
         const initSectionIndex = this.bookmarkList[0].sectionIndex;
         const initElementIndex = this.bookmarkList[0].elementIndex;
-        // this.setSize(initSize);
 
         if (!isAlreadyParsed) {
             console.log("###> Parsing");
@@ -973,7 +967,11 @@ class BookComponent extends HTMLElement {
                 );
             }.bind(this),
         };
-        this.createCounterComponent(initSize);
+        // this.createCounterComponent();
+        new ResizeObserver((objs) => this.recount(objs[0].contentRect)).observe(
+            this.rootElem
+        );
+
         this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
     }
 
@@ -1120,12 +1118,12 @@ class BookComponent extends HTMLElement {
         return null;
     }
 
-    /**
-     * Resizes book component and recalculates page count
-     * @param {number} size - book component width in px, height will be `size * aspectRatio`
-     * @returns {void}
-     */
-    resize = debounce(
+    // /**
+    //  * Resizes book component and recalculates page count
+    //  * @param {number} size - book component width in px, height will be `size * aspectRatio`
+    //  * @returns {void}
+    //  */
+    recount = debounce(
         (size) => {
             console.log("resizing!", size, this.status);
 
@@ -1133,14 +1131,13 @@ class BookComponent extends HTMLElement {
                 // Get a reference to a visible element
                 const element = this.getVisibleElement();
 
-                // Resize
-                this.setSize(size);
                 const newOffset = this.getElementOffset(element);
                 this.setOffset(newOffset);
 
+                // TODO pass current size
                 this.createCounterComponent(size);
             } else {
-                this.resize(size);
+                this.recount();
             }
         },
         1000,
