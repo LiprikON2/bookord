@@ -166,6 +166,17 @@ template.innerHTML = /*html*/ `
  *
  */
 
+/** HtmlObject's Attributes
+ * @typedef {Object} UIState
+ * @property {string} bookTitle
+ * @property {string} currentSectionTitle
+ * @property {number} currentSectionPage
+ * @property {number} totalSectionPages
+ * @property {number} currentBookPage
+ * @property {number} totalBookPages
+ *
+ */
+
 /**
  * Book web component
  */
@@ -191,6 +202,7 @@ class BookComponent extends HTMLElement {
          * @property {('loading'|'sectionReady'|'ready'|'resizing')} status - Status of initialization of the book, true when all of the book's sections are parsed
          */
         this.status = "loading";
+        this.quitting = false;
     }
 
     // TODO breaks SOLID principle
@@ -295,9 +307,9 @@ class BookComponent extends HTMLElement {
      * Collects book's styles and applies them to the web component
      * @param {ParsedBook} book
      * @param {HtmlObject} section
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    loadStyles(book, section) {
+    async loadStyles(book, section) {
         const styleElem = this.shadowRoot.getElementById("book-style");
 
         const sectionStyles = this.getSectionStyleReferences(section);
@@ -374,9 +386,9 @@ class BookComponent extends HTMLElement {
     /**
      * Loads book's content and appends a end-marker to it
      * @param {HtmlObject} section
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    loadContent(section) {
+    async loadContent(section) {
         this.contentElem.innerHTML = "";
         // Remove head tag from section
         section = section.slice(1);
@@ -409,7 +421,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Emits "UIStateUpdate"
-     * @param {*} state //todo
+     * @param {UIState} state
      * @listens Event
      * @return {void}
      */
@@ -773,7 +785,7 @@ class BookComponent extends HTMLElement {
      * Creates another web component which is used to count pages of a book, and then destroys it
      * @return {Promise<any>}
      */
-    async createCounterComponent(size) {
+    async createCounterComponent() {
         this.status = "resizing";
         /** Create a counter`component inside the current component
          * @type {BookComponent}
@@ -785,9 +797,7 @@ class BookComponent extends HTMLElement {
         // Make it hidden
         const rootElem = counterComponent.shadowRoot.getElementById("root");
         rootElem.style.visibility = "hidden";
-        rootElem.style.height = "0";
-
-        if (size) this.setSize(size.width, size.height);
+        rootElem.style.position = "absolute";
 
         await counterComponent._countBookPages(this);
         this.status = "ready";
@@ -837,8 +847,8 @@ class BookComponent extends HTMLElement {
         // TODO start counting pages near where user left off (0th bookmark)
         await this._asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
             const section = this.getSection(book, sectionIndex);
-            this.loadStyles(book, section);
-            this.loadContent(section);
+            await this.loadStyles(book, section);
+            await this.loadContent(section);
 
             const totalSectionPages = this.countSectionPages();
 
@@ -861,7 +871,6 @@ class BookComponent extends HTMLElement {
      * @return {Promise<void>}
      */
     async loadBook(bookObj, bookmarkList, isAlreadyParsed = false) {
-        console.log("isAlreadyParsed", isAlreadyParsed);
         this.bookmarkList = bookmarkList.length
             ? bookmarkList
             : [{ sectionIndex: 0, elementIndex: 0 }];
@@ -894,7 +903,7 @@ class BookComponent extends HTMLElement {
             }
         } else {
             console.log("###> Is already parsed");
-            // Make it a promise to match the interface of unparsed book
+            // Make it so a promise matches the interface of an unparsed book
             this.book = Promise.resolve(bookObj);
             this.status = "ready";
         }
@@ -916,7 +925,6 @@ class BookComponent extends HTMLElement {
             },
 
             getCurrentSectionPage: function (that) {
-                // todo refactor
                 const displayWidth = that._getDisplayWidth();
                 const currentOffset = this._getCurrentOffset();
                 const currentPage = Math.abs(currentOffset / displayWidth);
@@ -967,12 +975,10 @@ class BookComponent extends HTMLElement {
                 );
             }.bind(this),
         };
-        // this.createCounterComponent();
-        new ResizeObserver((objs) => this.recount(objs[0].contentRect)).observe(
-            this.rootElem
-        );
 
-        this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
+        await this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
+        // this.createCounterComponent();
+        new ResizeObserver((objs) => this.recount()).observe(this.rootElem);
     }
 
     /**
@@ -1118,15 +1124,13 @@ class BookComponent extends HTMLElement {
         return null;
     }
 
-    // /**
-    //  * Resizes book component and recalculates page count
-    //  * @param {number} size - book component width in px, height will be `size * aspectRatio`
-    //  * @returns {void}
-    //  */
+    /**
+     * Recalculates page count
+     * @returns {void}
+     */
     recount = debounce(
-        (size) => {
-            console.log("resizing!", size, this.status);
-
+        () => {
+            if (this.quitting) return;
             if (this.status !== "resizing") {
                 // Get a reference to a visible element
                 const element = this.getVisibleElement();
@@ -1134,8 +1138,7 @@ class BookComponent extends HTMLElement {
                 const newOffset = this.getElementOffset(element);
                 this.setOffset(newOffset);
 
-                // TODO pass current size
-                this.createCounterComponent(size);
+                this.createCounterComponent();
             } else {
                 this.recount();
             }
@@ -1146,6 +1149,13 @@ class BookComponent extends HTMLElement {
 
     disconnectedCallback() {
         if (this.unlisten) this.unlisten();
+        this.quitting = true;
+
+        // TODO terminate recounting properly
+
+        // Cancel debounces
+        this.recount.cancel();
+        this.emitSaveBookmarks.cancel();
 
         // TODO check if it can to be removed
         delete this.initBook;
