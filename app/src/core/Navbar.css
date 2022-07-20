@@ -1,8 +1,7 @@
 nav.navbar {
-    margin-top: var(--titlebar-height);
-
     min-height: unset;
     background-color: var(--clr-secondary-300);
+    height: var(--navbar-height);
 }
 .navbar-list {
     display: grid;

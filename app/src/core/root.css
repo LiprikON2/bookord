@@ -45,6 +45,7 @@
 
     /* Width & hight */
     --titlebar-height: 32px;
+    --navbar-height: calc(var(--titlebar-height) * 1.5);
     --scrollbar-width: 12px;
     --border-width: 1px;
 
@@ -306,12 +307,11 @@ body {
 
 main#main {
     width: 100%;
-    height: 100%;
+    height: calc(100% - var(--titlebar-height) - var(--navbar-height));
 
     --window-edge-padding: 20px;
 
     padding: var(--window-edge-padding);
-    /* padding-top: calc(var(--window-edge-padding) + var(--titlebar-height)); */
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -330,8 +330,4 @@ main#main {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--clr-primary-300-hsl) / 1);
-}
-
-#main::-webkit-scrollbar-track {
-    margin-top: var(--titlebar-height); /* Scrollbar adjusted for titlebar height */
 }

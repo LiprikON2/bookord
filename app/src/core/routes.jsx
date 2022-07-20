@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, createContext } from "react";
 import { Switch, Route, Redirect } from "react-router";
 
 import ROUTES from "Constants/routes";
@@ -15,6 +15,7 @@ const Read = loadable(() =>
 const Settings = loadable(() =>
     import(/* webpackChunkName: "SettingsChunk" */ "Pages/settings/Settings")
 );
+// TODO remove
 const About = loadable(() =>
     import(/* webpackChunkName: "AboutChunk" */ "Pages/about/about")
 );
@@ -31,25 +32,20 @@ const ContextMenu = loadable(() =>
     import(/* webpackChunkName: "ContextMenuChunk" */ "Pages/contextmenu/contextmenu")
 );
 
-const initStorage = window.api.store.initial();
+const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) => {
+    const toContinueReading = () => {
+        const continueReadingSetting = initStorage.settings?.continueReading?.value;
 
-const toContinueReading = () => {
-    const recentBooks = initStorage.recentBooks;
-    // The last book in the list of recent books is the last opened book
-    const lastOpenedBook = recentBooks?.[recentBooks?.length - 1];
-    const continueReadingSetting = initStorage.settings?.continueReading?.value;
+        return lastOpenedBookTitle && continueReadingSetting;
+    };
 
-    return lastOpenedBook && continueReadingSetting;
-};
+    const getInitSettings = () => {
+        const initSettings = initStorage?.settings;
+        const mergedSettings = Object.assign({}, DEFAULT_SETTINGS, initSettings);
 
-const getInitSettings = () => {
-    const initSettings = initStorage?.settings;
-    const mergedSettings = Object.assign({}, DEFAULT_SETTINGS, initSettings);
+        return mergedSettings;
+    };
 
-    return mergedSettings;
-};
-
-const Routes = () => {
     const [settings, setSettings] = useState(getInitSettings());
 
     const [files, setFiles] = useState([]);
@@ -60,11 +56,10 @@ const Routes = () => {
         <main id="main">
             <Switch>
                 <Route exact path="/">
-                    {toContinueReading() ? (
-                        <Redirect push to={ROUTES.READ} />
-                    ) : (
-                        <Redirect push to={ROUTES.LIBRARY} />
-                    )}
+                    <Redirect
+                        push
+                        to={toContinueReading() ? ROUTES.READ : ROUTES.LIBRARY}
+                    />
                 </Route>
                 <Route path={ROUTES.SETTINGS}>
                     <Settings settings={settings} setSettings={setSettings} />
@@ -79,7 +74,9 @@ const Routes = () => {
                         setIsInitLoad={setIsInitLoad}
                     />
                 </Route>
-                <Route path={ROUTES.READ} component={Read}></Route>
+                <Route path={ROUTES.READ}>
+                    <Read setLastOpenedBookTitle={setLastOpenedBookTitle} />
+                </Route>
                 <Route path={ROUTES.ABOUT} component={About}></Route>
                 <Route path={ROUTES.MOTD} component={Motd}></Route>
                 <Route path={ROUTES.LOCALIZATION} component={Localization}></Route>

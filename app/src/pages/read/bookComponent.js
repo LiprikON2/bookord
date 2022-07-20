@@ -190,12 +190,7 @@ class BookComponent extends HTMLElement {
         super();
 
         this.attachShadow({ mode: "open" });
-        /**
-         * @type {ShadowRoot}
-         */
-        this.shadowRoot = this.shadowRoot;
 
-        this.shadowRoot = this.shadowRoot;
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.rootElem = this.shadowRoot.getElementById("root");
@@ -984,8 +979,7 @@ class BookComponent extends HTMLElement {
         };
 
         await this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
-        // this.createCounterComponent();
-        new ResizeObserver((objs) => this.recount()).observe(this.rootElem);
+        new ResizeObserver(() => this.recount()).observe(this.rootElem);
     }
 
     /**

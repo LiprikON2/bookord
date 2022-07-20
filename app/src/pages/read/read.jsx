@@ -17,7 +17,7 @@ import "./Read.css";
 
 // TODO use useContext hook https://youtu.be/TNhaISOUy6Q?t=355
 
-const Read = () => {
+const Read = ({ setLastOpenedBookTitle }) => {
     const location = useLocation();
     const [page, setPage] = useState(1);
 
@@ -171,6 +171,13 @@ const Read = () => {
         const bookRef = bookComponentRef.current;
         if (bookRef.status === "ready") {
             window.api.store.send(writeConfigRequest, "recentBooks", recentBooks);
+        }
+
+        const lastOpenedBook = recentBooks[recentBooks.length - 1];
+        if (lastOpenedBook) {
+            const lastOpenedBookTitle = lastOpenedBook.info.title;
+            console.log("hehe", recentBooks, lastOpenedBookTitle);
+            setLastOpenedBookTitle(lastOpenedBookTitle);
         }
     }, [recentBooks]);
 

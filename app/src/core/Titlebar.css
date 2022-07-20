@@ -3,7 +3,7 @@
     width: calc(100% - var(--border-width) * 3);
 
     display: flex;
-    position: fixed;
+    position: sticky;
     z-index: 1000;
     background-color: var(--clr-secondary-100);
     user-select: none;

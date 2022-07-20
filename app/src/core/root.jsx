@@ -3,12 +3,7 @@ import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
 import { MantineProvider } from "@mantine/core";
 
-import Routes from "Core/Routes";
-import Titlebar from "./Titlebar";
-import Navbar from "./Navbar";
-
-import "bulma/css/bulma.css";
-import "./Root.css";
+import App from "./App";
 
 class Root extends React.Component {
     render() {
@@ -19,9 +14,7 @@ class Root extends React.Component {
                 <Provider store={store}>
                     <ConnectedRouter history={history}>
                         <MantineProvider theme={{ colorScheme: "dark" }}>
-                            <Titlebar history={history}></Titlebar>
-                            <Navbar></Navbar>
-                            <Routes></Routes>
+                            <App history={history} />
                         </MantineProvider>
                     </ConnectedRouter>
                 </Provider>

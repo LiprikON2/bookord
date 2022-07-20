@@ -1,5 +1,5 @@
 import React from "react";
-import { Button as MantineButton } from "@mantine/core";
+import { Button as MantineButton, ActionIcon } from "@mantine/core";
 import { withRouter } from "react-router";
 
 import "./Button.css";
@@ -8,6 +8,7 @@ const Button = ({
     children,
     className,
     onClick,
+    isIconOnly,
     history,
     location,
     match,
@@ -15,9 +16,10 @@ const Button = ({
     to,
     ...rest
 }) => {
+    const DynamicButton = isIconOnly ? ActionIcon : MantineButton;
     return (
         <>
-            <MantineButton
+            <DynamicButton
                 className={className ?? "button btn"}
                 onClick={(event) => {
                     onClick && onClick(event);
@@ -25,7 +27,7 @@ const Button = ({
                 }}
                 {...rest}>
                 {children}
-            </MantineButton>
+            </DynamicButton>
         </>
     );
 };
