@@ -146,7 +146,7 @@ template.innerHTML = /*html*/ `
  */
 
 /** HTML & XML parsed to the JavaScript object
- * @typedef {Object[]} HtmlObject
+ * @typedef {Array<Object>} HtmlObject
  * @property {string|undefined} [name]
  * @property {string|undefined} [text]
  * @property {Attrs|undefined} [attrs]
@@ -166,7 +166,7 @@ template.innerHTML = /*html*/ `
  *
  */
 
-/** HtmlObject's Attributes
+/** TODO
  * @typedef {Object} UIState
  * @property {string} bookTitle
  * @property {string} currentSectionTitle
@@ -257,7 +257,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Recursively extracts section (chapter) title from book's TOC
-     * @param {ParsedBook} book
+     * @param {InitBook | ParsedBook} book
      * @param {HtmlObject} toc - Table of Contents
      * @param {number} sectionIndex - Section index
      * @param {boolean} [root] - A way to differentiate between recursive and non-recursive function call
@@ -302,7 +302,7 @@ class BookComponent extends HTMLElement {
      * Returns book's section object
      * @param {ParsedBook|any} book
      * @param {number} sectionIndex
-     * @returns {HtmlObject}
+     * @returns {Array<HtmlObject>}
      */
     getSection(book, sectionIndex) {
         return book.sections[sectionIndex];
@@ -310,8 +310,8 @@ class BookComponent extends HTMLElement {
 
     /**
      * Collects book's styles and applies them to the web component
-     * @param {ParsedBook} book
-     * @param {HtmlObject} section
+     * @param {InitBook|ParsedBook} book
+     * @param {Array<HtmlObject>} section
      * @returns {Promise<void>}
      */
     async loadStyles(book, section) {
@@ -365,7 +365,7 @@ class BookComponent extends HTMLElement {
     /**
      * Handles clicks on book navigation links and website links
      * @param {Event} e - Event
-     * @param {ParsedBook} book
+     * @param {InitBook | ParsedBook} book
      * @listens Event
      * @returns {void}
      */
@@ -443,7 +443,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Updates book's state
-     * @param {ParsedBook} book
+     * @param {InitBook | ParsedBook} book
      * @param {number} currentSection
      * @returns {void}
      */
@@ -480,7 +480,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Attaches event handlers to anchor tags to handle book navigation
-     * @param {ParsedBook} book
+     * @param {InitBook | ParsedBook} book
      * @returns {void}
      */
     attachLinkHandlers(book) {
@@ -927,6 +927,7 @@ class BookComponent extends HTMLElement {
                     );
                     if (page <= sumOfPages) return index;
                 }
+                throw new Error("Couldn't get section book page belonged to.");
             },
 
             getCurrentSectionPage: function (that) {
@@ -975,6 +976,7 @@ class BookComponent extends HTMLElement {
                 // TODO make positive
                 // Strips all non-numeric characters from a string
                 return (
+                    // @ts-ignore
                     parseInt(this.contentElem.style.transform.replace(/[^\d.-]/g, "")) ??
                     0
                 );
@@ -1044,11 +1046,10 @@ class BookComponent extends HTMLElement {
     }, 500);
     /**
      * Emits "saveBookmarksEvent" when the book is fully parsed
-     * @param {Event} e - Event
      * @listens Event
      * @return {Promise<void>}
      */
-    async emitSaveParsedBook(e) {
+    async emitSaveParsedBook() {
         const saveParsedBookEvent = new CustomEvent("saveParsedBookEvent", {
             bubbles: true,
             cancelable: false,

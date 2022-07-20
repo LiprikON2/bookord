@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "lib": [
+            "es5",
+            "es6",
+            "dom",
+            "dom.iterable"
+        ],
+        "sourceMap": true,
+        "outDir": "./script",
+        "strict": false,
+        "strictNullChecks": false,
+        "strictFunctionTypes": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+    }
+}
