@@ -190,19 +190,24 @@ class BookComponent extends HTMLElement {
         super();
 
         this.attachShadow({ mode: "open" });
+        /**
+         * @type {ShadowRoot}
+         */
+        this.shadowRoot = this.shadowRoot;
+
+        this.shadowRoot = this.shadowRoot;
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.rootElem = this.shadowRoot.getElementById("root");
         this.contentElem = this.shadowRoot.getElementById("book-content");
 
         this.componentStyle = getComputedStyle(this.rootElem);
-        this.aspectRatio = 1.5;
 
         /**
-         * @property {('loading'|'sectionReady'|'ready'|'resizing')} status - Status of initialization of the book, true when all of the book's sections are parsed
+         * @type {('loading'|'sectionReady'|'ready'|'resizing')} Status of initialization of the book, true when all of the book's sections are parsed
          */
         this.status = "loading";
-        this.quitting = false;
+        this.isQuitting = false;
     }
 
     // TODO breaks SOLID principle
@@ -881,7 +886,7 @@ class BookComponent extends HTMLElement {
             console.log("###> Parsing");
 
             /**
-             * @property {Promise<InitBook>} initBook
+             * @type {Promise<InitBook>} initBook
              */
             this.initBook = new Promise((resolve, reject) => {
                 this.unlisten = window.api.receive(
@@ -1130,7 +1135,7 @@ class BookComponent extends HTMLElement {
      */
     recount = debounce(
         () => {
-            if (this.quitting) return;
+            if (this.isQuitting) return;
             if (this.status !== "resizing") {
                 // Get a reference to a visible element
                 const element = this.getVisibleElement();
@@ -1149,7 +1154,7 @@ class BookComponent extends HTMLElement {
 
     disconnectedCallback() {
         if (this.unlisten) this.unlisten();
-        this.quitting = true;
+        this.isQuitting = true;
 
         // TODO terminate recounting properly
 
