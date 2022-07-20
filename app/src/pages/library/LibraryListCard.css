@@ -1,5 +1,5 @@
 /* todo make a remove/delete/open animation */
-.card {
+div.card {
     display: grid;
     justify-items: center;
     aspect-ratio: 351 / 575;

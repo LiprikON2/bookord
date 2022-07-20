@@ -15,10 +15,6 @@ import ROUTES from "Constants/routes";
 import "./bookComponent";
 import "./Read.css";
 
-const clamp = (min, value, max) => {
-    return Math.min(Math.max(value, min), max);
-};
-
 // TODO use useContext hook https://youtu.be/TNhaISOUy6Q?t=355
 
 const Read = () => {

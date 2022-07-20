@@ -1,0 +1,20 @@
+nav.navbar {
+    margin-top: var(--titlebar-height);
+
+    min-height: unset;
+    background-color: var(--clr-secondary-300);
+}
+.navbar-list {
+    display: grid;
+    grid-auto-flow: column;
+}
+li.navbar-item {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+}
+.navbar-item button {
+    font-weight: var(--fw-500);
+    width: max-content;
+    border-radius: 0;
+}

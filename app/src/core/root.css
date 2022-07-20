@@ -66,6 +66,7 @@
     /* Font weight */
     --fw-300: 300;
     --fw-400: 400;
+    --fw-500: 500;
     --fw-700: 700;
 
     /* TODO remove unused */
@@ -310,7 +311,7 @@ main#main {
     --window-edge-padding: 20px;
 
     padding: var(--window-edge-padding);
-    padding-top: calc(var(--window-edge-padding) + var(--titlebar-height));
+    /* padding-top: calc(var(--window-edge-padding) + var(--titlebar-height)); */
     overflow-x: hidden;
     overflow-y: auto;
 }

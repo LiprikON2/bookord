@@ -5,6 +5,7 @@ import { MantineProvider } from "@mantine/core";
 
 import Routes from "Core/Routes";
 import Titlebar from "./Titlebar";
+import Navbar from "./Navbar";
 
 import "bulma/css/bulma.css";
 import "./Root.css";
@@ -19,6 +20,7 @@ class Root extends React.Component {
                     <ConnectedRouter history={history}>
                         <MantineProvider theme={{ colorScheme: "dark" }}>
                             <Titlebar history={history}></Titlebar>
+                            <Navbar></Navbar>
                             <Routes></Routes>
                         </MantineProvider>
                     </ConnectedRouter>
