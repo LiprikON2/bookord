@@ -98,6 +98,15 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                             TTS
                         </Button>
                     </li>
+                    <li className="navbar-item">
+                        <Button
+                            to={ROUTES.CONTEXTMENU}
+                            leftIcon={
+                                <Book strokeWidth={1.5} color="var(--clr-primary-100)" />
+                            }>
+                            TEST
+                        </Button>
+                    </li>
                     <li className="navbar-item" style={conditionalContinueReadingStyle}>
                         <Button
                             disabled={isBtnContinueReadingVisible}

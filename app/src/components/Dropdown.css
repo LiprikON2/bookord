@@ -25,6 +25,7 @@
 .dropdown > .dropdown-menu > .dropdown-content {
     background-color: var(--clr-secondary-300);
     opacity: 0.95;
+    padding: 0.25rem;
 }
 
 .dropdown > .dropdown-menu > .dropdown-content > .dropdown-divider {
@@ -35,7 +36,8 @@
 }
 .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .button {
     width: 100%;
-    border-radius: 0;
+    font-weight: var(--fw-400);
+    font-size: 0.9rem;
 
     justify-content: flex-start;
 }

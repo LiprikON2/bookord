@@ -31,6 +31,8 @@
     --clr-accent-100: #43c59e;
 
     --clr-danger: #d31223;
+    --clr-danger-000: #ff6b6b;
+    --clr-danger-100: #662a2d;
     /* Gradients */
     --grad-primary-lin: linear-gradient(
         78deg,

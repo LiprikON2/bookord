@@ -1,8 +1,8 @@
 import React from "react";
+import { Edit, ArrowUpRightCircle, Trash } from "tabler-icons-react";
 
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
-
 import "./LibraryListCard.css";
 
 const LibraryListCard = ({ file }) => {
@@ -59,9 +59,37 @@ const LibraryListCard = ({ file }) => {
                     </h3>
                     {!file.isSkeleton ? (
                         <Dropdown>
-                            <Button>Open</Button>
-                            <Button>Edit</Button>
-                            <Button divider="true" onClick={(e) => handleDelete(e, file)}>
+                            <Button
+                                compact
+                                leftIcon={
+                                    <ArrowUpRightCircle
+                                        strokeWidth={1.25}
+                                        color="var(--clr-primary-100)"
+                                    />
+                                }>
+                                Open
+                            </Button>
+                            <Button
+                                compact
+                                leftIcon={
+                                    <Edit
+                                        strokeWidth={1.25}
+                                        color="var(--clr-primary-100)"
+                                    />
+                                }>
+                                Edit
+                            </Button>
+                            <Button
+                                className="btn-danger"
+                                compact
+                                leftIcon={
+                                    <Trash
+                                        strokeWidth={1.25}
+                                        color="var(--clr-danger-000)"
+                                    />
+                                }
+                                divider="true"
+                                onClick={(e) => handleDelete(e, file)}>
                                 Delete
                             </Button>
                         </Dropdown>

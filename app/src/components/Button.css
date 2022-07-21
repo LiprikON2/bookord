@@ -27,6 +27,22 @@
 .button.btn > * {
     pointer-events: none;
 }
+
+/* Additional spacing between button text and icon */
+.mantine-Button-leftIcon {
+    margin-right: 1rem;
+}
+.button.btn.btn-danger,
+.button.btn.btn-danger:active,
+.button.btn.btn-danger:hover,
+.button.btn.btn-danger:focus:not(:active) {
+    color: var(--clr-danger-000);
+}
+
+.button.btn.btn-danger:active,
+.button.btn.btn-danger:hover {
+    background-color: var(--clr-danger-100);
+}
 /* +++++ +++++ +++++ +++++ */
 
 /* +++++ Titlebar button +++++ */

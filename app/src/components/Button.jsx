@@ -20,7 +20,7 @@ const Button = ({
     return (
         <>
             <DynamicButton
-                className={className ?? "button btn"}
+                className={className + " button btn"}
                 onClick={(event) => {
                     onClick && onClick(event);
                     if (to) history.push(to);
