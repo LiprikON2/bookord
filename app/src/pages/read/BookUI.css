@@ -20,6 +20,10 @@
 .ui-block > * {
     flex: 1;
 }
+.ui-block > *:not(:first-child):last-child {
+    display: flex;
+    justify-content: flex-end;
+}
 .ui-block > .digit-elem {
     flex: 0.2;
 }

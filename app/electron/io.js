@@ -28,10 +28,14 @@ const notification = require("./notification");
 // get application directory
 const appDir = path.resolve(os.homedir(), "Bookord Books");
 
+if (!fs.existsSync(appDir)) {
+    fs.mkdirSync(appDir);
+}
+
 // get the list of files
 exports.getFiles = () => {
     const files = fs.readdirSync(appDir);
-
+    console.log(appDir);
     return files.map((filename) => {
         const filePath = path.resolve(appDir, filename);
         const fileStats = fs.statSync(filePath);
