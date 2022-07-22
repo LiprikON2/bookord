@@ -1,5 +1,5 @@
 import React from "react";
-import { Button as MantineButton, ActionIcon } from "@mantine/core";
+import { Button as MantineButton, ActionIcon, Divider } from "@mantine/core";
 import { withRouter } from "react-router";
 
 import "./Button.css";
@@ -8,7 +8,8 @@ const Button = ({
     children,
     className,
     onClick,
-    isIconOnly,
+    isIconOnly = false,
+    divider = false,
     history,
     location,
     match,
@@ -19,6 +20,7 @@ const Button = ({
     const DynamicButton = isIconOnly ? ActionIcon : MantineButton;
     return (
         <>
+            {divider ? <Divider className="btn-divider" size="xs" /> : null}
             <DynamicButton
                 className={className + " button btn"}
                 onClick={(event) => {

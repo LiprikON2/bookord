@@ -7,10 +7,9 @@ import {
     writeConfigRequest,
 } from "secure-electron-store";
 
-import Link from "components/Link";
-import Button from "components/Button";
 import ImageModal from "components/ImageModal";
 import BookUI from "./BookUI";
+import ReadContextMenu from "./ReadContextMenu";
 import ROUTES from "Constants/routes";
 import "./bookComponent";
 import "./Read.css";
@@ -198,8 +197,6 @@ const Read = ({ setLastOpenedBookTitle }) => {
         };
     }, []);
 
-    const handleBookmark = () => {};
-
     return (
         <>
             <section className="section read-section">
@@ -213,6 +210,7 @@ const Read = ({ setLastOpenedBookTitle }) => {
                     </div>
                 </BookUI>
                 <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
+                <ReadContextMenu />
             </section>
         </>
     );

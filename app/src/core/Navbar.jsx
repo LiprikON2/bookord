@@ -24,29 +24,6 @@ const Navbar = ({ lastOpenedBookTitle }) => {
         pointerEvents: isBtnContinueReadingVisible ? "none" : "auto",
     };
 
-    // useEffect(() => {
-    //     // Send an IPC request to get config
-    //     window.api.store.send(readConfigRequest, "recentBooks");
-
-    //     // Listen for responses from the electron store
-    //     window.api.store.onReceive(readConfigResponse, (args) => {
-    //         // Check first if the requested book is already parsed
-    //         // i.e. is currently in recent books
-    //         if (args.key === "recentBooks" && args.success) {
-    //             const retrivedRecentBooks = args.value ?? [];
-    //             console.log("got retrivedRecentBooks", retrivedRecentBooks);
-
-    //             if (retrivedRecentBooks.length) {
-    //                 // The last book in the list of recent books is the last opened book
-    //                 const parsedBook =
-    //                     retrivedRecentBooks[retrivedRecentBooks.length - 1];
-
-    //                 setLastReadBook(parsedBook);
-    //             }
-    //         }
-    //     });
-    // }, []);
-
     return (
         <>
             <nav className="navbar">
@@ -98,7 +75,7 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                             TTS
                         </Button>
                     </li>
-                    <li className="navbar-item">
+                    <li className="navbar-item" cm-template="textSelectionTemplate">
                         <Button
                             to={ROUTES.CONTEXTMENU}
                             leftIcon={

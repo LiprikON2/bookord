@@ -132,13 +132,39 @@ async function createWindow() {
         loudAlertTemplate: [
             {
                 id: "loudAlert",
-                label: "AN ALERT!",
+                label: "AN ALERT (modified)!",
             },
         ],
         softAlertTemplate: [
             {
                 id: "softAlert",
                 label: "Soft alert",
+            },
+        ],
+        textSelectionTemplate: [
+            {
+                id: "textSelection",
+                label: "Text Selection",
+                submenu: [
+                    {
+                        role: "undo",
+                    },
+                    {
+                        role: "redo",
+                    },
+                    {
+                        type: "separator",
+                    },
+                    {
+                        role: "cut",
+                    },
+                    {
+                        role: "copy",
+                    },
+                    {
+                        role: "paste",
+                    },
+                ],
             },
         ],
     });

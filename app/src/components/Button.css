@@ -1,5 +1,8 @@
 /* +++++ Base button +++++ */
 .button.btn {
+    display: flex;
+    justify-content: flex-start;
+
     background-color: var(--clr-secondary-300);
     color: var(--clr-primary-100);
     transition: all 0.2s ease;
@@ -32,6 +35,8 @@
 .mantine-Button-leftIcon {
     margin-right: 1rem;
 }
+
+/* Danger button */
 .button.btn.btn-danger,
 .button.btn.btn-danger:active,
 .button.btn.btn-danger:hover,
@@ -39,9 +44,15 @@
     color: var(--clr-danger-000);
 }
 
+/* Danger button */
 .button.btn.btn-danger:active,
 .button.btn.btn-danger:hover {
     background-color: var(--clr-danger-100);
+}
+
+.btn-divider {
+    background-color: var(--clr-primary-300);
+    margin: 0.375rem 0;
 }
 /* +++++ +++++ +++++ +++++ */
 

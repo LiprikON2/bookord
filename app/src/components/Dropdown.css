@@ -28,16 +28,13 @@
     padding: 0.25rem;
 }
 
-.dropdown > .dropdown-menu > .dropdown-content > .dropdown-divider {
-    background-color: var(--clr-primary-300);
-}
 .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item {
     padding: 0;
 }
 .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .button {
     width: 100%;
     font-weight: var(--fw-400);
-    font-size: 0.9rem;
+    font-size: var(--fs-250);
 
     justify-content: flex-start;
 }

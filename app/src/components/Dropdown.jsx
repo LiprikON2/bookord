@@ -46,18 +46,11 @@ const Dropdown = ({ children, className, disabled, ...rest }) => {
                 </div>
                 <div className="dropdown-menu" id="dropdown-menu-options" role="menu">
                     <div className="dropdown-content">
-                        {children.map((child, index) => {
-                            return child.props.divider !== "true" ? (
-                                <div key={index} className="dropdown-item">
-                                    {child}
-                                </div>
-                            ) : (
-                                <React.Fragment key={index}>
-                                    <hr className="dropdown-divider" />
-                                    <div className="dropdown-item">{child}</div>
-                                </React.Fragment>
-                            );
-                        })}
+                        {children.map((child, index) => (
+                            <div key={index} className="dropdown-item">
+                                {child}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

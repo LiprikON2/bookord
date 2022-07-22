@@ -88,7 +88,7 @@ const LibraryListCard = ({ file }) => {
                                         color="var(--clr-danger-000)"
                                     />
                                 }
-                                divider="true"
+                                divider={true}
                                 onClick={(e) => handleDelete(e, file)}>
                                 Delete
                             </Button>

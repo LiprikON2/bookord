@@ -1,0 +1,10 @@
+.context-menu {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    padding: 0.25rem;
+    opacity: 0.95 !important;
+    font-size: var(--fs-250);
+    background-color: var(--clr-secondary-300);
+}

@@ -26,7 +26,7 @@ const ImageModal = ({ src, setSrc, toggle = true, showButton = true }) => {
     return (
         <>
             <div ref={modalRef} className="modal">
-                <div className="modal-background"></div>
+                <div className="modal-background" />
                 <div className="modal-content">
                     <p className="image">
                         <img src={src} alt="" />
