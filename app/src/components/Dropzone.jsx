@@ -2,7 +2,7 @@ import React from "react";
 
 import { Group, Text, useMantineTheme } from "@mantine/core";
 import { BookUpload, Book2, X } from "tabler-icons-react";
-import { Dropzone as MantineDropzone, FullScreenDropzone } from "@mantine/dropzone";
+import { Dropzone as MantineDropzone } from "@mantine/dropzone";
 
 import MIME_TYPES from "Constants/mimeTypes";
 
@@ -72,13 +72,13 @@ const Dropzone = ({
                     {(status) => dropzoneChildren(status, theme)}
                 </MantineDropzone>
             ) : (
-                <FullScreenDropzone
+                <MantineDropzone.FullScreen
                     onDrop={onDrop ?? (() => {})}
                     accept={accept ?? MIME_TYPES.EBOOK_MIME_TYPES}
                     multiple={multiple ?? true}
                     {...rest}>
                     {(status) => dropzoneChildren(status, theme)}
-                </FullScreenDropzone>
+                </MantineDropzone.FullScreen>
             )}
         </>
     );

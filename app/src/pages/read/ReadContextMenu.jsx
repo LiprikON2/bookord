@@ -9,67 +9,81 @@ import ContextMenu from "components/ContextMenu";
 import SECRET from "Constants/secret";
 import "./ReadContextMenu.css";
 
-const PortalTooltip = ({ toTooltip }) => {
+const PortalTooltip = ({ opened, toTooltip }) => {
     const { target, originalText, translatedText, targetLang, sourceLang } = toTooltip;
 
     const [TooltipWrapper, setTooltipWrapper] = useState(null);
-    const [portalContainer, _] = useState(document.createElement("span"));
+    const [portalContainer, setPortalContainer] = useState(null);
 
-    const [opened, setOpened] = useState(true);
-    const ref = useClickOutside(() => {
-        console.log("outside!");
-        setOpened(false);
-    });
+    // const ref = useClickOutside(() => {
+    //     console.log("outside!");
+    //     setOpened(false);
+    // });
 
     useEffect(() => {
-        console.log(target, ":", sourceLang + "->" + targetLang, translatedText);
+        if (opened) {
+            setPortalContainer(document.createElement("span"));
+        }
+    }, [opened]);
+    useEffect(() => {
+        if (portalContainer) {
+            console.log(target, ":", sourceLang + "->" + targetLang, translatedText);
 
-        // Get contents of <p> as a text node
-        // const foobar = target.textNode;
+            // Get contents of <p> as a text node
+            // const foobar = target.textNode;
 
-        // // Split 'foobar' into two text nodes, 'foo' and 'bar',
-        // // and save 'bar' as a const
-        // const bar = foobar.splitText(3);
+            // // Split 'foobar' into two text nodes, 'foo' and 'bar',
+            // // and save 'bar' as a const
+            // const bar = foobar.splitText(3);
 
-        // // Create a <u> element containing ' new content '
-        // const u = document.createElement("u");
-        // u.appendChild(document.createTextNode(" new content "));
+            // // Create a <u> element containing ' new content '
+            // const u = document.createElement("u");
+            // u.appendChild(document.createTextNode(" new content "));
 
-        // // Add <u> before 'bar'
-        // p.insertBefore(u, bar);
+            // // Add <u> before 'bar'
+            // p.insertBefore(u, bar);
 
-        // The result is: <p>foo<u> new content </u>bar</p>
-        // ++++++
+            // The result is: <p>foo<u> new content </u>bar</p>
+            // ++++++
 
-        // TODO: this renders multiple times
-        const index = target.textContent.indexOf(originalText);
-        const barr = target.firstChild.splitText(index);
+            const index = target.textContent.indexOf(originalText);
+            const barr = target.firstChild.splitText(index);
+            console.log(opened, "portalContainer", portalContainer);
+            if (opened) {
+                setPortalContainer(document.createElement("span"));
+                barr.parentNode.insertBefore(portalContainer, barr);
+                barr.splitText(originalText.length);
+                barr.remove();
+            } else {
+                const textNode = document.createTextNode(originalText);
 
-        barr.parentNode.insertBefore(portalContainer, barr);
-        barr.splitText(originalText.length);
-        barr.remove();
+                portalContainer.parentNode.insertBefore(textNode, portalContainer);
+                portalContainer.remove();
+                setPortalContainer(null);
+            }
 
-        const TooltipWrapper = (
-            <Tooltip
-                ref={ref}
-                withinPortal={true}
-                wrapLines
-                component={"span"}
-                opened={opened}
-                label={translatedText}
-                transitionDuration={200}
-                transition="fade"
-                color="gray"
-                withArrow
-                onPositionChange={() => console.log("changed pos")}
-                arrowSize={6}>
-                {originalText}
-            </Tooltip>
-        );
-        setTooltipWrapper(TooltipWrapper);
-    }, []);
+            const TooltipWrapper = opened ? (
+                <Tooltip
+                    // ref={ref}
+                    multiline
+                    width={250}
+                    withinPortal={true}
+                    component={"span"}
+                    opened={opened}
+                    label={translatedText}
+                    transitionDuration={200}
+                    transition="fade"
+                    color="gray"
+                    withArrow
+                    arrowSize={6}>
+                    <span>{originalText}</span>
+                </Tooltip>
+            ) : null;
+            setTooltipWrapper(TooltipWrapper);
+        }
+    }, [portalContainer]);
 
-    return ReactDOM.createPortal(TooltipWrapper, portalContainer);
+    return portalContainer && ReactDOM.createPortal(TooltipWrapper, portalContainer);
 };
 
 const ReadContext = () => {
@@ -129,11 +143,14 @@ const ReadContext = () => {
                     targetLang,
                     sourceLang,
                 }));
+                setOpenedTooltip(true);
             })
             .catch((error) => {
                 console.log(error);
             });
     };
+
+    const [openedTooltip, setOpenedTooltip] = useState(true);
 
     return (
         <>
@@ -170,7 +187,13 @@ const ReadContext = () => {
                     Translate
                 </Button>
             </ContextMenu>
-            {toTooltip.target && <PortalTooltip toTooltip={toTooltip} />}
+
+            <Button onClick={() => setOpenedTooltip(false)} compact>
+                toggle
+            </Button>
+            {toTooltip.target && (
+                <PortalTooltip opened={openedTooltip} toTooltip={toTooltip} />
+            )}
         </>
     );
 };
