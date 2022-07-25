@@ -6,7 +6,7 @@ import "./Button.css";
 
 const Button = ({
     children,
-    className,
+    className = "",
     onClick,
     isIconOnly = false,
     divider = false,

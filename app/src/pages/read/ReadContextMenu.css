@@ -1,0 +1,7 @@
+.mantine-Tooltip-body {
+    max-width: 30%;
+    margin-inline: auto;
+
+    /* color: var(--clr-primary-100);
+    background-color: var(--clr-secondary-100); */
+}

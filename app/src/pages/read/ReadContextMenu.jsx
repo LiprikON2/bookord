@@ -2,52 +2,74 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { Copy, Speakerphone, Highlight, Language } from "tabler-icons-react";
 import { Tooltip } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useClickOutside } from "@mantine/hooks";
 
 import Button from "components/Button";
 import ContextMenu from "components/ContextMenu";
 import SECRET from "Constants/secret";
+import "./ReadContextMenu.css";
 
 const PortalTooltip = ({ toTooltip }) => {
     const { target, originalText, translatedText, targetLang, sourceLang } = toTooltip;
-    const parent = target.parentNode;
 
-    console.log(sourceLang + "->" + targetLang, translatedText);
-    console.log(target);
+    const [TooltipWrapper, setTooltipWrapper] = useState(null);
+    const [portalContainer, _] = useState(document.createElement("span"));
 
-    // Get contents of <p> as a text node
-    // const foobar = target.textNode;
+    const [opened, setOpened] = useState(true);
+    const ref = useClickOutside(() => {
+        console.log("outside!");
+        setOpened(false);
+    });
 
-    // // Split 'foobar' into two text nodes, 'foo' and 'bar',
-    // // and save 'bar' as a const
-    // const bar = foobar.splitText(3);
+    useEffect(() => {
+        console.log(target, ":", sourceLang + "->" + targetLang, translatedText);
 
-    // // Create a <u> element containing ' new content '
-    // const u = document.createElement("u");
-    // u.appendChild(document.createTextNode(" new content "));
+        // Get contents of <p> as a text node
+        // const foobar = target.textNode;
 
-    // // Add <u> before 'bar'
-    // p.insertBefore(u, bar);
+        // // Split 'foobar' into two text nodes, 'foo' and 'bar',
+        // // and save 'bar' as a const
+        // const bar = foobar.splitText(3);
 
-    // The result is: <p>foo<u> new content </u>bar</p>
-    // ++++++
+        // // Create a <u> element containing ' new content '
+        // const u = document.createElement("u");
+        // u.appendChild(document.createTextNode(" new content "));
 
-    // TODO: this renders multiple times
-    const index = target.textContent.indexOf(originalText);
-    console.log("index", index, target, originalText);
-    const barr = target.firstChild.splitText(index);
-    barr.splitText(originalText.length);
-    barr.remove();
+        // // Add <u> before 'bar'
+        // p.insertBefore(u, bar);
 
-    const TooltipWrapper = (
-        <Tooltip opened label={translatedText} withArrow>
-            {originalText}
-        </Tooltip>
-    );
+        // The result is: <p>foo<u> new content </u>bar</p>
+        // ++++++
 
-    console.log(TooltipWrapper, "hhmm");
+        // TODO: this renders multiple times
+        const index = target.textContent.indexOf(originalText);
+        const barr = target.firstChild.splitText(index);
 
-    return ReactDOM.createPortal(TooltipWrapper, target);
+        barr.parentNode.insertBefore(portalContainer, barr);
+        barr.splitText(originalText.length);
+        barr.remove();
+
+        const TooltipWrapper = (
+            <Tooltip
+                ref={ref}
+                withinPortal={true}
+                wrapLines
+                component={"span"}
+                opened={opened}
+                label={translatedText}
+                transitionDuration={200}
+                transition="fade"
+                color="gray"
+                withArrow
+                onPositionChange={() => console.log("changed pos")}
+                arrowSize={6}>
+                {originalText}
+            </Tooltip>
+        );
+        setTooltipWrapper(TooltipWrapper);
+    }, []);
+
+    return ReactDOM.createPortal(TooltipWrapper, portalContainer);
 };
 
 const ReadContext = () => {
@@ -94,10 +116,10 @@ const ReadContext = () => {
                 throw new Error("Something went wrong");
             })
             .then((response) => {
+                setToTooltip(() => ({ ...toTooltip, target: null }));
                 const { text: translatedText, detected_source_language: sourceLang } =
                     response.translations[0];
 
-                console.log("contextMenuEvent.event.path", contextMenuEvent.event.path);
                 const target = contextMenuEvent.event.path[0];
 
                 setToTooltip(() => ({
