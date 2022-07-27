@@ -18,16 +18,7 @@ const BookUploadIcon = ({ status, ...props }) => {
     return <Book2 {...props} />;
 };
 
-const Dropzone = ({
-    onDrop,
-    onReject,
-    accept,
-    multiple,
-    fullscreen = false,
-    ...rest
-}) => {
-    const theme = useMantineTheme();
-
+const DropzoneChildren = ({ status, theme }) => {
     const getIconColor = (status, theme) => {
         return status.accepted
             ? theme.colors[theme.primaryColor][theme.colorScheme === "dark" ? 4 : 6]
@@ -38,7 +29,7 @@ const Dropzone = ({
             : theme.colors.gray[7];
     };
 
-    const dropzoneChildren = (status, theme) => (
+    return (
         <Group
             position="center"
             spacing="xl"
@@ -59,6 +50,17 @@ const Dropzone = ({
             </div>
         </Group>
     );
+};
+
+const Dropzone = ({
+    onDrop,
+    onReject,
+    accept,
+    multiple,
+    fullscreen = false,
+    ...rest
+}) => {
+    const theme = useMantineTheme();
 
     return (
         <>
@@ -69,7 +71,7 @@ const Dropzone = ({
                     accept={accept ?? MIME_TYPES.EBOOK_MIME_TYPES}
                     multiple={multiple ?? true}
                     {...rest}>
-                    {(status) => dropzoneChildren(status, theme)}
+                    <DropzoneChildren status={status} theme={theme} />
                 </MantineDropzone>
             ) : (
                 <MantineDropzone.FullScreen
@@ -77,7 +79,7 @@ const Dropzone = ({
                     accept={accept ?? MIME_TYPES.EBOOK_MIME_TYPES}
                     multiple={multiple ?? true}
                     {...rest}>
-                    {(status) => dropzoneChildren(status, theme)}
+                    <DropzoneChildren status={status} theme={theme} />
                 </MantineDropzone.FullScreen>
             )}
         </>
