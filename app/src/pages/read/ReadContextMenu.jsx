@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { Copy, Speakerphone, Highlight, Language } from "tabler-icons-react";
 import { Tooltip } from "@mantine/core";
-import { useDisclosure, useClickOutside } from "@mantine/hooks";
+import { useDisclosure, useClickOutside, useDidUpdate } from "@mantine/hooks";
 
 import Button from "components/Button";
 import ContextMenu from "components/ContextMenu";
@@ -10,43 +10,25 @@ import SECRET from "Constants/secret";
 import "./ReadContextMenu.css";
 
 const PortalTooltip = ({ opened, toTooltip }) => {
-    const { target, originalText, translatedText, targetLang, sourceLang } = toTooltip;
+    const { target, originalText, translatedText, targetLang, sourceLang, selection } =
+        toTooltip;
 
     const [TooltipWrapper, setTooltipWrapper] = useState(null);
     const [portalContainer, setPortalContainer] = useState(null);
 
-    // const ref = useClickOutside(() => {
-    //     console.log("outside!");
-    //     setOpened(false);
-    // });
-
     useEffect(() => {
         if (opened) {
             setPortalContainer(document.createElement("span"));
+            console.log("useEffect");
         }
     }, [opened]);
-    useEffect(() => {
-        if (portalContainer) {
-            console.log(target, ":", sourceLang + "->" + targetLang, translatedText);
 
-            // Get contents of <p> as a text node
-            // const foobar = target.textNode;
-
-            // // Split 'foobar' into two text nodes, 'foo' and 'bar',
-            // // and save 'bar' as a const
-            // const bar = foobar.splitText(3);
-
-            // // Create a <u> element containing ' new content '
-            // const u = document.createElement("u");
-            // u.appendChild(document.createTextNode(" new content "));
-
-            // // Add <u> before 'bar'
-            // p.insertBefore(u, bar);
-
-            // The result is: <p>foo<u> new content </u>bar</p>
-            // ++++++
-
+    useDidUpdate(() => {
+        console.log("useDidUpdate");
+        console.log(target, ":", sourceLang + "->" + targetLang, translatedText);
+        try {
             const index = target.textContent.indexOf(originalText);
+
             const barr = target.firstChild.splitText(index);
             console.log(opened, "portalContainer", portalContainer);
             if (opened) {
@@ -64,7 +46,6 @@ const PortalTooltip = ({ opened, toTooltip }) => {
 
             const TooltipWrapper = opened ? (
                 <Tooltip
-                    // ref={ref}
                     multiline
                     width={250}
                     withinPortal={true}
@@ -80,6 +61,9 @@ const PortalTooltip = ({ opened, toTooltip }) => {
                 </Tooltip>
             ) : null;
             setTooltipWrapper(TooltipWrapper);
+            //
+        } catch (error) {
+            console.log("error", error);
         }
     }, [portalContainer]);
 
@@ -95,6 +79,7 @@ const ReadContext = () => {
         translatedText: "",
         targetLang: "",
         sourceLang: "",
+        selection: null,
     });
 
     const handleCopy = () => {
@@ -107,6 +92,7 @@ const ReadContext = () => {
     const handleTranslate = () => {
         const targetLang = "RU";
         const originalText = contextMenuEvent.selectedText;
+        const selection = contextMenuEvent.selection;
 
         fetch("https://api-free.deepl.com/v2/translate", {
             method: "POST",
@@ -142,12 +128,24 @@ const ReadContext = () => {
                     translatedText,
                     targetLang,
                     sourceLang,
+                    selection,
                 }));
                 setOpenedTooltip(true);
             })
             .catch((error) => {
                 console.log(error);
             });
+    };
+
+    const handleHighlight = (selection) => {
+        var range = selection.getRangeAt(0);
+        var selectionContents = range.extractContents();
+        var div = document.createElement("span");
+        div.style.color = "yellow";
+        div.appendChild(selectionContents);
+        range.insertNode(div);
+
+        // https://stackoverflow.com/questions/2139616/window-getselection-gives-me-the-selected-text-but-i-want-the-html
     };
 
     const [openedTooltip, setOpenedTooltip] = useState(true);
@@ -172,6 +170,7 @@ const ReadContext = () => {
                     Read Aloud
                 </Button>
                 <Button
+                    onClick={() => handleHighlight(contextMenuEvent.selection)}
                     compact
                     leftIcon={
                         <Highlight strokeWidth={1.25} color="var(--clr-primary-100)" />

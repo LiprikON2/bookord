@@ -1,21 +1,37 @@
 {
     "continueReading": {
-        "name": "Continue reading last book.",
+        "name": "Reopen last book on startup.",
         "description": "Whether or not app will open last read book on startup.",
-        "section": "Reading",
+        "section": "App Settings",
+        "type": "checkbox",
         "value": true
     },
-    "yes": {
-        "name": "yes.",
+    "continueReading2": {
+        "name": "Another setting.",
         "description": "Whether or not app will open last read book on startup.",
-        "section": "Reading",
+        "section": "App Settings",
+        "type": "checkbox",
         "value": true
     },
-    "no": {
-        "name": "no.",
+    "continueReading3": {
+        "name": "I just haven't come up with more.",
         "description": "Whether or not app will open last read book on startup.",
-        "section": "Reading",
+        "section": "App Settings",
+        "type": "checkbox",
         "value": true
+    },
+    "fontSize": {
+        "name": "Font Size.",
+        "description": "16 is the default",
+        "section": "Font settings",
+        "type": "numberInput",
+        "value": 16
+    },
+    "accentColor": {
+        "name": "Bookord Accent Color.",
+        "description": "Make it yours!",
+        "section": "App Settings",
+        "type": "colorInput",
+        "value": "#4f929e"
     }
-    
 }

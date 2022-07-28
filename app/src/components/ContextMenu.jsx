@@ -17,10 +17,13 @@ const ContextMenu = ({
             "contextmenu",
             (e) => {
                 const selectedText = window.getSelection().toString();
+                const bookComponent = document.querySelector("book-component");
+                const selection = bookComponent.shadowRoot.getSelection();
+
                 if (e.target.tagName === "BOOK-COMPONENT" && selectedText) {
                     e.preventDefault();
 
-                    setContextMenuEvent({ event: e, selectedText });
+                    setContextMenuEvent({ event: e, selectedText, selection });
                     setPos({ x: e.x, y: e.y });
                     setOpened.open();
                 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { Title } from "@mantine/core";
 
 import SettingsList from "./SettingsList";
 
@@ -6,9 +7,9 @@ const Settings = ({ settings, setSettings }) => {
     return (
         <>
             <section className="section">
-                <h1>Settings</h1>
+                <Title order={1}>Settings</Title>
+                <SettingsList settings={settings} setSettings={setSettings} />
             </section>
-            <SettingsList settings={settings} setSettings={setSettings} />
         </>
     );
 };

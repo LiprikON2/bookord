@@ -1,4 +1,5 @@
 import React from "react";
+import { Title } from "@mantine/core";
 
 import LibraryList from "./LibraryList";
 import "./Library.css";
@@ -14,19 +15,17 @@ const Library = ({
     return (
         <>
             <section className="section">
-                <div className="container">
-                    <h1>Library</h1>
-                </div>
-            </section>
+                <Title order={1}>Library</Title>
 
-            <LibraryList
-                files={files}
-                setFiles={setFiles}
-                skeletontFileCount={skeletontFileCount}
-                setSkeletontFileCount={setSkeletontFileCount}
-                isInitLoad={isInitLoad}
-                setIsInitLoad={setIsInitLoad}
-            />
+                <LibraryList
+                    files={files}
+                    setFiles={setFiles}
+                    skeletontFileCount={skeletontFileCount}
+                    setSkeletontFileCount={setSkeletontFileCount}
+                    isInitLoad={isInitLoad}
+                    setIsInitLoad={setIsInitLoad}
+                />
+            </section>
         </>
     );
 };

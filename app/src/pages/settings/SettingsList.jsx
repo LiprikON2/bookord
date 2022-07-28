@@ -1,5 +1,7 @@
 import React, { useState, useLayoutEffect } from "react";
-import { writeConfigRequest } from "secure-electron-store";
+import { Stack, Title } from "@mantine/core";
+
+import Setting from "./Setting";
 
 const SettingsList = ({ settings, setSettings }) => {
     const [sections, setSections] = useState([]);
@@ -7,10 +9,9 @@ const SettingsList = ({ settings, setSettings }) => {
     // Extracts all settings sections without repeats
     const createSections = () => {
         const sectionsSet = [
-            ...new Set(
-                Object.keys(settings).map((key) => settings[key].section)
-            ),
+            ...new Set(Object.keys(settings).map((key) => settings[key].section)),
         ];
+
         setSections(sectionsSet);
     };
 
@@ -18,50 +19,30 @@ const SettingsList = ({ settings, setSettings }) => {
         createSections();
     }, [settings]);
 
-    const updateSettings = ({ target }) => {
-        const setting = target.id;
-        const value =
-            target.type === "checkbox" ? target.checked : target.value;
-
-        // Updates only one specific value of an object inside another object
-        const updatedSettings = {
-            ...settings,
-            [setting]: { ...settings[setting], value: value },
-        };
-
-        setSettings(updatedSettings);
-        window.api.store.send(writeConfigRequest, "settings", updatedSettings);
-    };
-
     return (
         <>
             <section className="section">
                 {sections.map((section) => {
                     return (
                         <section key={section}>
-                            <h2>{section}</h2>
-                            <ul>
+                            <Title order={2}>{section}</Title>
+                            <Stack m="xl" align="flex-start">
                                 {Object.keys(settings).map((key) => {
                                     const setting = settings[key];
                                     if (setting.section === section) {
                                         return (
-                                            <li
-                                                key={key}
-                                                title={setting.description}>
-                                                <input
-                                                    id={key}
-                                                    type="checkbox"
-                                                    onChange={updateSettings}
-                                                    checked={setting.value}
+                                            <React.Fragment key={key}>
+                                                <Setting
+                                                    settingID={key}
+                                                    setting={setting}
+                                                    settings={settings}
+                                                    setSettings={setSettings}
                                                 />
-                                                <label htmlFor={key}>
-                                                    {setting.name}
-                                                </label>
-                                            </li>
+                                            </React.Fragment>
                                         );
                                     }
                                 })}
-                            </ul>
+                            </Stack>
                         </section>
                     );
                 })}
