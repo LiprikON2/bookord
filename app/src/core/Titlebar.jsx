@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 import Button from "components/Button";
+// @ts-ignore
 import ROUTES from "Constants/routes";
 
 import "./Titlebar.css";
 import logo from "resources/icons/icon.svg";
 
+// TODO fix static ESLint auto import (jsconfig.json)
 import min10 from "resources/titlebar icons/min-w-10.png";
 import min12 from "resources/titlebar icons/min-w-12.png";
 import min15 from "resources/titlebar icons/min-w-15.png";

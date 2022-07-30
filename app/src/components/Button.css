@@ -1,5 +1,6 @@
 /* +++++ Base button +++++ */
-.button.btn {
+.button.btn,
+.button.btn[disabled] {
     display: flex;
     justify-content: flex-start;
 
@@ -8,6 +9,7 @@
     transition: all 0.2s ease;
 
     border: none;
+    min-width: 2.5em;
 }
 /* Hovered */
 .button.btn:hover {
@@ -34,6 +36,20 @@
 /* Additional spacing between button text and icon */
 .mantine-Button-leftIcon {
     margin-right: 1rem;
+}
+
+/* Ghost button */
+.button.btn.btn-ghost,
+.button.btn.btn-ghost:active,
+.button.btn.btn-ghost:hover,
+.button.btn.btn-ghost:focus:not(:active) {
+    opacity: 0.5;
+}
+
+/* Ghost button */
+.button.btn.btn-ghost:active,
+.button.btn.btn-ghost:hover {
+    opacity: 0.9;
 }
 
 /* Danger button */

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+// @ts-ignore
 import Routes from "Core/Routes";
 import Titlebar from "./Titlebar";
 import Navbar from "./Navbar";

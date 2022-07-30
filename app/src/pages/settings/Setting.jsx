@@ -1,11 +1,22 @@
 import React from "react";
 import { writeConfigRequest } from "secure-electron-store";
-import { Checkbox, HoverCard, Text, NumberInput, Space, ColorInput } from "@mantine/core";
+import {
+    Checkbox,
+    HoverCard,
+    Text,
+    NumberInput,
+    Space,
+    ColorInput,
+    Group,
+} from "@mantine/core";
+import Button from "components/Button";
+import { Rotate } from "tabler-icons-react";
 
 const dynamicInputTypes = { numberInput: NumberInput, colorInput: ColorInput };
 
 const Setting = ({ settingID, setting, settings, setSettings }) => {
     const updateSettings = (setting, value) => {
+        console.log("setting", setting, value);
         // Updates only one specific value of an object inside another object
         const updatedSettings = {
             ...settings,
@@ -17,9 +28,17 @@ const Setting = ({ settingID, setting, settings, setSettings }) => {
     };
 
     return (
-        <>
+        <Group style={setting.type !== "checkbox" ? { alignItems: "flex-end" } : null}>
+            <Button
+                title="Restore To Default"
+                isIconOnly={true}
+                isGhost={true}
+                isVisible={setting.defaultValue !== setting.value}
+                onClick={() => updateSettings(settingID, setting.defaultValue)}>
+                <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
+            </Button>
             <HoverCard
-                position="left"
+                position={setting.type === "checkbox" ? "left" : "left-end"}
                 offset={20}
                 width={280}
                 openDelay={1000}
@@ -59,7 +78,7 @@ const Setting = ({ settingID, setting, settings, setSettings }) => {
                     <Text size="sm">{setting.description}</Text>
                 </HoverCard.Dropdown>
             </HoverCard>
-        </>
+        </Group>
     );
 };
 

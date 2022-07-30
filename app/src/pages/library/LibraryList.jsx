@@ -12,6 +12,7 @@ import Link from "components/Link";
 import Dropzone from "components/Dropzone";
 import LibraryListCard from "./LibraryListCard";
 
+// @ts-ignore
 import ROUTES from "Constants/routes";
 import "./LibraryList.css";
 

@@ -4,11 +4,14 @@ import { withRouter } from "react-router";
 
 import "./Button.css";
 
+// Can be a button, link or an Action icon
 const Button = ({
     children,
     className = "",
     onClick,
     isIconOnly = false,
+    isGhost = false,
+    isVisible = true,
     divider = false,
     history,
     location,
@@ -22,11 +25,23 @@ const Button = ({
         <>
             {divider ? <Divider className="btn-divider" size="xs" /> : null}
             <DynamicButton
-                className={className + " button btn"}
+                className={
+                    isGhost
+                        ? className + " button btn" + " btn-ghost"
+                        : className + " button btn"
+                }
                 onClick={(event) => {
                     onClick && onClick(event);
                     if (to) history.push(to);
                 }}
+                style={
+                    !isVisible
+                        ? {
+                              opacity: "0",
+                              pointerEvents: "none",
+                          }
+                        : null
+                }
                 {...rest}>
                 {children}
             </DynamicButton>

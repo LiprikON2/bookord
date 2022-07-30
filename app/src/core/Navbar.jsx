@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import { ArrowLeft, Settings, Speakerphone, Book, Typography } from "tabler-icons-react";
 import { Divider } from "@mantine/core";
-import { readConfigRequest, readConfigResponse } from "secure-electron-store";
 
-import ROUTES from "../constants/routes.json";
+// @ts-ignore
+import ROUTES from "Constants/routes";
 import Button from "../components/Button";
 import "./Navbar.css";
 

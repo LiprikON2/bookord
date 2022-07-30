@@ -8,8 +8,11 @@
         // Import aliases from Webpack 
         "paths": {
             "resources/*": ["./resources/*"],
-            "components/*": ["./app/src/components/*"]
-            // TODO Constants
+            "components/*": ["./app/src/components/*"],
+            "Pages/*": ["./app/src/pages/*"],
+            "Core/*": ["./app/src/core/*"],
+            "Redux/*": ["./app/src/redux/*"],
+            "I18n/*": ["./app/localization/*"],
         },
 
         "target": "es6",

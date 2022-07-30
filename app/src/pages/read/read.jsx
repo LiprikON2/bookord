@@ -10,6 +10,7 @@ import {
 import ImageModal from "components/ImageModal";
 import BookUI from "./BookUI";
 import ReadContextMenu from "./ReadContextMenu";
+// @ts-ignore
 import ROUTES from "Constants/routes";
 import "./bookComponent";
 import "./Read.css";
@@ -24,6 +25,7 @@ const Read = ({ setLastOpenedBookTitle }) => {
     const bookComponentRef = useRef(null);
     const setBookComponentRef = useCallback((bookComponent) => {
         if (bookComponent) {
+            // @ts-ignore
             const bookSource = location?.state?.bookFile ? "location" : "last";
 
             // Send an IPC request to get config
@@ -41,6 +43,7 @@ const Read = ({ setLastOpenedBookTitle }) => {
                     if (retrivedRecentBooks.length) {
                         if (bookSource === "location") {
                             // Check if book from location is in recent books
+                            // @ts-ignore
                             const bookName = location.state.bookFile.name;
                             retrivedRecentBooks.forEach((bookObj) => {
                                 if (bookObj.name === bookName) {
@@ -68,6 +71,7 @@ const Read = ({ setLastOpenedBookTitle }) => {
                 ) {
                     const allBooks = args.value;
 
+                    // @ts-ignore
                     const bookName = location.state.bookFile.name;
                     const bookObj = allBooks[bookName];
 

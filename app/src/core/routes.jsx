@@ -1,7 +1,9 @@
-import React, { useState, createContext } from "react";
+import React, { useState } from "react";
 import { Switch, Route, Redirect } from "react-router";
 
+// @ts-ignore
 import ROUTES from "Constants/routes";
+// @ts-ignore
 import DEFAULT_SETTINGS from "Constants/defaultSettings";
 import loadable from "@loadable/component";
 

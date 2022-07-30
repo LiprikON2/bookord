@@ -1,4 +1,6 @@
 import React from "react";
+
+// @ts-ignore
 import ROUTES from "Constants/routes";
 import {
     validateLicenseRequest,
@@ -36,30 +38,27 @@ class Nav extends React.Component {
         // validated by the main process
         const _ = this;
 
-        window.api.licenseKeys.onReceive(
-            validateLicenseResponse,
-            function (data) {
-                // If the license key/data is valid
-                if (data.success) {
-                    // Here you would compare data.appVersion to
-                    // data.major, data.minor and data.patch to
-                    // ensure that the user's version of the app
-                    // matches their license
-                    _.setState({
-                        licenseValid: true,
-                        allowedMajorVersions: data.major,
-                        allowedMinorVersions: data.minor,
-                        allowedPatchVersions: data.patch,
-                        appVersion: data.appVersion,
-                        licenseExpiry: data.expire,
-                    });
-                } else {
-                    _.setState({
-                        licenseValid: false,
-                    });
-                }
+        window.api.licenseKeys.onReceive(validateLicenseResponse, function (data) {
+            // If the license key/data is valid
+            if (data.success) {
+                // Here you would compare data.appVersion to
+                // data.major, data.minor and data.patch to
+                // ensure that the user's version of the app
+                // matches their license
+                _.setState({
+                    licenseValid: true,
+                    allowedMajorVersions: data.major,
+                    allowedMinorVersions: data.minor,
+                    allowedPatchVersions: data.patch,
+                    appVersion: data.appVersion,
+                    licenseExpiry: data.expire,
+                });
+            } else {
+                _.setState({
+                    licenseValid: false,
+                });
             }
-        );
+        });
     }
 
     toggleMenu(event) {
@@ -98,17 +97,13 @@ class Nav extends React.Component {
 
     renderLicenseModal() {
         return (
-            <div
-                className={`modal ${
-                    this.state.licenseModalActive ? "is-active" : ""
-                }`}>
+            <div className={`modal ${this.state.licenseModalActive ? "is-active" : ""}`}>
                 <div className="modal-background"></div>
                 <div className="modal-content">
                     {this.state.licenseValid ? (
                         <div className="box">
-                            The license key for this product has been validated
-                            and the following versions of this app are allowed
-                            for your use:
+                            The license key for this product has been validated and the
+                            following versions of this app are allowed for your use:
                             <div>
                                 <strong>Major versions:</strong>{" "}
                                 {this.state.allowedMajorVersions} <br />
@@ -133,23 +128,18 @@ class Nav extends React.Component {
                         <div className="box">
                             <div>The license key is not valid.</div>
                             <div>
-                                If you'd like to create a license key, follow
-                                these steps:
+                                If you'd like to create a license key, follow these steps:
                                 <ol style={{ marginLeft: "30px" }}>
                                     <li>
                                         Install this package globally (
                                         <strong>
-                                            npm i
-                                            secure-electron-license-keys-cli -g
+                                            npm i secure-electron-license-keys-cli -g
                                         </strong>
                                         ).
                                     </li>
                                     <li>
                                         Run{" "}
-                                        <strong>
-                                            secure-electron-license-keys-cli
-                                        </strong>
-                                        .
+                                        <strong>secure-electron-license-keys-cli</strong>.
                                     </li>
                                     <li>
                                         Copy <strong>public.key</strong> and{" "}
@@ -157,13 +147,12 @@ class Nav extends React.Component {
                                         <em>root</em> folder of this app.
                                     </li>
                                     <li>
-                                        Re-run this app (ie.{" "}
-                                        <strong>npm run dev</strong>).
+                                        Re-run this app (ie. <strong>npm run dev</strong>
+                                        ).
                                     </li>
                                     <li>
-                                        If you'd like to further customize your
-                                        license keys, copy this link into your
-                                        browser:{" "}
+                                        If you'd like to further customize your license
+                                        keys, copy this link into your browser:{" "}
                                         <a href="https://github.com/reZach/secure-electron-license-keys-cli">
                                             https://github.com/reZach/secure-electron-license-keys-cli
                                         </a>
@@ -237,30 +226,22 @@ class Nav extends React.Component {
                                 </a>
                                 <a
                                     className="navbar-item"
-                                    onClick={() =>
-                                        this.navigate(ROUTES.LOCALIZATION)
-                                    }>
+                                    onClick={() => this.navigate(ROUTES.LOCALIZATION)}>
                                     Changing locales
                                 </a>
                                 <a
                                     className="navbar-item"
-                                    onClick={() =>
-                                        this.navigate(ROUTES.UNDOREDO)
-                                    }>
+                                    onClick={() => this.navigate(ROUTES.UNDOREDO)}>
                                     Undo/redoing actions
                                 </a>
                                 <a
                                     className="navbar-item"
-                                    onClick={() =>
-                                        this.navigate(ROUTES.CONTEXTMENU)
-                                    }>
+                                    onClick={() => this.navigate(ROUTES.CONTEXTMENU)}>
                                     Custom context menu
                                 </a>
                             </div>
                         </div>
-                        <div className="navbar-item">
-                            {window.location.href}
-                        </div>
+                        <div className="navbar-item">{window.location.href}</div>
                     </div>
                     {this.renderLicenseModal()}
                     <div className="navbar-end">
