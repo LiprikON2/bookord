@@ -43,7 +43,8 @@
 .button.btn.btn-ghost:active,
 .button.btn.btn-ghost:hover,
 .button.btn.btn-ghost:focus:not(:active) {
-    opacity: 0.5;
+    background: transparent;
+    opacity: 0.3;
 }
 
 /* Ghost button */

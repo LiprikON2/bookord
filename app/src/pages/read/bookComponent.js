@@ -2,9 +2,6 @@
 ///<reference path="../types/index.d.ts" />
 import debounce from "lodash/debounce";
 
-// TODO copypaste
-// document.querySelector("book-component").shadowRoot.querySelector("#book-content").querySelector("p:nth-child(7)")
-
 const style = /*css*/ `
     :host {
         --book-component-width: 400px;
@@ -35,7 +32,6 @@ const style = /*css*/ `
         column-gap: var(--column-gap);
     }
 
-    /* TODO svg */
     .book-container img {
         display: block !important;
         padding: 0 !important;
@@ -166,7 +162,7 @@ template.innerHTML = /*html*/ `
  *
  */
 
-/** TODO
+/** Book state for the purposes of displaying
  * @typedef {Object} UIState
  * @property {string} bookTitle
  * @property {string} currentSectionTitle
@@ -205,7 +201,6 @@ class BookComponent extends HTMLElement {
         this.isQuitting = false;
     }
 
-    // TODO breaks SOLID principle
     /**
      * Imports book using IPC, completes initialization as soon as promise is resolved
      * @param  {string} filePath
@@ -215,11 +210,13 @@ class BookComponent extends HTMLElement {
     importBook(filePath, sectionIndex) {
         const book = window.api
             .invoke("app:get-parsed-book", [filePath, sectionIndex])
-            .catch(() => {});
+            .catch();
+
         book.then(() => {
             this.status = "ready";
             this.emitSaveParsedBook();
         });
+
         return book;
     }
 
@@ -258,12 +255,12 @@ class BookComponent extends HTMLElement {
      * @param {boolean} [root] - A way to differentiate between recursive and non-recursive function call
      * @returns {string}
      */
-    getSectionTitle(book, toc, sectionIndex, root = true) {
+    recGetSectionTitle(book, toc, sectionIndex, root = true) {
         let descendantSectionTitle;
         for (let tocEntry of toc) {
             const tocEntryChildren = tocEntry?.children;
             if (tocEntryChildren) {
-                descendantSectionTitle = this.getSectionTitle(
+                descendantSectionTitle = this.recGetSectionTitle(
                     book,
                     tocEntryChildren,
                     sectionIndex,
@@ -286,7 +283,7 @@ class BookComponent extends HTMLElement {
             sectionIndex >= 0 &&
             sectionIndex < this.bookState.totalSections
         ) {
-            const prevSectionTitle = this.getSectionTitle(book, toc, sectionIndex - 1);
+            const prevSectionTitle = this.recGetSectionTitle(book, toc, sectionIndex - 1);
             return prevSectionTitle;
         } else {
             return "";
@@ -399,16 +396,14 @@ class BookComponent extends HTMLElement {
      * Updates book's UI elements such as book title, section title and page counters
      * @returns {void}
      */
-    updateBookUI() {
+    updateBookUi() {
         const currentSectionPage = this.bookState.getCurrentSectionPage(this) + 1;
-        const totalSectionPages = this.bookState.getTotalSectionPages(
-            this.bookState.currentSection
-        );
+        const totalSectionPages = this.countSectionPages();
 
         const currentBookPage = this.bookState.getCurrentBookPage(this) + 1;
         const totalBookPages = this.bookState.getTotalBookPages();
 
-        const UIState = {
+        const uiState = {
             bookTitle: this.bookState.bookTitle,
             currentSectionTitle: this.bookState.currentSectionTitle,
             currentSectionPage: currentSectionPage,
@@ -416,24 +411,24 @@ class BookComponent extends HTMLElement {
             currentBookPage: currentBookPage,
             totalBookPages: totalBookPages,
         };
-        this.emitUIStateUpdate(UIState);
+        this.emitUiStateUpdate(uiState);
     }
 
     /**
-     * Emits "UIStateUpdate"
+     * Emits "uiStateUpdate"
      * @param {UIState} state
      * @listens Event
      * @return {void}
      */
-    emitUIStateUpdate(state) {
-        const UIStateUpdateEvent = new CustomEvent("UIStateUpdate", {
+    emitUiStateUpdate(state) {
+        const uiStateUpdateEvent = new CustomEvent("uiStateUpdate", {
             bubbles: true,
             cancelable: false,
             composed: true,
             detail: { state },
         });
 
-        this.dispatchEvent(UIStateUpdateEvent);
+        this.dispatchEvent(uiStateUpdateEvent);
     }
 
     /**
@@ -446,7 +441,7 @@ class BookComponent extends HTMLElement {
         this.bookState.currentSection = currentSection;
         this.bookState.totalSections = book.sectionsTotal;
         this.bookState.bookTitle = book.info.title;
-        this.bookState.currentSectionTitle = this.getSectionTitle(
+        this.bookState.currentSectionTitle = this.recGetSectionTitle(
             book,
             book.structure,
             this.bookState.currentSection
@@ -537,7 +532,7 @@ class BookComponent extends HTMLElement {
         }
 
         this.updateBookSectionState(book, sectionIndex);
-        this.updateBookUI();
+        this.updateBookUi();
 
         // In case user traveled from previous section and
         // still had pages pending to shift through
@@ -617,17 +612,6 @@ class BookComponent extends HTMLElement {
         return leftEdge;
     }
 
-    // TODO deprecate
-    /**
-     * Inserts element right after target element
-     * @param {HTMLElement} referenceNode
-     * @param {HTMLElement} newNode
-     * @returns {void}
-     */
-    _insertAfter(referenceNode, newNode) {
-        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-    }
-
     /**
      * Sets pixel offset as a way to advance pages within a section
      * @param {string|number} nextOffset
@@ -687,7 +671,7 @@ class BookComponent extends HTMLElement {
         const totalWidth = this._getTotalDisplayWidth();
         const width = this._getDisplayWidth();
 
-        return Math.ceil(totalWidth / width);
+        return Math.round(totalWidth / width);
     }
 
     /**
@@ -708,7 +692,7 @@ class BookComponent extends HTMLElement {
             const newOffset = this.calcShiftedOffset(nPageShift);
 
             this.setOffset(newOffset);
-            this.updateBookUI();
+            this.updateBookUi();
             this.emitSaveBookmarks();
         }
     }
@@ -727,6 +711,29 @@ class BookComponent extends HTMLElement {
             page = maxPage;
         }
         return page;
+    }
+    /**
+     * Flips one page forward
+     * @returns {void}
+     */
+    pageForward() {
+        this.flipNPages(1);
+    }
+    /**
+     * Flips one page backward
+     * @returns {void}
+     */
+    pageBackward() {
+        this.flipNPages(-1);
+    }
+    /**
+     * Flips specified amout of pages forward or backward
+     * @param {number} n - book page
+     * @returns {void}
+     */
+    flipNPages(n) {
+        const currentPage = this.bookState.getCurrentBookPage(this) + 1;
+        this.jumpToPage(currentPage + n);
     }
 
     /**
@@ -768,17 +775,6 @@ class BookComponent extends HTMLElement {
 
             this.loadSection(nextSection, currentNextSectionPage);
         }
-    }
-
-    /**
-     * Overrides css variables that determines book component's dimentions
-     * {*}
-     * @param {HTMLElement} [root] - element containig styles
-     * @return {void}
-     */
-    setSize(width, height, root = this.rootElem) {
-        root.style.setProperty("width", width + "px");
-        root.style.setProperty("height", height + "px");
     }
 
     /**
@@ -855,12 +851,12 @@ class BookComponent extends HTMLElement {
             parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
             // Update page count every 10 sections
             if (sectionIndex % 10 === 0) {
-                parentComponent.updateBookUI();
+                parentComponent.updateBookUi();
             }
             await _waitForNextTask();
         });
 
-        parentComponent.updateBookUI();
+        parentComponent.updateBookUi();
     }
 
     /**
@@ -908,7 +904,6 @@ class BookComponent extends HTMLElement {
             this.status = "ready";
         }
 
-        // TODO make a class
         this.bookState = {
             currentSection: initSectionIndex,
             totalSections: 0,
@@ -925,6 +920,7 @@ class BookComponent extends HTMLElement {
                 throw new Error("Couldn't get section book page belonged to.");
             },
 
+            // Zero-based
             getCurrentSectionPage: function (that) {
                 const displayWidth = that._getDisplayWidth();
                 const currentOffset = this._getCurrentOffset();
@@ -944,11 +940,18 @@ class BookComponent extends HTMLElement {
                     this.sectionPagesArr,
                     this.currentSection
                 );
-                return (
-                    sumOfPages -
-                    this.getTotalSectionPages(this.currentSection) +
-                    this.getCurrentSectionPage(that)
-                );
+                const totalSectionPages = this.getTotalSectionPages(this.currentSection);
+                const totalSectionPages2 = that.countSectionPages();
+                const currentSectionPage = this.getCurrentSectionPage(that);
+
+                // console.log(
+                //     sumOfPages,
+                //     totalSectionPages,
+                //     "vs",
+                //     totalSectionPages2,
+                //     currentSectionPage
+                // );
+                return sumOfPages - totalSectionPages2 + currentSectionPage;
             },
             getTotalBookPages: function () {
                 const totalBookPages = this.sectionPagesArr.reduce(
@@ -1133,7 +1136,12 @@ class BookComponent extends HTMLElement {
             if (this.isQuitting) return;
             if (this.status !== "resizing") {
                 // Get a reference to a visible element
+                // TODO sometimes errors out
                 const element = this.getVisibleElement();
+                if (!element) {
+                    console.log("null in recount");
+                    return;
+                }
 
                 const newOffset = this.getElementOffset(element);
                 this.setOffset(newOffset);
@@ -1157,7 +1165,7 @@ class BookComponent extends HTMLElement {
         this.recount.cancel();
         this.emitSaveBookmarks.cancel();
 
-        // TODO check if it can to be removed
+        // TODO check if this does something
         delete this.initBook;
         delete this.book;
     }

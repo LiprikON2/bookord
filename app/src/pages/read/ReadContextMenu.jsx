@@ -190,9 +190,9 @@ const ReadContext = () => {
                 </Button>
             </ContextMenu>
 
-            <Button onClick={() => setOpenedTooltip(false)} compact>
+            {/* <Button onClick={() => setOpenedTooltip(false)} compact>
                 toggle
-            </Button>
+            </Button> */}
             {toTooltip.target && (
                 <PortalTooltip opened={openedTooltip} toTooltip={toTooltip} />
             )}

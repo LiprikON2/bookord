@@ -21,7 +21,7 @@ import "./Read.css";
 
 const Read = ({ setLastOpenedBookTitle }) => {
     const location = useLocation();
-    const [page, setPage] = useState(1);
+    // const [page, setPage] = useState(1);
 
     // Callback ref for passing object to the web component
     const bookComponentRef = useRef(null);
@@ -97,14 +97,14 @@ const Read = ({ setLastOpenedBookTitle }) => {
             bookRef.addEventListener("imgClickEvent", handleImgClick);
             bookRef.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
             bookRef.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
-            bookRef.addEventListener("UIStateUpdate", handleUIUpdate);
+            bookRef.addEventListener("uiStateUpdate", handleUiUpdate);
         });
     };
-    const [UIState, setUIState] = useState({});
+    const [uiState, setUiState] = useState({});
 
-    const handleUIUpdate = (e) => {
+    const handleUiUpdate = (e) => {
         const newState = e.detail.state;
-        setUIState(() => newState);
+        setUiState(() => newState);
     };
 
     const [bookmarks, setBookmarks] = useState({});
@@ -152,18 +152,14 @@ const Read = ({ setLastOpenedBookTitle }) => {
         setRecentBooks.setState([parsedBook]);
     };
 
-    const flipNPages = (nPageShift) => {
-        const book = bookComponentRef.current;
-
-        const currentPage = book.bookState.getCurrentBookPage(book) + 1;
-        const validNextPage = book.enforcePageRange(currentPage + nPageShift);
-        setPage(validNextPage);
+    const flipNPages = (n) => {
+        bookComponentRef.current.flipNPages(n);
     };
     const goNext = () => {
-        flipNPages(1);
+        bookComponentRef.current.pageForward();
     };
     const goBack = () => {
-        flipNPages(-1);
+        bookComponentRef.current.pageBackward();
     };
 
     useDidUpdate(() => {
@@ -181,7 +177,6 @@ const Read = ({ setLastOpenedBookTitle }) => {
         const lastOpenedBook = recentBooks[recentBooks.length - 1];
         if (lastOpenedBook) {
             const lastOpenedBookTitle = lastOpenedBook.info.title;
-            console.log("hehe", recentBooks, lastOpenedBookTitle);
             setLastOpenedBookTitle(lastOpenedBookTitle);
         }
     }, [recentBooks]);
@@ -206,13 +201,13 @@ const Read = ({ setLastOpenedBookTitle }) => {
     return (
         <>
             <section className="section read-section">
-                <BookUI UIState={UIState}>
+                <BookUI UIState={uiState}>
                     <div
                         className="component-container"
                         style={{
                             visibility: bookComponentRef !== null ? "visible" : "hidden",
                         }}>
-                        <book-component ref={setBookComponentRef} book-page={page} />
+                        <book-component ref={setBookComponentRef} />
                     </div>
                 </BookUI>
                 <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
