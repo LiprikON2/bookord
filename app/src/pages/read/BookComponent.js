@@ -197,7 +197,7 @@ class BookComponent extends HTMLElement {
         this.pageCounter = new PageCounter(this);
 
         /**
-         * @type {('loading'|'sectionReady'|'ready'|'resizing')} Status of initialization of the book, true when all of the book's sections are parsed
+         * @type {('loading'|'sectionReady'|'ready')} Status of initialization of the book, true when all of the book's sections are parsed
          */
         this.status = "loading";
         this.isQuitting = false;
@@ -764,7 +764,7 @@ class BookComponent extends HTMLElement {
             this.#shiftNPages(nPageShift);
         } else if (
             nextSection !== currentSection &&
-            (this.status === "ready" || this.status === "resizing")
+            (this.status === "ready" || this.pageCounter.isCounting)
         ) {
             const sectionPagesArr = this.bookState.sectionPagesArr;
 
@@ -1150,7 +1150,8 @@ class BookComponent extends HTMLElement {
     recount = debounce(
         () => {
             if (this.isQuitting) return;
-            if (this.status !== "resizing") {
+
+            if (!this.pageCounter.isCounting) {
                 // Get a reference to a visible element
                 // TODO sometimes errors out
                 const element = this.getVisibleElement();
@@ -1204,15 +1205,20 @@ class BookComponent extends HTMLElement {
 window.customElements.define("book-component", BookComponent);
 
 class PageCounter {
+    parentComponent;
+    shadowRoot;
+    #isCounting;
+
     constructor(bookComponent) {
         this.parentComponent = bookComponent;
         this.shadowRoot = bookComponent.shadowRoot;
-
-        this.isCounting = false;
+        this.#isCounting = false;
     }
-
+    get isCounting() {
+        return this.#isCounting;
+    }
     start() {
-        if (true || "TODO") {
+        if (!this.isCounting) {
             this.#createCounterComponent();
         }
     }
@@ -1222,8 +1228,7 @@ class PageCounter {
      * @return {Promise<any>}
      */
     async #createCounterComponent() {
-        // this.status = "resizing";
-        this.isCounting = true;
+        this.#isCounting = true;
 
         /** Create a counter`component inside the current component
          * @type {BookComponent}
@@ -1238,8 +1243,8 @@ class PageCounter {
         rootElem.style.position = "absolute";
 
         await this.#countBookPages(childComponent);
-        // this.status = "ready";
-        this.isCounting = false;
+
+        this.#isCounting = false;
         childComponent.remove();
     }
 
