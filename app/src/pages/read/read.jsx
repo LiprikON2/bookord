@@ -1,3 +1,5 @@
+///<reference path="../types/index.d.ts" />
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useHotkeys, useDidUpdate, useListState } from "@mantine/hooks";

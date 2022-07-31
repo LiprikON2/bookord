@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const io = require("../io");
 
 // const send = (str, data) => {

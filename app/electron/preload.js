@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const { contextBridge, ipcRenderer } = require("electron");
 const fs = require("fs");
 const i18nextBackend = require("i18next-electron-fs-backend");

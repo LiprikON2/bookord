@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const { ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs-extra");

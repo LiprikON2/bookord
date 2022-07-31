@@ -11,26 +11,24 @@ import "./Navbar.css";
 const Navbar = ({ lastOpenedBookTitle }) => {
     const location = useLocation();
 
-    const isBtnBackVisible = location.pathname === ROUTES.LIBRARY;
-    const conditionalBackButtonStyle = {
-        opacity: isBtnBackVisible ? "0" : "1",
-        pointerEvents: isBtnBackVisible ? "none" : "auto",
-    };
-
+    const isBtnBackVisible = location.pathname !== ROUTES.LIBRARY;
     const isBtnContinueReadingVisible =
-        location.pathname === ROUTES.READ || !lastOpenedBookTitle;
-    const conditionalContinueReadingStyle = {
-        opacity: isBtnContinueReadingVisible ? "0" : "1",
-        pointerEvents: isBtnContinueReadingVisible ? "none" : "auto",
+        location.pathname !== ROUTES.READ && lastOpenedBookTitle;
+
+    const invisibleStyle = {
+        opacity: "0",
+        PointerEvents: "none",
     };
 
     return (
         <>
             <nav className="navbar">
                 <ul className="navbar-list">
-                    <li className="navbar-item" style={conditionalBackButtonStyle}>
+                    <li
+                        className="navbar-item"
+                        style={!isBtnBackVisible ? invisibleStyle : null}>
                         <Button
-                            disabled={isBtnBackVisible}
+                            isVisible={isBtnBackVisible}
                             to={ROUTES.LIBRARY}
                             title="Back to Library"
                             isIconOnly={true}>
@@ -84,9 +82,11 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                             TEST
                         </Button>
                     </li>
-                    <li className="navbar-item" style={conditionalContinueReadingStyle}>
+                    <li
+                        className="navbar-item"
+                        style={!isBtnContinueReadingVisible ? invisibleStyle : null}>
                         <Button
-                            disabled={isBtnContinueReadingVisible}
+                            isVisible={isBtnContinueReadingVisible}
                             to={ROUTES.READ}
                             title={`Continue Reading "${lastOpenedBookTitle}"`}
                             leftIcon={

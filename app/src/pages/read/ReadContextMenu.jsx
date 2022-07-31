@@ -6,6 +6,7 @@ import { useDisclosure, useClickOutside, useDidUpdate } from "@mantine/hooks";
 
 import Button from "components/Button";
 import ContextMenu from "components/ContextMenu";
+// @ts-ignore
 import SECRET from "Constants/secret";
 import "./ReadContextMenu.css";
 
@@ -49,6 +50,7 @@ const PortalTooltip = ({ opened, toTooltip }) => {
                     multiline
                     width={250}
                     withinPortal={true}
+                    // @ts-ignore
                     component={"span"}
                     opened={opened}
                     label={translatedText}
@@ -155,7 +157,8 @@ const ReadContext = () => {
             <ContextMenu
                 opened={opened}
                 setOpened={setOpened}
-                setContextMenuEvent={setContextMenuEvent}>
+                setContextMenuEvent={setContextMenuEvent}
+                position={undefined}>
                 <Button
                     onClick={handleCopy}
                     compact
