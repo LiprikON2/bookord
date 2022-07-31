@@ -194,6 +194,8 @@ class BookComponent extends HTMLElement {
 
         this.componentStyle = getComputedStyle(this.rootElem);
 
+        this.pageCounter = new PageCounter(this);
+
         /**
          * @type {('loading'|'sectionReady'|'ready'|'resizing')} Status of initialization of the book, true when all of the book's sections are parsed
          */
@@ -787,24 +789,24 @@ class BookComponent extends HTMLElement {
      * Creates another web component which is used to count pages of a book, and then destroys it
      * @return {Promise<any>}
      */
-    async createCounterComponent() {
-        this.status = "resizing";
-        /** Create a counter`component inside the current component
-         * @type {BookComponent}
-         */
-        // @ts-ignore
-        const counterComponent = document.createElement("book-component");
-        this.shadowRoot.appendChild(counterComponent);
+    // async createCounterComponent() {
+    //     this.status = "resizing";
+    //     /** Create a counter`component inside the current component
+    //      * @type {BookComponent}
+    //      */
+    //     // @ts-ignore
+    //     const counterComponent = document.createElement("book-component");
+    //     this.shadowRoot.appendChild(counterComponent);
 
-        // Make it hidden
-        const rootElem = counterComponent.shadowRoot.getElementById("root");
-        rootElem.style.visibility = "hidden";
-        rootElem.style.position = "absolute";
+    //     // Make it hidden
+    //     const rootElem = counterComponent.shadowRoot.getElementById("root");
+    //     rootElem.style.visibility = "hidden";
+    //     rootElem.style.position = "absolute";
 
-        await counterComponent.#countBookPages(this);
-        this.status = "ready";
-        counterComponent.remove();
-    }
+    //     await counterComponent.#countBookPages(this);
+    //     this.status = "ready";
+    //     counterComponent.remove();
+    // }
 
     // TODO move to utility
     /**
@@ -813,57 +815,57 @@ class BookComponent extends HTMLElement {
      * @param {*} callback
      * @returns {Promise<void>}
      */
-    async _asyncForEach(array, callback) {
-        for (let index = 0; index < array.length; index++) {
-            await callback(array[index], index, array);
-        }
-    }
+    // async _asyncForEach(array, callback) {
+    //     for (let index = 0; index < array.length; index++) {
+    //         await callback(array[index], index, array);
+    //     }
+    // }
 
     /**
      * Asynchronously and non-blockingly counts pages of a book with a help of a parent web component
      * @param {BookComponent} parentComponent - instance of a parent web component which created this counter web component
      * @returns {Promise<void>}
      */
-    async #countBookPages(parentComponent) {
-        // TODO move to utility
-        /**
-         * Splits code in chunks
-         * https://stackoverflow.com/a/67135932/10744339
-         * @returns {Promise<void>}
-         */
-        const _waitForNextTask = () => {
-            // @ts-ignore
-            const { port1, port2 } = (_waitForNextTask.channel ??= new MessageChannel());
+    // async #countBookPages(parentComponent) {
+    //     // TODO move to utility
+    //     /**
+    //      * Splits code in chunks
+    //      * https://stackoverflow.com/a/67135932/10744339
+    //      * @returns {Promise<void>}
+    //      */
+    //     const _waitForNextTask = () => {
+    //         // @ts-ignore
+    //         const { port1, port2 } = (_waitForNextTask.channel ??= new MessageChannel());
 
-            return new Promise((resolve) => {
-                port1.addEventListener("message", () => resolve(), { once: true });
-                port1.start();
-                port2.postMessage("");
-            });
-        };
+    //         return new Promise((resolve) => {
+    //             port1.addEventListener("message", () => resolve(), { once: true });
+    //             port1.start();
+    //             port2.postMessage("");
+    //         });
+    //     };
 
-        const book = await parentComponent.book;
+    //     const book = await parentComponent.book;
 
-        parentComponent.bookState.sectionPagesArr = [];
+    //     parentComponent.bookState.sectionPagesArr = [];
 
-        // TODO start counting pages near where user left off (0th bookmark)
-        await this._asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
-            const section = this.getSection(book, sectionIndex);
-            await this.loadStyles(book, section);
-            await this.loadContent(section);
+    //     // TODO start counting pages near where user left off (0th bookmark)
+    //     await this._asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
+    //         const section = this.getSection(book, sectionIndex);
+    //         await this.loadStyles(book, section);
+    //         await this.loadContent(section);
 
-            const totalSectionPages = this.countSectionPages();
+    //         const totalSectionPages = this.countSectionPages();
 
-            parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
-            // Update page count every 10 sections
-            if (sectionIndex % 10 === 0) {
-                parentComponent.updateBookUi();
-            }
-            await _waitForNextTask();
-        });
+    //         parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
+    //         // Update page count every 10 sections
+    //         if (sectionIndex % 10 === 0) {
+    //             parentComponent.updateBookUi();
+    //         }
+    //         await _waitForNextTask();
+    //     });
 
-        parentComponent.updateBookUi();
-    }
+    //     parentComponent.updateBookUi();
+    // }
 
     /**
      * Loads book to the web component, as well as runs a page counter
@@ -1160,7 +1162,8 @@ class BookComponent extends HTMLElement {
                 const newOffset = this.getElementOffset(element);
                 this.setOffset(newOffset);
 
-                this.createCounterComponent();
+                // TODO this.createCounterComponent();
+                this.pageCounter.start();
             } else {
                 this.recount();
             }
@@ -1199,3 +1202,101 @@ class BookComponent extends HTMLElement {
 }
 
 window.customElements.define("book-component", BookComponent);
+
+class PageCounter {
+    constructor(bookComponent) {
+        this.parentComponent = bookComponent;
+        this.shadowRoot = bookComponent.shadowRoot;
+
+        this.isCounting = false;
+    }
+
+    start() {
+        if (true || "TODO") {
+            this.#createCounterComponent();
+        }
+    }
+
+    /**
+     * Creates another web component which is used to count pages of a book, and then destroys it
+     * @return {Promise<any>}
+     */
+    async #createCounterComponent() {
+        // this.status = "resizing";
+        this.isCounting = true;
+
+        /** Create a counter`component inside the current component
+         * @type {BookComponent}
+         */
+        // @ts-ignore
+        const childComponent = document.createElement("book-component");
+        this.shadowRoot.appendChild(childComponent);
+
+        // Make it hidden
+        const rootElem = childComponent.shadowRoot.getElementById("root");
+        rootElem.style.visibility = "hidden";
+        rootElem.style.position = "absolute";
+
+        await this.#countBookPages(childComponent);
+        // this.status = "ready";
+        this.isCounting = false;
+        childComponent.remove();
+    }
+
+    /**
+     * Asynchronously and non-blockingly counts pages of a book with a help of a parent web component
+     * @param {BookComponent} childComponent - TODO instance of a parent web component which created this counter web component
+     * @returns {Promise<void>}
+     */
+    async #countBookPages(childComponent) {
+        const book = await this.parentComponent.book;
+
+        this.parentComponent.bookState.sectionPagesArr = [];
+
+        // TODO start counting pages near where user left off (0th bookmark)
+        await this.#asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
+            const section = childComponent.getSection(book, sectionIndex);
+            await childComponent.loadStyles(book, section);
+            await childComponent.loadContent(section);
+
+            const totalSectionPages = childComponent.countSectionPages();
+
+            this.parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
+            // Update page count every 10 sections
+            if (sectionIndex % 10 === 0) {
+                this.parentComponent.updateBookUi();
+            }
+            await this.#waitForNextTask();
+        });
+
+        this.parentComponent.updateBookUi();
+    }
+
+    /**
+     * Asynchronous version of a forEach
+     * @param {Array} array
+     * @param {*} callback
+     * @returns {Promise<void>}
+     */
+    async #asyncForEach(array, callback) {
+        for (let index = 0; index < array.length; index++) {
+            await callback(array[index], index, array);
+        }
+    }
+
+    /**
+     * Splits code in chunks
+     * https://stackoverflow.com/a/67135932/10744339
+     * @returns {Promise<void>}
+     */
+    #waitForNextTask() {
+        // @ts-ignore
+        const { port1, port2 } = (this.#waitForNextTask.channel ??= new MessageChannel());
+
+        return new Promise((resolve) => {
+            port1.addEventListener("message", () => resolve(), { once: true });
+            port1.start();
+            port2.postMessage("");
+        });
+    }
+}

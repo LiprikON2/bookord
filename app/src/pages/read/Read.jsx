@@ -21,7 +21,6 @@ import "./Read.css";
 
 const Read = ({ setLastOpenedBookTitle }) => {
     const location = useLocation();
-    // const [page, setPage] = useState(1);
 
     // Callback ref for passing object to the web component
     const bookComponentRef = useRef(null);
