@@ -14,7 +14,7 @@ import BookUI from "./BookUI";
 import ReadContextMenu from "./ReadContextMenu";
 // @ts-ignore
 import ROUTES from "Constants/routes";
-import "./bookComponent";
+import "./BookComponent";
 import "./Read.css";
 
 // TODO use useContext hook https://youtu.be/TNhaISOUy6Q?t=355

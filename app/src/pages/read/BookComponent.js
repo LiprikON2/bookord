@@ -518,9 +518,14 @@ class BookComponent extends HTMLElement {
         // or user traveled back from the subsequent section back
         if (offsetSelector) {
             const targetElem = this.shadowRoot.querySelector(offsetSelector);
-            const targetOffset = this.getElementOffset(targetElem);
-            // Set offset to the last page (if it's the end-marker) of this section
-            this.setOffset(targetOffset);
+            if (!targetElem) {
+                console.log("null in loadSection");
+            }
+            if (targetElem) {
+                const targetOffset = this.getElementOffset(targetElem);
+                // Set offset to the last page (if it's the end-marker) of this section
+                this.setOffset(targetOffset);
+            }
         } else if (elementIndex) {
             const targetElem = this.getElementByIndex(elementIndex);
             const targetOffset = this.getElementOffset(targetElem);
@@ -537,7 +542,7 @@ class BookComponent extends HTMLElement {
         // In case user traveled from previous section and
         // still had pages pending to shift through
         if (sectionPage !== 0) {
-            this._flipNPages(sectionPage);
+            this.#shiftNPages(sectionPage);
         }
 
         this.attachLinkHandlers(book);
@@ -548,7 +553,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Checks visibility of the element
-     * @param {HTMLElement|any} elem
+     * @param {HTMLElement | any} elem
      * @returns {boolean[]} [isFullyVisible, isAtLeastPartiallyVisible]
      */
     checkVisibility(elem) {
@@ -591,11 +596,12 @@ class BookComponent extends HTMLElement {
 
     /**
      * Returns element's offset
-     * @param {HTMLElement|any} elem
+     * @param {HTMLElement | any} elem
      * @param {boolean} [round] - rounds elements offset to the left page edge
      * @returns {number}
      */
     getElementOffset(elem, round = true) {
+        if (!elem) throw new Error("Cannot get element offset: elem is not provided.");
         const elemOffset = elem.offsetLeft;
         if (!round) {
             return elemOffset;
@@ -614,7 +620,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Sets pixel offset as a way to advance pages within a section
-     * @param {string|number} nextOffset
+     * @param {string | number} nextOffset
      * @returns {void}
      */
     setOffset(nextOffset) {
@@ -676,20 +682,20 @@ class BookComponent extends HTMLElement {
 
     /**
      * Flips N pages of a book
-     * @param {number} nPageShift
+     * @param {number} n
      * @returns {void}
      */
-    _flipNPages(nPageShift) {
+    #shiftNPages(n) {
         if (this.status === "loading") return;
 
         const minPageNum = 0;
         const maxPageNum = this.countSectionPages();
         const currentPage = this.bookState.getCurrentSectionPage(this);
-        const nextSectionPage = currentPage + nPageShift;
+        const nextSectionPage = currentPage + n;
 
         // Checks if requested page is in range of this section
         if (nextSectionPage >= minPageNum && nextSectionPage <= maxPageNum) {
-            const newOffset = this.calcShiftedOffset(nPageShift);
+            const newOffset = this.calcShiftedOffset(n);
 
             this.setOffset(newOffset);
             this.updateBookUi();
@@ -702,7 +708,7 @@ class BookComponent extends HTMLElement {
      * @param {number} page - book page
      * @returns {number}
      */
-    enforcePageRange(page) {
+    #enforcePageRange(page) {
         const minPage = 1;
         const maxPage = this.bookState.getTotalBookPages();
         if (page < minPage) {
@@ -743,7 +749,7 @@ class BookComponent extends HTMLElement {
      */
     jumpToPage(page) {
         if (this.status === "loading") return;
-        const validPage = this.enforcePageRange(page);
+        const validPage = this.#enforcePageRange(page);
 
         const currentPage = this.bookState.getCurrentBookPage(this);
         const nPageShift = validPage - currentPage - 1;
@@ -753,7 +759,7 @@ class BookComponent extends HTMLElement {
 
         // Avoid loading the loaded section again by flipping pages instead
         if (nextSection === currentSection && nPageShift !== 0) {
-            this._flipNPages(nPageShift);
+            this.#shiftNPages(nPageShift);
         } else if (
             nextSection !== currentSection &&
             (this.status === "ready" || this.status === "resizing")
@@ -795,7 +801,7 @@ class BookComponent extends HTMLElement {
         rootElem.style.visibility = "hidden";
         rootElem.style.position = "absolute";
 
-        await counterComponent._countBookPages(this);
+        await counterComponent.#countBookPages(this);
         this.status = "ready";
         counterComponent.remove();
     }
@@ -818,7 +824,7 @@ class BookComponent extends HTMLElement {
      * @param {BookComponent} parentComponent - instance of a parent web component which created this counter web component
      * @returns {Promise<void>}
      */
-    async _countBookPages(parentComponent) {
+    async #countBookPages(parentComponent) {
         // TODO move to utility
         /**
          * Splits code in chunks
@@ -861,7 +867,7 @@ class BookComponent extends HTMLElement {
 
     /**
      * Loads book to the web component, as well as runs a page counter
-     * @param {Book|ParsedBook|any} bookObj - Entry of AllBooks object; contains information about book file and book metadata
+     * @param {Book | ParsedBook | any} bookObj - Entry of AllBooks object; contains information about book file and book metadata
      * @param {BookmarkList} bookmarkList - Interaction states of all of the books
      * @param {boolean} [isAlreadyParsed=false] - specifies which type of book object is passed: Book or ParsedBook
      * @return {Promise<void>}
@@ -899,16 +905,25 @@ class BookComponent extends HTMLElement {
             }
         } else {
             console.log("###> Is already parsed");
-            // Make it so a promise matches the interface of an unparsed book
+            // TODO Make it so a promise matches the interface of an unparsed book
             this.book = Promise.resolve(bookObj);
             this.status = "ready";
         }
 
-        this.bookState = {
-            currentSection: initSectionIndex,
+        this.bookState = this.createBookState(this, initSectionIndex);
+
+        await this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
+        // Recount book pages everytime bookComponent's viewport changes
+        new ResizeObserver(() => this.recount()).observe(this.rootElem);
+    }
+
+    createBookState(bookComponent, currentSection) {
+        return {
+            bookComponent,
+            currentSection,
             totalSections: 0,
 
-            getSectionBookPageBelongsTo: function (page) {
+            getSectionBookPageBelongsTo(page) {
                 const sliceOfPages = [];
                 for (const [index, pageCount] of this.sectionPagesArr.entries()) {
                     sliceOfPages.push(pageCount);
@@ -921,21 +936,21 @@ class BookComponent extends HTMLElement {
             },
 
             // Zero-based
-            getCurrentSectionPage: function (that) {
+            getCurrentSectionPage(that) {
                 const displayWidth = that._getDisplayWidth();
                 const currentOffset = this._getCurrentOffset();
                 const currentPage = Math.abs(currentOffset / displayWidth);
                 return currentPage;
             },
-            getTotalSectionPages: function (sectionIndex) {
+            getTotalSectionPages(sectionIndex) {
                 return this.sectionPagesArr[sectionIndex];
             },
 
             sectionPagesArr: [0],
-            isSectionCounted: function (section) {
+            isSectionCounted(section) {
                 return !!this.sectionPagesArr[section];
             },
-            getCurrentBookPage: function (that) {
+            getCurrentBookPage(that) {
                 const sumOfPages = this._sumFirstNArrayItems(
                     this.sectionPagesArr,
                     this.currentSection
@@ -944,6 +959,7 @@ class BookComponent extends HTMLElement {
                 const totalSectionPages2 = that.countSectionPages();
                 const currentSectionPage = this.getCurrentSectionPage(that);
 
+                // TODO
                 // console.log(
                 //     sumOfPages,
                 //     totalSectionPages,
@@ -953,7 +969,7 @@ class BookComponent extends HTMLElement {
                 // );
                 return sumOfPages - totalSectionPages2 + currentSectionPage;
             },
-            getTotalBookPages: function () {
+            getTotalBookPages() {
                 const totalBookPages = this.sectionPagesArr.reduce(
                     (prevValue, currValue) => prevValue + currValue
                 );
@@ -963,26 +979,24 @@ class BookComponent extends HTMLElement {
             bookTitle: "",
             currentSectionTitle: "",
 
-            _sumFirstNArrayItems: function (array, n) {
+            _sumFirstNArrayItems(array, n) {
                 const arraySlice = array.slice(0, n + 1);
                 const arraySum = arraySlice.reduce(
                     (prevValue, currValue) => prevValue + currValue
                 );
                 return arraySum;
             },
-            _getCurrentOffset: function () {
+            _getCurrentOffset() {
                 // TODO make positive
                 // Strips all non-numeric characters from a string
                 return (
                     // @ts-ignore
-                    parseInt(this.contentElem.style.transform.replace(/[^\d.-]/g, "")) ??
-                    0
+                    parseInt(
+                        bookComponent.contentElem.style.transform.replace(/[^\d.-]/g, "")
+                    ) ?? 0
                 );
-            }.bind(this),
+            },
         };
-
-        await this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
-        new ResizeObserver(() => this.recount()).observe(this.rootElem);
     }
 
     /**
@@ -1100,7 +1114,7 @@ class BookComponent extends HTMLElement {
     /**
      * Recus
      * @param {HTMLCollection} [elements]
-     * @returns {HTMLElement|any}
+     * @returns {HTMLElement | any}
      */
     recGetVisibleElement(elements, strict = true) {
         if (!elements) {
@@ -1173,8 +1187,8 @@ class BookComponent extends HTMLElement {
     /**
      * Runs everytime web component's listened attribute changes.
      * @param {string} name
-     * @param {string|undefined} oldValue
-     * @param {string|undefined} newValue
+     * @param {string | undefined} oldValue
+     * @param {string | undefined} newValue
      */
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "book-page" && oldValue) {
