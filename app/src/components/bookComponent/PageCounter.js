@@ -4,13 +4,13 @@
 import BookComponent from "./BookComponent";
 
 export default class PageCounter {
-    parentComponent;
-    shadowRoot;
+    #parentComponent;
+    #shadowRoot;
     #isCounting;
 
     constructor(bookComponent) {
-        this.parentComponent = bookComponent;
-        this.shadowRoot = bookComponent.shadowRoot;
+        this.#parentComponent = bookComponent;
+        this.#shadowRoot = bookComponent.shadowRoot;
         this.#isCounting = false;
     }
     get isCounting() {
@@ -34,7 +34,7 @@ export default class PageCounter {
          */
         // @ts-ignore
         const childComponent = document.createElement("book-component");
-        this.shadowRoot.appendChild(childComponent);
+        this.#shadowRoot.appendChild(childComponent);
 
         // Make childComponent hidden
         const rootElem = childComponent.rootElem;
@@ -53,27 +53,27 @@ export default class PageCounter {
      * @returns {Promise<void>}
      */
     async #countBookPages(childComponent) {
-        const book = await this.parentComponent.book;
+        const book = await this.#parentComponent.book;
 
-        this.parentComponent.bookState.sectionPagesArr = [];
+        this.#parentComponent.bookState.sectionPagesArr = [];
 
         // TODO start counting pages near where user left off (0th bookmark)
         await this.#asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
             const section = childComponent.getSection(book, sectionIndex);
-            await childComponent.loadStyles(book, section);
+            await childComponent.styleLoader.loadStyles(book, section);
             await childComponent.loadContent(section);
 
             const totalSectionPages = childComponent.countSectionPages();
 
-            this.parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
+            this.#parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
             // Update page count every 10 sections
             if (sectionIndex % 10 === 0) {
-                this.parentComponent.updateBookUi();
+                this.#parentComponent.updateBookUi();
             }
             await this.#waitForNextTask();
         });
 
-        this.parentComponent.updateBookUi();
+        this.#parentComponent.updateBookUi();
     }
 
     /**

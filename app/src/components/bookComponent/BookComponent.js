@@ -4,59 +4,8 @@
 
 import debounce from "lodash/debounce";
 import PageCounter from "./PageCounter";
-
-const style = /*css*/ `
-    :host {
-        --book-component-width: 400px;
-        --book-component-height: 600px;
-        --column-gap: 100px;
-
-        --clr-link: #4dabf7; /* todo move it to somewhere else */
-    }
-
-    :any-link {
-        color: var(--clr-link) !important;
-    }
-
-    .book-container {
-        max-width: 30rem;
-        height: 85vh;
-        height: 80vh;
-        height: 100%;
-
-        margin: auto;
-        overflow: hidden;
-    }
-    .book-container > #book-content {
-        width: 100%;
-        height: 100%;
-
-        columns: 1;
-        column-gap: var(--column-gap);
-    }
-
-    .book-container img {
-        display: block !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-        object-fit: contain;
-        cursor: zoom-in;
-    }
-`;
-
-const template = document.createElement("template");
-template.innerHTML = /*html*/ `
-    <section id="root" class="book-container">
-        <style id="book-style"></style>
-        <style id="component-style">
-            ${style}
-        </style>
-      
-        <div id="book-content"></div>
-        
-    </section>
-`;
+import StyleLoader from "./StyleLoader";
+import { template } from "./Template";
 
 /**
  * Book web component
@@ -80,6 +29,7 @@ export default class BookComponent extends HTMLElement {
         this.componentStyle = getComputedStyle(this.rootElem);
 
         this.pageCounter = new PageCounter(this);
+        this.styleLoader = new StyleLoader(this);
 
         /**
          * @type {('loading'|'sectionReady'|'ready')} Status of initialization of the book, true when all of the book's sections are parsed
@@ -107,32 +57,32 @@ export default class BookComponent extends HTMLElement {
         return book;
     }
 
-    /**
-     * Returns all references to stylesheet names in a section
-     * @param {HtmlObject} section
-     * @returns {Array<string>}
-     */
-    getSectionStyleReferences(section) {
-        // First tag of a section is the head tag
-        const headLinks = section[0].children.filter((elem) => {
-            return elem.tag === "link";
-        });
+    // /**
+    //  * Returns all references to stylesheet names in a section
+    //  * @param {HtmlObject} section
+    //  * @returns {Array<string>}
+    //  */
+    // getSectionStyleReferences(section) {
+    //     // First tag of a section is the head tag
+    //     const headLinks = section[0].children.filter((elem) => {
+    //         return elem.tag === "link";
+    //     });
 
-        const sectionStyles = headLinks.map((link) => link?.attrs?.href);
-        return sectionStyles;
-    }
+    //     const sectionStyles = headLinks.map((link) => link?.attrs?.href);
+    //     return sectionStyles;
+    // }
 
-    /**
-     * Returns inline styles of a particular book section
-     * @param {HtmlObject} section
-     * @returns {string}
-     */
-    getSectionInlineStyles(section) {
-        const headStyles = section[0].children.filter((elem) => {
-            return elem.tag === "style";
-        });
-        return headStyles[0]?.children?.[0]?.text ?? "";
-    }
+    // /**
+    //  * Returns inline styles of a particular book section
+    //  * @param {HtmlObject} section
+    //  * @returns {string}
+    //  */
+    // getSectionInlineStyles(section) {
+    //     const headStyles = section[0].children.filter((elem) => {
+    //         return elem.tag === "style";
+    //     });
+    //     return headStyles[0]?.children?.[0]?.text ?? "";
+    // }
 
     /**
      * Recursively extracts section (chapter) title from book's TOC
@@ -187,29 +137,29 @@ export default class BookComponent extends HTMLElement {
         return book.sections[sectionIndex];
     }
 
-    /**
-     * Collects book's styles and applies them to the web component
-     * @param {InitBook|ParsedBook} book
-     * @param {Array<HtmlObject>} section
-     * @returns {Promise<void>}
-     */
-    async loadStyles(book, section) {
-        const styleElem = this.shadowRoot.getElementById("book-style");
+    // /**
+    //  * Collects book's styles and applies them to the web component
+    //  * @param {InitBook|ParsedBook} book
+    //  * @param {Array<HtmlObject>} section
+    //  * @returns {Promise<void>}
+    //  */
+    // async loadStyles(book, section) {
+    //     const styleElem = this.shadowRoot.getElementById("book-style");
 
-        const sectionStyles = this.getSectionStyleReferences(section);
-        const inlineStyles = this.getSectionInlineStyles(section);
+    //     const sectionStyles = this.getSectionStyleReferences(section);
+    //     const inlineStyles = this.getSectionInlineStyles(section);
 
-        styleElem.innerHTML = inlineStyles;
+    //     styleElem.innerHTML = inlineStyles;
 
-        // Appends all of the referenced
-        // styles to the style element
-        Object.keys(book.styles).forEach((index) => {
-            const bookStyle = book.styles[index];
-            if (sectionStyles.includes(bookStyle.href)) {
-                styleElem.innerHTML += bookStyle._data;
-            }
-        });
-    }
+    //     // Appends all of the referenced
+    //     // styles to the style element
+    //     Object.keys(book.styles).forEach((index) => {
+    //         const bookStyle = book.styles[index];
+    //         if (sectionStyles.includes(bookStyle.href)) {
+    //             styleElem.innerHTML += bookStyle._data;
+    //         }
+    //     });
+    // }
 
     /**
      * Recursively creates and appends child elements to the respective child's parent
@@ -287,10 +237,10 @@ export default class BookComponent extends HTMLElement {
      * @returns {void}
      */
     updateBookUi() {
-        const currentSectionPage = this.bookState.getCurrentSectionPage(this) + 1;
+        const currentSectionPage = this.bookState.getCurrentSectionPage() + 1;
         const totalSectionPages = this.countSectionPages();
 
-        const currentBookPage = this.bookState.getCurrentBookPage(this) + 1;
+        const currentBookPage = this.bookState.getCurrentBookPage() + 1;
         const totalBookPages = this.bookState.getTotalBookPages();
 
         const uiState = {
@@ -401,13 +351,14 @@ export default class BookComponent extends HTMLElement {
             book.sectionNames[sectionIndex]
         );
 
-        this.loadStyles(book, section);
+        this.styleLoader.loadStyles(book, section);
         this.loadContent(section);
 
         // In case element selector provided instead of section page is used
         // or user traveled back from the subsequent section back
         if (offsetSelector) {
             const targetElem = this.shadowRoot.querySelector(offsetSelector);
+            // TODO sometimes errors out
             if (!targetElem) {
                 console.log("null in loadSection");
             }
@@ -580,7 +531,7 @@ export default class BookComponent extends HTMLElement {
 
         const minPageNum = 0;
         const maxPageNum = this.countSectionPages();
-        const currentPage = this.bookState.getCurrentSectionPage(this);
+        const currentPage = this.bookState.getCurrentSectionPage();
         const nextSectionPage = currentPage + n;
 
         // Checks if requested page is in range of this section
@@ -628,7 +579,7 @@ export default class BookComponent extends HTMLElement {
      * @returns {void}
      */
     flipNPages(n) {
-        const currentPage = this.bookState.getCurrentBookPage(this) + 1;
+        const currentPage = this.bookState.getCurrentBookPage() + 1;
         this.jumpToPage(currentPage + n);
     }
 
@@ -641,7 +592,7 @@ export default class BookComponent extends HTMLElement {
         if (this.status === "loading") return;
         const validPage = this.#enforcePageRange(page);
 
-        const currentPage = this.bookState.getCurrentBookPage(this);
+        const currentPage = this.bookState.getCurrentBookPage();
         const nPageShift = validPage - currentPage - 1;
 
         const nextSection = this.bookState.getSectionBookPageBelongsTo(validPage);
@@ -674,88 +625,6 @@ export default class BookComponent extends HTMLElement {
     }
 
     /**
-     * Creates another web component which is used to count pages of a book, and then destroys it
-     * @return {Promise<any>}
-     */
-    // async createCounterComponent() {
-    //     this.status = "resizing";
-    //     /** Create a counter`component inside the current component
-    //      * @type {BookComponent}
-    //      */
-    //     // @ts-ignore
-    //     const counterComponent = document.createElement("book-component");
-    //     this.shadowRoot.appendChild(counterComponent);
-
-    //     // Make it hidden
-    //     const rootElem = counterComponent.shadowRoot.getElementById("root");
-    //     rootElem.style.visibility = "hidden";
-    //     rootElem.style.position = "absolute";
-
-    //     await counterComponent.#countBookPages(this);
-    //     this.status = "ready";
-    //     counterComponent.remove();
-    // }
-
-    // TODO move to utility
-    /**
-     * Asynchronous version of a forEach
-     * @param {Array} array
-     * @param {*} callback
-     * @returns {Promise<void>}
-     */
-    // async _asyncForEach(array, callback) {
-    //     for (let index = 0; index < array.length; index++) {
-    //         await callback(array[index], index, array);
-    //     }
-    // }
-
-    /**
-     * Asynchronously and non-blockingly counts pages of a book with a help of a parent web component
-     * @param {BookComponent} parentComponent - instance of a parent web component which created this counter web component
-     * @returns {Promise<void>}
-     */
-    // async #countBookPages(parentComponent) {
-    //     // TODO move to utility
-    //     /**
-    //      * Splits code in chunks
-    //      * https://stackoverflow.com/a/67135932/10744339
-    //      * @returns {Promise<void>}
-    //      */
-    //     const _waitForNextTask = () => {
-    //         // @ts-ignore
-    //         const { port1, port2 } = (_waitForNextTask.channel ??= new MessageChannel());
-
-    //         return new Promise((resolve) => {
-    //             port1.addEventListener("message", () => resolve(), { once: true });
-    //             port1.start();
-    //             port2.postMessage("");
-    //         });
-    //     };
-
-    //     const book = await parentComponent.book;
-
-    //     parentComponent.bookState.sectionPagesArr = [];
-
-    //     // TODO start counting pages near where user left off (0th bookmark)
-    //     await this._asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
-    //         const section = this.getSection(book, sectionIndex);
-    //         await this.loadStyles(book, section);
-    //         await this.loadContent(section);
-
-    //         const totalSectionPages = this.countSectionPages();
-
-    //         parentComponent.bookState.sectionPagesArr.push(totalSectionPages);
-    //         // Update page count every 10 sections
-    //         if (sectionIndex % 10 === 0) {
-    //             parentComponent.updateBookUi();
-    //         }
-    //         await _waitForNextTask();
-    //     });
-
-    //     parentComponent.updateBookUi();
-    // }
-
-    /**
      * Loads book to the web component, as well as runs a page counter
      * @param {Book | ParsedBook | any} bookObj - Entry of AllBooks object; contains information about book file and book metadata
      * @param {BookmarkList} bookmarkList - Interaction states of all of the books
@@ -770,8 +639,6 @@ export default class BookComponent extends HTMLElement {
         const initElementIndex = this.bookmarkList[0].elementIndex;
 
         if (!isAlreadyParsed) {
-            console.log("###> Parsing");
-
             /**
              * @type {Promise<InitBook>} initBook
              */
@@ -794,7 +661,6 @@ export default class BookComponent extends HTMLElement {
                 return;
             }
         } else {
-            console.log("###> Is already parsed");
             // TODO Make it so a promise matches the interface of an unparsed book
             this.book = Promise.resolve(bookObj);
             this.status = "ready";
@@ -803,7 +669,7 @@ export default class BookComponent extends HTMLElement {
         this.bookState = this.createBookState(this, initSectionIndex);
 
         await this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
-        // Recount book pages everytime bookComponent's viewport changes
+        // Recount book pages every time bookComponent's viewport changes
         new ResizeObserver(() => this.recount()).observe(this.rootElem);
     }
 
@@ -826,8 +692,8 @@ export default class BookComponent extends HTMLElement {
             },
 
             // Zero-based
-            getCurrentSectionPage(that) {
-                const displayWidth = that._getDisplayWidth();
+            getCurrentSectionPage() {
+                const displayWidth = this.bookComponent._getDisplayWidth();
                 const currentOffset = this._getCurrentOffset();
                 const currentPage = Math.abs(currentOffset / displayWidth);
                 return currentPage;
@@ -840,14 +706,14 @@ export default class BookComponent extends HTMLElement {
             isSectionCounted(section) {
                 return !!this.sectionPagesArr[section];
             },
-            getCurrentBookPage(that) {
+            getCurrentBookPage() {
                 const sumOfPages = this._sumFirstNArrayItems(
                     this.sectionPagesArr,
                     this.currentSection
                 );
                 const totalSectionPages = this.getTotalSectionPages(this.currentSection);
-                const totalSectionPages2 = that.countSectionPages();
-                const currentSectionPage = this.getCurrentSectionPage(that);
+                const totalSectionPages2 = this.bookComponent.countSectionPages();
+                const currentSectionPage = this.getCurrentSectionPage();
 
                 // TODO
                 // console.log(
@@ -1045,9 +911,9 @@ export default class BookComponent extends HTMLElement {
 
             if (!this.pageCounter.isCounting) {
                 // Get a reference to a visible element
-                // TODO sometimes errors out
                 const element = this.getVisibleElement();
                 if (!element) {
+                    // TODO sometimes errors out
                     console.log("null in recount");
                     return;
                 }
