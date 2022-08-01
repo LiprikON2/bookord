@@ -1,16 +1,9 @@
 export default class StyleLoader {
-    #parentComponent;
     #shadowRoot;
 
     constructor(bookComponent) {
-        this.#parentComponent = bookComponent;
         this.#shadowRoot = bookComponent.shadowRoot;
     }
-    /**
-     * Returns all references to stylesheet names in a section
-     * @param {HtmlObject} section
-     * @returns {Array<string>}
-     */
 
     /**
      * Collects book's styles and applies them to the web component
@@ -35,6 +28,12 @@ export default class StyleLoader {
             }
         });
     }
+
+    /**
+     * Returns all references to stylesheet names in a section
+     * @param {HtmlObject} section
+     * @returns {Array<string>}
+     */
     #getSectionStyleReferences(section) {
         // First tag of a section is the head tag
         const headLinks = section[0].children.filter((elem) => {

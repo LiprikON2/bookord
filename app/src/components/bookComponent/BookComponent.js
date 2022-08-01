@@ -5,7 +5,8 @@
 import debounce from "lodash/debounce";
 import PageCounter from "./PageCounter";
 import StyleLoader from "./StyleLoader";
-import { template } from "./Template";
+import BookmarkManager from "./BookmarkManager";
+import { template } from "./template";
 
 /**
  * Book web component
@@ -30,6 +31,7 @@ export default class BookComponent extends HTMLElement {
 
         this.pageCounter = new PageCounter(this);
         this.styleLoader = new StyleLoader(this);
+        this.bookmarkManager = new BookmarkManager(this);
 
         /**
          * @type {('loading'|'sectionReady'|'ready')} Status of initialization of the book, true when all of the book's sections are parsed
@@ -56,33 +58,6 @@ export default class BookComponent extends HTMLElement {
 
         return book;
     }
-
-    // /**
-    //  * Returns all references to stylesheet names in a section
-    //  * @param {HtmlObject} section
-    //  * @returns {Array<string>}
-    //  */
-    // getSectionStyleReferences(section) {
-    //     // First tag of a section is the head tag
-    //     const headLinks = section[0].children.filter((elem) => {
-    //         return elem.tag === "link";
-    //     });
-
-    //     const sectionStyles = headLinks.map((link) => link?.attrs?.href);
-    //     return sectionStyles;
-    // }
-
-    // /**
-    //  * Returns inline styles of a particular book section
-    //  * @param {HtmlObject} section
-    //  * @returns {string}
-    //  */
-    // getSectionInlineStyles(section) {
-    //     const headStyles = section[0].children.filter((elem) => {
-    //         return elem.tag === "style";
-    //     });
-    //     return headStyles[0]?.children?.[0]?.text ?? "";
-    // }
 
     /**
      * Recursively extracts section (chapter) title from book's TOC
@@ -136,30 +111,6 @@ export default class BookComponent extends HTMLElement {
     getSection(book, sectionIndex) {
         return book.sections[sectionIndex];
     }
-
-    // /**
-    //  * Collects book's styles and applies them to the web component
-    //  * @param {InitBook|ParsedBook} book
-    //  * @param {Array<HtmlObject>} section
-    //  * @returns {Promise<void>}
-    //  */
-    // async loadStyles(book, section) {
-    //     const styleElem = this.shadowRoot.getElementById("book-style");
-
-    //     const sectionStyles = this.getSectionStyleReferences(section);
-    //     const inlineStyles = this.getSectionInlineStyles(section);
-
-    //     styleElem.innerHTML = inlineStyles;
-
-    //     // Appends all of the referenced
-    //     // styles to the style element
-    //     Object.keys(book.styles).forEach((index) => {
-    //         const bookStyle = book.styles[index];
-    //         if (sectionStyles.includes(bookStyle.href)) {
-    //             styleElem.innerHTML += bookStyle._data;
-    //         }
-    //     });
-    // }
 
     /**
      * Recursively creates and appends child elements to the respective child's parent
@@ -289,26 +240,6 @@ export default class BookComponent extends HTMLElement {
     }
 
     /**
-     * Updates current position inside the book and, optionally, adds additional bookmark
-     * @param {Bookmark} [newBookmark]
-     * @returns {void}
-     */
-    updateBookmarkList(newBookmark) {
-        const element = this.getVisibleElement();
-        if (!element) return;
-
-        const elementIndex = this.getElementIndex(element);
-        const currentSection = this.bookState.currentSection;
-
-        // TODO add abstraction to 0th bookmark
-        this.bookmarkList[0].sectionIndex = currentSection;
-        this.bookmarkList[0].elementIndex = elementIndex;
-        if (newBookmark) {
-            this.bookmarkList.push(newBookmark);
-        }
-    }
-
-    /**
      * Attaches event handlers to anchor tags to handle book navigation
      * @param {InitBook | ParsedBook} book
      * @returns {void}
@@ -389,7 +320,7 @@ export default class BookComponent extends HTMLElement {
         this.attachLinkHandlers(book);
         this.attachImgEventEmitters();
 
-        this.emitSaveBookmarks();
+        this.bookmarkManager.emitSaveBookmarks();
     }
 
     /**
@@ -540,7 +471,7 @@ export default class BookComponent extends HTMLElement {
 
             this.setOffset(newOffset);
             this.updateBookUi();
-            this.emitSaveBookmarks();
+            this.bookmarkManager.emitSaveBookmarks();
         }
     }
 
@@ -632,11 +563,9 @@ export default class BookComponent extends HTMLElement {
      * @return {Promise<void>}
      */
     async loadBook(bookObj, bookmarkList, isAlreadyParsed = false) {
-        this.bookmarkList = bookmarkList.length
-            ? bookmarkList
-            : [{ sectionIndex: 0, elementIndex: 0 }];
-        const initSectionIndex = this.bookmarkList[0].sectionIndex;
-        const initElementIndex = this.bookmarkList[0].elementIndex;
+        this.bookmarkManager.setBookmarkList(bookmarkList);
+        const [initSectionIndex, initElementIndex] =
+            this.bookmarkManager.getAutoBookmark();
 
         if (!isAlreadyParsed) {
             /**
@@ -666,14 +595,14 @@ export default class BookComponent extends HTMLElement {
             this.status = "ready";
         }
 
-        this.bookState = this.createBookState(this, initSectionIndex);
+        this.bookState = this.#createBookState(this, initSectionIndex);
 
         await this.loadSection(this.bookState.currentSection, 0, "", initElementIndex);
         // Recount book pages every time bookComponent's viewport changes
         new ResizeObserver(() => this.recount()).observe(this.rootElem);
     }
 
-    createBookState(bookComponent, currentSection) {
+    #createBookState(bookComponent, currentSection) {
         return {
             bookComponent,
             currentSection,
@@ -756,24 +685,6 @@ export default class BookComponent extends HTMLElement {
     }
 
     /**
-     * Returns selector of an element based on nth-child with respect to content element
-     * @param {HTMLElement} element
-     * @returns {number}
-     */
-    getElementIndex(element) {
-        const allElems = this.contentElem.querySelectorAll("*");
-        let nthElement;
-        [...allElems].some((elem, index) => {
-            const isFound = elem === element;
-            if (isFound) {
-                nthElement = index;
-            }
-            return isFound;
-        });
-        return nthElement;
-    }
-
-    /**
      * Returns element by the index of descendant elements of contentElem
      * @param {number} index - index of element
      * @returns {Element}
@@ -783,34 +694,6 @@ export default class BookComponent extends HTMLElement {
         return allElems[index];
     }
 
-    /**
-     * Emits "saveBookmarksEvent" when the page is turned
-     * @param {Event} e - Event
-     * @listens Event
-     * @return {void}
-     */
-    emitSaveBookmarks = debounce((e) => {
-        let book;
-        if (this.status !== "sectionReady") {
-            book = this.book;
-        } else {
-            book = this.initBook;
-        }
-        book.then(({ name: bookName }) => {
-            this.updateBookmarkList();
-            const saveBookmarksEvent = new CustomEvent("saveBookmarksEvent", {
-                bubbles: true,
-                cancelable: false,
-                composed: true,
-                detail: {
-                    bookName,
-                    bookmarkList: this.bookmarkList,
-                },
-            });
-
-            this.dispatchEvent(saveBookmarksEvent);
-        });
-    }, 500);
     /**
      * Emits "saveBookmarksEvent" when the book is fully parsed
      * @listens Event
@@ -863,45 +746,6 @@ export default class BookComponent extends HTMLElement {
     }
 
     /**
-     * Returns currently fully visible or partially visible element
-     * @returns {HTMLElement}
-     */
-    getVisibleElement() {
-        return this.recGetVisibleElement() ?? this.recGetVisibleElement(null, false);
-    }
-
-    // TODO use binary search
-    /**
-     * Recus
-     * @param {HTMLCollection} [elements]
-     * @returns {HTMLElement | any}
-     */
-    recGetVisibleElement(elements, strict = true) {
-        if (!elements) {
-            elements = this.contentElem.children;
-        }
-
-        for (let element of elements) {
-            const [isFullyVis, isAtLeastPartVis] = this.checkVisibility(element);
-            const requiredVisibility = strict ? isFullyVis : isAtLeastPartVis;
-            const hasChildren = element.children.length;
-
-            if (requiredVisibility && !hasChildren) {
-                return element;
-            } else if (hasChildren) {
-                const descendantElem = this.recGetVisibleElement(
-                    element.children,
-                    strict
-                );
-                if (descendantElem) {
-                    return descendantElem;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Recalculates page count
      * @returns {void}
      */
@@ -911,7 +755,7 @@ export default class BookComponent extends HTMLElement {
 
             if (!this.pageCounter.isCounting) {
                 // Get a reference to a visible element
-                const element = this.getVisibleElement();
+                const element = this.bookmarkManager.getVisibleElement();
                 if (!element) {
                     // TODO sometimes errors out
                     console.log("null in recount");
@@ -936,10 +780,10 @@ export default class BookComponent extends HTMLElement {
         this.isQuitting = true;
 
         // TODO terminate recounting properly
-
+        // TODO call quit on all classes
         // Cancel debounces
         this.recount.cancel();
-        this.emitSaveBookmarks.cancel();
+        this.bookmarkManager.emitSaveBookmarks.cancel();
 
         // TODO check if this does something
         delete this.initBook;
