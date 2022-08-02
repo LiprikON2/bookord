@@ -2,7 +2,8 @@ export const style = /*css*/ `
     :host {
         --book-component-width: 400px;
         --book-component-height: 600px;
-        --column-gap: 100px;
+        // --column-gap: 100px;
+        --column-gap: 0px;
 
         --clr-link: #4dabf7; /* todo move it to somewhere else */
     }

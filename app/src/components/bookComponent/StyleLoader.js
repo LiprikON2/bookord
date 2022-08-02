@@ -6,7 +6,7 @@ export default class StyleLoader {
     }
 
     /**
-     * Collects book's styles and applies them to the web component
+     * Collects book's styles and adds them to the book component
      * @param {InitBook|ParsedBook} book
      * @param {Array<HtmlObject>} section
      * @returns {Promise<void>}

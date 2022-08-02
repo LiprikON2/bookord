@@ -1,6 +1,6 @@
 import React from "react";
 
-const TextElem = ({ children, title, className }) => {
+const TextElem = ({ children = undefined, className }) => {
     return (
         <>
             <li className={className} title={children}>
