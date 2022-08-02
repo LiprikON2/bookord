@@ -1,0 +1,132 @@
+export default class StateManager {
+    #parentComponent;
+
+    totalSections = 0;
+    bookTitle = "";
+
+    currentSection;
+    sectionPagesArr = [0];
+    currentSectionTitle = "";
+
+    constructor(bookComponent) {
+        this.#parentComponent = bookComponent;
+    }
+
+    setInitBookInfo(book) {
+        console.log("book", book);
+        this.totalSections = book.sectionsTotal;
+        this.bookTitle = book.info.title;
+    }
+
+    getSectionBookPageBelongsTo(page) {
+        const sliceOfPages = [];
+        for (const [index, pageCount] of this.sectionPagesArr.entries()) {
+            sliceOfPages.push(pageCount);
+            const sumOfPages = sliceOfPages.reduce(
+                (prevValue, currValue) => prevValue + currValue
+            );
+            if (page <= sumOfPages) return index;
+        }
+        throw new Error("Couldn't get section book page belonged to.");
+    }
+
+    // Zero-based
+    getCurrentSectionPage() {
+        const displayWidth = this.#parentComponent._getDisplayWidth();
+        const currentOffset = this.#parentComponent._getCurrentOffset();
+        const currentPage = Math.abs(currentOffset / displayWidth);
+        return currentPage + 1;
+    }
+    getTotalSectionPages(sectionIndex) {
+        return this.sectionPagesArr[sectionIndex];
+    }
+
+    isSectionCounted(section) {
+        return !!this.sectionPagesArr[section];
+    }
+    getCurrentBookPage() {
+        const sumOfPages = this._sumFirstNArrayItems(
+            this.sectionPagesArr,
+            this.currentSection
+        );
+        const totalSectionPages = this.getTotalSectionPages(this.currentSection);
+        const totalSectionPages2 = this.#parentComponent.countSectionPages();
+        const currentSectionPage = this.getCurrentSectionPage();
+
+        return sumOfPages - totalSectionPages2 + currentSectionPage;
+    }
+    getTotalBookPages() {
+        const totalBookPages = this.sectionPagesArr.reduce(
+            (prevValue, currValue) => prevValue + currValue
+        );
+        return totalBookPages;
+    }
+
+    _sumFirstNArrayItems(array, n) {
+        const arraySlice = array.slice(0, n + 1);
+        const arraySum = arraySlice.reduce(
+            (prevValue, currValue) => prevValue + currValue
+        );
+        return arraySum;
+    }
+
+    /**
+     * Updates book's state
+     * @param {InitBook | ParsedBook} book
+     * @param {number} currentSection
+     * @returns {void}
+     */
+    updateBookSectionState(book, currentSection) {
+        this.currentSection = currentSection;
+        this.currentSectionTitle = this.#recGetSectionTitle(
+            book,
+            book.structure,
+            this.currentSection
+        );
+    }
+
+    /**
+     * Recursively extracts section (chapter) title from book's TOC
+     * @param {InitBook | ParsedBook} book
+     * @param {HtmlObject} toc - Table of Contents
+     * @param {number} sectionIndex - Section index
+     * @param {boolean} [root] - A way to differentiate between recursive and non-recursive function call
+     * @returns {string}
+     */
+    #recGetSectionTitle(book, toc, sectionIndex, root = true) {
+        let descendantSectionTitle;
+        for (let tocEntry of toc) {
+            const tocEntryChildren = tocEntry?.children;
+            if (tocEntryChildren) {
+                descendantSectionTitle = this.#recGetSectionTitle(
+                    book,
+                    tocEntryChildren,
+                    sectionIndex,
+                    false
+                );
+                if (descendantSectionTitle) break;
+            }
+        }
+        const tocEntry = toc.find(
+            (tocEntry) => tocEntry.sectionId === book.sectionNames[sectionIndex]
+        );
+        const sectionTitle = tocEntry?.name;
+
+        if (descendantSectionTitle) {
+            // Use the deep-nested title if possible
+            return descendantSectionTitle;
+        } else if (sectionTitle) {
+            return sectionTitle;
+        } else if (root && sectionIndex >= 0 && sectionIndex < this.totalSections) {
+            // Untitled sections try to use previous section's title
+            const prevSectionTitle = this.#recGetSectionTitle(
+                book,
+                toc,
+                sectionIndex - 1
+            );
+            return prevSectionTitle;
+        } else {
+            return "";
+        }
+    }
+}

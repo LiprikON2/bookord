@@ -55,7 +55,7 @@ export default class PageCounter {
     async #countBookPages(childComponent) {
         const book = await this.#parentComponent.book;
 
-        this.#parentComponent.pageNavigator.sectionPagesArr = [];
+        this.#parentComponent.stateManager.sectionPagesArr = [];
 
         // TODO start counting pages near where user left off (0th bookmark)
         await this.#asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
@@ -65,7 +65,7 @@ export default class PageCounter {
 
             const totalSectionPages = childComponent.countSectionPages();
 
-            this.#parentComponent.pageNavigator.sectionPagesArr.push(totalSectionPages);
+            this.#parentComponent.stateManager.sectionPagesArr.push(totalSectionPages);
             // Update page count every 10 sections
             if (sectionIndex % 10 === 0) {
                 this.#parentComponent.updateBookUi();
