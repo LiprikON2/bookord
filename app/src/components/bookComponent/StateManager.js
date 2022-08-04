@@ -12,8 +12,8 @@ export default class StateManager {
         this.#parentComponent = bookComponent;
     }
 
-    setInitBookInfo(book) {
-        console.log("book", book);
+    async setInitBookInfo(book) {
+        book = await book;
         this.totalSections = book.sectionsTotal;
         this.bookTitle = book.info.title;
     }
@@ -30,11 +30,10 @@ export default class StateManager {
         throw new Error("Couldn't get section book page belonged to.");
     }
 
-    // Zero-based
     getCurrentSectionPage() {
         const displayWidth = this.#parentComponent._getDisplayWidth();
         const currentOffset = this.#parentComponent._getCurrentOffset();
-        const currentPage = Math.abs(currentOffset / displayWidth);
+        const currentPage = currentOffset / displayWidth;
         return currentPage + 1;
     }
     getTotalSectionPages(sectionIndex) {
@@ -72,11 +71,12 @@ export default class StateManager {
 
     /**
      * Updates book's state
-     * @param {InitBook | ParsedBook} book
      * @param {number} currentSection
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    updateBookSectionState(book, currentSection) {
+    async updateBookSectionState(currentSection) {
+        const book = await this.#parentComponent.book;
+
         this.currentSection = currentSection;
         this.currentSectionTitle = this.#recGetSectionTitle(
             book,

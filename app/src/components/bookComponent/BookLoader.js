@@ -1,7 +1,9 @@
-export default class StyleLoader {
+export default class BookLoader {
     #shadowRoot;
+    #parentComponent;
 
     constructor(bookComponent) {
+        this.#parentComponent = bookComponent;
         this.#shadowRoot = bookComponent.shadowRoot;
     }
 
@@ -30,6 +32,18 @@ export default class StyleLoader {
     }
 
     /**
+     * Loads book's content and appends a end-marker to it
+     * @param {HtmlObject} section
+     * @returns {Promise<void>}
+     */
+    async loadContent(section) {
+        this.#parentComponent.contentElem.innerHTML = "";
+        // Remove head tag from section
+        section = section.slice(1);
+        this.#recCreateElements(this.#parentComponent.contentElem, section);
+    }
+
+    /**
      * Returns all references to stylesheet names in a section
      * @param {HtmlObject} section
      * @returns {Array<string>}
@@ -54,5 +68,35 @@ export default class StyleLoader {
             return elem.tag === "style";
         });
         return headStyles[0]?.children?.[0]?.text ?? "";
+    }
+
+    /**
+     * Recursively creates and appends child elements to the respective child's parent
+     * @param {HTMLElement} parent
+     * @param {HtmlObject} children
+     * @returns {void}
+     */
+    #recCreateElements(parent, children) {
+        children.map((element) => {
+            if (element?.tag !== undefined) {
+                const tag = document.createElement(element.tag);
+                if (element?.attrs !== undefined) {
+                    Object.keys(element.attrs).forEach((attr) => {
+                        const attrVal = element.attrs[attr];
+
+                        if (attrVal !== undefined) {
+                            tag.setAttribute(attr, attrVal);
+                        }
+                    });
+                }
+                if (element?.children !== undefined) {
+                    this.#recCreateElements(tag, element.children);
+                }
+                parent.appendChild(tag);
+            } else {
+                const textNode = document.createTextNode(element.text);
+                parent.appendChild(textNode);
+            }
+        });
     }
 }

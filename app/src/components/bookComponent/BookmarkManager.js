@@ -115,7 +115,7 @@ export default class BookmarkManager {
                 },
             });
 
-            this.#parentComponent.dispatchEvent(saveBookmarksEvent);
+            // this.#parentComponent.dispatchEvent(saveBookmarksEvent); // todo uncomment
         });
     }, 500);
 

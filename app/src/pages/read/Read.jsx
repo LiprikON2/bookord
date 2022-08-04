@@ -146,7 +146,7 @@ const Read = ({ setLastOpenedBookTitle }) => {
     const handleSavingParsedBook = (e) => {
         const parsedBook = e.detail.parsedBook;
         // TODO add bookFile property to recentBooks' ParsedBook
-        // TODO check bookfile size property to determine amount of recent books to be kept
+        // TODO check bookfile size property to determine amount of recent books to keep
         // setRecentBooks.append(parsedBook);
         setRecentBooks.setState([parsedBook]);
     };
@@ -206,7 +206,7 @@ const Read = ({ setLastOpenedBookTitle }) => {
                         style={{
                             visibility: bookComponentRef !== null ? "visible" : "hidden",
                         }}>
-                        <book-component ref={setBookComponentRef} />
+                        <book-component ref={setBookComponentRef} book-page={10} />
                     </div>
                 </BookUI>
                 <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
