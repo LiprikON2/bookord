@@ -1,3 +1,60 @@
+class BookState {
+    #parentComponent;
+
+    title = "";
+    sectionCount = 0;
+
+    get currentPage() {
+        return;
+    }
+    get totalPages() {
+        return;
+    }
+
+    constructor(bookComponent) {
+        this.#parentComponent = bookComponent;
+    }
+}
+class SectionState {
+    #parentComponent;
+
+    title = "";
+    sectionCount = 0;
+
+    get currentPage() {
+        const displayWidth = this.#parentComponent._getDisplayWidth();
+        const currentOffset = this.#parentComponent._getCurrentOffset();
+        const currentPage = currentOffset / displayWidth;
+        return currentPage + 1;
+    }
+    get totalPages() {
+        const totalWidth = this.#parentComponent._getTotalDisplayWidth();
+        const width = this.#parentComponent._getDisplayWidth();
+
+        const sectionPages = totalWidth / width;
+        const rounded = Math.round(sectionPages);
+
+        if (Math.abs(rounded - sectionPages) > 0.01)
+            console.log(
+                "Warning. countSectionPages rounding error",
+                rounded,
+                sectionPages
+            );
+
+        return rounded;
+    }
+    get firstPage() {
+        return 1;
+    }
+    get lastPage() {
+        return this.totalPages;
+    }
+
+    constructor(bookComponent) {
+        this.#parentComponent = bookComponent;
+    }
+}
+
 export default class StateManager {
     #parentComponent;
 
@@ -8,8 +65,14 @@ export default class StateManager {
     sectionPagesArr = [0];
     currentSectionTitle = "";
 
+    book;
+    section;
+
     constructor(bookComponent) {
         this.#parentComponent = bookComponent;
+
+        this.book = new BookState(this.#parentComponent);
+        this.section = new SectionState(this.#parentComponent);
     }
 
     async setInitBookInfo(book) {

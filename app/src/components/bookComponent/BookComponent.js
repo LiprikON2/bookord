@@ -104,10 +104,10 @@ export default class BookComponent extends HTMLElement {
     async loadSection(sectionIndex, position) {
         const defaults = {
             sectionPage: { value: 0, isFromBack: false },
-            offsetSelector: "",
             elementIndex: null,
+            elementSelector: "",
         };
-        const pos = Object.assign({}, defaults, position);
+        const pos = { ...defaults, ...position };
 
         // TODO refactor
         let book, section;
@@ -138,51 +138,44 @@ export default class BookComponent extends HTMLElement {
      * @param {number} sectionIndex - section number
      * @param {Object} position
      */
-    #navigateToPosition(sectionIndex, { sectionPage, offsetSelector, elementIndex }) {
-        // TODO update comments
-
-        if (offsetSelector) {
-            console.log("OFFSET");
-            // In case element selector provided instead of section page is used
-            // or user traveled back from the subsequent section back
-            const targetElem = this.shadowRoot.querySelector(offsetSelector);
-            // TODO sometimes errors out
-            if (!targetElem) {
-                console.log("null in loadSection");
-            }
-            if (targetElem) {
-                const targetOffset = this.getElementOffset(targetElem);
-                // Set offset to the last page (if it's the end-marker) of this section
-                this.setOffset(targetOffset);
-            }
-        } else if (elementIndex) {
-            console.log("INDEX");
-            const targetElem = this.getElementByIndex(elementIndex);
-            const targetOffset = this.getElementOffset(targetElem);
-
-            this.setOffset(targetOffset);
+    #navigateToPosition(sectionIndex, { sectionPage, elementIndex, elementSelector }) {
+        if (elementSelector || elementIndex) {
+            this.#shiftToElement({ elementIndex, elementSelector });
         } else if (!sectionPage.isFromBack) {
-            this.setOffset(0);
+            const firstPage = this.stateManager.section.firstPage;
+            this.#shiftToSectionPage(firstPage);
 
             const targetPage = sectionPage.value;
-
-            console.log("NOT isFromBack", targetPage);
             this.flipNPages(targetPage);
         } else if (sectionPage.isFromBack) {
-            // In case user traveled from previous section and
-            // still had pages pending to go through
-
-            const maxOffset = this._getTotalDisplayWidth() - this._getDisplayWidth();
-            this.setOffset(maxOffset);
+            const lastPage = this.stateManager.section.lastPage;
+            this.#shiftToSectionPage(lastPage);
 
             const targetPage = sectionPage.value;
-            console.log("isFromBack", targetPage);
             this.flipNPages(targetPage);
         }
         this.stateManager.updateBookSectionState(sectionIndex);
-        this.updateBookUi();
 
         this.bookmarkManager.emitSaveBookmarks();
+    }
+
+    /**
+     * TODO
+     * @param {Object} elementPosition
+     */
+    #shiftToElement({ element, elementIndex, elementSelector }) {
+        if (elementIndex) {
+            element = this.getElementByIndex(elementIndex);
+        } else if (elementSelector) {
+            element = this.shadowRoot.querySelector(elementSelector);
+        }
+
+        if (element) {
+            const targetOffset = this.getElementOffset(element);
+            this.#setOffset(targetOffset);
+        } else {
+            throw new Error("Couldn't find specified element");
+        }
     }
 
     /**
@@ -358,6 +351,9 @@ export default class BookComponent extends HTMLElement {
 
     /**
      * Returns element's offset
+     *
+     * TODO set page based on provided element
+     *
      * @param {HTMLElement | any} elem
      * @param {boolean} [round] - rounds elements offset to the left page edge
      * @returns {number}
@@ -385,9 +381,10 @@ export default class BookComponent extends HTMLElement {
      * @param {string | number} nextOffset
      * @returns {void}
      */
-    setOffset(nextOffset) {
+    #setOffset(nextOffset) {
         this.contentElem.style.transform = `translate(-${nextOffset}px)`;
-        this.#hideInvisibleLinks();
+        // this.#hideInvisibleLinks(); // todo fix
+        this.updateBookUi();
     }
 
     /**
@@ -443,7 +440,11 @@ export default class BookComponent extends HTMLElement {
         const sectionPages = totalWidth / width;
         const rounded = Math.round(sectionPages);
         if (Math.abs(rounded - sectionPages) > 0.01)
-            console.log("countSectionPages rounding error", rounded, sectionPages);
+            console.log(
+                "Warning. countSectionPages rounding error",
+                rounded,
+                sectionPages
+            );
         return rounded;
     }
 
@@ -471,11 +472,10 @@ export default class BookComponent extends HTMLElement {
     async flipNPages(n) {
         // if (this.status === "loading" || n === 0) return; // todo uncomment
 
-        const firstPage = 1;
-        const lastPage = this.countSectionPages();
+        const firstPage = this.stateManager.section.firstPage;
+        const lastPage = this.stateManager.section.lastPage;
         const currentPage = this.stateManager.getCurrentSectionPage();
         const requestedSectionPage = currentPage + n;
-        console.log("requestedSectionPage", requestedSectionPage, lastPage);
 
         const currentSection = this.stateManager.currentSection;
         const nextSection = currentSection + 1;
@@ -572,8 +572,7 @@ export default class BookComponent extends HTMLElement {
         const newOffset = (page - 1) * displayWidth;
         console.log("SHIFT TO", newOffset);
 
-        this.setOffset(newOffset);
-        this.updateBookUi();
+        this.#setOffset(newOffset);
         this.bookmarkManager.emitSaveBookmarks();
     }
 
@@ -672,7 +671,7 @@ export default class BookComponent extends HTMLElement {
                 }
 
                 const newOffset = this.getElementOffset(element);
-                this.setOffset(newOffset);
+                this.#setOffset(newOffset);
 
                 // TODO this.createCounterComponent();
                 this.pageCounter.start();

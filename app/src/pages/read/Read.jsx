@@ -138,8 +138,6 @@ const Read = ({ setLastOpenedBookTitle }) => {
         const updatedBookmarks = {
             [bookName]: bookmarkList,
         };
-        // TODO setMovies(prevMovies => ([...prevMovies, ...result]));
-        // const mergedBookmarks = Object.assign({}, bookmarks, updatedBookmarks);
         setBookmarks((prevBookmarks) => ({ ...prevBookmarks, ...updatedBookmarks }));
     };
 
@@ -147,7 +145,6 @@ const Read = ({ setLastOpenedBookTitle }) => {
         const parsedBook = e.detail.parsedBook;
         // TODO add bookFile property to recentBooks' ParsedBook
         // TODO check bookfile size property to determine amount of recent books to keep
-        // setRecentBooks.append(parsedBook);
         setRecentBooks.setState([parsedBook]);
     };
 

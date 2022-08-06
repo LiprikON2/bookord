@@ -43,7 +43,7 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
 
     const getInitSettings = () => {
         const initSettings = initStorage?.settings;
-        const mergedSettings = Object.assign({}, DEFAULT_SETTINGS, initSettings);
+        const mergedSettings = { ...DEFAULT_SETTINGS, ...initSettings };
 
         return mergedSettings;
     };
