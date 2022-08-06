@@ -3,6 +3,7 @@ class BookState {
 
     title = "";
     sectionCount = 0;
+    currentSection;
 
     get currentPage() {
         return;
@@ -19,7 +20,6 @@ class SectionState {
     #parentComponent;
 
     title = "";
-    sectionCount = 0;
 
     get currentPage() {
         const displayWidth = this.#parentComponent._getDisplayWidth();
@@ -36,7 +36,7 @@ class SectionState {
 
         if (Math.abs(rounded - sectionPages) > 0.01)
             console.log(
-                "Warning. countSectionPages rounding error",
+                "Warning! countSectionPages rounding error",
                 rounded,
                 sectionPages
             );
@@ -61,9 +61,7 @@ export default class StateManager {
     totalSections = 0;
     bookTitle = "";
 
-    currentSection;
     sectionPagesArr = [0];
-    currentSectionTitle = "";
 
     book;
     section;
@@ -109,9 +107,9 @@ export default class StateManager {
     getCurrentBookPage() {
         const sumOfPages = this._sumFirstNArrayItems(
             this.sectionPagesArr,
-            this.currentSection
+            this.book.currentSection
         );
-        const totalSectionPages = this.getTotalSectionPages(this.currentSection);
+        const totalSectionPages = this.getTotalSectionPages(this.book.currentSection);
         const totalSectionPages2 = this.#parentComponent.countSectionPages();
         const currentSectionPage = this.getCurrentSectionPage();
 
@@ -134,18 +132,19 @@ export default class StateManager {
 
     /**
      * Updates book's state
+     * @param {InitBook | ParsedBook} book
      * @param {number} currentSection
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async updateBookSectionState(currentSection) {
-        const book = await this.#parentComponent.book;
+    updateState(book, currentSection) {
+        this.book.currentSection = currentSection;
 
-        this.currentSection = currentSection;
-        this.currentSectionTitle = this.#recGetSectionTitle(
+        const currentSectionTitle = this.#recGetSectionTitle(
             book,
             book.structure,
-            this.currentSection
+            currentSection
         );
+        this.section.title = currentSectionTitle;
     }
 
     /**

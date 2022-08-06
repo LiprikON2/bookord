@@ -82,12 +82,12 @@ export default class BookComponent extends HTMLElement {
             this.status = "ready";
         }
 
-        this.stateManager.currentSection = initSectionIndex;
+        this.stateManager.book.currentSection = initSectionIndex;
 
         const position = {
             elementIndex: initElementIndex,
         };
-        await this.loadSection(this.stateManager.currentSection, position);
+        await this.loadSection(initSectionIndex, position);
         // Recount book pages every time bookComponent's viewport changes
         new ResizeObserver(() => this.recount()).observe(this.rootElem);
     }
@@ -121,13 +121,14 @@ export default class BookComponent extends HTMLElement {
             book = await this.book;
             section = this.getSection(book, sectionIndex);
         }
+        this.stateManager.updateState(book, sectionIndex);
 
         console.log("book", sectionIndex, pos, book.sectionNames[sectionIndex]);
 
         this.bookLoader.loadStyles(book, section);
         this.bookLoader.loadContent(section);
 
-        this.#navigateToPosition(sectionIndex, pos);
+        this.#navigateToPosition(pos);
 
         this.attachLinkHandlers(book);
         this.attachImgEventEmitters();
@@ -135,10 +136,9 @@ export default class BookComponent extends HTMLElement {
 
     /**
      * TODO
-     * @param {number} sectionIndex - section number
      * @param {Object} position
      */
-    #navigateToPosition(sectionIndex, { sectionPage, elementIndex, elementSelector }) {
+    #navigateToPosition({ sectionPage, elementIndex, elementSelector }) {
         if (elementSelector || elementIndex) {
             this.#shiftToElement({ elementIndex, elementSelector });
         } else if (!sectionPage.isFromBack) {
@@ -154,13 +154,15 @@ export default class BookComponent extends HTMLElement {
             const targetPage = sectionPage.value;
             this.flipNPages(targetPage);
         }
-        this.stateManager.updateBookSectionState(sectionIndex);
 
         this.bookmarkManager.emitSaveBookmarks();
     }
 
     /**
-     * TODO
+     * Shifts offset to the page with the given element.
+     * Element can be passed either by `elementIndex`, `elementSelector` or `element`.
+     * The `elementIndex` is given precedence over `elementSelector`,
+     * and `elementSelector` is given precedence over `element`.
      * @param {Object} elementPosition
      */
     #shiftToElement({ element, elementIndex, elementSelector }) {
@@ -257,7 +259,7 @@ export default class BookComponent extends HTMLElement {
 
         const uiState = {
             bookTitle: this.stateManager.bookTitle,
-            currentSectionTitle: this.stateManager.currentSectionTitle,
+            currentSectionTitle: this.stateManager.section.title,
             currentSectionPage: currentSectionPage,
             totalSectionPages: totalSectionPages,
             currentBookPage: currentBookPage,
@@ -385,6 +387,7 @@ export default class BookComponent extends HTMLElement {
         this.contentElem.style.transform = `translate(-${nextOffset}px)`;
         // this.#hideInvisibleLinks(); // todo fix
         this.updateBookUi();
+        this.bookmarkManager.emitSaveBookmarks();
     }
 
     /**
@@ -470,36 +473,32 @@ export default class BookComponent extends HTMLElement {
      * @returns {Promise<void>}
      */
     async flipNPages(n) {
-        // if (this.status === "loading" || n === 0) return; // todo uncomment
+        if (this.status === "loading" || n === 0) return;
 
         const firstPage = this.stateManager.section.firstPage;
         const lastPage = this.stateManager.section.lastPage;
         const currentPage = this.stateManager.getCurrentSectionPage();
         const requestedSectionPage = currentPage + n;
 
-        const currentSection = this.stateManager.currentSection;
+        const currentSection = this.stateManager.book.currentSection;
         const nextSection = currentSection + 1;
         const prevSection = currentSection - 1;
 
         const firstSection = 0;
         const lastSection = (await this.book).sectionsTotal;
-        const doesNextSectionExist = nextSection <= lastSection;
+        const doesNextSectionExist = nextSection < lastSection;
         const doesPrevSectionExist = prevSection >= firstSection;
 
-        const isInSucceedingSection =
-            requestedSectionPage > lastPage && doesNextSectionExist;
-        const isInPrecedingSection =
-            requestedSectionPage < firstPage && doesPrevSectionExist;
+        const isInSucceedingSection = requestedSectionPage > lastPage;
+        const isInPrecedingSection = requestedSectionPage < firstPage;
         // Checks if requested page is within range of this section
         const isWithinThisSection = !isInPrecedingSection && !isInSucceedingSection;
         // Checks if requested page is within range of the book
-        const pageIsNotInRange = !doesNextSectionExist && !doesPrevSectionExist;
+        const pageIsNotInRange = !doesNextSectionExist || !doesPrevSectionExist;
 
         if (isWithinThisSection) {
-            console.log("IS WITHIN");
             this.#shiftToSectionPage(requestedSectionPage);
         } else if (isInSucceedingSection && doesNextSectionExist) {
-            console.log("NEXT");
             const requestedPageMinusThisSection = n - 1 - (lastPage - currentPage);
             const position = {
                 sectionPage: { value: requestedPageMinusThisSection, isFromBack: false },
@@ -507,20 +506,31 @@ export default class BookComponent extends HTMLElement {
 
             this.loadSection(nextSection, position);
         } else if (isInPrecedingSection && doesPrevSectionExist) {
-            console.log("BACK");
-
             const requestedPageMinusThisSection = n + 1 - (firstPage - currentPage);
             const position = {
                 sectionPage: { value: requestedPageMinusThisSection, isFromBack: true },
             };
+
             this.loadSection(prevSection, position);
         } else if (isInSucceedingSection && pageIsNotInRange) {
+            // Default to the last page
             this.#shiftToSectionPage(lastPage);
         } else if (isInPrecedingSection && pageIsNotInRange) {
+            // Default to the first page
             this.#shiftToSectionPage(firstPage);
-        } else {
-            console.log("TODO remove this else");
         }
+    }
+
+    /**
+     * Flips N pages of a book if they are within the section TODO
+     * @param {number} page
+     * @returns {void}
+     */
+    #shiftToSectionPage(page) {
+        const displayWidth = this._getDisplayWidth();
+        const newOffset = (page - 1) * displayWidth;
+
+        this.#setOffset(newOffset);
     }
 
     /**
@@ -530,12 +540,11 @@ export default class BookComponent extends HTMLElement {
      */
     jumpToPage(page) {
         // if (this.status === "loading") return;
-        // console.log("JUMP", page);
         // const validPage = this.#enforcePageRange(page);
         // const currentPage = this.stateManager.getCurrentBookPage();
         // const nPageShift = validPage - currentPage - 1;
         // const nextSection = this.stateManager.getSectionBookPageBelongsTo(validPage);
-        // const currentSection = this.stateManager.currentSection;
+        // const currentSection = this.stateManager.book.currentSection;
         // // Avoid loading the loaded section again by flipping pages instead
         // if (nextSection === currentSection && nPageShift !== 0) {
         //     this.#shiftToSectionPage(nPageShift);
@@ -543,11 +552,9 @@ export default class BookComponent extends HTMLElement {
         //     nextSection !== currentSection &&
         //     (this.status === "ready" || this.pageCounter.isCounting)
         // ) {
-        //     console.log("TRUE JUMP");
         //     const sectionPagesArr = this.stateManager.sectionPagesArr;
         //     // Prevents the change of a section before the section is counted
         //     if (!this.stateManager.isSectionCounted(nextSection)) {
-        //         console.log("not counted");
         //         return;
         //     }
         //     const sumOfPages = this.stateManager._sumFirstNArrayItems(
@@ -560,20 +567,6 @@ export default class BookComponent extends HTMLElement {
         //         currentPage + nPageShift - sumOfPages + totalNextSectionPage;
         //     this.loadSection(nextSection, currentNextSectionPage);
         // }
-    }
-
-    /**
-     * Flips N pages of a book if they are within the section TODO
-     * @param {number} page
-     * @returns {void}
-     */
-    #shiftToSectionPage(page) {
-        const displayWidth = this._getDisplayWidth();
-        const newOffset = (page - 1) * displayWidth;
-        console.log("SHIFT TO", newOffset);
-
-        this.#setOffset(newOffset);
-        this.bookmarkManager.emitSaveBookmarks();
     }
 
     /**
@@ -664,16 +657,8 @@ export default class BookComponent extends HTMLElement {
             if (!this.pageCounter.isCounting) {
                 // Get a reference to a visible element
                 const element = this.bookmarkManager.getVisibleElement();
-                if (!element) {
-                    // TODO sometimes errors out
-                    console.log("null in recount");
-                    return;
-                }
+                this.#shiftToElement({ element });
 
-                const newOffset = this.getElementOffset(element);
-                this.#setOffset(newOffset);
-
-                // TODO this.createCounterComponent();
                 this.pageCounter.start();
             } else {
                 this.recount();
@@ -689,13 +674,10 @@ export default class BookComponent extends HTMLElement {
 
         // TODO terminate recounting properly
         // TODO call quit on all classes
+
         // Cancel debounces
         this.recount.cancel();
         this.bookmarkManager.emitSaveBookmarks.cancel();
-
-        // TODO check if this does something
-        delete this.initBook;
-        delete this.book;
     }
 
     /**

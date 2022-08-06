@@ -36,6 +36,7 @@ const ImageModal = ({ src, setSrc, toggle = true, showButton = true }) => {
                     <Button
                         className="modal-close is-large"
                         aria-label="close"
+                        isGhost={true}
                         style={{ padding: 0 }}
                         onClick={closeModal}></Button>
                 )}

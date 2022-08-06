@@ -1,6 +1,3 @@
-/// <reference path="typedefs.js" />
-/// <reference path="BookComponent.js" />
-
 import BookComponent from "./BookComponent";
 
 export default class PageCounter {

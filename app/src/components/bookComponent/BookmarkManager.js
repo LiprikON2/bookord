@@ -65,7 +65,7 @@ export default class BookmarkManager {
         if (!element) return;
 
         const elementIndex = this.#getElementIndex(element);
-        const sectionIndex = this.#parentComponent.stateManager.currentSection;
+        const sectionIndex = this.#parentComponent.stateManager.book.currentSection;
 
         this.setAutoBookmark({ sectionIndex, elementIndex });
     }
