@@ -42,6 +42,7 @@ const Button = ({
                           }
                         : null
                 }
+                disabled={!isVisible}
                 {...rest}>
                 {children}
             </DynamicButton>

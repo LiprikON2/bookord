@@ -28,7 +28,9 @@ const Setting = ({ settingID, setting, settings, setSettings }) => {
     };
 
     return (
-        <Group style={setting.type !== "checkbox" ? { alignItems: "flex-end" } : null}>
+        <Group
+            spacing="xs"
+            style={setting.type !== "checkbox" ? { alignItems: "flex-end" } : null}>
             <Button
                 title="Restore To Default"
                 isIconOnly={true}

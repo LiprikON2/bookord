@@ -23,6 +23,10 @@
 }
 
 .dropdown > .dropdown-menu > .dropdown-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+
     background-color: var(--clr-secondary-300);
     opacity: 0.95;
     padding: 0.25rem;

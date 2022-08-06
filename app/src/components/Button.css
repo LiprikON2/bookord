@@ -39,37 +39,33 @@
 }
 
 /* Ghost button */
-.button.btn.btn-ghost,
-.button.btn.btn-ghost:active,
-.button.btn.btn-ghost:hover,
-.button.btn.btn-ghost:focus:not(:active) {
+.button.btn.btn-ghost {
     background: transparent;
     opacity: 0.3;
 }
 
 /* Ghost button */
 .button.btn.btn-ghost:active,
+.button.btn.btn-ghost:focus,
 .button.btn.btn-ghost:hover {
     opacity: 0.9;
 }
 
 /* Danger button */
 .button.btn.btn-danger,
-.button.btn.btn-danger:active,
-.button.btn.btn-danger:hover,
 .button.btn.btn-danger:focus:not(:active) {
     color: var(--clr-danger-000);
 }
 
 /* Danger button */
 .button.btn.btn-danger:active,
+.button.btn.btn-danger:focus,
 .button.btn.btn-danger:hover {
     background-color: var(--clr-danger-100);
 }
 
 .btn-divider {
     background-color: var(--clr-primary-300);
-    margin: 0.375rem 0;
 }
 /* +++++ +++++ +++++ +++++ */
 

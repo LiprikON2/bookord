@@ -26,7 +26,7 @@ const SettingsList = ({ settings, setSettings }) => {
                     return (
                         <section key={section}>
                             <Title order={2}>{section}</Title>
-                            <Stack m="xl" align="flex-start">
+                            <Stack m="xl" align="flex-start" style={{ marginInline: 0 }}>
                                 {Object.keys(settings).map((key) => {
                                     const setting = settings[key];
                                     if (setting.section === section) {
