@@ -1,9 +1,15 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useContext } from "react";
 import { Stack, Title } from "@mantine/core";
+import { writeConfigRequest } from "secure-electron-store";
 
-import Setting from "./Setting";
+import SettingItem from "./SettingItem";
+import { AppContext } from "Core/Routes";
+import { useDebouncedValue } from "@mantine/hooks";
 
-const SettingsList = ({ settings, setSettings }) => {
+const SettingsList = () => {
+    const { settings, updateTheme } = useContext(AppContext);
+    const [debouncedSettings] = useDebouncedValue(settings, 100);
+
     const [sections, setSections] = useState([]);
 
     // Extracts all settings sections without repeats
@@ -19,6 +25,11 @@ const SettingsList = ({ settings, setSettings }) => {
         createSections();
     }, [settings]);
 
+    useLayoutEffect(() => {
+        window.api.store.send(writeConfigRequest, "settings", debouncedSettings);
+        Object.values(settings).forEach((setting) => updateTheme(setting));
+    }, [debouncedSettings]);
+
     return (
         <>
             <section className="section">
@@ -32,11 +43,9 @@ const SettingsList = ({ settings, setSettings }) => {
                                     if (setting.section === section) {
                                         return (
                                             <React.Fragment key={key}>
-                                                <Setting
+                                                <SettingItem
                                                     settingID={key}
                                                     setting={setting}
-                                                    settings={settings}
-                                                    setSettings={setSettings}
                                                 />
                                             </React.Fragment>
                                         );

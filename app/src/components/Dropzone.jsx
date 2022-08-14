@@ -4,6 +4,7 @@ import { Group, Text, useMantineTheme } from "@mantine/core";
 import { BookUpload, Book2, X } from "tabler-icons-react";
 import { Dropzone as MantineDropzone } from "@mantine/dropzone";
 
+// @ts-ignore
 import MIME_TYPES from "Constants/mimeTypes";
 
 const BookUploadIcon = ({ status, ...props }) => {
@@ -54,9 +55,9 @@ const DropzoneChildren = ({ status, theme }) => {
 
 const Dropzone = ({
     onDrop,
-    onReject,
-    accept,
-    multiple,
+    onReject = undefined,
+    accept = undefined,
+    multiple = undefined,
     fullscreen = false,
     ...rest
 }) => {

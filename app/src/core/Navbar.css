@@ -2,6 +2,8 @@ nav.navbar {
     min-height: unset;
     background-color: var(--clr-secondary-300);
     height: var(--navbar-height);
+    align-items: stretch;
+    display: flex;
 }
 .navbar-list {
     display: grid;

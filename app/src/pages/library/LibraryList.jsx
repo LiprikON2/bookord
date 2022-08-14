@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useWindowEvent } from "@mantine/hooks";
 import debounce from "lodash/debounce";
 import {
@@ -11,6 +11,7 @@ import Button from "components/Button";
 import Link from "components/Link";
 import Dropzone from "components/Dropzone";
 import LibraryListCard from "./LibraryListCard";
+import { AppContext } from "Core/Routes";
 
 // @ts-ignore
 import ROUTES from "Constants/routes";
@@ -21,14 +22,15 @@ const skeletonFile = {
     info: { title: "" },
 };
 
-const LibraryList = ({
-    files,
-    setFiles,
-    skeletontFileCount,
-    setSkeletontFileCount,
-    isInitLoad,
-    setIsInitLoad,
-}) => {
+const LibraryList = () => {
+    const {
+        files,
+        setFiles,
+        skeletontFileCount,
+        setSkeletontFileCount,
+        isInitLoad,
+        setIsInitLoad,
+    } = useContext(AppContext);
     const [uploading, setUploading] = useState(false);
 
     const handleUpload = () => {

@@ -3,7 +3,14 @@ import { Link as ReactRouterLink } from "react-router-dom";
 
 import "./Button.css";
 
-const Link = ({ children, className, onAuxClick, draggable, to, ...rest }) => {
+const Link = ({
+    children = undefined,
+    className,
+    onAuxClick = undefined,
+    draggable = undefined,
+    to,
+    ...rest
+}) => {
     return (
         <>
             <ReactRouterLink

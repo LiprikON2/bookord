@@ -37,6 +37,9 @@
         "section": "App Settings",
         "type": "colorInput",
         "value": "#4f929e",
-        "defaultValue": "#4f929e"
+        "defaultValue": "#4f929e",
+        "theme": {
+            "cssVar": "--clr-accent-000"
+        }
     }
 }

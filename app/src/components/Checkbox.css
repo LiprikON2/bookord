@@ -1,0 +1,4 @@
+input[type="checkbox"]:checked {
+    background-color: var(--clr-accent-000);
+    border-color: var(--clr-accent-000);
+}

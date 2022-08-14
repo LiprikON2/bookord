@@ -3,12 +3,12 @@ import { Title } from "@mantine/core";
 
 import SettingsList from "./SettingsList";
 
-const Settings = ({ settings, setSettings }) => {
+const Settings = () => {
     return (
         <>
             <section className="section" style={{ maxWidth: "50rem" }}>
                 <Title order={1}>Settings</Title>
-                <SettingsList settings={settings} setSettings={setSettings} />
+                <SettingsList />
             </section>
         </>
     );

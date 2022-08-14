@@ -1,30 +1,25 @@
-import React from "react";
-import { writeConfigRequest } from "secure-electron-store";
-import {
-    Checkbox,
-    HoverCard,
-    Text,
-    NumberInput,
-    Space,
-    ColorInput,
-    Group,
-} from "@mantine/core";
-import Button from "components/Button";
+import React, { useContext } from "react";
+import { HoverCard, Text, NumberInput, Space, ColorInput, Group } from "@mantine/core";
 import { Rotate } from "tabler-icons-react";
+
+import { AppContext } from "Core/Routes";
+import Button from "components/Button";
+import Checkbox from "components/Checkbox";
 
 const dynamicInputTypes = { numberInput: NumberInput, colorInput: ColorInput };
 
-const Setting = ({ settingID, setting, settings, setSettings }) => {
+const SettingItem = ({ settingID, setting }) => {
+    const { settings, setSettings } = useContext(AppContext);
+
     const updateSettings = (setting, value) => {
-        console.log("setting", setting, value);
+        const updatedSetting = { ...settings[setting], value: value };
         // Updates only one specific value of an object inside another object
         const updatedSettings = {
             ...settings,
-            [setting]: { ...settings[setting], value: value },
+            [setting]: updatedSetting,
         };
 
         setSettings(updatedSettings);
-        window.api.store.send(writeConfigRequest, "settings", updatedSettings);
     };
 
     return (
@@ -84,4 +79,4 @@ const Setting = ({ settingID, setting, settings, setSettings }) => {
     );
 };
 
-export default Setting;
+export default SettingItem;

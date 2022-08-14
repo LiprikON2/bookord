@@ -11,6 +11,11 @@
     font-family: "Staatliches";
     src: url("resources/fonts/Staatliches-Regular.ttf") format("truetype");
 }
+:any-link,
+:any-link,
+:any-link {
+    color: black !important;
+}
 
 :root {
     /* Colors */
@@ -33,6 +38,10 @@
     --clr-danger: #d31223;
     --clr-danger-000: #ff6b6b;
     --clr-danger-100: #662a2d;
+
+    --clr-link: #4dabf7;
+    --clr-link: var(--clr-accent-000);
+
     /* Gradients */
     --grad-primary-lin: linear-gradient(
         78deg,

@@ -5,7 +5,6 @@ export const style = /*css*/ `
         // --column-gap: 100px;
         --column-gap: 0px;
 
-        --clr-link: #4dabf7; /* todo move it to somewhere else */
     }
 
     :any-link {

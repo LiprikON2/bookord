@@ -17,7 +17,7 @@ const Navbar = ({ lastOpenedBookTitle }) => {
 
     const invisibleStyle = {
         opacity: "0",
-        PointerEvents: "none",
+        pointerEvents: "none",
     };
 
     return (
@@ -26,6 +26,7 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                 <ul className="navbar-list">
                     <li
                         className="navbar-item"
+                        // @ts-ignore
                         style={!isBtnBackVisible ? invisibleStyle : null}>
                         <Button
                             isVisible={isBtnBackVisible}
@@ -84,6 +85,7 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                     </li>
                     <li
                         className="navbar-item"
+                        // @ts-ignore
                         style={!isBtnContinueReadingVisible ? invisibleStyle : null}>
                         <Button
                             isVisible={isBtnContinueReadingVisible}
