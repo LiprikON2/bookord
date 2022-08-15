@@ -1,3 +1,26 @@
 .complex-setting .mantine-Group-child {
     width: 80%;
 }
+
+.mantine-Accordion-item > div:first-child {
+    align-items: flex-start;
+}
+.mantine-Accordion-item .mantine-Accordion-control {
+    flex: 1;
+    padding: 0;
+    padding-block: 1rem;
+}
+.mantine-Accordion-content,
+.mantine-Accordion-control {
+    padding: 0;
+    padding-bottom: 2rem;
+}
+.mantine-Accordion-item .mantine-Switch-root {
+    gap: 0.5rem;
+    margin-top: 1rem;
+    height: 100%;
+    flex-direction: column-reverse;
+}
+.mantine-Accordion-item .mantine-Switch-label {
+    padding: 0;
+}

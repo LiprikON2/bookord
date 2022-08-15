@@ -40,14 +40,16 @@ const SettingItem = ({ settingId, setting }) => {
 
     return (
         <Group spacing="xs" style={{ ...settingGroupStyle, width: "100%" }}>
-            <Button
-                title="Restore To Default"
-                isIconOnly={true}
-                isGhost={true}
-                isVisible={setting.defaultValue !== setting.value}
-                onClick={() => restoreDefaults(settingId, setting.defaultValue)}>
-                <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
-            </Button>
+            {setting.type !== "complex" ? (
+                <Button
+                    title="Restore To Default"
+                    isIconOnly={true}
+                    isGhost={true}
+                    isVisible={setting.defaultValue !== setting.value}
+                    onClick={() => restoreDefaults(settingId, setting.defaultValue)}>
+                    <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
+                </Button>
+            ) : null}
             <HoverCard
                 // @ts-ignore
                 style={setting.type === "complex" ? { width: "80%" } : null}
