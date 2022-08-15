@@ -1,10 +1,13 @@
 import React, { useContext } from "react";
-import { HoverCard, Text, NumberInput, Space, ColorInput, Group } from "@mantine/core";
+import { HoverCard, Text, Space, Group } from "@mantine/core";
 import { Rotate } from "tabler-icons-react";
 
 import { AppContext } from "Core/Routes";
 import Button from "components/Button";
 import Checkbox from "components/Checkbox";
+import NumberInput from "components/NumberInput";
+import ColorInput from "components/ColorInput";
+import ComplexSetting from "./ComplexSetting";
 
 const dynamicInputTypes = { numberInput: NumberInput, colorInput: ColorInput };
 
@@ -22,10 +25,10 @@ const SettingItem = ({ settingID, setting }) => {
         setSettings(updatedSettings);
     };
 
+    const checkboxStyle = setting.type !== "checkbox" ? { alignItems: "flex-end" } : null;
+
     return (
-        <Group
-            spacing="xs"
-            style={setting.type !== "checkbox" ? { alignItems: "flex-end" } : null}>
+        <Group spacing="xs" style={{ ...checkboxStyle, width: "100%" }}>
             <Button
                 title="Restore To Default"
                 isIconOnly={true}
@@ -35,6 +38,8 @@ const SettingItem = ({ settingID, setting }) => {
                 <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
             </Button>
             <HoverCard
+                // @ts-ignore
+                style={setting.type === "complex" ? { width: "80%" } : null}
                 position={setting.type === "checkbox" ? "left" : "left-end"}
                 offset={20}
                 width={280}
@@ -68,6 +73,8 @@ const SettingItem = ({ settingID, setting }) => {
                                     />
                                 );
                             })()
+                        ) : setting.type === "complex" ? (
+                            <ComplexSetting />
                         ) : null}
                     </div>
                 </HoverCard.Target>
