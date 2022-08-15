@@ -11,6 +11,13 @@ export const style = /*css*/ `
         color: var(--clr-link) !important;
     }
 
+    p {
+        font-size: var(--fs-book-text) !important;
+    }
+    h1, h2, h3, h4, h5, h6, h7 {
+        font-size: var(--fs-book-title) !important;
+    }
+
     .book-container {
         max-width: 30rem;
         height: 85vh;

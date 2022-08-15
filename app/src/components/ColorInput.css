@@ -1,0 +1,9 @@
+.mantine-Input-input.mantine-ColorInput-input {
+    background-color: var(--clr-secondary-300);
+    border-color: var(--clr-primary-300);
+}
+
+.mantine-Input-input.mantine-ColorInput-input,
+.mantine-InputWrapper-label {
+    color: var(--clr-primary-150);
+}

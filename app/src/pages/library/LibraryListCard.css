@@ -45,7 +45,7 @@ a:focus-visible > .card > .card-cover {
     line-height: 1;
 
     /* border: 2px solid var(--clr-accent-000); */
-    background: var(--grad-primary-lin);
+    background: var(--grad-card-lin);
     color: var(--clr-accent-000);
 }
 
@@ -82,11 +82,7 @@ a:focus-visible > .card > .card-cover {
 .no-cover:hover .clip-path > h3,
 a:focus-visible .no-cover .clip-path > h3 {
     color: var(--clr-secondary-300);
-    background: radial-gradient(
-        farthest-corner at 200% -300%,
-        var(--clr-accent-100) 25%,
-        var(--clr-accent-000) 100%
-    );
+    background: var(--grad-card-rad);
 }
 
 .card > .card-content {

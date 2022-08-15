@@ -1,4 +1,11 @@
-input[type="checkbox"]:checked {
+.mantine-Checkbox-input {
+    background-color: var(--clr-secondary-300);
+    border-color: var(--clr-primary-300);
+}
+.mantine-Checkbox-input:checked {
     background-color: var(--clr-accent-000);
     border-color: var(--clr-accent-000);
+}
+.mantine-Checkbox-label {
+    color: var(--clr-primary-150);
 }

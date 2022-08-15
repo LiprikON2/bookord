@@ -23,23 +23,155 @@
         "value": true,
         "defaultValue": true
     },
-    "fontSize": {
+    "overrideFont": {
+        "name": "Override book's font size",
+        "description": "Whether or not app will open last read book on startup.",
+        "section": "App Settings",
+        "type": "checkbox",
+        "value": false,
+        "defaultValue": false
+    },
+    "fontSizeText": {
         "name": "Font Size.",
         "description": "16 is the default",
-        "section": "Font settings",
+        "section": "Theme",
         "type": "numberInput",
         "value": 16,
-        "defaultValue": 16
+        "defaultValue": 16,
+        "theme": {
+            "cssVar": "--fs-book-text"
+        }
     },
-    "accentColor": {
-        "name": "Bookord Accent Color.",
-        "description": "Make it yours!",
-        "section": "App Settings",
+    "accentColor000": {
+        "name": "Accent Color.",
+        "description": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+        "section": "Theme",
         "type": "colorInput",
         "value": "#4f929e",
         "defaultValue": "#4f929e",
         "theme": {
             "cssVar": "--clr-accent-000"
+        }
+    },
+    "accentColor100": {
+        "name": "Complimentary Accent Color.",
+        "description": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#43c59e",
+        "defaultValue": "#43c59e",
+        "theme": {
+            "cssVar": "--clr-accent-100"
+        }
+    },
+    "primaryColor000": {
+        "name": "Primary Color.",
+        "description": "Primary color are calls-to-action, buttons, and any other important information.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#ffffff",
+        "defaultValue": "#ffffff",
+        "theme": {
+            "cssVar": "--clr-primary-000"
+        }
+    },
+    "primaryColor100": {
+        "name": "Primary Color.",
+        "description": "Primary color are calls-to-action, buttons, and any other important information.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#dcddde",
+        "defaultValue": "#dcddde",
+        "theme": {
+            "cssVar": "--clr-primary-100"
+        }
+    },
+    "primaryColor150": {
+        "name": "Primary Color.",
+        "description": "Primary color are calls-to-action, buttons, and any other important information.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#C1C2C5",
+        "defaultValue": "#C1C2C5",
+        "theme": {
+            "cssVar": "--clr-primary-150"
+        }
+    },
+    "primaryColor200": {
+        "name": "Primary Color.",
+        "description": "Primary color are calls-to-action, buttons, and any other important information.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#8e9297",
+        "defaultValue": "#8e9297",
+        "theme": {
+            "cssVar": "--clr-primary-200"
+        }
+    },
+    "primaryColor300": {
+        "name": "Primary Color.",
+        "description": "Primary color are calls-to-action, buttons, and any other important information.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#48545c",
+        "defaultValue": "#48545c",
+        "theme": {
+            "cssVar": "--clr-primary-300"
+        }
+    },
+    "secondaryColor000": {
+        "name": "Secondary Color.",
+        "description": "The secondary colors are used to highlight less important elements.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#000000",
+        "defaultValue": "#000000",
+        "theme": {
+            "cssVar": "--clr-secondary-000"
+        }
+    },
+    "secondaryColor100": {
+        "name": "Secondary Color.",
+        "description": "The secondary colors are used to highlight less important elements.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#17191b",
+        "defaultValue": "#17191b",
+        "theme": {
+            "cssVar": "--clr-secondary-100"
+        }
+    },
+    "secondaryColor200": {
+        "name": "Secondary Color.",
+        "description": "The secondary colors are used to highlight less important elements.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#202225",
+        "defaultValue": "#202225",
+        "theme": {
+            "cssVar": "--clr-secondary-200"
+        }
+    },
+    "secondaryColor300": {
+        "name": "Secondary Color.",
+        "description": "The secondary colors are used to highlight less important elements.",
+        "section": "Theme",
+        "type": "colorInput",
+        "value": "#2f3136",
+        "defaultValue": "#2f3136",
+        "theme": {
+            "cssVar": "--clr-secondary-300"
+        }
+    },
+    "x": {
+        "name": "Secondary Color.",
+        "description": "The secondary colors are used to highlight less important elements.",
+        "section": "Theme",
+        "type": "complex",
+        "value": "#2f3136",
+        "defaultValue": "#2f3136",
+        "theme": {
+            "cssVar": "--clr-secondary-300"
         }
     }
 }

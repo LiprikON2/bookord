@@ -1,11 +1,12 @@
 import React, { useState, createContext, useLayoutEffect } from "react";
 import { Switch, Route, Redirect } from "react-router";
+import tinycolor from "tinycolor2";
+import loadable from "@loadable/component";
 
 // @ts-ignore
 import ROUTES from "Constants/routes";
 // @ts-ignore
 import DEFAULT_SETTINGS from "Constants/defaultSettings";
-import loadable from "@loadable/component";
 
 // Load bundles asynchronously so that the initial render happens faster
 const Library = loadable(() =>
@@ -39,6 +40,16 @@ export const AppContext = createContext(null);
 const updateTheme = (setting) => {
     if ("theme" in setting) {
         document.documentElement.style.setProperty(setting.theme.cssVar, setting.value);
+        if (setting.type === "colorInput") {
+            const color = tinycolor(setting.value);
+            const { h, s, l } = color.toHsl();
+            const hslString = `${h} ${s * 100}% ${l * 100}%`;
+
+            document.documentElement.style.setProperty(
+                setting.theme.cssVar + "-hsl",
+                hslString
+            );
+        }
     }
 };
 

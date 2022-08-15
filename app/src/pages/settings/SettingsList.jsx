@@ -1,6 +1,7 @@
 import React, { useState, useLayoutEffect, useContext } from "react";
-import { Stack, Title } from "@mantine/core";
+import { Stack, Tabs, Title } from "@mantine/core";
 import { writeConfigRequest } from "secure-electron-store";
+import { Palette } from "tabler-icons-react";
 
 import SettingItem from "./SettingItem";
 import { AppContext } from "Core/Routes";
@@ -33,28 +34,44 @@ const SettingsList = () => {
     return (
         <>
             <section className="section">
-                {sections.map((section) => {
-                    return (
-                        <section key={section}>
-                            <Title order={2}>{section}</Title>
-                            <Stack m="xl" align="flex-start" style={{ marginInline: 0 }}>
-                                {Object.keys(settings).map((key) => {
-                                    const setting = settings[key];
-                                    if (setting.section === section) {
-                                        return (
-                                            <React.Fragment key={key}>
-                                                <SettingItem
-                                                    settingID={key}
-                                                    setting={setting}
-                                                />
-                                            </React.Fragment>
-                                        );
-                                    }
-                                })}
-                            </Stack>
-                        </section>
-                    );
-                })}
+                <Tabs defaultValue="App Settings">
+                    <Tabs.List>
+                        {sections.map((section) => (
+                            <Tabs.Tab
+                                key={section + "-tab"}
+                                value={section}
+                                icon={<Palette size={14} />}>
+                                {section}
+                            </Tabs.Tab>
+                        ))}
+                    </Tabs.List>
+                    {sections.map((section) => {
+                        return (
+                            <Tabs.Panel key={section + "-panel"} value={section} pt="xs">
+                                <section>
+                                    <Stack
+                                        m="xl"
+                                        align="flex-start"
+                                        style={{ marginInline: 0, width: "100%" }}>
+                                        {Object.keys(settings).map((key) => {
+                                            const setting = settings[key];
+                                            if (setting.section === section) {
+                                                return (
+                                                    <React.Fragment key={key}>
+                                                        <SettingItem
+                                                            settingID={key}
+                                                            setting={setting}
+                                                        />
+                                                    </React.Fragment>
+                                                );
+                                            }
+                                        })}
+                                    </Stack>
+                                </section>
+                            </Tabs.Panel>
+                        );
+                    })}
+                </Tabs>
             </section>
         </>
     );

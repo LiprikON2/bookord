@@ -6,7 +6,7 @@ import SettingsList from "./SettingsList";
 const Settings = () => {
     return (
         <>
-            <section className="section" style={{ maxWidth: "50rem" }}>
+            <section className="section" style={{ maxWidth: "75rem" }}>
                 <Title order={1}>Settings</Title>
                 <SettingsList />
             </section>

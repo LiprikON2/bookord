@@ -13,7 +13,7 @@ class Root extends React.Component {
             <>
                 <Provider store={store}>
                     <ConnectedRouter history={history}>
-                        <MantineProvider withCSSVariables theme={{ colorScheme: "dark" }}>
+                        <MantineProvider theme={{ colorScheme: "dark" }}>
                             <App history={history} />
                         </MantineProvider>
                     </ConnectedRouter>
