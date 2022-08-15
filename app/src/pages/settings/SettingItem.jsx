@@ -11,7 +11,7 @@ import ComplexSetting from "./ComplexSetting";
 
 const dynamicInputTypes = { numberInput: NumberInput, colorInput: ColorInput };
 
-const SettingItem = ({ settingID, setting }) => {
+const SettingItem = ({ settingId, setting }) => {
     const { settings, setSettings } = useContext(AppContext);
 
     const updateSettings = (setting, value) => {
@@ -25,16 +25,27 @@ const SettingItem = ({ settingID, setting }) => {
         setSettings(updatedSettings);
     };
 
-    const checkboxStyle = setting.type !== "checkbox" ? { alignItems: "flex-end" } : null;
+    const restoreDefaults = (setting, value) => {
+        if (setting.type !== "complex") {
+            updateSettings(setting, value);
+        } else {
+            /* TODO */
+        }
+    };
+
+    const settingGroupStyle =
+        setting.type !== "checkbox" && setting.type !== "complex"
+            ? { alignItems: "flex-end" }
+            : null;
 
     return (
-        <Group spacing="xs" style={{ ...checkboxStyle, width: "100%" }}>
+        <Group spacing="xs" style={{ ...settingGroupStyle, width: "100%" }}>
             <Button
                 title="Restore To Default"
                 isIconOnly={true}
                 isGhost={true}
                 isVisible={setting.defaultValue !== setting.value}
-                onClick={() => updateSettings(settingID, setting.defaultValue)}>
+                onClick={() => restoreDefaults(settingId, setting.defaultValue)}>
                 <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
             </Button>
             <HoverCard
@@ -52,7 +63,7 @@ const SettingItem = ({ settingID, setting }) => {
                                 size="md"
                                 label={setting.name}
                                 checked={setting.value}
-                                onChange={() => updateSettings(settingID, !setting.value)}
+                                onChange={() => updateSettings(settingId, !setting.value)}
                             />
                         ) : setting.type in dynamicInputTypes ? (
                             (() => {
@@ -60,7 +71,7 @@ const SettingItem = ({ settingID, setting }) => {
                                 return (
                                     <GenericInput
                                         onChange={(newValue) =>
-                                            updateSettings(settingID, newValue)
+                                            updateSettings(settingId, newValue)
                                         }
                                         value={setting.value}
                                         label={
@@ -74,7 +85,11 @@ const SettingItem = ({ settingID, setting }) => {
                                 );
                             })()
                         ) : setting.type === "complex" ? (
-                            <ComplexSetting />
+                            <ComplexSetting
+                                updateSettings={updateSettings}
+                                settingId={settingId}
+                                setting={setting}
+                            />
                         ) : null}
                     </div>
                 </HoverCard.Target>

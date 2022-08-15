@@ -64,61 +64,6 @@
             "cssVar": "--clr-accent-100"
         }
     },
-    "primaryColor000": {
-        "name": "Primary Color.",
-        "description": "Primary color are calls-to-action, buttons, and any other important information.",
-        "section": "Theme",
-        "type": "colorInput",
-        "value": "#ffffff",
-        "defaultValue": "#ffffff",
-        "theme": {
-            "cssVar": "--clr-primary-000"
-        }
-    },
-    "primaryColor100": {
-        "name": "Primary Color.",
-        "description": "Primary color are calls-to-action, buttons, and any other important information.",
-        "section": "Theme",
-        "type": "colorInput",
-        "value": "#dcddde",
-        "defaultValue": "#dcddde",
-        "theme": {
-            "cssVar": "--clr-primary-100"
-        }
-    },
-    "primaryColor150": {
-        "name": "Primary Color.",
-        "description": "Primary color are calls-to-action, buttons, and any other important information.",
-        "section": "Theme",
-        "type": "colorInput",
-        "value": "#C1C2C5",
-        "defaultValue": "#C1C2C5",
-        "theme": {
-            "cssVar": "--clr-primary-150"
-        }
-    },
-    "primaryColor200": {
-        "name": "Primary Color.",
-        "description": "Primary color are calls-to-action, buttons, and any other important information.",
-        "section": "Theme",
-        "type": "colorInput",
-        "value": "#8e9297",
-        "defaultValue": "#8e9297",
-        "theme": {
-            "cssVar": "--clr-primary-200"
-        }
-    },
-    "primaryColor300": {
-        "name": "Primary Color.",
-        "description": "Primary color are calls-to-action, buttons, and any other important information.",
-        "section": "Theme",
-        "type": "colorInput",
-        "value": "#48545c",
-        "defaultValue": "#48545c",
-        "theme": {
-            "cssVar": "--clr-primary-300"
-        }
-    },
     "secondaryColor000": {
         "name": "Secondary Color.",
         "description": "The secondary colors are used to highlight less important elements.",
@@ -164,14 +109,69 @@
         }
     },
     "x": {
-        "name": "Secondary Color.",
+        "name": "Main colors",
         "description": "The secondary colors are used to highlight less important elements.",
         "section": "Theme",
         "type": "complex",
         "value": "#2f3136",
         "defaultValue": "#2f3136",
-        "theme": {
-            "cssVar": "--clr-secondary-300"
+        "useSubsettings": false,
+        "subsettings": {
+            "primaryColor000": {
+                "name": "Primary Color.",
+                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#ffffff",
+                "defaultValue": "#ffffff",
+                "theme": {
+                    "cssVar": "--clr-primary-000"
+                }
+            },
+            "primaryColor100": {
+                "name": "Primary Color.",
+                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#dcddde",
+                "defaultValue": "#dcddde",
+                "theme": {
+                    "cssVar": "--clr-primary-100"
+                }
+            },
+            "primaryColor150": {
+                "name": "Primary Color.",
+                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#C1C2C5",
+                "defaultValue": "#C1C2C5",
+                "theme": {
+                    "cssVar": "--clr-primary-150"
+                }
+            },
+            "primaryColor200": {
+                "name": "Primary Color.",
+                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#8e9297",
+                "defaultValue": "#8e9297",
+                "theme": {
+                    "cssVar": "--clr-primary-200"
+                }
+            },
+            "primaryColor300": {
+                "name": "Primary Color.",
+                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#48545c",
+                "defaultValue": "#48545c",
+                "theme": {
+                    "cssVar": "--clr-primary-300"
+                }
+            }
         }
     }
 }

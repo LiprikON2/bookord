@@ -59,7 +59,7 @@ const SettingsList = () => {
                                                 return (
                                                     <React.Fragment key={key}>
                                                         <SettingItem
-                                                            settingID={key}
+                                                            settingId={key}
                                                             setting={setting}
                                                         />
                                                     </React.Fragment>
