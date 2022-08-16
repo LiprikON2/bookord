@@ -28,7 +28,7 @@ index e4d8206..c338fca 100644
      "aria-expanded": isActive,
      "aria-controls": ctx.getRegionId(value),
 diff --git a/node_modules/@mantine/core/esm/Accordion/AccordionControl/AccordionControl.js b/node_modules/@mantine/core/esm/Accordion/AccordionControl/AccordionControl.js
-index 1ab9e8e..661e057 100644
+index 1ab9e8e..d8981ed 100644
 --- a/node_modules/@mantine/core/esm/Accordion/AccordionControl/AccordionControl.js
 +++ b/node_modules/@mantine/core/esm/Accordion/AccordionControl/AccordionControl.js
 @@ -4,7 +4,6 @@ import { createScopedKeydownHandler } from '@mantine/utils';
@@ -48,3 +48,11 @@ index 1ab9e8e..661e057 100644
      ref,
      "data-accordion-control": true,
      disabled,
+@@ -77,7 +76,6 @@ const AccordionControl = forwardRef((_a, ref) => {
+       onClick == null ? void 0 : onClick(event);
+       ctx.onChange(value);
+     },
+-    type: "button",
+     "data-active": isActive || void 0,
+     "aria-expanded": isActive,
+     "aria-controls": ctx.getRegionId(value),

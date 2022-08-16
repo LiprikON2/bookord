@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { HoverCard, Text, Group } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { Rotate } from "tabler-icons-react";
 
 import { AppContext } from "Core/Routes";
@@ -8,25 +8,35 @@ import Button from "components/Button";
 import SettingItemInput from "./SettingItemInput";
 import HoverDescription from "./HoverDescription";
 
-const SettingItem = ({ settingId, setting }) => {
+const SettingItem = ({ settingId, setting, parentSettingId = null }) => {
     const { settings, setSettings } = useContext(AppContext);
 
-    const updateSettings = (setting, value) => {
-        // const updatedSetting = { ...settings[setting], value: value };
-        // // Updates only one specific value of an object inside another object
-        // const updatedSettings = {
-        //     ...settings,
-        //     [setting]: updatedSetting,
-        // };
-        // setSettings(updatedSettings);
-    };
+    const updateSettings = (settingId, value, parentSettingId) => {
+        let updatedSetting;
 
-    const restoreDefaults = (setting, value) => {
-        if (setting.type !== "complex") {
-            updateSettings(setting, value);
+        if (!parentSettingId) {
+            updatedSetting = { ...settings[settingId], value: value };
+            // Updates only one specific value of an object inside another object
         } else {
-            /* TODO */
+            updatedSetting = {
+                ...settings[parentSettingId],
+                subsettings: {
+                    ...settings[parentSettingId].subsettings,
+                    [settingId]: {
+                        ...settings[parentSettingId].subsettings[settingId],
+                        value: value,
+                    },
+                },
+            };
         }
+
+        const updatedSettings = {
+            ...settings,
+            [settingId]: updatedSetting,
+        };
+        console.log("before", settings);
+        console.log("updatedSettings", updatedSettings);
+        setSettings(updatedSettings);
     };
 
     const settingGroupStyle =
@@ -43,7 +53,13 @@ const SettingItem = ({ settingId, setting }) => {
                         isIconOnly={true}
                         isGhost={true}
                         isVisible={setting.defaultValue !== setting.value}
-                        onClick={() => restoreDefaults(settingId, setting.defaultValue)}>
+                        onClick={() =>
+                            updateSettings(
+                                settingId,
+                                setting.defaultValue,
+                                parentSettingId
+                            )
+                        }>
                         <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
                     </Button>
                     <HoverDescription setting={setting}>
@@ -51,6 +67,7 @@ const SettingItem = ({ settingId, setting }) => {
                             updateSettings={updateSettings}
                             settingId={settingId}
                             setting={setting}
+                            parentSettingId={parentSettingId}
                         />
                     </HoverDescription>
                 </>
@@ -59,6 +76,7 @@ const SettingItem = ({ settingId, setting }) => {
                     updateSettings={updateSettings}
                     settingId={settingId}
                     setting={setting}
+                    parentSettingId={parentSettingId}
                 />
             )}
         </Group>

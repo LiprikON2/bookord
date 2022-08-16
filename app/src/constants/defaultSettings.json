@@ -113,8 +113,6 @@
         "description": "Complex input description",
         "section": "Theme",
         "type": "complex",
-        "value": "#2f3136",
-        "defaultValue": "#2f3136",
         "useSubsettings": false,
         "subsettings": {
             "primaryColor000": {

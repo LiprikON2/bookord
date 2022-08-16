@@ -4,6 +4,7 @@ nav.navbar {
     height: var(--navbar-height);
     align-items: stretch;
     display: flex;
+    z-index: 1000;
 }
 .navbar-list {
     display: grid;

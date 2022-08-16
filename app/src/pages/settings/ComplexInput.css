@@ -26,3 +26,11 @@
 .mantine-Accordion-item .mantine-Switch-label {
     padding: 0;
 }
+
+.mantine-Accordion-label > .mantine-Group-root {
+    gap: 0;
+}
+
+.mantine-Accordion-label .btn.btn-ghost {
+    margin-inline: 5px;
+}

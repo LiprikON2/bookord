@@ -1,21 +1,21 @@
-.mantine-Checkbox-input {
+.mantine-Switch-input {
     background-color: var(--clr-secondary-300);
     border-color: var(--clr-primary-300);
 }
-.mantine-Checkbox-input:hover,
-.mantine-Checkbox-input:focus-visible {
+.mantine-Switch-input:hover,
+.mantine-Switch-input:focus-visible {
     background-color: var(--clr-secondary-200);
     border-color: var(--clr-primary-200);
 }
-.mantine-Checkbox-input:checked {
+.mantine-Switch-input:checked {
     background-color: var(--clr-accent-000);
     border-color: var(--clr-accent-000);
 }
-.mantine-Checkbox-input:checked:hover,
-.mantine-Checkbox-input:checked:focus-visible {
+.mantine-Switch-input:checked:hover,
+.mantine-Switch-input:checked:focus-visible {
     background-color: var(--clr-accent-100);
     border-color: var(--clr-accent-100);
 }
-.mantine-Checkbox-label {
+.mantine-Switch-label {
     color: var(--clr-primary-150);
 }

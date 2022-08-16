@@ -159,3 +159,8 @@ main#main {
     color: var(--clr-primary-000);
     border-color: var(--clr-accent-000);
 }
+
+.mantine-Tabs-tabLabel[data-active]:hover,
+.mantine-Tabs-tab[data-active]:hover {
+    border-color: var(--clr-accent-100);
+}

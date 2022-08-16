@@ -8,7 +8,7 @@ import ComplexInput from "./ComplexInput";
 
 const dynamicInputTypes = { numberInput: NumberInput, colorInput: ColorInput };
 
-const SettingItemInput = ({ updateSettings, settingId, setting }) => {
+const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId }) => {
     return (
         <>
             {setting.type === "checkbox" ? (
@@ -16,14 +16,18 @@ const SettingItemInput = ({ updateSettings, settingId, setting }) => {
                     size="md"
                     label={setting.name}
                     checked={setting.value}
-                    onChange={() => updateSettings(settingId, !setting.value)}
+                    onChange={() =>
+                        updateSettings(settingId, !setting.value, parentSettingId)
+                    }
                 />
             ) : setting.type in dynamicInputTypes ? (
                 (() => {
                     const GenericInput = dynamicInputTypes[setting.type];
                     return (
                         <GenericInput
-                            onChange={(newValue) => updateSettings(settingId, newValue)}
+                            onChange={(newValue) =>
+                                updateSettings(settingId, newValue, parentSettingId)
+                            }
                             value={setting.value}
                             label={
                                 <>

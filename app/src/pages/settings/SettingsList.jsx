@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect, useContext } from "react";
-import { Stack, Tabs, Title } from "@mantine/core";
+import { Stack, Tabs } from "@mantine/core";
 import { writeConfigRequest } from "secure-electron-store";
 import { Palette } from "tabler-icons-react";
 
