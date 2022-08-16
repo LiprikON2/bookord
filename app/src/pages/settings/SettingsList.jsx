@@ -24,11 +24,18 @@ const SettingsList = () => {
 
     useLayoutEffect(() => {
         createSections();
-    }, [settings]);
+    }, []);
 
     useLayoutEffect(() => {
         window.api.store.send(writeConfigRequest, "settings", debouncedSettings);
-        Object.values(settings).forEach((setting) => updateTheme(setting));
+        Object.values(settings).forEach((setting) => {
+            updateTheme(setting);
+            if ("subsettings" in setting) {
+                Object.values(setting.subsettings).forEach((setting) =>
+                    updateTheme(setting)
+                );
+            }
+        });
     }, [debouncedSettings]);
 
     return (
@@ -57,7 +64,7 @@ const SettingsList = () => {
                                             const setting = settings[key];
                                             if (setting.section === section) {
                                                 return (
-                                                    <React.Fragment key={key}>
+                                                    <React.Fragment key={key + "-item"}>
                                                         <SettingItem
                                                             settingId={key}
                                                             setting={setting}

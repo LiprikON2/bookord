@@ -41,6 +41,7 @@ const updateTheme = (setting) => {
     if ("theme" in setting) {
         document.documentElement.style.setProperty(setting.theme.cssVar, setting.value);
         if (setting.type === "colorInput") {
+            // Generates hsl variable version for color
             const color = tinycolor(setting.value);
             const { h, s, l } = color.toHsl();
             const hslString = `${h} ${s * 100}% ${l * 100}%`;
@@ -69,6 +70,32 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
 
     const [settings, setSettings] = useState(getInitSettings());
 
+    const updateSettings = (settingId, value, parentSettingId) => {
+        let updatedSetting;
+
+        if (!parentSettingId) {
+            // Updates only one specific property of an object inside another object
+            updatedSetting = { ...settings[settingId], value: value };
+        } else {
+            updatedSetting = {
+                ...settings[parentSettingId],
+                subsettings: {
+                    ...settings[parentSettingId].subsettings,
+                    [settingId]: {
+                        ...settings[parentSettingId].subsettings[settingId],
+                        value: value,
+                    },
+                },
+            };
+        }
+
+        const updatedSettings = {
+            ...settings,
+            [parentSettingId]: updatedSetting,
+        };
+        setSettings(updatedSettings);
+    };
+
     const [files, setFiles] = useState([]);
     const [skeletontFileCount, setSkeletontFileCount] = useState(0);
     const [isInitLoad, setIsInitLoad] = useState(true);
@@ -90,6 +117,7 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
                 isInitLoad,
                 setIsInitLoad,
                 updateTheme,
+                updateSettings,
             }}>
             <main id="main">
                 <Switch>

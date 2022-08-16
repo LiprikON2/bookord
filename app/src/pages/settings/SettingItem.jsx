@@ -9,35 +9,7 @@ import SettingItemInput from "./SettingItemInput";
 import HoverDescription from "./HoverDescription";
 
 const SettingItem = ({ settingId, setting, parentSettingId = null }) => {
-    const { settings, setSettings } = useContext(AppContext);
-
-    const updateSettings = (settingId, value, parentSettingId) => {
-        let updatedSetting;
-
-        if (!parentSettingId) {
-            updatedSetting = { ...settings[settingId], value: value };
-            // Updates only one specific value of an object inside another object
-        } else {
-            updatedSetting = {
-                ...settings[parentSettingId],
-                subsettings: {
-                    ...settings[parentSettingId].subsettings,
-                    [settingId]: {
-                        ...settings[parentSettingId].subsettings[settingId],
-                        value: value,
-                    },
-                },
-            };
-        }
-
-        const updatedSettings = {
-            ...settings,
-            [settingId]: updatedSetting,
-        };
-        console.log("before", settings);
-        console.log("updatedSettings", updatedSettings);
-        setSettings(updatedSettings);
-    };
+    const { updateSettings } = useContext(AppContext);
 
     const settingGroupStyle =
         setting.type !== "checkbox" && setting.type !== "complex"
@@ -72,12 +44,15 @@ const SettingItem = ({ settingId, setting, parentSettingId = null }) => {
                     </HoverDescription>
                 </>
             ) : (
-                <SettingItemInput
-                    updateSettings={updateSettings}
-                    settingId={settingId}
-                    setting={setting}
-                    parentSettingId={parentSettingId}
-                />
+                <>
+                    {console.log(setting.type, "has following item:", settingId)}
+                    <SettingItemInput
+                        updateSettings={updateSettings}
+                        settingId={settingId}
+                        setting={setting}
+                        parentSettingId={parentSettingId}
+                    />
+                </>
             )}
         </Group>
     );

@@ -43,6 +43,11 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                                 .slice(1) // Removes main subsetting which is shown in Control
                                 .map((subsettingKey) => {
                                     const subsetting = setting.subsettings[subsettingKey];
+                                    console.log(
+                                        "complex settingId",
+                                        settingId,
+                                        subsetting.type
+                                    );
                                     return (
                                         <React.Fragment key={settingId + subsettingKey}>
                                             <SettingItem
