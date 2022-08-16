@@ -9,6 +9,7 @@
     flex: 1;
     padding: 0;
     padding-block: 1rem;
+    cursor: default;
 }
 .mantine-Accordion-content,
 .mantine-Accordion-control {
@@ -18,6 +19,7 @@
 .mantine-Accordion-item .mantine-Switch-root {
     gap: 0.5rem;
     margin-top: 1rem;
+    margin-right: 2rem;
     height: 100%;
     flex-direction: column-reverse;
 }

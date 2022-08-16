@@ -109,8 +109,8 @@
         }
     },
     "x": {
-        "name": "Main colors",
-        "description": "The secondary colors are used to highlight less important elements.",
+        "name": "Complex input",
+        "description": "Complex input description",
         "section": "Theme",
         "type": "complex",
         "value": "#2f3136",

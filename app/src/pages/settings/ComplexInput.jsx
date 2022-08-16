@@ -1,17 +1,17 @@
 import React from "react";
-import { Plus } from "tabler-icons-react";
 import { Accordion, Box, Group, Switch } from "@mantine/core";
-import ColorInput from "components/ColorInput";
 
-import "./ComplexSetting.css";
+import "./ComplexInput.css";
 import SettingItem from "./SettingItem";
 import { useToggle } from "@mantine/hooks";
+import HoverDescription from "./HoverDescription";
 
-const ComplexSetting = ({ updateSettings, settingId, setting }) => {
+const ComplexInput = ({ updateSettings, settingId, setting }) => {
     const mainSubsettingKey = Object.keys(setting.subsettings)[0];
     const mainSubsetting = setting.subsettings[mainSubsettingKey];
+
     const [show, toggleShow] = useToggle([null, setting.name]);
-    console.log("show", show);
+
     return (
         <>
             <Group style={{ justifyContent: "space-between", width: "100%" }}>
@@ -23,20 +23,7 @@ const ComplexSetting = ({ updateSettings, settingId, setting }) => {
                         // updateSettings(settingId, !setting.useSubsettings);
                     }}
                     style={{ width: "100%" }}
-                    chevron={null}
-                    // chevron={
-                    //     <>
-                    //         <Plus size={16} />
-                    //     </>
-                    // }
-                    // styles={{
-                    //     chevron: {
-                    //         "&[data-rotate]": {
-                    //             transform: "rotate(45deg)",
-                    //         },
-                    //     },
-                    // }}
-                >
+                    chevron={null}>
                     <Accordion.Item value={setting.name}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                             <Accordion.Control>
@@ -45,7 +32,9 @@ const ComplexSetting = ({ updateSettings, settingId, setting }) => {
                                     setting={mainSubsetting}
                                 />
                             </Accordion.Control>
-                            <Switch label="Show more" onChange={() => toggleShow()} />
+                            <HoverDescription setting={setting}>
+                                <Switch label="Show more" onChange={() => toggleShow()} />
+                            </HoverDescription>
                         </Box>
                         <Accordion.Panel>
                             {Object.keys(setting.subsettings)
@@ -69,4 +58,4 @@ const ComplexSetting = ({ updateSettings, settingId, setting }) => {
     );
 };
 
-export default ComplexSetting;
+export default ComplexInput;
