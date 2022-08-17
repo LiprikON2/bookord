@@ -150,12 +150,17 @@ main#main {
     border-left-color: hsl(var(--clr-secondary-200-hsl) / 0.3);
 }
 
+/* tabs */
+
 .mantine-Tabs-tabLabel,
-.mantine-Tabs-tab {
+.mantine-Tabs-tab,
+.mantine-Tabs-tabIcon {
     color: var(--clr-primary-150);
 }
-.mantine-Tabs-tabLabel[data-active],
-.mantine-Tabs-tab[data-active] {
+
+[data-active] .mantine-Tabs-tabLabel,
+.mantine-Tabs-tab[data-active],
+[data-active] .mantine-Tabs-tabIcon {
     color: var(--clr-primary-000);
     border-color: var(--clr-accent-000);
 }
@@ -164,3 +169,14 @@ main#main {
 .mantine-Tabs-tab[data-active]:hover {
     border-color: var(--clr-accent-100);
 }
+.mantine-Tabs-tabLabel:hover,
+.mantine-Tabs-tab:hover {
+    background-color: var(--clr-secondary-300);
+    border-color: var(--clr-primary-300);
+}
+
+.mantine-Tabs-tabsList {
+    border-color: var(--clr-primary-300);
+}
+
+/* Text */

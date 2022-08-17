@@ -13,6 +13,8 @@ const SettingsList = () => {
 
     const [sections, setSections] = useState([]);
 
+    const firstSection = settings[Object.keys(settings)[0]].section;
+
     // Extracts all settings sections without repeats
     const createSections = () => {
         const sectionsSet = [
@@ -41,7 +43,7 @@ const SettingsList = () => {
     return (
         <>
             <section className="section">
-                <Tabs defaultValue="App Settings">
+                <Tabs defaultValue={firstSection}>
                     <Tabs.List>
                         {sections.map((section) => (
                             <Tabs.Tab

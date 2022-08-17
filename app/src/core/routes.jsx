@@ -73,10 +73,19 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
     const updateSettings = (settingId, value, parentSettingId) => {
         let updatedSetting;
 
-        if (!parentSettingId) {
+        const setting = parentSettingId
+            ? settings[parentSettingId].subsettings[settingId]
+            : settings[settingId];
+
+        // Is not a subsetting
+        if (!parentSettingId && setting.type !== "complex") {
             // Updates only one specific property of an object inside another object
             updatedSetting = { ...settings[settingId], value: value };
+        } else if (setting.type === "complex") {
+            // is a setting that has subsettings
+            updatedSetting = { ...settings[settingId], useSubsettings: value };
         } else {
+            // Is a subsetting
             updatedSetting = {
                 ...settings[parentSettingId],
                 subsettings: {
@@ -88,10 +97,9 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
                 },
             };
         }
-
         const updatedSettings = {
             ...settings,
-            [parentSettingId]: updatedSetting,
+            [parentSettingId ?? settingId]: updatedSetting,
         };
         setSettings(updatedSettings);
     };

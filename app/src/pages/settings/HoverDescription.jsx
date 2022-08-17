@@ -1,5 +1,7 @@
-import { HoverCard, Text } from "@mantine/core";
+import { HoverCard, Space, Text } from "@mantine/core";
 import React from "react";
+
+import "./HoverDescription.css";
 
 const HoverDescription = ({ children, setting }) => {
     return (
@@ -14,7 +16,12 @@ const HoverDescription = ({ children, setting }) => {
                 <span>{children}</span>
             </HoverCard.Target>
             <HoverCard.Dropdown>
-                <Text size="sm">{setting.description}</Text>
+                {setting.description.split("\n").map((line, index) => (
+                    <React.Fragment key={line + index}>
+                        {index !== 0 ? <Space h="sm" /> : null}
+                        <Text size="sm">{line}</Text>
+                    </React.Fragment>
+                ))}
             </HoverCard.Dropdown>
         </HoverCard>
     );

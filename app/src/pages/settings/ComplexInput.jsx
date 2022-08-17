@@ -11,18 +11,12 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
     const mainSubsettingKey = Object.keys(setting.subsettings)[0];
     const mainSubsetting = setting.subsettings[mainSubsettingKey];
 
-    const [show, toggleShow] = useToggle([null, setting.name]);
-
     return (
         <>
             <Group style={{ justifyContent: "space-between", width: "100%" }}>
                 <Accordion
                     variant="separated"
-                    value={show}
-                    onChange={(e) => {
-                        // console.log("e", e, setting.useSubsettings);
-                        // updateSettings(settingId, !setting.useSubsettings);
-                    }}
+                    value={setting.useSubsettings ? setting.name : null}
                     style={{ width: "100%" }}
                     chevron={null}>
                     <Accordion.Item value={setting.name}>
@@ -35,7 +29,13 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                                 />
                             </Accordion.Control>
                             <HoverDescription setting={setting}>
-                                <Switch label="Show more" onChange={() => toggleShow()} />
+                                <Switch
+                                    label="Show Advanced"
+                                    checked={setting.useSubsettings}
+                                    onChange={() =>
+                                        updateSettings(settingId, !setting.useSubsettings)
+                                    }
+                                />
                             </HoverDescription>
                         </Box>
                         <Accordion.Panel>
@@ -43,11 +43,6 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                                 .slice(1) // Removes main subsetting which is shown in Control
                                 .map((subsettingKey) => {
                                     const subsetting = setting.subsettings[subsettingKey];
-                                    console.log(
-                                        "complex settingId",
-                                        settingId,
-                                        subsetting.type
-                                    );
                                     return (
                                         <React.Fragment key={settingId + subsettingKey}>
                                             <SettingItem

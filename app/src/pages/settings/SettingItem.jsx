@@ -45,7 +45,6 @@ const SettingItem = ({ settingId, setting, parentSettingId = null }) => {
                 </>
             ) : (
                 <>
-                    {console.log(setting.type, "has following item:", settingId)}
                     <SettingItemInput
                         updateSettings={updateSettings}
                         settingId={settingId}

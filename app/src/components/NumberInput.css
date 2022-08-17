@@ -1,4 +1,5 @@
-.mantine-Input-input.mantine-NumberInput-input {
+.mantine-Input-input.mantine-NumberInput-input,
+.mantine-NumberInput-control {
     background-color: var(--clr-secondary-300);
     border-color: var(--clr-primary-300);
 }

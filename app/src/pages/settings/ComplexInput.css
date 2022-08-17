@@ -1,7 +1,13 @@
 .complex-setting .mantine-Group-child {
     width: 80%;
 }
+.mantine-Accordion-item {
+    background-color: transparent;
+}
 
+.mantine-Accordion-item[data-active] {
+    background-color: var(--clr-secondary-100);
+}
 .mantine-Accordion-item > div:first-child {
     align-items: flex-start;
 }
