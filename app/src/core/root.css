@@ -78,14 +78,14 @@
     --fs-900: 3.2rem;
     --fs-xl: clamp(4.5rem, 1rem + 8vw, 9rem);
 
-    --fs-book-text: 1em;
+    --fs-book-global: 1em;
+    --fs-book-paragraph: 1em;
     --fs-book-h1: 3em;
     --fs-book-h2: 2.5em;
     --fs-book-h3: 2em;
-    --fs-book-h4: 1.75em;
-    --fs-book-h5: 1.5em;
-    --fs-book-h6: 1.25em;
-    --fs-book-h7: 1em;
+    --fs-book-h4: 1.5em;
+    --fs-book-h5: 1.25em;
+    --fs-book-h6: 1em;
 
     /* Font weight */
     --fw-300: 300;

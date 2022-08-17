@@ -57,7 +57,7 @@ const updateTheme = (setting) => {
         if (setting.type === "numberInput") {
             document.documentElement.style.setProperty(
                 setting.theme.cssVar,
-                parseInt(setting.value) / 16 + "em"
+                parseInt(setting.value) / 16 + "rem"
             );
         }
     }

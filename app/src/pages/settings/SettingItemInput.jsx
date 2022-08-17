@@ -13,12 +13,12 @@ const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId 
         <>
             {setting.type === "checkbox" ? (
                 <Checkbox
-                    size="md"
                     label={setting.name}
                     checked={setting.value}
                     onChange={() =>
                         updateSettings(settingId, !setting.value, parentSettingId)
                     }
+                    size="md"
                 />
             ) : setting.type in dynamicInputTypes ? (
                 (() => {

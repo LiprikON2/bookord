@@ -38,28 +38,30 @@
         "type": "complex",
         "useSubsettings": false,
         "subsettings": {
-            "globalFontSize": {
+            "fontSizeGlobal": {
                 "name": "Global font size",
-                "description": "Changing this value will affect all other font settings in the group",
+                "description": "Is overriden when using advanced settings TODO make disabled",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 16,
                 "defaultValue": 16,
-                "global": true
+                "theme": {
+                    "cssVar": "--fs-book-global"
+                }
             },
-            "fontSizeText": {
-                "name": "Text font size",
+            "fontSizeParagraph": {
+                "name": "Paragraph font size",
                 "description": "16 is the default",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 16,
                 "defaultValue": 16,
                 "theme": {
-                    "cssVar": "--fs-book-text"
+                    "cssVar": "--fs-book-paragraph"
                 }
             },
             "fontSizeH1": {
-                "name": "Title font size",
+                "name": "H1 font size",
                 "description": "",
                 "section": "Theme",
                 "type": "numberInput",
@@ -70,7 +72,7 @@
                 }
             },
             "fontSizeH2": {
-                "name": "Title font size",
+                "name": "H2 font size",
                 "description": "",
                 "section": "Theme",
                 "type": "numberInput",
@@ -81,7 +83,7 @@
                 }
             },
             "fontSizeH3": {
-                "name": "Title font size",
+                "name": "H3 font size",
                 "description": "",
                 "section": "Theme",
                 "type": "numberInput",
@@ -92,47 +94,36 @@
                 }
             },
             "fontSizeH4": {
-                "name": "Title font size",
-                "description": "",
-                "section": "Theme",
-                "type": "numberInput",
-                "value": 28,
-                "defaultValue": 28,
-                "theme": {
-                    "cssVar": "--fs-book-h4"
-                }
-            },
-            "fontSizeH5": {
-                "name": "Title font size",
+                "name": "H4 font size",
                 "description": "",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 24,
                 "defaultValue": 24,
                 "theme": {
-                    "cssVar": "--fs-book-h5"
+                    "cssVar": "--fs-book-h4"
                 }
             },
-            "fontSizeH6": {
-                "name": "Title font size",
+            "fontSizeH5": {
+                "name": "H5 font size",
                 "description": "",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 20,
                 "defaultValue": 20,
                 "theme": {
-                    "cssVar": "--fs-book-h6"
+                    "cssVar": "--fs-book-h5"
                 }
             },
-            "fontSizeH7": {
-                "name": "Title font size",
+            "fontSizeH6": {
+                "name": "H6 font size",
                 "description": "",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 16,
                 "defaultValue": 16,
                 "theme": {
-                    "cssVar": "--fs-book-h7"
+                    "cssVar": "--fs-book-h6"
                 }
             }
         }

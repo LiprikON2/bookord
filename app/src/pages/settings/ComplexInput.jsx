@@ -1,6 +1,5 @@
 import React from "react";
 import { Accordion, Box, Group, Stack } from "@mantine/core";
-import { useToggle } from "@mantine/hooks";
 
 import "./ComplexInput.css";
 import SettingItem from "./SettingItem";

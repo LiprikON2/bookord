@@ -74,7 +74,7 @@ const SettingsList = () => {
 
     return (
         <>
-            <section className="section">
+            <section className="section" style={{ padding: "0" }}>
                 <Tabs defaultValue={firstSection}>
                     <Tabs.List>
                         {sections.map((section) => (
