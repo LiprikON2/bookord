@@ -20,7 +20,7 @@
 .mantine-Accordion-content,
 .mantine-Accordion-control {
     padding: 0;
-    padding-bottom: 2rem;
+    padding-bottom: 0.5rem;
 }
 .mantine-Accordion-item .mantine-Switch-root {
     gap: 0.5rem;

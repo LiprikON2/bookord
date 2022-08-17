@@ -39,7 +39,7 @@
         "useSubsettings": false,
         "subsettings": {
             "fontSizeGlobal": {
-                "name": "Global font size",
+                "name": "Font size",
                 "description": "Is overriden when using advanced settings TODO make disabled",
                 "section": "Theme",
                 "type": "numberInput",
@@ -130,21 +130,25 @@
     },
 
     "accentColor": {
-        "name": "Accent Color",
+        "name": "Accent color",
         "description": "Complex input description",
         "section": "Theme",
         "type": "complex",
         "useSubsettings": false,
         "subsettings": {
             "accentColor000": {
-                "name": "Accent Color",
-                "description": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "name": "Accent color",
+                "description": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.\n Changing this value will affect all other font settings in the group",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#4f929e",
                 "defaultValue": "#4f929e",
                 "theme": {
-                    "cssVar": "--clr-accent-000"
+                    "cssVar": "--clr-accent-000",
+                    "isGlobal": true,
+                    "controlledCss": [
+                        { "cssVar": "--clr-accent-100", "coefficient": 1.5 }
+                    ]
                 }
             },
             "accentColor100": {
@@ -168,7 +172,7 @@
         "useSubsettings": false,
         "subsettings": {
             "primaryColor000": {
-                "name": "Primary Color",
+                "name": "Primary color",
                 "description": "Primary color are calls-to-action, buttons, and any other important information.",
                 "section": "Theme",
                 "type": "colorInput",
@@ -232,7 +236,7 @@
         "useSubsettings": false,
         "subsettings": {
             "secondaryColor000": {
-                "name": "Secondary Color",
+                "name": "Secondary color",
                 "description": "The secondary colors are used to highlight less important elements.",
                 "section": "Theme",
                 "type": "colorInput",

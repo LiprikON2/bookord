@@ -8,7 +8,7 @@ import { AppContext } from "Core/Routes";
 import { useDebouncedValue } from "@mantine/hooks";
 
 const SettingsList = () => {
-    const { settings, setSettings, updateTheme } = useContext(AppContext);
+    const { settings, setSettings, reloadTheme } = useContext(AppContext);
     const [debouncedSettings] = useDebouncedValue(settings, 100);
 
     const [sections, setSections] = useState([]);
@@ -30,14 +30,7 @@ const SettingsList = () => {
 
     useLayoutEffect(() => {
         window.api.store.send(writeConfigRequest, "settings", debouncedSettings);
-        Object.values(settings).forEach((setting) => {
-            updateTheme(setting);
-            if ("subsettings" in setting) {
-                Object.values(setting.subsettings).forEach((setting) =>
-                    updateTheme(setting)
-                );
-            }
-        });
+        reloadTheme(settings);
     }, [debouncedSettings]);
 
     const updateSettings = (settingId, value, parentSettingId) => {

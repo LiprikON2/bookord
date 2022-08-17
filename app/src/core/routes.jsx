@@ -37,7 +37,7 @@ const ContextMenu = loadable(() =>
 
 export const AppContext = createContext(null);
 
-const updateTheme = (setting) => {
+const updateCssVar = (setting) => {
     if ("theme" in setting) {
         if (setting.type === "colorInput") {
             document.documentElement.style.setProperty(
@@ -53,6 +53,20 @@ const updateTheme = (setting) => {
                 setting.theme.cssVar + "-hsl",
                 hslString
             );
+            if (setting.theme.isGlobal) {
+                setting.theme.controlledCss.forEach((controlledCssObj) => {
+                    console.log("was", color.toString());
+                    console.log(
+                        "brihgthend",
+                        controlledCssObj.cssVar,
+                        color.brighten(10 * controlledCssObj.coefficient).toString()
+                    );
+                    document.documentElement.style.setProperty(
+                        controlledCssObj.cssVar,
+                        color.brighten(10 * controlledCssObj.coefficient).toString()
+                    );
+                });
+            }
         }
         if (setting.type === "numberInput") {
             document.documentElement.style.setProperty(
@@ -61,6 +75,37 @@ const updateTheme = (setting) => {
             );
         }
     }
+};
+
+const reloadTheme = (settings) => {
+    Object.values(settings).forEach((setting) => {
+        updateCssVar(setting);
+        if ("subsettings" in setting) {
+            if (setting.useSubsettings) {
+                Object.values(setting.subsettings).forEach((subsetting) =>
+                    updateCssVar(subsetting)
+                );
+            } else {
+                const mainSubsetting =
+                    setting.subsettings[Object.keys(setting.subsettings)[0]];
+                updateCssVar(mainSubsetting);
+
+                // Remove hidden, uncontrolled values of advanced options
+                if (!mainSubsetting.theme.isGlobal) {
+                    Object.values(setting.subsettings)
+                        .slice(1)
+                        .forEach((subsetting) => {
+                            document.documentElement.style.removeProperty(
+                                subsetting.theme.cssVar
+                            );
+                            document.documentElement.style.removeProperty(
+                                subsetting.theme.cssVar + "-hsl"
+                            );
+                        });
+                }
+            }
+        }
+    });
 };
 
 const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) => {
@@ -84,14 +129,7 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
     const [isInitLoad, setIsInitLoad] = useState(true);
 
     useLayoutEffect(() => {
-        Object.values(settings).forEach((setting) => {
-            updateTheme(setting);
-            if ("subsettings" in setting) {
-                Object.values(setting.subsettings).forEach((setting) =>
-                    updateTheme(setting)
-                );
-            }
-        });
+        reloadTheme(settings);
     }, []);
 
     return (
@@ -105,7 +143,7 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
                 setSkeletontFileCount,
                 isInitLoad,
                 setIsInitLoad,
-                updateTheme,
+                reloadTheme,
             }}>
             <main id="main">
                 <Switch>
