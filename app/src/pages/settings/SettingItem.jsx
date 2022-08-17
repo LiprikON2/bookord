@@ -2,15 +2,12 @@ import React, { useContext } from "react";
 import { Group } from "@mantine/core";
 import { Rotate } from "tabler-icons-react";
 
-import { AppContext } from "Core/Routes";
 import Button from "components/Button";
 
 import SettingItemInput from "./SettingItemInput";
 import HoverDescription from "./HoverDescription";
 
-const SettingItem = ({ settingId, setting, parentSettingId = null }) => {
-    const { updateSettings } = useContext(AppContext);
-
+const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = null }) => {
     const settingGroupStyle =
         setting.type !== "checkbox" && setting.type !== "complex"
             ? { alignItems: "flex-end" }

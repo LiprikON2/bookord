@@ -7,7 +7,7 @@
         "value": true,
         "defaultValue": true
     },
-    "continueReading2": {
+    "test2": {
         "name": "Another setting.",
         "description": "Whether or not app will open last read book on startup.",
         "section": "App Settings",
@@ -15,7 +15,7 @@
         "value": true,
         "defaultValue": true
     },
-    "continueReading3": {
+    "test3": {
         "name": "I just haven't come up with more.",
         "description": "Whether or not app will open last read book on startup.",
         "section": "App Settings",
@@ -26,24 +26,120 @@
     "overrideFont": {
         "name": "Override book's font size",
         "description": "Whether or not app will open last read book on startup.",
-        "section": "App Settings",
+        "section": "Theme",
         "type": "checkbox",
         "value": false,
         "defaultValue": false
     },
-    "fontSizeText": {
-        "name": "Font Size.",
-        "description": "16 is the default",
+    "fontSize": {
+        "name": "Font size",
+        "description": "Complex input description",
         "section": "Theme",
-        "type": "numberInput",
-        "value": 16,
-        "defaultValue": 16,
-        "theme": {
-            "cssVar": "--fs-book-text"
+        "type": "complex",
+        "useSubsettings": false,
+        "subsettings": {
+            "globalFontSize": {
+                "name": "Global font size",
+                "description": "Changing this value will affect all other font settings in the group",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 16,
+                "defaultValue": 16,
+                "global": true
+            },
+            "fontSizeText": {
+                "name": "Text font size",
+                "description": "16 is the default",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 16,
+                "defaultValue": 16,
+                "theme": {
+                    "cssVar": "--fs-book-text"
+                }
+            },
+            "fontSizeH1": {
+                "name": "Title font size",
+                "description": "",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 48,
+                "defaultValue": 48,
+                "theme": {
+                    "cssVar": "--fs-book-h1"
+                }
+            },
+            "fontSizeH2": {
+                "name": "Title font size",
+                "description": "",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 40,
+                "defaultValue": 40,
+                "theme": {
+                    "cssVar": "--fs-book-h2"
+                }
+            },
+            "fontSizeH3": {
+                "name": "Title font size",
+                "description": "",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 32,
+                "defaultValue": 32,
+                "theme": {
+                    "cssVar": "--fs-book-h3"
+                }
+            },
+            "fontSizeH4": {
+                "name": "Title font size",
+                "description": "",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 28,
+                "defaultValue": 28,
+                "theme": {
+                    "cssVar": "--fs-book-h4"
+                }
+            },
+            "fontSizeH5": {
+                "name": "Title font size",
+                "description": "",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 24,
+                "defaultValue": 24,
+                "theme": {
+                    "cssVar": "--fs-book-h5"
+                }
+            },
+            "fontSizeH6": {
+                "name": "Title font size",
+                "description": "",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 20,
+                "defaultValue": 20,
+                "theme": {
+                    "cssVar": "--fs-book-h6"
+                }
+            },
+            "fontSizeH7": {
+                "name": "Title font size",
+                "description": "",
+                "section": "Theme",
+                "type": "numberInput",
+                "value": 16,
+                "defaultValue": 16,
+                "theme": {
+                    "cssVar": "--fs-book-h7"
+                }
+            }
         }
     },
+
     "accentColor": {
-        "name": "",
+        "name": "Accent Color",
         "description": "Complex input description",
         "section": "Theme",
         "type": "complex",
@@ -74,7 +170,7 @@
         }
     },
     "primaryColor": {
-        "name": "",
+        "name": "Primary color",
         "description": "Complex input description",
         "section": "Theme",
         "type": "complex",
@@ -126,7 +222,7 @@
             },
             "primaryColor300": {
                 "name": "Primary 300",
-                "description": "Primary color are calls-to-action, buttons, and any other important information.\nThis setting controls borders, ...",
+                "description": "Primary color are calls-to-action, buttons, and any other important information.\nThis setting controls the color of borders and a scrollbar",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#48545c",
@@ -138,7 +234,7 @@
         }
     },
     "secondaryColor": {
-        "name": "",
+        "name": "Secondary color",
         "description": "Complex input description",
         "section": "Theme",
         "type": "complex",

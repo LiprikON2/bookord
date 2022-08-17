@@ -39,8 +39,11 @@ export const AppContext = createContext(null);
 
 const updateTheme = (setting) => {
     if ("theme" in setting) {
-        document.documentElement.style.setProperty(setting.theme.cssVar, setting.value);
         if (setting.type === "colorInput") {
+            document.documentElement.style.setProperty(
+                setting.theme.cssVar,
+                setting.value
+            );
             // Generates hsl variable version for color
             const color = tinycolor(setting.value);
             const { h, s, l } = color.toHsl();
@@ -49,6 +52,12 @@ const updateTheme = (setting) => {
             document.documentElement.style.setProperty(
                 setting.theme.cssVar + "-hsl",
                 hslString
+            );
+        }
+        if (setting.type === "numberInput") {
+            document.documentElement.style.setProperty(
+                setting.theme.cssVar,
+                parseInt(setting.value) / 16 + "em"
             );
         }
     }
@@ -70,47 +79,19 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
 
     const [settings, setSettings] = useState(getInitSettings());
 
-    const updateSettings = (settingId, value, parentSettingId) => {
-        let updatedSetting;
-
-        const setting = parentSettingId
-            ? settings[parentSettingId].subsettings[settingId]
-            : settings[settingId];
-
-        // Is not a subsetting
-        if (!parentSettingId && setting.type !== "complex") {
-            // Updates only one specific property of an object inside another object
-            updatedSetting = { ...settings[settingId], value: value };
-        } else if (setting.type === "complex") {
-            // is a setting that has subsettings
-            updatedSetting = { ...settings[settingId], useSubsettings: value };
-        } else {
-            // Is a subsetting
-            updatedSetting = {
-                ...settings[parentSettingId],
-                subsettings: {
-                    ...settings[parentSettingId].subsettings,
-                    [settingId]: {
-                        ...settings[parentSettingId].subsettings[settingId],
-                        value: value,
-                    },
-                },
-            };
-        }
-        const updatedSettings = {
-            ...settings,
-            [parentSettingId ?? settingId]: updatedSetting,
-        };
-        setSettings(updatedSettings);
-    };
-
     const [files, setFiles] = useState([]);
     const [skeletontFileCount, setSkeletontFileCount] = useState(0);
     const [isInitLoad, setIsInitLoad] = useState(true);
 
     useLayoutEffect(() => {
-        console.log("this should trigger only once");
-        Object.values(settings).forEach((setting) => updateTheme(setting));
+        Object.values(settings).forEach((setting) => {
+            updateTheme(setting);
+            if ("subsettings" in setting) {
+                Object.values(setting.subsettings).forEach((setting) =>
+                    updateTheme(setting)
+                );
+            }
+        });
     }, []);
 
     return (
@@ -125,7 +106,6 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
                 isInitLoad,
                 setIsInitLoad,
                 updateTheme,
-                updateSettings,
             }}>
             <main id="main">
                 <Switch>

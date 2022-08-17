@@ -1,5 +1,5 @@
 import React from "react";
-import { Accordion, Box, Group } from "@mantine/core";
+import { Accordion, Box, Group, Stack } from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
 
 import "./ComplexInput.css";
@@ -26,6 +26,7 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                                     settingId={mainSubsettingKey}
                                     setting={mainSubsetting}
                                     parentSettingId={settingId}
+                                    updateSettings={updateSettings}
                                 />
                             </Accordion.Control>
                             <HoverDescription setting={setting}>
@@ -39,20 +40,28 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                             </HoverDescription>
                         </Box>
                         <Accordion.Panel>
-                            {Object.keys(setting.subsettings)
-                                .slice(1) // Removes main subsetting which is shown in Control
-                                .map((subsettingKey) => {
-                                    const subsetting = setting.subsettings[subsettingKey];
-                                    return (
-                                        <React.Fragment key={settingId + subsettingKey}>
-                                            <SettingItem
-                                                settingId={subsettingKey}
-                                                setting={subsetting}
-                                                parentSettingId={settingId}
-                                            />
-                                        </React.Fragment>
-                                    );
-                                })}
+                            <Stack
+                                m="xl"
+                                align="flex-start"
+                                style={{ marginInline: 0, width: "100%" }}>
+                                {Object.keys(setting.subsettings)
+                                    .slice(1) // Removes main subsetting which is shown in Control
+                                    .map((subsettingKey) => {
+                                        const subsetting =
+                                            setting.subsettings[subsettingKey];
+                                        return (
+                                            <React.Fragment
+                                                key={settingId + subsettingKey}>
+                                                <SettingItem
+                                                    settingId={subsettingKey}
+                                                    setting={subsetting}
+                                                    parentSettingId={settingId}
+                                                    updateSettings={updateSettings}
+                                                />
+                                            </React.Fragment>
+                                        );
+                                    })}
+                            </Stack>
                         </Accordion.Panel>
                     </Accordion.Item>
                 </Accordion>

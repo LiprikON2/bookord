@@ -79,7 +79,13 @@
     --fs-xl: clamp(4.5rem, 1rem + 8vw, 9rem);
 
     --fs-book-text: 1em;
-    --fs-book-title: 1.5em;
+    --fs-book-h1: 3em;
+    --fs-book-h2: 2.5em;
+    --fs-book-h3: 2em;
+    --fs-book-h4: 1.75em;
+    --fs-book-h5: 1.5em;
+    --fs-book-h6: 1.25em;
+    --fs-book-h7: 1em;
 
     /* Font weight */
     --fw-300: 300;
@@ -125,7 +131,7 @@ main#main {
 
     padding: var(--window-edge-padding);
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: overlay;
 }
 
 /* Scrollbar */
@@ -156,6 +162,7 @@ main#main {
 .mantine-Tabs-tab,
 .mantine-Tabs-tabIcon {
     color: var(--clr-primary-150);
+    font-weight: var(--fw-500);
 }
 
 [data-active] .mantine-Tabs-tabLabel,

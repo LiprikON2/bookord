@@ -11,11 +11,26 @@ export const style = /*css*/ `
         color: var(--clr-link) !important;
     }
 
-    p {
+    :host {
         font-size: var(--fs-book-text) !important;
     }
-    h1, h2, h3, h4, h5, h6, h7 {
-        font-size: var(--fs-book-title) !important;
+    h1 {
+        font-size: var(--fs-book-h1) !important;
+    }
+    h2 {
+        font-size: var(--fs-book-h2) !important;
+    }
+    h3 {
+        font-size: var(--fs-book-h3) !important;
+    }
+    h4 {
+        font-size: var(--fs-book-h4) !important;
+    }
+    h5 {
+        font-size: var(--fs-book-h5) !important;
+    }
+    h6 {
+        font-size: var(--fs-book-h6) !important;
     }
 
     .book-container {
