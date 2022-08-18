@@ -1,27 +1,29 @@
-import { HoverCard, Space, Text } from "@mantine/core";
+import { HoverCard } from "@mantine/core";
 import React from "react";
 
+import SettingDescription from "./SettingDescription";
 import "./HoverDescription.css";
 
-const HoverDescription = ({ children, setting }) => {
+const HoverDescription = ({
+    children,
+    offset = 20,
+    openDelay = 1000,
+    position = "left",
+    description,
+}) => {
     return (
         <HoverCard
             // @ts-ignore
-            position={setting.type === "checkbox" ? "left" : "left-end"}
-            offset={20}
+            position={position}
+            offset={offset}
             width={280}
-            openDelay={1000}
+            openDelay={openDelay}
             shadow="md">
             <HoverCard.Target>
                 <span>{children}</span>
             </HoverCard.Target>
             <HoverCard.Dropdown>
-                {setting.description.split("\n").map((line, index) => (
-                    <React.Fragment key={line + index}>
-                        {index !== 0 ? <Space h="sm" /> : null}
-                        <Text size="sm">{line}</Text>
-                    </React.Fragment>
-                ))}
+                <SettingDescription description={description} />
             </HoverCard.Dropdown>
         </HoverCard>
     );

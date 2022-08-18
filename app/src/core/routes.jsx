@@ -55,12 +55,12 @@ const updateCssVar = (setting) => {
             );
             if (setting.theme.isGlobal) {
                 setting.theme.controlledCss.forEach((controlledCssObj) => {
-                    console.log("was", color.toString());
-                    console.log(
-                        "brihgthend",
-                        controlledCssObj.cssVar,
-                        color.brighten(10 * controlledCssObj.coefficient).toString()
-                    );
+                    // console.log("was", color.toString());
+                    // console.log(
+                    //     "brihgthend",
+                    //     controlledCssObj.cssVar,
+                    //     color.brighten(10 * controlledCssObj.coefficient).toString()
+                    // );
                     document.documentElement.style.setProperty(
                         controlledCssObj.cssVar,
                         color.brighten(10 * controlledCssObj.coefficient).toString()

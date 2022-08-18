@@ -1,23 +1,8 @@
 {
     "continueReading": {
         "name": "Reopen last book on startup.",
-        "description": "Whether or not app will open last read book on startup.",
-        "section": "App Settings",
-        "type": "checkbox",
-        "value": true,
-        "defaultValue": true
-    },
-    "test2": {
-        "name": "Another setting.",
-        "description": "Whether or not app will open last read book on startup.",
-        "section": "App Settings",
-        "type": "checkbox",
-        "value": true,
-        "defaultValue": true
-    },
-    "test3": {
-        "name": "I just haven't come up with more.",
-        "description": "Whether or not app will open last read book on startup.",
+        "description": "",
+        "hoverDescription": "Whether or not app will open last read book on startup.",
         "section": "App Settings",
         "type": "checkbox",
         "value": true,
@@ -26,6 +11,7 @@
     "overrideFontFamily": {
         "name": "Override book's font family",
         "description": "",
+        "hoverDescription": "TODO",
         "section": "Theme",
         "type": "checkbox",
         "value": false,
@@ -33,7 +19,8 @@
     },
     "fontFamily": {
         "name": "Font family",
-        "description": "Font family",
+        "description": "Font family of the book",
+        "hoverDescription": "List of the installed fonts on your system",
         "section": "Theme",
         "type": "fontInput",
         "value": "",
@@ -42,6 +29,7 @@
     "overrideFontSize": {
         "name": "Override book's font size",
         "description": "",
+        "hoverDescription": "TODO",
         "section": "Theme",
         "type": "checkbox",
         "value": false,
@@ -49,14 +37,16 @@
     },
     "fontSize": {
         "name": "Font size",
-        "description": "Complex input description",
+        "description": "",
+        "hoverDescription": "Set font size for specific parts of book",
         "section": "Theme",
         "type": "complex",
         "useSubsettings": false,
         "subsettings": {
             "fontSizeGlobal": {
                 "name": "Font size",
-                "description": "Is overriden when using advanced settings TODO make disabled",
+                "description": "Font size of the whole book",
+                "hoverDescription": "Is overruled when advanced font settings are used",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 16,
@@ -67,7 +57,8 @@
             },
             "fontSizeParagraph": {
                 "name": "Paragraph font size",
-                "description": "16 is the default",
+                "description": "",
+                "hoverDescription": "16 is the default value for this setting",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 16,
@@ -79,6 +70,7 @@
             "fontSizeH1": {
                 "name": "H1 font size",
                 "description": "",
+                "hoverDescription": "48 is the default value for this setting",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 48,
@@ -90,6 +82,7 @@
             "fontSizeH2": {
                 "name": "H2 font size",
                 "description": "",
+                "hoverDescription": "40 is the default value for this setting",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 40,
@@ -101,6 +94,7 @@
             "fontSizeH3": {
                 "name": "H3 font size",
                 "description": "",
+                "hoverDescription": "32 is the default value for this setting",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 32,
@@ -112,6 +106,7 @@
             "fontSizeH4": {
                 "name": "H4 font size",
                 "description": "",
+                "hoverDescription": "24 is the default value for this setting",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 24,
@@ -123,6 +118,7 @@
             "fontSizeH5": {
                 "name": "H5 font size",
                 "description": "",
+                "hoverDescription": "20 is the default value for this setting",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 20,
@@ -134,6 +130,7 @@
             "fontSizeH6": {
                 "name": "H6 font size",
                 "description": "",
+                "hoverDescription": "16 is the default value for this setting",
                 "section": "Theme",
                 "type": "numberInput",
                 "value": 16,
@@ -147,29 +144,45 @@
 
     "accentColor": {
         "name": "Accent color",
-        "description": "Complex input description",
+        "description": "Changing this value will affect all other font settings in the group.",
+        "hoverDescription": "Set all accent colors for the UI",
         "section": "Theme",
         "type": "complex",
         "useSubsettings": false,
         "subsettings": {
-            "accentColor000": {
+            "accentColorGlobal": {
                 "name": "Accent color",
-                "description": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.\n Changing this value will affect all other font settings in the group",
+                "description": "TODO",
+                "hoverDescription": "Is overruled when advanced accent color settings are used",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#4f929e",
                 "defaultValue": "#4f929e",
                 "theme": {
-                    "cssVar": "--clr-accent-000",
+                    "cssVar": "--clr-accent-global",
                     "isGlobal": true,
                     "controlledCss": [
-                        { "cssVar": "--clr-accent-100", "coefficient": 1.5 }
+                        { "cssVar": "--clr-accent-000", "coefficient": 1.5 },
+                        { "cssVar": "--clr-accent-100", "coefficient": 2 }
                     ]
+                }
+            },
+            "accentColor000": {
+                "name": "Accent 000",
+                "description": "",
+                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#4f929e",
+                "defaultValue": "#4f929e",
+                "theme": {
+                    "cssVar": "--clr-accent-000"
                 }
             },
             "accentColor100": {
                 "name": "Accent 100",
-                "description": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "description": "",
+                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#43c59e",
@@ -182,14 +195,36 @@
     },
     "primaryColor": {
         "name": "Primary color",
-        "description": "Complex input description",
+        "description": "",
+        "hoverDescription": "Set colors for specific parts of the UI",
         "section": "Theme",
         "type": "complex",
         "useSubsettings": false,
         "subsettings": {
-            "primaryColor000": {
+            "primaryColorGlobal": {
                 "name": "Primary color",
-                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "description": "TODO",
+                "hoverDescription": "Is overruled when advanced primary color settings are used",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#dcddde",
+                "defaultValue": "#dcddde",
+                "theme": {
+                    "cssVar": "--clr-primary-global",
+                    "isGlobal": true,
+                    "controlledCss": [
+                        { "cssVar": "--clr-primary-000", "coefficient": 1.5 },
+                        { "cssVar": "--clr-primary-100", "coefficient": 1.8 },
+                        { "cssVar": "--clr-primary-150", "coefficient": 2 },
+                        { "cssVar": "--clr-primary-200", "coefficient": 2.5 },
+                        { "cssVar": "--clr-primary-300", "coefficient": 3 }
+                    ]
+                }
+            },
+            "primaryColor000": {
+                "name": "Primary color 000",
+                "description": "",
+                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#ffffff",
@@ -200,7 +235,8 @@
             },
             "primaryColor100": {
                 "name": "Primary 100",
-                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "description": "",
+                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#dcddde",
@@ -211,7 +247,8 @@
             },
             "primaryColor150": {
                 "name": "Primary 150",
-                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "description": "",
+                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#C1C2C5",
@@ -222,7 +259,8 @@
             },
             "primaryColor200": {
                 "name": "Primary 200",
-                "description": "Primary color are calls-to-action, buttons, and any other important information.",
+                "description": "",
+                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#8e9297",
@@ -233,7 +271,8 @@
             },
             "primaryColor300": {
                 "name": "Primary 300",
-                "description": "Primary color are calls-to-action, buttons, and any other important information.\nThis setting controls the color of borders and a scrollbar",
+                "description": "This setting controls the color of borders and a scrollbar",
+                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#48545c",
@@ -246,14 +285,35 @@
     },
     "secondaryColor": {
         "name": "Secondary color",
-        "description": "Complex input description",
+        "description": "",
+        "hoverDescription": "Set colors for specific parts of the UI text",
         "section": "Theme",
         "type": "complex",
         "useSubsettings": false,
         "subsettings": {
-            "secondaryColor000": {
+            "secondaryColorGlobal": {
                 "name": "Secondary color",
-                "description": "The secondary colors are used to highlight less important elements.",
+                "description": "TODO",
+                "hoverDescription": "Is overruled when advanced secondary color settings are used",
+                "section": "Theme",
+                "type": "colorInput",
+                "value": "#17191b",
+                "defaultValue": "#17191b",
+                "theme": {
+                    "cssVar": "--clr-secondary-global",
+                    "isGlobal": true,
+                    "controlledCss": [
+                        { "cssVar": "--clr-secondary-000", "coefficient": 1.5 },
+                        { "cssVar": "--clr-secondary-100", "coefficient": 2 },
+                        { "cssVar": "--clr-secondary-200", "coefficient": 2.5 },
+                        { "cssVar": "--clr-secondary-300", "coefficient": 3 }
+                    ]
+                }
+            },
+            "secondaryColor000": {
+                "name": "Secondary color 000",
+                "description": "Color of the text in the active/selected elements",
+                "hoverDescription": "The secondary colors are used to highlight less important elements.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#000000",
@@ -264,7 +324,8 @@
             },
             "secondaryColor100": {
                 "name": "Secondary 100",
-                "description": "The secondary colors are used to highlight less important elements.",
+                "description": "",
+                "hoverDescription": "The secondary colors are used to highlight less important elements.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#17191b",
@@ -275,7 +336,8 @@
             },
             "secondaryColor200": {
                 "name": "Secondary 200",
-                "description": "The secondary colors are used to highlight less important elements.",
+                "description": "",
+                "hoverDescription": "The secondary colors are used to highlight less important elements.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#202225",
@@ -286,7 +348,8 @@
             },
             "secondaryColor300": {
                 "name": "Secondary 300",
-                "description": "The secondary colors are used to highlight less important elements.",
+                "description": "",
+                "hoverDescription": "The secondary colors are used to highlight less important elements.",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#2f3136",

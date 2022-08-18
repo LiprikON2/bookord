@@ -3,8 +3,9 @@ import React, { forwardRef, useEffect, useState } from "react";
 import { Text } from "@mantine/core";
 
 import "./FontInput.css";
+import { useDebouncedValue, useDidUpdate } from "@mantine/hooks";
 
-const fontCheck = new Set(
+const defaultFontsToCheck = new Set(
     [
         // Windows 10
         "Arial",
@@ -131,16 +132,26 @@ const fontCheck = new Set(
     ].sort()
 );
 
+const checkFont = (fontFamily) => {
+    return document.fonts.check(`12px "${fontFamily}"`);
+};
+
+const getFontList = async () => {
+    await document.fonts.ready;
+
+    const fontAvailable = new Set();
+
+    for (const font of defaultFontsToCheck.values()) {
+        if (checkFont(font)) {
+            fontAvailable.add(font);
+        }
+    }
+
+    return [...fontAvailable.values()];
+};
+
 // @ts-ignore
 const AutoCompleteItem = forwardRef(({ value, ...rest }, ref) => (
-    // <div ref={ref} {...rest}>
-    //     <Group spacing="xs">
-    //         <Avatar size="sm" src={null} color="red">
-    //             <span style={{ fontFamily: value }}>{value[0].toUpperCase()}</span>
-    //         </Avatar>
-    //         <Text style={{ fontFamily: value }}>{value}</Text>
-    //     </Group>
-    // </div>
     <div ref={ref} {...rest}>
         <Text style={{ fontFamily: value }}>{value}</Text>
     </div>
@@ -152,46 +163,41 @@ const FontInput = ({
     data = undefined,
     ...rest
 }) => {
-    const getFontList = async () => {
-        await document.fonts.ready;
-
-        const fontAvailable = new Set();
-
-        for (const font of fontCheck.values()) {
-            if (document.fonts.check(`12px "${font}"`)) {
-                fontAvailable.add(font);
-            }
-        }
-
-        return [...fontAvailable.values()];
-    };
-
+    const [fonts, setFonts] = useState(null);
     useEffect(() => {
         const fontList = getFontList();
         fontList.then((fontList) => setFonts(fontList));
     }, []);
-    const [fonts, setFonts] = useState(null);
 
-    const [fontValue, setFontValue] = useState("");
+    const [fontValue, setFontValue] = useState(value);
+    const [debouncedFontValue] = useDebouncedValue(fontValue, 300);
 
-    console.log("value", value, "and", value || "unset");
+    useDidUpdate(() => {
+        onChange && onChange(debouncedFontValue);
+    }, [debouncedFontValue]);
+
+    useDidUpdate(() => {
+        if (value !== fontValue) {
+            setFontValue(value);
+        }
+    }, [value]);
 
     return (
         <Autocomplete
             value={fontValue}
-            // onChange={(value) => {
-            //     // onChange && onChange(value);
-            //     setFontValue(value);
-            // }}
             onChange={setFontValue}
             inputContainer={(children) => (
-                <span style={{ fontFamily: fontValue || "var(--ff-default)" }}>
+                <span
+                    style={{
+                        fontFamily: checkFont(fontValue)
+                            ? fontValue
+                            : "var(--ff-default)",
+                    }}>
                     {children}
                 </span>
             )}
             placeholder="Comic Sans MS"
             itemComponent={AutoCompleteItem}
-            style={{ width: "15rem" }}
             data={fonts ?? []}
             {...rest}
         />

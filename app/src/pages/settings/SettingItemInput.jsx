@@ -6,6 +6,7 @@ import NumberInput from "components/NumberInput";
 import ColorInput from "components/ColorInput";
 import ComplexInput from "./ComplexInput";
 import FontInput from "components/FontInput";
+import SettingDescription from "./SettingDescription";
 
 const dynamicInputTypes = {
     numberInput: NumberInput,
@@ -30,17 +31,21 @@ const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId 
                     const GenericInput = dynamicInputTypes[setting.type];
                     return (
                         <GenericInput
+                            description={
+                                <>
+                                    <SettingDescription
+                                        description={setting.description}
+                                    />
+                                    <Space h="sm" />
+                                </>
+                            }
                             onChange={(newValue) =>
                                 updateSettings(settingId, newValue, parentSettingId)
                             }
                             value={setting.value}
-                            label={
-                                <>
-                                    {setting.name}
-                                    <Space h="sm" />
-                                </>
-                            }
+                            label={setting.name}
                             size="md"
+                            style={{ width: "15rem" }}
                         />
                     );
                 })()

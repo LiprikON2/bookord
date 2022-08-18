@@ -28,7 +28,11 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                                     updateSettings={updateSettings}
                                 />
                             </Accordion.Control>
-                            <HoverDescription setting={setting}>
+                            <HoverDescription
+                                position={
+                                    setting.type === "checkbox" ? "left" : "left-end"
+                                }
+                                description={setting.hoverDescription}>
                                 <Switch
                                     label="Show Advanced"
                                     checked={setting.useSubsettings}

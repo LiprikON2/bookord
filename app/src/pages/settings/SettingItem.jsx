@@ -17,21 +17,28 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
         <Group spacing="xs" style={{ ...settingGroupStyle, width: "100%" }}>
             {setting.type !== "complex" ? (
                 <>
-                    <Button
-                        title="Restore To Default"
-                        isIconOnly={true}
-                        isGhost={true}
-                        isVisible={setting.defaultValue !== setting.value}
-                        onClick={() =>
-                            updateSettings(
-                                settingId,
-                                setting.defaultValue,
-                                parentSettingId
-                            )
-                        }>
-                        <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
-                    </Button>
-                    <HoverDescription setting={setting}>
+                    <HoverDescription
+                        offset={10}
+                        openDelay={300}
+                        position="bottom-start"
+                        description="Restore To Default">
+                        <Button
+                            isIconOnly={true}
+                            isGhost={true}
+                            isVisible={setting.defaultValue !== setting.value}
+                            onClick={() =>
+                                updateSettings(
+                                    settingId,
+                                    setting.defaultValue,
+                                    parentSettingId
+                                )
+                            }>
+                            <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
+                        </Button>
+                    </HoverDescription>
+                    <HoverDescription
+                        position={setting.type === "checkbox" ? "left" : "left-end"}
+                        description={setting.hoverDescription}>
                         <SettingItemInput
                             updateSettings={updateSettings}
                             settingId={settingId}
