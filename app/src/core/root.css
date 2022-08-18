@@ -114,7 +114,7 @@ body,
 html {
     background-color: var(--clr-secondary-200);
 
-    padding-right: var(--border-width);
+    /* padding-right: var(--border-width); todo delete if not needed */
     padding-bottom: var(--border-width);
 }
 
@@ -188,4 +188,10 @@ main#main {
     border-color: var(--clr-primary-300);
 }
 
-/* Text */
+/* Text and labels */
+.mantine-InputWrapper-label {
+    line-height: 2;
+}
+.mantine-InputWrapper-description .mantine-Text-root {
+    line-height: 1.2;
+}

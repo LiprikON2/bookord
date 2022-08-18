@@ -1,6 +1,7 @@
 #titlebar {
     height: var(--titlebar-height);
-    width: calc(100% - var(--border-width) * 3);
+    /* width: calc(100% - var(--border-width) * 3);  todo delete if not needed */
+    width: 100%;
 
     display: flex;
     position: sticky;

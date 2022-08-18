@@ -24,7 +24,10 @@
         "section": "Theme",
         "type": "fontInput",
         "value": "",
-        "defaultValue": ""
+        "defaultValue": "",
+        "theme": {
+            "cssVar": "--ff-book-global"
+        }
     },
     "overrideFontSize": {
         "name": "Override book's font size",
@@ -144,7 +147,7 @@
 
     "accentColor": {
         "name": "Accent color",
-        "description": "Changing this value will affect all other font settings in the group.",
+        "description": "",
         "hoverDescription": "Set all accent colors for the UI",
         "section": "Theme",
         "type": "complex",
@@ -152,7 +155,7 @@
         "subsettings": {
             "accentColorGlobal": {
                 "name": "Accent color",
-                "description": "TODO",
+                "description": "Changing this value will affect all other font settings in the group.",
                 "hoverDescription": "Is overruled when advanced accent color settings are used",
                 "section": "Theme",
                 "type": "colorInput",

@@ -12,7 +12,7 @@ export const style = /*css*/ `
     }
     :host {
         font-size: var(--fs-book-global) !important;
-        font-family: var(--ff-book) !important;
+        font-family: var(--ff-book-global) !important;
     }
     p {
         font-size: var(--fs-book-paragraph) !important;
@@ -38,6 +38,7 @@ export const style = /*css*/ `
 
     p, h1, h2, h3, h4, h5, h6 { 
         line-height: 1.2 !important;
+        font-family: var(--ff-book-global, unset) !important;
     }
 
     .book-container {

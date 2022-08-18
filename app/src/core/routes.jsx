@@ -67,11 +67,15 @@ const updateCssVar = (setting) => {
                     );
                 });
             }
-        }
-        if (setting.type === "numberInput") {
+        } else if (setting.type === "numberInput") {
             document.documentElement.style.setProperty(
                 setting.theme.cssVar,
                 parseInt(setting.value) / 16 + "rem"
+            );
+        } else {
+            document.documentElement.style.setProperty(
+                setting.theme.cssVar,
+                setting.value
             );
         }
     }
