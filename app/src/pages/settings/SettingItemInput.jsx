@@ -5,8 +5,13 @@ import Checkbox from "components/Checkbox";
 import NumberInput from "components/NumberInput";
 import ColorInput from "components/ColorInput";
 import ComplexInput from "./ComplexInput";
+import FontInput from "components/FontInput";
 
-const dynamicInputTypes = { numberInput: NumberInput, colorInput: ColorInput };
+const dynamicInputTypes = {
+    numberInput: NumberInput,
+    colorInput: ColorInput,
+    fontInput: FontInput,
+};
 
 const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId }) => {
     return (

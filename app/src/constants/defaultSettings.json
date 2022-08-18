@@ -23,9 +23,25 @@
         "value": true,
         "defaultValue": true
     },
-    "overrideFont": {
+    "overrideFontFamily": {
+        "name": "Override book's font family",
+        "description": "",
+        "section": "Theme",
+        "type": "checkbox",
+        "value": false,
+        "defaultValue": false
+    },
+    "fontFamily": {
+        "name": "Font family",
+        "description": "Font family",
+        "section": "Theme",
+        "type": "fontInput",
+        "value": "",
+        "defaultValue": ""
+    },
+    "overrideFontSize": {
         "name": "Override book's font size",
-        "description": "Whether or not app will open last read book on startup.",
+        "description": "",
         "section": "Theme",
         "type": "checkbox",
         "value": false,

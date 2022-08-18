@@ -10,9 +10,9 @@ export const style = /*css*/ `
     :any-link {
         color: var(--clr-link) !important;
     }
-
     :host {
         font-size: var(--fs-book-global) !important;
+        font-family: var(--ff-book) !important;
     }
     p {
         font-size: var(--fs-book-paragraph) !important;
