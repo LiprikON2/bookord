@@ -2,7 +2,6 @@ import React from "react";
 import { Title } from "@mantine/core";
 
 import LibraryList from "./LibraryList";
-import "./Library.css";
 
 const Library = () => {
     return (

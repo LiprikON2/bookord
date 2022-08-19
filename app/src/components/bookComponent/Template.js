@@ -71,11 +71,11 @@ export const style = /*css*/ `
         max-height: 100vh !important;
         max-width: 100% !important;
     }
-    .book-container *:has(img) {
+    /* .book-container *:has(img) {
         display: flex;
         align-items: center;
         justify-content: center;
-    }
+    } */
 `;
 
 export const template = document.createElement("template");

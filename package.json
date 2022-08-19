@@ -104,6 +104,8 @@
         "mini-css-extract-plugin": "^2.6.1",
         "mocha": "^10.0.0",
         "path-browserify": "^1.0.1",
+        "postcss-loader": "^7.0.1",
+        "postcss-preset-env": "^7.8.0",
         "spectron": "^15.0.0",
         "stream-browserify": "^3.0.0",
         "webpack": "^5.74.0",

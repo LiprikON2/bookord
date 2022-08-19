@@ -2,6 +2,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const path = require("path");
+const postcssPresetEnv = require("postcss-preset-env");
 
 module.exports = {
     target: "web", // Our app can run without electron
@@ -59,7 +60,25 @@ module.exports = {
                     path.resolve(__dirname, "app/src"),
                     path.resolve(__dirname, "node_modules/"),
                 ],
-                use: [MiniCssExtractPlugin.loader, "css-loader"],
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    { loader: "css-loader", options: { importLoaders: 1 } },
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            postcssOptions: {
+                                plugins: [
+                                    postcssPresetEnv({
+                                        stage: 1,
+                                        features: {
+                                            "has-pseudo-class": true, // todo remove as this doesn't work
+                                        },
+                                    }),
+                                ],
+                            },
+                        },
+                    },
+                ],
                 resolve: {
                     extensions: [".css"],
                 },
