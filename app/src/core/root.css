@@ -195,3 +195,7 @@ main#main {
 .mantine-InputWrapper-description .mantine-Text-root {
     line-height: 1.2;
 }
+.mantine-InputWrapper-description,
+.description {
+    color: var(--clr-primary-200);
+}

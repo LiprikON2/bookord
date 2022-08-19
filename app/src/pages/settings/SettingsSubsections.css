@@ -1,0 +1,16 @@
+svg.subsection-icon {
+    @media (max-width: 800px) {
+        & {
+            display: none;
+        }
+    }
+}
+
+.subsection-title {
+    @media (max-width: 800px) {
+        & .mantine-Stack-root {
+            margin-inline: 3.125rem;
+            max-width: 100%;
+        }
+    }
+}

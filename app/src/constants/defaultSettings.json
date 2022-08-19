@@ -2,8 +2,9 @@
     "continueReading": {
         "name": "Reopen last book on startup.",
         "description": "",
-        "hoverDescription": "Whether or not app will open last read book on startup.",
+        "hoverDescription": "Whether or not app will open last read book on startup",
         "section": "App Settings",
+        "subsection": "Startup",
         "type": "checkbox",
         "value": true,
         "defaultValue": true
@@ -13,15 +14,17 @@
         "description": "",
         "hoverDescription": "TODO",
         "section": "Theme",
+        "subsection": "Font",
         "type": "checkbox",
         "value": false,
         "defaultValue": false
     },
     "fontFamily": {
         "name": "Font family",
-        "description": "Font family of the book",
+        "description": "Font family of the book.",
         "hoverDescription": "List of the installed fonts on your system",
         "section": "Theme",
+        "subsection": "Font",
         "type": "fontFamilyInput",
         "value": "",
         "defaultValue": "",
@@ -31,9 +34,10 @@
     },
     "lineHeight": {
         "name": "Line height",
-        "description": "Spacing between text lines",
+        "description": "Spacing between text lines.",
         "hoverDescription": "TODO",
         "section": "Theme",
+        "subsection": "Font",
         "type": "numberInput",
         "value": "1.2",
         "defaultValue": "1.2",
@@ -46,6 +50,7 @@
         "description": "",
         "hoverDescription": "TODO",
         "section": "Theme",
+        "subsection": "Font",
         "type": "checkbox",
         "value": false,
         "defaultValue": false
@@ -55,12 +60,13 @@
         "description": "",
         "hoverDescription": "Set font size for specific parts of book",
         "section": "Theme",
+        "subsection": "Font",
         "type": "complex",
         "useSubsettings": false,
         "subsettings": {
             "fontSizeGlobal": {
                 "name": "Font size",
-                "description": "Font size of the whole book",
+                "description": "Font size of the whole book.",
                 "hoverDescription": "Is overruled when advanced font settings are used",
                 "section": "Theme",
                 "type": "fontSizeInput",
@@ -213,12 +219,13 @@
         "description": "",
         "hoverDescription": "Set colors for specific parts of the UI",
         "section": "Theme",
+        "subsection": "Color",
         "type": "complex",
         "useSubsettings": true,
         "subsettings": {
             "primaryColorGlobal": {
                 "name": "Primary color",
-                "description": "TODO",
+                "description": "TODO.",
                 "hoverDescription": "Is overruled when advanced primary color settings are used",
                 "section": "Theme",
                 "type": "colorInput",
@@ -237,7 +244,7 @@
                 }
             },
             "primaryColor000": {
-                "name": "Primary color 000",
+                "name": "Primary 000",
                 "description": "",
                 "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
@@ -303,12 +310,13 @@
         "description": "",
         "hoverDescription": "Set colors for specific parts of the UI text",
         "section": "Theme",
+        "subsection": "Color",
         "type": "complex",
         "useSubsettings": true,
         "subsettings": {
             "secondaryColorGlobal": {
                 "name": "Secondary color",
-                "description": "TODO",
+                "description": "TODO.",
                 "hoverDescription": "Is overruled when advanced secondary color settings are used",
                 "section": "Theme",
                 "type": "colorInput",
@@ -326,8 +334,8 @@
                 }
             },
             "secondaryColor000": {
-                "name": "Secondary color 000",
-                "description": "Color of the text in the active/selected elements",
+                "name": "Secondary 000",
+                "description": "Color of the text in the active/selected elements.",
                 "hoverDescription": "The secondary colors are used to highlight less important elements.",
                 "section": "Theme",
                 "type": "colorInput",

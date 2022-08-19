@@ -4,7 +4,12 @@ import Button from "components/Button";
 
 import "./Dropdown.css";
 
-const Dropdown = ({ children, className, disabled, ...rest }) => {
+const Dropdown = ({
+    children = undefined,
+    className = undefined,
+    disabled = undefined,
+    ...rest
+}) => {
     const dropdownRef = useRef(null);
 
     useEffect(() => {

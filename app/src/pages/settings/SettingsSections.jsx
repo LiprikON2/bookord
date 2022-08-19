@@ -1,19 +1,16 @@
 import React, { useState, useLayoutEffect, useContext } from "react";
 import { Stack, Tabs } from "@mantine/core";
-import { writeConfigRequest } from "secure-electron-store";
-import { Palette } from "tabler-icons-react";
-
-import SettingItem from "./SettingItem";
-import { AppContext } from "Core/Routes";
 import { useDebouncedValue } from "@mantine/hooks";
+import { writeConfigRequest } from "secure-electron-store";
 
-const SettingsList = () => {
+import SettingsSubsections from "./SettingsSubsections";
+import { AppContext } from "Core/Routes";
+
+const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
     const { settings, setSettings, reloadTheme } = useContext(AppContext);
     const [debouncedSettings] = useDebouncedValue(settings, 100);
 
     const [sections, setSections] = useState([]);
-
-    const firstSection = settings[Object.keys(settings)[0]].section;
 
     // Extracts all settings sections without repeats
     const createSections = () => {
@@ -68,18 +65,22 @@ const SettingsList = () => {
     return (
         <>
             <section className="section" style={{ padding: "0" }}>
-                <Tabs defaultValue={firstSection}>
+                <Tabs onTabChange={setCurrentTab} defaultValue={initialTab}>
                     <Tabs.List>
                         {sections.map((section) => (
                             <Tabs.Tab
                                 key={section + "-tab"}
                                 value={section}
-                                icon={<Palette size={14} />}>
+                                icon={sectionDetails[section].icon}>
                                 {section}
                             </Tabs.Tab>
                         ))}
                     </Tabs.List>
                     {sections.map((section) => {
+                        const subsections = Object.keys(
+                            sectionDetails[section].subsections
+                        );
+
                         return (
                             <Tabs.Panel key={section + "-panel"} value={section} pt="xs">
                                 <section>
@@ -87,22 +88,13 @@ const SettingsList = () => {
                                         m="xl"
                                         align="flex-start"
                                         style={{ marginInline: 0, width: "100%" }}>
-                                        {Object.keys(settings).map((key) => {
-                                            const setting = settings[key];
-                                            if (setting.section === section) {
-                                                return (
-                                                    <React.Fragment key={key + "-item"}>
-                                                        <SettingItem
-                                                            settingId={key}
-                                                            setting={setting}
-                                                            updateSettings={
-                                                                updateSettings
-                                                            }
-                                                        />
-                                                    </React.Fragment>
-                                                );
-                                            }
-                                        })}
+                                        <SettingsSubsections
+                                            section={section}
+                                            subsections={subsections}
+                                            sectionDetails={sectionDetails}
+                                            settings={settings}
+                                            updateSettings={updateSettings}
+                                        />
                                     </Stack>
                                 </section>
                             </Tabs.Panel>
@@ -114,4 +106,4 @@ const SettingsList = () => {
     );
 };
 
-export default SettingsList;
+export default SettingSections;

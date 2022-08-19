@@ -1,0 +1,8 @@
+span.btn-restore {
+    padding-inline: 1rem;
+    @media (max-width: 800px) {
+        & {
+            padding-inline: unset;
+        }
+    }
+}

@@ -30,7 +30,7 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                             </Accordion.Control>
                             <HoverDescription
                                 position={
-                                    setting.type === "checkbox" ? "left" : "left-end"
+                                    setting.type === "checkbox" ? "right" : "right-end"
                                 }
                                 description={setting.hoverDescription}>
                                 <Switch

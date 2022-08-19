@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactDOM from "react-dom";
-import { Copy, Speakerphone, Highlight, Language } from "tabler-icons-react";
 import { Tooltip } from "@mantine/core";
-import { useDisclosure, useClickOutside, useDidUpdate } from "@mantine/hooks";
+import { useDisclosure, useDidUpdate } from "@mantine/hooks";
+import { Copy, Speakerphone, Highlight, Language } from "tabler-icons-react";
 
 import Button from "components/Button";
 import ContextMenu from "components/ContextMenu";

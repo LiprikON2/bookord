@@ -5,10 +5,11 @@ import SettingDescription from "./SettingDescription";
 import "./HoverDescription.css";
 
 const HoverDescription = ({
-    children,
+    className = undefined,
+    children = undefined,
     offset = 20,
     openDelay = 1000,
-    position = "left",
+    position = "right",
     description,
 }) => {
     // todo make text unselectable
@@ -23,7 +24,7 @@ const HoverDescription = ({
             zIndex={30}
             shadow="md">
             <HoverCard.Target>
-                <span>{children}</span>
+                <span className={className}>{children}</span>
             </HoverCard.Target>
             <HoverCard.Dropdown>
                 <SettingDescription description={description} />

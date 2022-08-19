@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Group } from "@mantine/core";
 import { Rotate } from "tabler-icons-react";
 
 import Button from "components/Button";
-
 import SettingItemInput from "./SettingItemInput";
 import HoverDescription from "./HoverDescription";
+import "./SettingItem.css";
 
 const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = null }) => {
     const settingGroupStyle =
@@ -21,7 +21,8 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
                         offset={10}
                         openDelay={300}
                         position="bottom-start"
-                        description="Restore To Default">
+                        description="Restore To Default"
+                        className="btn-restore">
                         <Button
                             isIconOnly={true}
                             isGhost={true}
@@ -37,7 +38,7 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
                         </Button>
                     </HoverDescription>
                     <HoverDescription
-                        position={setting.type === "checkbox" ? "left" : "left-end"}
+                        position={setting.type === "checkbox" ? "right" : "right-end"}
                         description={setting.hoverDescription}>
                         <SettingItemInput
                             updateSettings={updateSettings}
