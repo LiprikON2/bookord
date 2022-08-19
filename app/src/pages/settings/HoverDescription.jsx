@@ -20,6 +20,7 @@ const HoverDescription = ({
             offset={offset}
             width={280}
             openDelay={openDelay}
+            zIndex={30}
             shadow="md">
             <HoverCard.Target>
                 <span>{children}</span>

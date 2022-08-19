@@ -40,6 +40,9 @@ export default class BookComponent extends HTMLElement {
          */
         this.status = "loading";
         this.isQuitting = false;
+        this.settings = {
+            enlargeImages: true,
+        };
     }
 
     /**
@@ -622,7 +625,33 @@ export default class BookComponent extends HTMLElement {
             img.addEventListener("click", (e) =>
                 img.addEventListener("click", this.emitImgClickEvent)
             );
+
+            if (this.settings.enlargeImages) this.applyCenteringStyles(img);
         });
+    }
+
+    /**
+     * Makes div parents (up to contentElem) of the provided image tag to center their content
+     * @param {HTMLImageElement | any} imgElement
+     */
+    applyCenteringStyles(imgElement) {
+        const isDecorativeImage =
+            imgElement.alt === "" ||
+            imgElement.role === "presentation" ||
+            imgElement.role === "none";
+        if (!isDecorativeImage) {
+            let target = imgElement.parentNode;
+            while (target !== this.contentElem && target.children.length === 1) {
+                console.log("targetting", target.id + target.className, this.contentElem);
+                target.style.display = "flex";
+                target.style.justifyContent = "center";
+                target.style.alignItems = "center";
+                target.style.height = "100%";
+                target.style.margin = "auto";
+
+                target = target.parentNode;
+            }
+        }
     }
 
     /**

@@ -73,8 +73,8 @@ export const style = /*css*/ `
     }
     /* .book-container *:has(img) {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
     } */
 `;
 
