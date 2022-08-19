@@ -11,6 +11,8 @@ const HoverDescription = ({
     position = "left",
     description,
 }) => {
+    // todo make text unselectable
+    // todo make default value for numberinput work
     return (
         <HoverCard
             // @ts-ignore

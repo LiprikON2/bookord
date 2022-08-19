@@ -37,7 +37,7 @@ export const style = /*css*/ `
     }
 
     p, h1, h2, h3, h4, h5, h6 { 
-        line-height: 1.2 !important;
+        line-height: var(--lh-book-global, 1.2) !important;
         font-family: var(--ff-book-global, unset) !important;
     }
 
@@ -59,12 +59,22 @@ export const style = /*css*/ `
     }
 
     .book-container img {
-        display: block !important;
+        cursor: zoom-in;
+        /* display: block !important;
         padding: 0 !important;
         margin: 0 !important;
         max-width: 100% !important;
-        object-fit: contain;
-        cursor: zoom-in;
+        object-fit: contain; */
+
+        display: block !important;
+        width: auto !important;
+        max-height: 100vh !important;
+        max-width: 100% !important;
+    }
+    .book-container *:has(img) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 `;
 

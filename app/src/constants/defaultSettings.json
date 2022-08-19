@@ -22,11 +22,23 @@
         "description": "Font family of the book",
         "hoverDescription": "List of the installed fonts on your system",
         "section": "Theme",
-        "type": "fontInput",
+        "type": "fontFamilyInput",
         "value": "",
         "defaultValue": "",
         "theme": {
             "cssVar": "--ff-book-global"
+        }
+    },
+    "lineHeight": {
+        "name": "Line height",
+        "description": "Spacing between text lines",
+        "hoverDescription": "TODO",
+        "section": "Theme",
+        "type": "numberInput",
+        "value": "1.2",
+        "defaultValue": "1.2",
+        "theme": {
+            "cssVar": "--lh-book-global"
         }
     },
     "overrideFontSize": {
@@ -51,7 +63,7 @@
                 "description": "Font size of the whole book",
                 "hoverDescription": "Is overruled when advanced font settings are used",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
                 "theme": {
@@ -63,7 +75,7 @@
                 "description": "",
                 "hoverDescription": "16 is the default value for this setting",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
                 "theme": {
@@ -75,7 +87,7 @@
                 "description": "",
                 "hoverDescription": "48 is the default value for this setting",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 48,
                 "defaultValue": 48,
                 "theme": {
@@ -87,7 +99,7 @@
                 "description": "",
                 "hoverDescription": "40 is the default value for this setting",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 40,
                 "defaultValue": 40,
                 "theme": {
@@ -99,7 +111,7 @@
                 "description": "",
                 "hoverDescription": "32 is the default value for this setting",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 32,
                 "defaultValue": 32,
                 "theme": {
@@ -111,7 +123,7 @@
                 "description": "",
                 "hoverDescription": "24 is the default value for this setting",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 24,
                 "defaultValue": 24,
                 "theme": {
@@ -123,7 +135,7 @@
                 "description": "",
                 "hoverDescription": "20 is the default value for this setting",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 20,
                 "defaultValue": 20,
                 "theme": {
@@ -135,7 +147,7 @@
                 "description": "",
                 "hoverDescription": "16 is the default value for this setting",
                 "section": "Theme",
-                "type": "numberInput",
+                "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
                 "theme": {

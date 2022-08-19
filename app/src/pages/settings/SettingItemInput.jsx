@@ -10,8 +10,9 @@ import SettingDescription from "./SettingDescription";
 
 const dynamicInputTypes = {
     numberInput: NumberInput,
+    fontSizeInput: NumberInput,
     colorInput: ColorInput,
-    fontInput: FontInput,
+    fontFamilyInput: FontInput,
 };
 
 const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId }) => {
