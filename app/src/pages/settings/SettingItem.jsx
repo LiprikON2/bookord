@@ -17,8 +17,11 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
         <Group spacing="xs" style={{ ...settingGroupStyle, width: "100%" }}>
             {setting.type !== "complex" ? (
                 <>
+                    {/* TODO fix visible hover on hidden */}
+                    {/* TODO style dropdown in font family input */}
+                    {/* TODO style dropdown in colorInput */}
                     <HoverDescription
-                        offset={10}
+                        offset={30}
                         openDelay={300}
                         position="bottom-start"
                         description="Restore To Default"

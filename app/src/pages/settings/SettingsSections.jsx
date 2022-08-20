@@ -5,6 +5,7 @@ import { writeConfigRequest } from "secure-electron-store";
 
 import SettingsSubsections from "./SettingsSubsections";
 import { AppContext } from "Core/Routes";
+import tinycolor from "tinycolor2";
 
 const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
     const { settings, setSettings, reloadTheme } = useContext(AppContext);
@@ -26,24 +27,28 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
     }, []);
 
     useLayoutEffect(() => {
+        reloadTheme(settings, setSettings);
         window.api.store.send(writeConfigRequest, "settings", debouncedSettings);
-        reloadTheme(settings);
     }, [debouncedSettings]);
 
     const updateSettings = (settingId, value, parentSettingId) => {
         let updatedSetting;
-        const setting = parentSettingId
+        const settingOrSubsetting = parentSettingId
             ? settings[parentSettingId].subsettings[settingId]
             : settings[settingId];
         // Is not a subsetting
-        if (!parentSettingId && setting.type !== "complex") {
+        if (!parentSettingId && settingOrSubsetting.type !== "complex") {
             // Updates only one specific property of an object inside another object
             updatedSetting = { ...settings[settingId], value: value };
-        } else if (setting.type === "complex") {
+        } else if (settingOrSubsetting.type === "complex") {
             // is a setting that has subsettings
-            updatedSetting = { ...settings[settingId], useSubsettings: value };
+            updatedSetting = {
+                ...settings[settingId],
+                useSubsettings: value,
+            };
+            // } else if (!setting.theme.isControlledApplied) {
         } else {
-            // Is a subsetting
+            // Is normal subsetting
             updatedSetting = {
                 ...settings[parentSettingId],
                 subsettings: {
@@ -55,11 +60,52 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
                 },
             };
         }
-        const updatedSettings = {
-            ...settings,
-            [parentSettingId ?? settingId]: updatedSetting,
-        };
-        setSettings(updatedSettings);
+
+        if (settingOrSubsetting?.theme?.controlledSettings) {
+            // Is main subsetting
+            const updatedSubsettings = {};
+
+            console.log("value", value, tinycolor(value).isDark());
+
+            settingOrSubsetting.theme.controlledSettings.forEach(
+                (controlledSettingObj) => {
+                    const { subsettingKey, lighten } = controlledSettingObj;
+                    const controlledSetting = {
+                        ...settings[parentSettingId].subsettings[subsettingKey],
+                    };
+                    const color = tinycolor(value);
+                    // const generatedColor = color.lighten(lighten).toString();
+                    const generatedColor = color.isDark()
+                        ? color.lighten(lighten).toString()
+                        : color.darken(lighten).toString();
+
+                    controlledSetting.value = generatedColor;
+                    controlledSetting.defaultValue = generatedColor;
+                    updatedSubsettings[subsettingKey] = controlledSetting;
+                }
+            );
+            const updatedSubsetting = updatedSetting.subsettings[settingId];
+            const mergedSetting = {
+                ...settings[parentSettingId],
+                subsettings: {
+                    ...settings[parentSettingId].subsettings,
+                    [settingId]: { ...updatedSubsetting },
+                    ...updatedSubsettings,
+                },
+            };
+
+            const updatedSettings = {
+                ...settings,
+                [parentSettingId]: mergedSetting,
+            };
+            setSettings(updatedSettings);
+        } else {
+            const updatedSettings = {
+                ...settings,
+                [parentSettingId ?? settingId]: updatedSetting,
+            };
+            setSettings(updatedSettings);
+        }
     };
 
     return (

@@ -66,7 +66,7 @@
         "subsettings": {
             "fontSizeGlobal": {
                 "name": "Font size",
-                "description": "Font size of the whole book.",
+                "description": "Base font size of the whole book.",
                 "hoverDescription": "Is overruled when advanced font settings are used",
                 "section": "Theme",
                 "type": "fontSizeInput",
@@ -168,8 +168,9 @@
         "description": "",
         "hoverDescription": "Set all accent colors for the UI",
         "section": "Theme",
+        "subsection": "Color",
         "type": "complex",
-        "useSubsettings": true,
+        "useSubsettings": false,
         "subsettings": {
             "accentColorGlobal": {
                 "name": "Accent color",
@@ -181,10 +182,10 @@
                 "defaultValue": "#4f929e",
                 "theme": {
                     "cssVar": "--clr-accent-global",
-                    "isGlobal": true,
-                    "controlledCss": [
-                        { "cssVar": "--clr-accent-000", "coefficient": 1.5 },
-                        { "cssVar": "--clr-accent-100", "coefficient": 2 }
+                    "isControlledApplied": true,
+                    "controlledSettings": [
+                        { "subsettingKey": "accentColor000", "lighten": 0 },
+                        { "subsettingKey": "accentColor100", "lighten": 20 }
                     ]
                 }
             },
@@ -221,7 +222,7 @@
         "section": "Theme",
         "subsection": "Color",
         "type": "complex",
-        "useSubsettings": true,
+        "useSubsettings": false,
         "subsettings": {
             "primaryColorGlobal": {
                 "name": "Primary color",
@@ -229,17 +230,17 @@
                 "hoverDescription": "Is overruled when advanced primary color settings are used",
                 "section": "Theme",
                 "type": "colorInput",
-                "value": "#dcddde",
-                "defaultValue": "#dcddde",
+                "value": "#ffffff",
+                "defaultValue": "#ffffff",
                 "theme": {
                     "cssVar": "--clr-primary-global",
-                    "isGlobal": true,
-                    "controlledCss": [
-                        { "cssVar": "--clr-primary-000", "coefficient": 1.5 },
-                        { "cssVar": "--clr-primary-100", "coefficient": 1.8 },
-                        { "cssVar": "--clr-primary-150", "coefficient": 2 },
-                        { "cssVar": "--clr-primary-200", "coefficient": 2.5 },
-                        { "cssVar": "--clr-primary-300", "coefficient": 3 }
+                    "isControlledApplied": true,
+                    "controlledSettings": [
+                        { "subsettingKey": "primaryColor000", "lighten": 0 },
+                        { "subsettingKey": "primaryColor100", "lighten": 15 },
+                        { "subsettingKey": "primaryColor150", "lighten": 30 },
+                        { "subsettingKey": "primaryColor200", "lighten": 50 },
+                        { "subsettingKey": "primaryColor300", "lighten": 70 }
                     ]
                 }
             },
@@ -312,7 +313,7 @@
         "section": "Theme",
         "subsection": "Color",
         "type": "complex",
-        "useSubsettings": true,
+        "useSubsettings": false,
         "subsettings": {
             "secondaryColorGlobal": {
                 "name": "Secondary color",
@@ -320,16 +321,16 @@
                 "hoverDescription": "Is overruled when advanced secondary color settings are used",
                 "section": "Theme",
                 "type": "colorInput",
-                "value": "#17191b",
-                "defaultValue": "#17191b",
+                "value": "#000000",
+                "defaultValue": "#000000",
                 "theme": {
                     "cssVar": "--clr-secondary-global",
-                    "isGlobal": true,
-                    "controlledCss": [
-                        { "cssVar": "--clr-secondary-000", "coefficient": 1.5 },
-                        { "cssVar": "--clr-secondary-100", "coefficient": 2 },
-                        { "cssVar": "--clr-secondary-200", "coefficient": 2.5 },
-                        { "cssVar": "--clr-secondary-300", "coefficient": 3 }
+                    "isControlledApplied": true,
+                    "controlledSettings": [
+                        { "subsettingKey": "secondaryColor000", "lighten": 0 },
+                        { "subsettingKey": "secondaryColor100", "lighten": 5 },
+                        { "subsettingKey": "secondaryColor200", "lighten": 8 },
+                        { "subsettingKey": "secondaryColor300", "lighten": 12 }
                     ]
                 }
             },

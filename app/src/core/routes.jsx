@@ -53,20 +53,6 @@ const updateCssVar = (setting) => {
                 setting.theme.cssVar + "-hsl",
                 hslString
             );
-            if (setting.theme.isGlobal) {
-                setting.theme.controlledCss.forEach((controlledCssObj) => {
-                    // console.log("was", color.toString());
-                    // console.log(
-                    //     "brihgthend",
-                    //     controlledCssObj.cssVar,
-                    //     color.brighten(10 * controlledCssObj.coefficient).toString()
-                    // );
-                    document.documentElement.style.setProperty(
-                        controlledCssObj.cssVar,
-                        color.brighten(10 * controlledCssObj.coefficient).toString()
-                    );
-                });
-            }
         } else if (setting.type === "fontSizeInput") {
             document.documentElement.style.setProperty(
                 setting.theme.cssVar,
@@ -81,33 +67,13 @@ const updateCssVar = (setting) => {
     }
 };
 
-const reloadTheme = (settings) => {
+const reloadTheme = (settings, setSettings) => {
     Object.values(settings).forEach((setting) => {
         updateCssVar(setting);
         if ("subsettings" in setting) {
-            if (setting.useSubsettings) {
-                Object.values(setting.subsettings).forEach((subsetting) =>
-                    updateCssVar(subsetting)
-                );
-            } else {
-                const mainSubsetting =
-                    setting.subsettings[Object.keys(setting.subsettings)[0]];
-                updateCssVar(mainSubsetting);
-
-                // Remove hidden, uncontrolled values of advanced options
-                if (!mainSubsetting.theme.isGlobal) {
-                    Object.values(setting.subsettings)
-                        .slice(1)
-                        .forEach((subsetting) => {
-                            document.documentElement.style.removeProperty(
-                                subsetting.theme.cssVar
-                            );
-                            document.documentElement.style.removeProperty(
-                                subsetting.theme.cssVar + "-hsl"
-                            );
-                        });
-                }
-            }
+            Object.values(setting.subsettings).forEach((subsetting) =>
+                updateCssVar(subsetting)
+            );
         }
     });
 };
@@ -133,7 +99,7 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
     const [isInitLoad, setIsInitLoad] = useState(true);
 
     useLayoutEffect(() => {
-        reloadTheme(settings);
+        reloadTheme(settings, setSettings);
     }, []);
 
     return (

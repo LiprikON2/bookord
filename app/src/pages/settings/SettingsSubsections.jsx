@@ -1,6 +1,5 @@
 import React from "react";
 import { Divider } from "@mantine/core";
-import { Alien } from "tabler-icons-react";
 
 import SettingItem from "./SettingItem";
 import Title from "components/Title";
