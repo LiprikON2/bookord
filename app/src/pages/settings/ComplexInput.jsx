@@ -6,7 +6,7 @@ import SettingItem from "./SettingItem";
 import HoverDescription from "./HoverDescription";
 import Switch from "components/Switch";
 
-const ComplexInput = ({ updateSettings, settingId, setting }) => {
+const ComplexInput = ({ updateSettings, settingKey, setting }) => {
     const mainSubsettingKey = Object.keys(setting.subsettings)[0];
     const mainSubsetting = setting.subsettings[mainSubsettingKey];
 
@@ -22,9 +22,9 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                             <Accordion.Control>
                                 <SettingItem
-                                    settingId={mainSubsettingKey}
+                                    settingKey={mainSubsettingKey}
                                     setting={mainSubsetting}
-                                    parentSettingId={settingId}
+                                    parentSettingKey={settingKey}
                                     updateSettings={updateSettings}
                                 />
                             </Accordion.Control>
@@ -37,7 +37,10 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                                     label="Show Advanced"
                                     checked={setting.useSubsettings}
                                     onChange={() =>
-                                        updateSettings(settingId, !setting.useSubsettings)
+                                        updateSettings(
+                                            settingKey,
+                                            !setting.useSubsettings
+                                        )
                                     }
                                 />
                             </HoverDescription>
@@ -54,11 +57,11 @@ const ComplexInput = ({ updateSettings, settingId, setting }) => {
                                             setting.subsettings[subsettingKey];
                                         return (
                                             <React.Fragment
-                                                key={settingId + subsettingKey}>
+                                                key={settingKey + subsettingKey}>
                                                 <SettingItem
-                                                    settingId={subsettingKey}
+                                                    settingKey={subsettingKey}
                                                     setting={subsetting}
-                                                    parentSettingId={settingId}
+                                                    parentSettingKey={settingKey}
                                                     updateSettings={updateSettings}
                                                 />
                                             </React.Fragment>

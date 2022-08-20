@@ -184,14 +184,24 @@
                     "cssVar": "--clr-accent-global",
                     "isControlledApplied": true,
                     "controlledSettings": [
-                        { "subsettingKey": "accentColor000", "lighten": 0 },
-                        { "subsettingKey": "accentColor100", "lighten": 20 }
+                        {
+                            "subsettingKey": "accentColor000",
+                            "h": 0,
+                            "s": 0,
+                            "l": 0
+                        },
+                        {
+                            "subsettingKey": "accentColor100",
+                            "h": 0,
+                            "s": 0,
+                            "l": 20
+                        }
                     ]
                 }
             },
             "accentColor000": {
                 "name": "Accent 000",
-                "description": "",
+                "description": "TODO123",
                 "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "section": "Theme",
                 "type": "colorInput",
@@ -236,18 +246,43 @@
                     "cssVar": "--clr-primary-global",
                     "isControlledApplied": true,
                     "controlledSettings": [
-                        { "subsettingKey": "primaryColor000", "lighten": 0 },
-                        { "subsettingKey": "primaryColor100", "lighten": 15 },
-                        { "subsettingKey": "primaryColor150", "lighten": 30 },
-                        { "subsettingKey": "primaryColor200", "lighten": 50 },
-                        { "subsettingKey": "primaryColor300", "lighten": 70 }
+                        {
+                            "subsettingKey": "primaryColor000",
+                            "h": 0,
+                            "s": 0,
+                            "l": 0
+                        },
+                        {
+                            "subsettingKey": "primaryColor100",
+                            "h": 0,
+                            "s": 0,
+                            "l": 15
+                        },
+                        {
+                            "subsettingKey": "primaryColor150",
+                            "h": 0,
+                            "s": 0,
+                            "l": 30
+                        },
+                        {
+                            "subsettingKey": "primaryColor200",
+                            "h": 0,
+                            "s": 0,
+                            "l": 50
+                        },
+                        {
+                            "subsettingKey": "primaryColor300",
+                            "h": 0,
+                            "s": 0,
+                            "l": 70
+                        }
                     ]
                 }
             },
             "primaryColor000": {
                 "name": "Primary 000",
                 "description": "",
-                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "hoverDescription": "TODO",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#ffffff",
@@ -259,7 +294,7 @@
             "primaryColor100": {
                 "name": "Primary 100",
                 "description": "",
-                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "hoverDescription": "TODO",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#dcddde",
@@ -271,7 +306,7 @@
             "primaryColor150": {
                 "name": "Primary 150",
                 "description": "",
-                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "hoverDescription": "TODO",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#C1C2C5",
@@ -283,7 +318,7 @@
             "primaryColor200": {
                 "name": "Primary 200",
                 "description": "",
-                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "hoverDescription": "TODO",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#8e9297",
@@ -295,7 +330,7 @@
             "primaryColor300": {
                 "name": "Primary 300",
                 "description": "This setting controls the color of borders and a scrollbar",
-                "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
+                "hoverDescription": "TODO",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#48545c",
@@ -327,10 +362,30 @@
                     "cssVar": "--clr-secondary-global",
                     "isControlledApplied": true,
                     "controlledSettings": [
-                        { "subsettingKey": "secondaryColor000", "lighten": 0 },
-                        { "subsettingKey": "secondaryColor100", "lighten": 5 },
-                        { "subsettingKey": "secondaryColor200", "lighten": 8 },
-                        { "subsettingKey": "secondaryColor300", "lighten": 12 }
+                        {
+                            "subsettingKey": "secondaryColor000",
+                            "h": 0,
+                            "s": 0,
+                            "l": 0
+                        },
+                        {
+                            "subsettingKey": "secondaryColor100",
+                            "h": 0,
+                            "s": 8,
+                            "l": 10
+                        },
+                        {
+                            "subsettingKey": "secondaryColor200",
+                            "h": 0,
+                            "s": 8,
+                            "l": 14
+                        },
+                        {
+                            "subsettingKey": "secondaryColor300",
+                            "h": 0,
+                            "s": 8,
+                            "l": 20
+                        }
                     ]
                 }
             },

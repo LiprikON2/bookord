@@ -7,7 +7,12 @@ import SettingItemInput from "./SettingItemInput";
 import HoverDescription from "./HoverDescription";
 import "./SettingItem.css";
 
-const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = null }) => {
+const SettingItem = ({
+    updateSettings,
+    settingKey,
+    setting,
+    parentSettingKey = null,
+}) => {
     const settingGroupStyle =
         setting.type !== "checkbox" && setting.type !== "complex"
             ? { alignItems: "flex-end" }
@@ -20,6 +25,7 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
                     {/* TODO fix visible hover on hidden */}
                     {/* TODO style dropdown in font family input */}
                     {/* TODO style dropdown in colorInput */}
+                    {/* TODO fix colorInput bugged picker */}
                     <HoverDescription
                         offset={30}
                         openDelay={300}
@@ -32,9 +38,9 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
                             isVisible={setting.defaultValue !== setting.value}
                             onClick={() =>
                                 updateSettings(
-                                    settingId,
+                                    settingKey,
                                     setting.defaultValue,
-                                    parentSettingId
+                                    parentSettingKey
                                 )
                             }>
                             <Rotate strokeWidth={1.5} color="var(--clr-primary-100)" />
@@ -45,9 +51,9 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
                         description={setting.hoverDescription}>
                         <SettingItemInput
                             updateSettings={updateSettings}
-                            settingId={settingId}
                             setting={setting}
-                            parentSettingId={parentSettingId}
+                            settingKey={settingKey}
+                            parentSettingKey={parentSettingKey}
                         />
                     </HoverDescription>
                 </>
@@ -55,9 +61,9 @@ const SettingItem = ({ updateSettings, settingId, setting, parentSettingId = nul
                 <>
                     <SettingItemInput
                         updateSettings={updateSettings}
-                        settingId={settingId}
+                        settingKey={settingKey}
                         setting={setting}
-                        parentSettingId={parentSettingId}
+                        parentSettingKey={parentSettingKey}
                     />
                 </>
             )}

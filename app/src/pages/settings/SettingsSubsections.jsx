@@ -27,16 +27,16 @@ const SettingsSubsections = ({
                             leftIcon={icon}>
                             {subsection}
                         </Title>
-                        {Object.keys(settings).map((key) => {
-                            const setting = settings[key];
+                        {Object.keys(settings).map((settingKey) => {
+                            const setting = settings[settingKey];
                             if (
                                 setting.section === section &&
                                 setting.subsection === subsection
                             ) {
                                 return (
-                                    <React.Fragment key={key}>
+                                    <React.Fragment key={settingKey}>
                                         <SettingItem
-                                            settingId={key}
+                                            settingKey={settingKey}
                                             setting={setting}
                                             updateSettings={updateSettings}
                                         />

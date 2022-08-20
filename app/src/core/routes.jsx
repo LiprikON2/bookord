@@ -67,7 +67,7 @@ const updateCssVar = (setting) => {
     }
 };
 
-const reloadTheme = (settings, setSettings) => {
+const reloadTheme = (settings) => {
     Object.values(settings).forEach((setting) => {
         updateCssVar(setting);
         if ("subsettings" in setting) {
@@ -93,14 +93,13 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
     };
 
     const [settings, setSettings] = useState(getInitSettings());
+    useLayoutEffect(() => {
+        reloadTheme(settings);
+    }, []);
 
     const [files, setFiles] = useState([]);
     const [skeletontFileCount, setSkeletontFileCount] = useState(0);
     const [isInitLoad, setIsInitLoad] = useState(true);
-
-    useLayoutEffect(() => {
-        reloadTheme(settings, setSettings);
-    }, []);
 
     return (
         <AppContext.Provider

@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-const { ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs-extra");
 const os = require("os");
@@ -98,13 +97,9 @@ exports.openFile = (filename) => {
 
 // watch files from the application's storage directory
 exports.watchFiles = (win) => {
-    const watcher = chokidar.watch(appDir).on("unlink", (filePath) => {
+    exports.watcher = chokidar.watch(appDir).on("unlink", (filePath) => {
         const fileName = getFilenameFromPath(filePath);
         win.webContents.send("app:file-is-deleted", fileName);
-    });
-
-    ipcMain.on("app:stop-watching-files", () => {
-        watcher.close();
     });
 };
 

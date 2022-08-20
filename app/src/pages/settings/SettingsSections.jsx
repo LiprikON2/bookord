@@ -27,34 +27,34 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
     }, []);
 
     useLayoutEffect(() => {
-        reloadTheme(settings, setSettings);
+        reloadTheme(settings);
         window.api.store.send(writeConfigRequest, "settings", debouncedSettings);
     }, [debouncedSettings]);
 
-    const updateSettings = (settingId, value, parentSettingId) => {
+    const updateSettings = (settingKey, value, parentSettingKey) => {
         let updatedSetting;
-        const settingOrSubsetting = parentSettingId
-            ? settings[parentSettingId].subsettings[settingId]
-            : settings[settingId];
+        const settingOrSubsetting = parentSettingKey
+            ? settings[parentSettingKey].subsettings[settingKey]
+            : settings[settingKey];
         // Is not a subsetting
-        if (!parentSettingId && settingOrSubsetting.type !== "complex") {
+        if (!parentSettingKey && settingOrSubsetting.type !== "complex") {
             // Updates only one specific property of an object inside another object
-            updatedSetting = { ...settings[settingId], value: value };
+            updatedSetting = { ...settings[settingKey], value: value };
         } else if (settingOrSubsetting.type === "complex") {
             // is a setting that has subsettings
             updatedSetting = {
-                ...settings[settingId],
+                ...settings[settingKey],
                 useSubsettings: value,
             };
             // } else if (!setting.theme.isControlledApplied) {
         } else {
             // Is normal subsetting
             updatedSetting = {
-                ...settings[parentSettingId],
+                ...settings[parentSettingKey],
                 subsettings: {
-                    ...settings[parentSettingId].subsettings,
-                    [settingId]: {
-                        ...settings[parentSettingId].subsettings[settingId],
+                    ...settings[parentSettingKey].subsettings,
+                    [settingKey]: {
+                        ...settings[parentSettingKey].subsettings[settingKey],
                         value: value,
                     },
                 },
@@ -65,44 +65,41 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
             // Is main subsetting
             const updatedSubsettings = {};
 
-            console.log("value", value, tinycolor(value).isDark());
-
             settingOrSubsetting.theme.controlledSettings.forEach(
                 (controlledSettingObj) => {
-                    const { subsettingKey, lighten } = controlledSettingObj;
+                    const { subsettingKey, h, s, l } = controlledSettingObj;
                     const controlledSetting = {
-                        ...settings[parentSettingId].subsettings[subsettingKey],
+                        ...settings[parentSettingKey].subsettings[subsettingKey],
                     };
                     const color = tinycolor(value);
-                    // const generatedColor = color.lighten(lighten).toString();
-                    const generatedColor = color.isDark()
-                        ? color.lighten(lighten).toString()
-                        : color.darken(lighten).toString();
+                    color.isDark()
+                        ? color.lighten(l).saturate(s).spin(h).toString()
+                        : color.darken(l).desaturate(s).spin(-h).toString();
 
-                    controlledSetting.value = generatedColor;
-                    controlledSetting.defaultValue = generatedColor;
+                    controlledSetting.value = color;
+                    controlledSetting.defaultValue = color;
                     updatedSubsettings[subsettingKey] = controlledSetting;
                 }
             );
-            const updatedSubsetting = updatedSetting.subsettings[settingId];
+            const updatedSubsetting = updatedSetting.subsettings[settingKey];
             const mergedSetting = {
-                ...settings[parentSettingId],
+                ...settings[parentSettingKey],
                 subsettings: {
-                    ...settings[parentSettingId].subsettings,
-                    [settingId]: { ...updatedSubsetting },
+                    ...settings[parentSettingKey].subsettings,
+                    [settingKey]: { ...updatedSubsetting },
                     ...updatedSubsettings,
                 },
             };
 
             const updatedSettings = {
                 ...settings,
-                [parentSettingId]: mergedSetting,
+                [parentSettingKey]: mergedSetting,
             };
             setSettings(updatedSettings);
         } else {
             const updatedSettings = {
                 ...settings,
-                [parentSettingId ?? settingId]: updatedSetting,
+                [parentSettingKey ?? settingKey]: updatedSetting,
             };
             setSettings(updatedSettings);
         }

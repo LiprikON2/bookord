@@ -15,7 +15,7 @@ const dynamicInputTypes = {
     fontFamilyInput: FontInput,
 };
 
-const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId }) => {
+const SettingItemInput = ({ updateSettings, settingKey, setting, parentSettingKey }) => {
     return (
         <>
             {setting.type === "checkbox" ? (
@@ -23,7 +23,7 @@ const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId 
                     label={setting.name}
                     checked={setting.value}
                     onChange={() =>
-                        updateSettings(settingId, !setting.value, parentSettingId)
+                        updateSettings(settingKey, !setting.value, parentSettingKey)
                     }
                     size="md"
                 />
@@ -41,7 +41,7 @@ const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId 
                                 </>
                             }
                             onChange={(newValue) =>
-                                updateSettings(settingId, newValue, parentSettingId)
+                                updateSettings(settingKey, newValue, parentSettingKey)
                             }
                             value={setting.value}
                             label={setting.name}
@@ -53,7 +53,7 @@ const SettingItemInput = ({ updateSettings, settingId, setting, parentSettingId 
             ) : setting.type === "complex" ? (
                 <ComplexInput
                     updateSettings={updateSettings}
-                    settingId={settingId}
+                    settingKey={settingKey}
                     setting={setting}
                 />
             ) : null}

@@ -414,6 +414,10 @@ ipcMain.handle("app:on-file-add", (event, files = []) => {
     return fileCount;
 });
 
+ipcMain.on("app:stop-watching-files", () => {
+    io.watcher.close();
+});
+
 // open filesystem dialog to choose files
 ipcMain.handle("app:on-fs-dialog-open", (event) => {
     const files =
