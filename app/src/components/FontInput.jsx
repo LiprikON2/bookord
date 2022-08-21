@@ -1,4 +1,4 @@
-import { Autocomplete, Avatar, Group, MantineProvider } from "@mantine/core";
+import { Autocomplete, ScrollArea } from "@mantine/core";
 import React, { forwardRef, useEffect, useState } from "react";
 import { Text } from "@mantine/core";
 
@@ -184,8 +184,12 @@ const FontInput = ({
 
     return (
         <Autocomplete
+            className="fontInput"
             value={fontValue}
             onChange={setFontValue}
+            dropdownComponent={({ ...rest }) => <ScrollArea type="auto" {...rest} />}
+            limit={1000}
+            maxDropdownHeight={280}
             inputContainer={(children) => (
                 <span
                     style={{

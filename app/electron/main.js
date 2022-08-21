@@ -476,6 +476,7 @@ const getChildResponse = async (child) => {
     const promise = new Promise((resolve, reject) => {
         promiseResolve = resolve;
     });
+    // TODO listener memory leak on reload
     child.on("message", (response) => {
         promiseResolve(response);
     });

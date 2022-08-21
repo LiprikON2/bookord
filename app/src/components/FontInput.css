@@ -1,19 +1,37 @@
-.mantine-Autocomplete-input {
-    font-family: inherit;
-}
-.mantine-Input-input.mantine-Autocomplete-input,
-.mantine-Autocomplete-control {
-    background-color: var(--clr-secondary-300);
-    border-color: var(--clr-primary-300);
-}
+.fontInput {
+    & .mantine-Autocomplete-input {
+        font-family: inherit;
+    }
 
-.mantine-Input-input.mantine-Autocomplete-input,
-.mantine-Autocomplete-control,
-.mantine-InputWrapper-label {
-    color: var(--clr-primary-150);
-}
+    & .mantine-Input-input.mantine-Autocomplete-input,
+    & .mantine-Autocomplete-control {
+        background-color: var(--clr-secondary-300);
+        border-color: var(--clr-primary-300);
+    }
 
-.mantine-Autocomplete-input::placeholder {
-    color: var(--clr-primary-200);
-    opacity: 0.75;
+    & .mantine-Input-input.mantine-Autocomplete-input,
+    & .mantine-Autocomplete-control,
+    & .mantine-InputWrapper-label {
+        color: var(--clr-primary-150);
+    }
+
+    & .mantine-Autocomplete-input::placeholder {
+        color: var(--clr-primary-200);
+        opacity: 0.75;
+    }
+
+    & .mantine-Autocomplete-dropdown,
+    & .mantine-Autocomplete-item {
+        background-color: var(--clr-secondary-300);
+        border-color: var(--clr-primary-300);
+        color: var(--clr-primary-150);
+    }
+
+    & .mantine-Autocomplete-item[data-hovered] {
+        background-color: var(--clr-secondary-200);
+    }
+
+    & .mantine-ScrollArea-root {
+        overflow: hidden !important;
+    }
 }

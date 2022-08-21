@@ -19,13 +19,12 @@ const SettingItem = ({
             : null;
 
     return (
-        <Group spacing="xs" style={{ ...settingGroupStyle, width: "100%" }}>
+        <Group
+            spacing="xs"
+            style={{ ...settingGroupStyle, width: "100%", paddingBottom: "4px" }}>
             {setting.type !== "complex" ? (
                 <>
                     {/* TODO fix visible hover on hidden */}
-                    {/* TODO style dropdown in font family input */}
-                    {/* TODO style dropdown in colorInput */}
-                    {/* TODO fix colorInput bugged picker */}
                     <HoverDescription
                         offset={30}
                         openDelay={300}

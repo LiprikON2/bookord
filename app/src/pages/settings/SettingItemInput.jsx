@@ -1,5 +1,6 @@
-import { Space } from "@mantine/core";
 import React from "react";
+import { Space } from "@mantine/core";
+import { Wand } from "tabler-icons-react";
 
 import Checkbox from "components/Checkbox";
 import NumberInput from "components/NumberInput";
@@ -39,6 +40,12 @@ const SettingItemInput = ({ updateSettings, settingKey, setting, parentSettingKe
                                     />
                                     <Space h="sm" />
                                 </>
+                            }
+                            rightSection={
+                                setting.type === "colorInput" &&
+                                setting?.theme?.controlledSettings ? (
+                                    <Wand />
+                                ) : null
                             }
                             onChange={(newValue) =>
                                 updateSettings(settingKey, newValue, parentSettingKey)

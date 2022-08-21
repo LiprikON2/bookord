@@ -73,11 +73,11 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
                     };
                     const color = tinycolor(value);
                     color.isDark()
-                        ? color.lighten(l).saturate(s).spin(h).toString()
-                        : color.darken(l).desaturate(s).spin(-h).toString();
+                        ? color.lighten(l).saturate(s).spin(h)
+                        : color.darken(l).desaturate(s).spin(-h);
 
-                    controlledSetting.value = color;
-                    controlledSetting.defaultValue = color;
+                    controlledSetting.value = color.toString();
+                    controlledSetting.defaultValue = color.toString();
                     updatedSubsettings[subsettingKey] = controlledSetting;
                 }
             );

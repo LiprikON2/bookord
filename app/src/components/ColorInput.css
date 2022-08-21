@@ -1,4 +1,5 @@
-.mantine-Input-input.mantine-ColorInput-input {
+.mantine-Input-input.mantine-ColorInput-input,
+.mantine-ColorInput-dropdown {
     background-color: var(--clr-secondary-300);
     border-color: var(--clr-primary-300);
 }
