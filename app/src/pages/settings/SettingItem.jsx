@@ -24,17 +24,22 @@ const SettingItem = ({
             style={{ ...settingGroupStyle, width: "100%", paddingBottom: "4px" }}>
             {setting.type !== "complex" ? (
                 <>
-                    {/* TODO fix visible hover on hidden */}
                     <HoverDescription
                         offset={30}
                         openDelay={300}
                         position="bottom-start"
                         description="Restore To Default"
+                        disabled={
+                            !setting.disabled && setting.defaultValue !== setting.value
+                        }
                         className="btn-restore">
                         <Button
                             isIconOnly={true}
                             isGhost={true}
-                            isVisible={setting.defaultValue !== setting.value}
+                            isVisible={
+                                !setting.disabled &&
+                                setting.defaultValue !== setting.value
+                            }
                             onClick={() =>
                                 updateSettings(
                                     settingKey,

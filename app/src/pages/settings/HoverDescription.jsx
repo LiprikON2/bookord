@@ -10,10 +10,10 @@ const HoverDescription = ({
     offset = 20,
     openDelay = 1000,
     position = "right",
+    disabled = false,
     description,
+    ...rest
 }) => {
-    // todo make text unselectable
-    // todo make default value for numberinput work
     return (
         <HoverCard
             // @ts-ignore
@@ -22,11 +22,11 @@ const HoverDescription = ({
             width={280}
             openDelay={openDelay}
             zIndex={30}
-            shadow="md">
+            {...rest}>
             <HoverCard.Target>
                 <span className={className}>{children}</span>
             </HoverCard.Target>
-            <HoverCard.Dropdown>
+            <HoverCard.Dropdown style={disabled ? { display: "none" } : null}>
                 <SettingDescription description={description} />
             </HoverCard.Dropdown>
         </HoverCard>

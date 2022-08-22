@@ -7,57 +7,44 @@
         "subsection": "Startup",
         "type": "checkbox",
         "value": true,
-        "defaultValue": true
+        "defaultValue": true,
+        "disabled": false,
+        "canBeDisabled": false
     },
-    "overrideFontFamily": {
-        "name": "Override book's font family",
-        "description": "",
-        "hoverDescription": "TODO",
-        "section": "Theme",
-        "subsection": "Font",
-        "type": "checkbox",
-        "value": false,
-        "defaultValue": false
-    },
+
     "fontFamily": {
         "name": "Font family",
-        "description": "Font family of the book.",
-        "hoverDescription": "List of the installed fonts on your system",
+        "description": "Override the font family of the book.",
+        "hoverDescription": "List of the detected fonts on your system",
         "section": "Theme",
         "subsection": "Font",
         "type": "fontFamilyInput",
         "value": "",
         "defaultValue": "",
+        "disabled": false,
+        "canBeDisabled": true,
         "theme": {
             "cssVar": "--ff-book-global"
         }
     },
     "lineHeight": {
         "name": "Line height",
-        "description": "Spacing between text lines.",
+        "description": "Override spacing between lines of text.",
         "hoverDescription": "TODO",
         "section": "Theme",
         "subsection": "Font",
         "type": "numberInput",
-        "value": "1.2",
-        "defaultValue": "1.2",
+        "value": 1.2,
+        "defaultValue": 1.2,
+        "disabled": false,
+        "canBeDisabled": true,
         "theme": {
             "cssVar": "--lh-book-global"
         }
     },
-    "overrideFontSize": {
-        "name": "Override book's font size",
-        "description": "",
-        "hoverDescription": "TODO",
-        "section": "Theme",
-        "subsection": "Font",
-        "type": "checkbox",
-        "value": false,
-        "defaultValue": false
-    },
     "fontSize": {
         "name": "Font size",
-        "description": "",
+        "description": "Override the size of the book's font",
         "hoverDescription": "Set font size for specific parts of book",
         "section": "Theme",
         "subsection": "Font",
@@ -72,6 +59,8 @@
                 "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-global"
                 }
@@ -84,6 +73,8 @@
                 "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-paragraph"
                 }
@@ -96,6 +87,8 @@
                 "type": "fontSizeInput",
                 "value": 48,
                 "defaultValue": 48,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h1"
                 }
@@ -108,6 +101,8 @@
                 "type": "fontSizeInput",
                 "value": 40,
                 "defaultValue": 40,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h2"
                 }
@@ -120,6 +115,8 @@
                 "type": "fontSizeInput",
                 "value": 32,
                 "defaultValue": 32,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h3"
                 }
@@ -132,6 +129,8 @@
                 "type": "fontSizeInput",
                 "value": 24,
                 "defaultValue": 24,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h4"
                 }
@@ -144,6 +143,8 @@
                 "type": "fontSizeInput",
                 "value": 20,
                 "defaultValue": 20,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h5"
                 }
@@ -156,6 +157,8 @@
                 "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
+                "disabled": false,
+                "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h6"
                 }
@@ -174,12 +177,14 @@
         "subsettings": {
             "accentColorGlobal": {
                 "name": "Accent color",
-                "description": "Changing this value will affect all other font settings in the group.",
+                "description": "TODO.",
                 "hoverDescription": "Is overruled when advanced accent color settings are used",
                 "section": "Theme",
                 "type": "colorInput",
                 "value": "#4f929e",
                 "defaultValue": "#4f929e",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-accent-global",
                     "isControlledApplied": true,
@@ -207,6 +212,8 @@
                 "type": "colorInput",
                 "value": "#4f929e",
                 "defaultValue": "#4f929e",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-accent-000"
                 }
@@ -219,6 +226,8 @@
                 "type": "colorInput",
                 "value": "#43c59e",
                 "defaultValue": "#43c59e",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-accent-100"
                 }
@@ -242,6 +251,8 @@
                 "type": "colorInput",
                 "value": "#ffffff",
                 "defaultValue": "#ffffff",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-primary-global",
                     "isControlledApplied": true,
@@ -287,6 +298,8 @@
                 "type": "colorInput",
                 "value": "#ffffff",
                 "defaultValue": "#ffffff",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-primary-000"
                 }
@@ -299,6 +312,8 @@
                 "type": "colorInput",
                 "value": "#dcddde",
                 "defaultValue": "#dcddde",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-primary-100"
                 }
@@ -311,6 +326,8 @@
                 "type": "colorInput",
                 "value": "#C1C2C5",
                 "defaultValue": "#C1C2C5",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-primary-150"
                 }
@@ -323,6 +340,8 @@
                 "type": "colorInput",
                 "value": "#8e9297",
                 "defaultValue": "#8e9297",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-primary-200"
                 }
@@ -335,6 +354,8 @@
                 "type": "colorInput",
                 "value": "#48545c",
                 "defaultValue": "#48545c",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-primary-300"
                 }
@@ -358,6 +379,8 @@
                 "type": "colorInput",
                 "value": "#000000",
                 "defaultValue": "#000000",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-secondary-global",
                     "isControlledApplied": true,
@@ -397,6 +420,8 @@
                 "type": "colorInput",
                 "value": "#000000",
                 "defaultValue": "#000000",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-secondary-000"
                 }
@@ -409,6 +434,8 @@
                 "type": "colorInput",
                 "value": "#17191b",
                 "defaultValue": "#17191b",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-secondary-100"
                 }
@@ -421,6 +448,8 @@
                 "type": "colorInput",
                 "value": "#202225",
                 "defaultValue": "#202225",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-secondary-200"
                 }
@@ -433,6 +462,8 @@
                 "type": "colorInput",
                 "value": "#2f3136",
                 "defaultValue": "#2f3136",
+                "disabled": false,
+                "canBeDisabled": false,
                 "theme": {
                     "cssVar": "--clr-secondary-300"
                 }

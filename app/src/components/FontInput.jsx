@@ -161,6 +161,7 @@ const FontInput = ({
     value = undefined,
     onChange = undefined,
     data = undefined,
+    placeholder = undefined,
     ...rest
 }) => {
     const [fonts, setFonts] = useState(null);
@@ -200,7 +201,7 @@ const FontInput = ({
                     {children}
                 </span>
             )}
-            placeholder="Comic Sans MS"
+            placeholder={placeholder ? placeholder : "Comic Sans MS"}
             itemComponent={AutoCompleteItem}
             data={fonts ?? []}
             {...rest}

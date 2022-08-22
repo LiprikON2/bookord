@@ -1,10 +1,10 @@
-.mantine-Input-input.mantine-NumberInput-input,
+.mantine-NumberInput-input,
 .mantine-NumberInput-control {
     background-color: var(--clr-secondary-300);
     border-color: var(--clr-primary-300);
 }
 
-.mantine-Input-input.mantine-NumberInput-input,
+.mantine-NumberInput-input,
 .mantine-NumberInput-control,
 .mantine-InputWrapper-label {
     color: var(--clr-primary-150);

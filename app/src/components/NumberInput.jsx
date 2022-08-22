@@ -15,7 +15,7 @@ const NumberInput = ({
 
     return (
         <MantineNumberInput
-            value={parseInt(value)}
+            value={value}
             step={decimalStepForSmallNumbers}
             precision={precision ?? isBigValue ? 0 : 2}
             min={min}

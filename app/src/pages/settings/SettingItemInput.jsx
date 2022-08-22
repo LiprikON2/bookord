@@ -1,5 +1,5 @@
 import React from "react";
-import { Space } from "@mantine/core";
+import { Group, Space } from "@mantine/core";
 import { Wand } from "tabler-icons-react";
 
 import Checkbox from "components/Checkbox";
@@ -8,6 +8,7 @@ import ColorInput from "components/ColorInput";
 import ComplexInput from "./ComplexInput";
 import FontInput from "components/FontInput";
 import SettingDescription from "./SettingDescription";
+import HoverDescription from "./HoverDescription";
 
 const dynamicInputTypes = {
     numberInput: NumberInput,
@@ -21,7 +22,7 @@ const SettingItemInput = ({ updateSettings, settingKey, setting, parentSettingKe
         <>
             {setting.type === "checkbox" ? (
                 <Checkbox
-                    label={setting.name}
+                    label={`${setting.canBeDisabled ? "Override ― " : ""}${setting.name}`}
                     checked={setting.value}
                     onChange={() =>
                         updateSettings(settingKey, !setting.value, parentSettingKey)
@@ -44,15 +45,47 @@ const SettingItemInput = ({ updateSettings, settingKey, setting, parentSettingKe
                             rightSection={
                                 setting.type === "colorInput" &&
                                 setting?.theme?.controlledSettings ? (
-                                    <Wand />
+                                    <HoverDescription
+                                        description={
+                                            "Changing this value will affect all other font settings in the group."
+                                        }
+                                        withArrow
+                                        position="top"
+                                        width={220}
+                                        offset={10}
+                                        disabled={setting.disabled}
+                                        arrowSize={10}>
+                                        <Group>
+                                            <Wand />
+                                        </Group>
+                                    </HoverDescription>
                                 ) : null
                             }
                             onChange={(newValue) =>
                                 updateSettings(settingKey, newValue, parentSettingKey)
                             }
                             value={setting.value}
-                            label={setting.name}
-                            size="md"
+                            placeholder={setting.defaultValue}
+                            disabled={setting.disabled}
+                            label={
+                                setting.canBeDisabled ? (
+                                    <Checkbox
+                                        label={"Override ― " + setting.name}
+                                        checked={!setting.disabled}
+                                        onChange={() =>
+                                            updateSettings(
+                                                settingKey,
+                                                !setting.disabled,
+                                                parentSettingKey,
+                                                "disabled"
+                                            )
+                                        }
+                                        size="md"
+                                    />
+                                ) : (
+                                    setting.name
+                                )
+                            }
                             style={{ width: "15rem" }}
                         />
                     );

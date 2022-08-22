@@ -39,30 +39,35 @@ export const AppContext = createContext(null);
 
 const updateCssVar = (setting) => {
     if ("theme" in setting) {
-        if (setting.type === "colorInput") {
-            document.documentElement.style.setProperty(
-                setting.theme.cssVar,
-                setting.value
-            );
-            // Generates hsl variable version for color
-            const color = tinycolor(setting.value);
-            const { h, s, l } = color.toHsl();
-            const hslString = `${h} ${s * 100}% ${l * 100}%`;
+        if (!setting.disabled) {
+            if (setting.type === "colorInput") {
+                document.documentElement.style.setProperty(
+                    setting.theme.cssVar,
+                    setting.value
+                );
+                // Generates hsl variable version for color
+                const color = tinycolor(setting.value);
+                const { h, s, l } = color.toHsl();
+                const hslString = `${h} ${s * 100}% ${l * 100}%`;
 
-            document.documentElement.style.setProperty(
-                setting.theme.cssVar + "-hsl",
-                hslString
-            );
-        } else if (setting.type === "fontSizeInput") {
-            document.documentElement.style.setProperty(
-                setting.theme.cssVar,
-                parseInt(setting.value) / 16 + "rem"
-            );
+                document.documentElement.style.setProperty(
+                    setting.theme.cssVar + "-hsl",
+                    hslString
+                );
+            } else if (setting.type === "fontSizeInput") {
+                document.documentElement.style.setProperty(
+                    setting.theme.cssVar,
+                    parseInt(setting.value) / 16 + "rem"
+                );
+            } else {
+                document.documentElement.style.setProperty(
+                    setting.theme.cssVar,
+                    setting.value
+                );
+            }
         } else {
-            document.documentElement.style.setProperty(
-                setting.theme.cssVar,
-                setting.value
-            );
+            document.documentElement.style.removeProperty(setting.theme.cssVar);
+            document.documentElement.style.removeProperty(setting.theme.cssVar + "-hsl");
         }
     }
 };

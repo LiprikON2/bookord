@@ -31,7 +31,7 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
         window.api.store.send(writeConfigRequest, "settings", debouncedSettings);
     }, [debouncedSettings]);
 
-    const updateSettings = (settingKey, value, parentSettingKey) => {
+    const updateSettings = (settingKey, value, parentSettingKey, valueKey = "value") => {
         let updatedSetting;
         const settingOrSubsetting = parentSettingKey
             ? settings[parentSettingKey].subsettings[settingKey]
@@ -39,7 +39,7 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
         // Is not a subsetting
         if (!parentSettingKey && settingOrSubsetting.type !== "complex") {
             // Updates only one specific property of an object inside another object
-            updatedSetting = { ...settings[settingKey], value: value };
+            updatedSetting = { ...settings[settingKey], [valueKey]: value };
         } else if (settingOrSubsetting.type === "complex") {
             // is a setting that has subsettings
             updatedSetting = {
@@ -55,13 +55,13 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
                     ...settings[parentSettingKey].subsettings,
                     [settingKey]: {
                         ...settings[parentSettingKey].subsettings[settingKey],
-                        value: value,
+                        [valueKey]: value,
                     },
                 },
             };
         }
 
-        if (settingOrSubsetting?.theme?.controlledSettings) {
+        if (settingOrSubsetting?.theme?.controlledSettings && valueKey === "value") {
             // Is main subsetting
             const updatedSubsettings = {};
 

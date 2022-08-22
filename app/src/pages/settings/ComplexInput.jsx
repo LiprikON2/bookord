@@ -10,12 +10,15 @@ const ComplexInput = ({ updateSettings, settingKey, setting }) => {
     const mainSubsettingKey = Object.keys(setting.subsettings)[0];
     const mainSubsetting = setting.subsettings[mainSubsettingKey];
 
+    const isOpened =
+        !setting.subsettings[mainSubsettingKey].disabled && setting.useSubsettings;
+    /* TODO reset subsettings' override checkbox & show advanced switch */
     return (
         <>
             <Group style={{ justifyContent: "space-between", width: "100%" }}>
                 <Accordion
                     variant="separated"
-                    value={setting.useSubsettings ? setting.name : null}
+                    value={isOpened ? setting.name : null}
                     style={{ width: "100%" }}
                     chevron={null}>
                     <Accordion.Item value={setting.name}>
@@ -35,7 +38,10 @@ const ComplexInput = ({ updateSettings, settingKey, setting }) => {
                                 description={setting.hoverDescription}>
                                 <Switch
                                     label="Show Advanced"
-                                    checked={setting.useSubsettings}
+                                    checked={isOpened}
+                                    disabled={
+                                        setting.subsettings[mainSubsettingKey].disabled
+                                    }
                                     onChange={() =>
                                         updateSettings(
                                             settingKey,

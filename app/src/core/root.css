@@ -199,3 +199,10 @@ main#main {
 .description {
     color: var(--clr-primary-200);
 }
+
+/* Inputs */
+.mantine-Input-input:disabled {
+    opacity: 1;
+    /* filter: brightness(75%); */
+    background-color: transparent;
+}
