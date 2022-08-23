@@ -1,3 +1,6 @@
+.dropdown {
+    opacity: 0.9;
+}
 .dropdown > .dropdown-menu {
     min-width: initial;
     display: block;
@@ -41,4 +44,8 @@
     font-size: var(--fs-250);
 
     justify-content: flex-start;
+}
+
+.dropdown > .dropdown-trigger .button {
+    box-shadow: 0 0 4px hsl(var(--clr-secondary-000-hsl) / 0.5);
 }

@@ -205,7 +205,9 @@ export default class BookComponent extends HTMLElement {
     importBook(filePath, sectionIndex) {
         const book = window.api
             .invoke("app:get-parsed-book", [filePath, sectionIndex])
-            .catch();
+            .catch((error) => {
+                console.log("Exited before could recive book");
+            });
 
         book.then(() => {
             this.status = "ready";

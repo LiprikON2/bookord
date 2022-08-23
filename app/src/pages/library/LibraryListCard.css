@@ -44,9 +44,8 @@ a:focus-visible > .card > .card-cover {
     text-transform: uppercase;
     line-height: 1;
 
-    /* border: 2px solid var(--clr-accent-000); */
     background: var(--grad-card-lin);
-    color: var(--clr-accent-000);
+    color: var(--clr-accent-100);
 }
 
 .no-cover > .clip-path-wrapper {
@@ -82,7 +81,7 @@ a:focus-visible > .card > .card-cover {
 .no-cover:hover .clip-path > h3,
 a:focus-visible .no-cover .clip-path > h3 {
     color: var(--clr-secondary-300);
-    background: var(--grad-card-rad);
+    background-color: var(--clr-accent-100);
 }
 
 .card > .card-content {
@@ -126,6 +125,8 @@ a:focus-visible .no-cover .clip-path > h3 {
     line-height: var(--line-height);
     font-size: 0.875rem;
     width: 80%;
+    box-shadow: 0 0 4px hsl(var(--clr-secondary-000-hsl) / 0.5);
+    text-shadow: 0px 0px 4px hsl(var(--clr-secondary-300-hsl) / 0.7);
 }
 
 .card-content > .card-content-title > span {

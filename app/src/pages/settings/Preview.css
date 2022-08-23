@@ -1,0 +1,7 @@
+.preview-container {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+
+    background-color: var(--clr-secondary-200);
+}

@@ -2,6 +2,7 @@ import React from "react";
 
 import LibraryListCard from "Pages/library/LibraryListCard";
 import { Stack, Text } from "@mantine/core";
+import "./Preview.css";
 
 const PreviewComponents = {
     LibraryListCard: (
@@ -23,11 +24,7 @@ const Preview = ({ style = undefined, component }) => {
     const PreviewComponent = PreviewComponents[component];
     return (
         <>
-            <Stack
-                style={{
-                    marginTop: "1rem",
-                    ...style,
-                }}>
+            <Stack className="preview-container" style={style}>
                 <Text weight={500} size="sm">
                     Preview:
                 </Text>

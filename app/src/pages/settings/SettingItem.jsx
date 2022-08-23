@@ -51,7 +51,13 @@ const SettingItem = ({
                         </Button>
                     </HoverDescription>
                     <HoverDescription
-                        position={setting.type === "checkbox" ? "right" : "right-end"}
+                        position={
+                            setting.type === "checkbox"
+                                ? "right"
+                                : setting.previewComponent
+                                ? "right-start"
+                                : "right-end"
+                        }
                         description={setting.hoverDescription}
                         previewComponent={setting.previewComponent}>
                         <SettingItemInput
