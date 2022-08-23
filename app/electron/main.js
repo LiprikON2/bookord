@@ -83,7 +83,7 @@ async function createWindow() {
         minWidth: 500,
         backgroundColor: "#202225",
         icon: getAssetPath("icons/256x256.png"), // TODO taskbar icon is tiny; No notification icon
-        title: "Application is currently initializing...",
+        title: "Bookord is initializing...",
         frame: false,
         webPreferences: {
             devTools: isDev,
@@ -448,7 +448,7 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
                 { name: "Kindle File Format Files", extensions: ["azw"] },
                 { name: "Portable Document Format Files", extensions: ["pdf"] },
             ],
-        }) || [];
+        }) ?? [];
 
     const fileCount = io.addFiles(
         files.map((filepath) => {
@@ -476,33 +476,34 @@ const getChildResponse = async (child) => {
     const promise = new Promise((resolve, reject) => {
         promiseResolve = resolve;
     });
-    // TODO listener memory leak on reload
-    child.on("message", (response) => {
+
+    child.once("message", (response) => {
         promiseResolve(response);
     });
+
     return promise;
 };
 
 // Forked child process for parsing book file.
-// It is needed to offload main thread and not to block UI
+// It is needed to offload parsing from main thread and, consequently, not to block UI
 const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
 
 ipcMain.handle("app:get-books", async () => {
     const allBooks = storeData?.["allBooks"];
     const files = io.getFiles();
 
-    // Force show skeletons for alreaddy added books on initial app load (or refresh)
+    // Force show skeletons for already added books on initial app load (or refresh)
     if (isInitLoad) {
         win.webContents.send("app:receive-skeleton-count", files.length);
         isInitLoad = false;
     }
-
     metadataParseChild.send({
         parseMetadata: {
             files: files,
             allBooks: allBooks,
         },
     });
+
     const { filesWithMetadata, mergedAllbooks } = await getChildResponse(
         metadataParseChild
     );
@@ -536,6 +537,6 @@ ipcMain.handle("app:get-parsed-book", async (event, [filePath, initSectionIndex]
 });
 
 // Kills parsing child process when user leaves the reading page
-ipcMain.on("app:on-stop-parsing", (event, file) => {
-    if (parseChild) parseChild.kill();
+ipcMain.on("app:on-stop-parsing", () => {
+    if (parseChild) parseChild.kill("SIGKILL");
 });
