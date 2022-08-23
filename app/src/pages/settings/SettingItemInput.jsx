@@ -1,5 +1,5 @@
 import React from "react";
-import { Group, Space } from "@mantine/core";
+import { Group, Space, Text } from "@mantine/core";
 import { Wand } from "tabler-icons-react";
 
 import Checkbox from "components/Checkbox";
@@ -50,13 +50,16 @@ const SettingItemInput = ({ updateSettings, settingKey, setting, parentSettingKe
                                             "Changing this value will affect all other font settings in the group."
                                         }
                                         withArrow
-                                        position="top"
+                                        position="left-end"
                                         width={220}
-                                        offset={10}
                                         disabled={setting.disabled}
-                                        arrowSize={10}>
+                                        arrowSize={8}
+                                        offset={0}
+                                        style={{
+                                            backgroundColor: "var(--clr-secondary-200)",
+                                        }}>
                                         <Group>
-                                            <Wand />
+                                            <Wand color="var(--clr-primary-100)" />
                                         </Group>
                                     </HoverDescription>
                                 ) : null
@@ -83,7 +86,7 @@ const SettingItemInput = ({ updateSettings, settingKey, setting, parentSettingKe
                                         size="md"
                                     />
                                 ) : (
-                                    setting.name
+                                    <Text size="md">{setting.name}</Text>
                                 )
                             }
                             style={{ width: "15rem" }}

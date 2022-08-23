@@ -1,3 +1,12 @@
+.setting-item {
+    width: 100%;
+    padding-bottom: 4px;
+    margin-block: 1rem;
+}
+.setting-item.has-subsettings {
+    margin: 0;
+}
+
 span.btn-restore {
     padding-inline: 1rem;
     @media (max-width: 800px) {

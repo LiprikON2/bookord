@@ -18,28 +18,29 @@ const SettingItem = ({
             ? { alignItems: "flex-end" }
             : null;
 
+    const isNonDefault = !setting.disabled && setting.defaultValue !== setting.value;
+
     return (
         <Group
+            className={
+                "setting-item" +
+                (setting.type === "complex" || parentSettingKey ? " has-subsettings" : "")
+            }
             spacing="xs"
-            style={{ ...settingGroupStyle, width: "100%", paddingBottom: "4px" }}>
+            style={settingGroupStyle}>
             {setting.type !== "complex" ? (
                 <>
                     <HoverDescription
-                        offset={30}
+                        offset={20}
                         openDelay={300}
                         position="bottom-start"
                         description="Restore To Default"
-                        disabled={
-                            !setting.disabled && setting.defaultValue !== setting.value
-                        }
+                        disabled={!isNonDefault}
                         className="btn-restore">
                         <Button
                             isIconOnly={true}
                             isGhost={true}
-                            isVisible={
-                                !setting.disabled &&
-                                setting.defaultValue !== setting.value
-                            }
+                            isVisible={isNonDefault}
                             onClick={() =>
                                 updateSettings(
                                     settingKey,

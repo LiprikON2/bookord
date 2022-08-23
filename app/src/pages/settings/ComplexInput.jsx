@@ -55,7 +55,7 @@ const ComplexInput = ({ updateSettings, settingKey, setting }) => {
                             <Stack
                                 m="xl"
                                 align="flex-start"
-                                style={{ marginInline: 0, width: "100%" }}>
+                                style={{ marginInline: 0, width: "100%", gap: 0 }}>
                                 {Object.keys(setting.subsettings)
                                     .slice(1) // Removes main subsetting which is shown in Control
                                     .map((subsettingKey) => {

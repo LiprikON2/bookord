@@ -20,7 +20,6 @@
 .mantine-Accordion-content,
 .mantine-Accordion-control {
     padding: 0;
-    padding-bottom: 0.5rem;
 }
 .mantine-Accordion-item .mantine-Switch-root {
     gap: 0.5rem;
@@ -33,10 +32,12 @@
     padding: 0;
 }
 
-.mantine-Accordion-label > .mantine-Group-root {
+.mantine-Accordion-label > .mantine-Group-root,
+.mantine-Accordion-content .mantine-Group-root {
     gap: 0;
 }
 
-.mantine-Accordion-label .btn.btn-ghost {
+.mantine-Accordion-label .btn.btn-ghost,
+.mantine-Accordion-content .btn.btn-ghost {
     margin-inline: 5px;
 }

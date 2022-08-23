@@ -2,7 +2,7 @@
     "continueReading": {
         "name": "Reopen last book on startup.",
         "description": "",
-        "hoverDescription": "Whether or not app will open last read book on startup",
+        "hoverDescription": "Whether or not app will open last read book on startup.",
         "section": "App Settings",
         "subsection": "Startup",
         "type": "checkbox",
@@ -15,7 +15,7 @@
     "fontFamily": {
         "name": "Font family",
         "description": "Override the font family of the book.",
-        "hoverDescription": "List of the detected fonts on your system",
+        "hoverDescription": "List of the detected fonts on your system.\nYou can type in name of the installed font even if it is not on the list.",
         "section": "Theme",
         "subsection": "Font",
         "type": "fontFamilyInput",
@@ -29,8 +29,23 @@
     },
     "lineHeight": {
         "name": "Line height",
-        "description": "Override spacing between lines of text.",
-        "hoverDescription": "TODO",
+        "description": "Override the amount of vertical space between lines of text in a paragraph.",
+        "hoverDescription": "Line height, also known as leading, controls the amount of space between baselines in a block of text. A text’s line height is proportional to its type size.\nTODO Preview.",
+        "section": "Theme",
+        "subsection": "Font",
+        "type": "numberInput",
+        "value": 1.2,
+        "defaultValue": 1.2,
+        "disabled": true,
+        "canBeDisabled": true,
+        "theme": {
+            "cssVar": "--lh-book-global"
+        }
+    },
+    "paragraphSpacing": {
+        "name": "Paragraph spacing",
+        "description": "Override the amount of vertical space spacing between paragraphs.",
+        "hoverDescription": "Paragraph spacing determines the amount of space above or below a paragraph.\nTODO Preview.",
         "section": "Theme",
         "subsection": "Font",
         "type": "numberInput",
@@ -44,8 +59,8 @@
     },
     "fontSize": {
         "name": "Font size",
-        "description": "Override the size of the book's font",
-        "hoverDescription": "Set font size for specific parts of book",
+        "description": "",
+        "hoverDescription": "Set font size for the specific parts of book",
         "section": "Theme",
         "subsection": "Font",
         "type": "complex",
@@ -54,7 +69,7 @@
             "fontSizeGlobal": {
                 "name": "Font size",
                 "description": "Base font size of the whole book.",
-                "hoverDescription": "Is overruled when advanced font settings are used",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.\nThis setting is overruled when advanced font settings are used",
                 "section": "Theme",
                 "type": "fontSizeInput",
                 "value": 16,
@@ -91,7 +106,7 @@
             "fontSizeParagraph": {
                 "name": "Paragraph font size",
                 "description": "",
-                "hoverDescription": "16 is the default value for this setting",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.",
                 "section": "Theme",
                 "type": "fontSizeInput",
                 "value": 16,
@@ -105,11 +120,11 @@
             "fontSizeH1": {
                 "name": "H1 font size",
                 "description": "",
-                "hoverDescription": "48 is the default value for this setting",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.",
                 "section": "Theme",
                 "type": "fontSizeInput",
-                "value": 48,
-                "defaultValue": 48,
+                "value": 32,
+                "defaultValue": 32,
                 "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
@@ -119,11 +134,11 @@
             "fontSizeH2": {
                 "name": "H2 font size",
                 "description": "",
-                "hoverDescription": "40 is the default value for this setting",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.",
                 "section": "Theme",
                 "type": "fontSizeInput",
-                "value": 40,
-                "defaultValue": 40,
+                "value": 28,
+                "defaultValue": 28,
                 "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
@@ -133,11 +148,11 @@
             "fontSizeH3": {
                 "name": "H3 font size",
                 "description": "",
-                "hoverDescription": "32 is the default value for this setting",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.",
                 "section": "Theme",
                 "type": "fontSizeInput",
-                "value": 32,
-                "defaultValue": 32,
+                "value": 24,
+                "defaultValue": 24,
                 "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
@@ -147,11 +162,11 @@
             "fontSizeH4": {
                 "name": "H4 font size",
                 "description": "",
-                "hoverDescription": "24 is the default value for this setting",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.",
                 "section": "Theme",
                 "type": "fontSizeInput",
-                "value": 24,
-                "defaultValue": 24,
+                "value": 20,
+                "defaultValue": 20,
                 "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
@@ -161,11 +176,11 @@
             "fontSizeH5": {
                 "name": "H5 font size",
                 "description": "",
-                "hoverDescription": "20 is the default value for this setting",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.",
                 "section": "Theme",
                 "type": "fontSizeInput",
-                "value": 20,
-                "defaultValue": 20,
+                "value": 18,
+                "defaultValue": 18,
                 "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
@@ -175,7 +190,7 @@
             "fontSizeH6": {
                 "name": "H6 font size",
                 "description": "",
-                "hoverDescription": "16 is the default value for this setting",
+                "hoverDescription": "Font size determines how large the characters displayed on a screen are.",
                 "section": "Theme",
                 "type": "fontSizeInput",
                 "value": 16,

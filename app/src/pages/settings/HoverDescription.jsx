@@ -8,6 +8,7 @@ import Preview from "./Preview";
 const HoverDescription = ({
     className = undefined,
     children = undefined,
+    style = undefined,
     offset = 20,
     openDelay = 1000,
     position = "right",
@@ -29,7 +30,7 @@ const HoverDescription = ({
             <HoverCard.Target>
                 <span className={className}>{children}</span>
             </HoverCard.Target>
-            <HoverCard.Dropdown style={disabled ? { display: "none" } : null}>
+            <HoverCard.Dropdown style={disabled ? { display: "none", ...style } : style}>
                 <SettingDescription description={description} />
 
                 {previewComponent && <Preview component={previewComponent} />}

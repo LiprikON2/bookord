@@ -32,6 +32,8 @@ const sectionDetails = {
     },
 };
 
+// TODO remove book selectors if not overriden
+
 const Settings = () => {
     const { settings } = useContext(AppContext);
     const firstSection = settings[Object.keys(settings)[0]].section;

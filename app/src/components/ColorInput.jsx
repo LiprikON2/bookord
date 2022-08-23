@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { ColorInput as MantineColorInput } from "@mantine/core";
 
 import "./ColorInput.css";
+import { useDebouncedValue, useDidUpdate } from "@mantine/hooks";
 
 const ColorInput = ({
+    value = undefined,
+    onChange = undefined,
     swatches = [
         "#25262b",
         "#868e96",
@@ -18,7 +21,27 @@ const ColorInput = ({
     ],
     ...rest
 }) => {
-    return <MantineColorInput swatches={swatches} {...rest} />;
+    const [inputValue, setInputValue] = useState(value);
+    const [debouncedFontValue] = useDebouncedValue(inputValue, 300);
+
+    useDidUpdate(() => {
+        onChange && onChange(debouncedFontValue);
+    }, [debouncedFontValue]);
+
+    useDidUpdate(() => {
+        if (value !== inputValue) {
+            setInputValue(value);
+        }
+    }, [value]);
+
+    return (
+        <MantineColorInput
+            value={inputValue}
+            onChange={setInputValue}
+            swatches={swatches}
+            {...rest}
+        />
+    );
 };
 
 export default ColorInput;

@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect, useContext } from "react";
 import { Stack, Tabs } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
+import { useDebouncedValue, useDidUpdate } from "@mantine/hooks";
 import { writeConfigRequest } from "secure-electron-store";
 
 import SettingsSubsections from "./SettingsSubsections";
@@ -27,9 +27,12 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
     }, []);
 
     useLayoutEffect(() => {
-        reloadTheme(settings);
         window.api.store.send(writeConfigRequest, "settings", debouncedSettings);
     }, [debouncedSettings]);
+
+    useDidUpdate(() => {
+        reloadTheme(settings);
+    }, [settings]);
 
     const updateSettings = (settingKey, value, parentSettingKey, valueKey = "value") => {
         let updatedSetting;
@@ -60,7 +63,11 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
             };
         }
 
-        if (settingOrSubsetting?.theme?.controlledSettings && valueKey === "value") {
+        if (
+            settingOrSubsetting?.theme?.controlledSettings &&
+            settingOrSubsetting.type === "colorInput" &&
+            valueKey === "value"
+        ) {
             // Is main subsetting
             const updatedSubsettings = {};
 
@@ -163,7 +170,11 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
                                     <Stack
                                         m="xl"
                                         align="flex-start"
-                                        style={{ marginInline: 0, width: "100%" }}>
+                                        style={{
+                                            marginInline: 0,
+                                            width: "100%",
+                                            gap: 0,
+                                        }}>
                                         <SettingsSubsections
                                             section={section}
                                             subsections={subsections}
