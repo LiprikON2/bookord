@@ -46,7 +46,6 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
                 ...settings[settingKey],
                 useSubsettings: value,
             };
-            // } else if (!setting.theme.isControlledApplied) {
         } else {
             // Is normal subsetting
             updatedSetting = {
@@ -84,6 +83,40 @@ const SettingSections = ({ initialTab, setCurrentTab, sectionDetails }) => {
             const updatedSubsetting = updatedSetting.subsettings[settingKey];
             const mergedSetting = {
                 ...settings[parentSettingKey],
+                subsettings: {
+                    ...settings[parentSettingKey].subsettings,
+                    [settingKey]: { ...updatedSubsetting },
+                    ...updatedSubsettings,
+                },
+            };
+
+            const updatedSettings = {
+                ...settings,
+                [parentSettingKey]: mergedSetting,
+            };
+            setSettings(updatedSettings);
+        } else if (
+            settingOrSubsetting?.theme?.controlledSettings &&
+            valueKey === "disabled"
+        ) {
+            // Unchecks useSubsettings and "override" in controlled subsettings
+            const updatedSubsettings = {};
+
+            settingOrSubsetting.theme.controlledSettings.forEach(
+                (controlledSettingObj) => {
+                    const { subsettingKey } = controlledSettingObj;
+                    const controlledSetting = {
+                        ...settings[parentSettingKey].subsettings[subsettingKey],
+                    };
+
+                    controlledSetting.disabled = true;
+                    updatedSubsettings[subsettingKey] = controlledSetting;
+                }
+            );
+            const updatedSubsetting = updatedSetting.subsettings[settingKey];
+            const mergedSetting = {
+                ...settings[parentSettingKey],
+                useSubsettings: false,
                 subsettings: {
                     ...settings[parentSettingKey].subsettings,
                     [settingKey]: { ...updatedSubsetting },

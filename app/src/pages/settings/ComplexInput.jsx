@@ -12,7 +12,6 @@ const ComplexInput = ({ updateSettings, settingKey, setting }) => {
 
     const isOpened =
         !setting.subsettings[mainSubsettingKey].disabled && setting.useSubsettings;
-    /* TODO reset subsettings' override checkbox & show advanced switch */
     return (
         <>
             <Group style={{ justifyContent: "space-between", width: "100%" }}>

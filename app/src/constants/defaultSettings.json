@@ -21,7 +21,7 @@
         "type": "fontFamilyInput",
         "value": "",
         "defaultValue": "",
-        "disabled": false,
+        "disabled": true,
         "canBeDisabled": true,
         "theme": {
             "cssVar": "--ff-book-global"
@@ -36,7 +36,7 @@
         "type": "numberInput",
         "value": 1.2,
         "defaultValue": 1.2,
-        "disabled": false,
+        "disabled": true,
         "canBeDisabled": true,
         "theme": {
             "cssVar": "--lh-book-global"
@@ -59,10 +59,33 @@
                 "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
-                    "cssVar": "--fs-book-global"
+                    "cssVar": "--fs-book-global",
+                    "controlledSettings": [
+                        {
+                            "subsettingKey": "fontSizeParagraph"
+                        },
+                        {
+                            "subsettingKey": "fontSizeH1"
+                        },
+                        {
+                            "subsettingKey": "fontSizeH2"
+                        },
+                        {
+                            "subsettingKey": "fontSizeH3"
+                        },
+                        {
+                            "subsettingKey": "fontSizeH4"
+                        },
+                        {
+                            "subsettingKey": "fontSizeH5"
+                        },
+                        {
+                            "subsettingKey": "fontSizeH6"
+                        }
+                    ]
                 }
             },
             "fontSizeParagraph": {
@@ -73,7 +96,7 @@
                 "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-paragraph"
@@ -87,7 +110,7 @@
                 "type": "fontSizeInput",
                 "value": 48,
                 "defaultValue": 48,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h1"
@@ -101,7 +124,7 @@
                 "type": "fontSizeInput",
                 "value": 40,
                 "defaultValue": 40,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h2"
@@ -115,7 +138,7 @@
                 "type": "fontSizeInput",
                 "value": 32,
                 "defaultValue": 32,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h3"
@@ -129,7 +152,7 @@
                 "type": "fontSizeInput",
                 "value": 24,
                 "defaultValue": 24,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h4"
@@ -143,7 +166,7 @@
                 "type": "fontSizeInput",
                 "value": 20,
                 "defaultValue": 20,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h5"
@@ -157,7 +180,7 @@
                 "type": "fontSizeInput",
                 "value": 16,
                 "defaultValue": 16,
-                "disabled": false,
+                "disabled": true,
                 "canBeDisabled": true,
                 "theme": {
                     "cssVar": "--fs-book-h6"
