@@ -1,8 +1,9 @@
-import { HoverCard } from "@mantine/core";
 import React from "react";
+import { HoverCard } from "@mantine/core";
 
 import SettingDescription from "./SettingDescription";
 import "./HoverDescription.css";
+import Preview from "./Preview";
 
 const HoverDescription = ({
     className = undefined,
@@ -12,8 +13,10 @@ const HoverDescription = ({
     position = "right",
     disabled = false,
     description,
+    previewComponent = "",
     ...rest
 }) => {
+    console.log("previewComponent", previewComponent, previewComponent && "something");
     return (
         <HoverCard
             // @ts-ignore
@@ -28,6 +31,8 @@ const HoverDescription = ({
             </HoverCard.Target>
             <HoverCard.Dropdown style={disabled ? { display: "none" } : null}>
                 <SettingDescription description={description} />
+
+                {previewComponent && <Preview component={previewComponent} />}
             </HoverCard.Dropdown>
         </HoverCard>
     );

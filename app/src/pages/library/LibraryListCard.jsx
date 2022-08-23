@@ -5,7 +5,7 @@ import Button from "components/Button";
 import Dropdown from "components/Dropdown";
 import "./LibraryListCard.css";
 
-const LibraryListCard = ({ file }) => {
+const LibraryListCard = ({ style = undefined, file }) => {
     const handleDelete = (e, file) => {
         e.preventDefault();
         window.api.send("app:on-file-delete", file);
@@ -15,7 +15,9 @@ const LibraryListCard = ({ file }) => {
         <>
             <div
                 className="card"
-                style={file.isSkeleton ? { pointerEvents: "none" } : {}}>
+                style={
+                    file.isSkeleton ? { pointerEvents: "none", ...style } : { ...style }
+                }>
                 {file.info.cover ? (
                     <span className="card-cover">
                         <img src={file.info.cover} alt="book cover" />

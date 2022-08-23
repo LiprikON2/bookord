@@ -34,7 +34,8 @@ const ComplexInput = ({ updateSettings, settingKey, setting }) => {
                                 position={
                                     setting.type === "checkbox" ? "right" : "right-end"
                                 }
-                                description={setting.hoverDescription}>
+                                description={setting.hoverDescription}
+                                previewComponent={setting.previewComponent}>
                                 <Switch
                                     label="Show Advanced"
                                     checked={isOpened}

@@ -52,7 +52,8 @@ const SettingItem = ({
                     </HoverDescription>
                     <HoverDescription
                         position={setting.type === "checkbox" ? "right" : "right-end"}
-                        description={setting.hoverDescription}>
+                        description={setting.hoverDescription}
+                        previewComponent={setting.previewComponent}>
                         <SettingItemInput
                             updateSettings={updateSettings}
                             setting={setting}
