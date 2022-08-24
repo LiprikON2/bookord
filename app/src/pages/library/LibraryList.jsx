@@ -10,11 +10,14 @@ import { Box, Center, Group, Stack, Text } from "@mantine/core";
 import {
     AlphabetLatin,
     Calendar,
+    CalendarStats,
     Category,
     Clock,
     FilePlus,
     MasksTheater,
     SortAscending2,
+    User,
+    X,
 } from "tabler-icons-react";
 
 import Button from "components/Button";
@@ -126,6 +129,8 @@ const LibraryList = () => {
 
     const hasBooks = !!files.length || !!skeletontFileCount || isInitLoad;
 
+    const [grouping, setGrouping] = useState("None");
+
     return (
         <>
             <div className="library-container" id="uploader">
@@ -145,7 +150,18 @@ const LibraryList = () => {
 
                         <Group spacing="xs">
                             <SegmentedControl
+                                value={grouping}
+                                onChange={setGrouping}
                                 data={[
+                                    {
+                                        value: "None",
+                                        label: (
+                                            <Center>
+                                                <X size={16} />
+                                                <Box ml={10}>None</Box>
+                                            </Center>
+                                        ),
+                                    },
                                     {
                                         value: "Recent",
                                         label: (
@@ -159,20 +175,38 @@ const LibraryList = () => {
                                         value: "Date Added",
                                         label: (
                                             <Center>
-                                                <Calendar size={16} />
+                                                <CalendarStats size={16} />
                                                 <Box ml={10}>Date Added</Box>
                                             </Center>
                                         ),
                                     },
+                                    // {
+                                    //     value: "Date Published",
+                                    //     label: (
+                                    //         <Center>
+                                    //             <Calendar size={16} />
+                                    //             <Box ml={10}>Date Published</Box>
+                                    //         </Center>
+                                    //     ),
+                                    // },
                                     {
-                                        value: "Alphabet",
+                                        value: "Author",
                                         label: (
                                             <Center>
-                                                <AlphabetLatin size={16} />
-                                                <Box ml={10}>Alphabet</Box>
+                                                <User size={16} />
+                                                <Box ml={10}>Author</Box>
                                             </Center>
                                         ),
                                     },
+                                    // {
+                                    //     value: "Alphabet",
+                                    //     label: (
+                                    //         <Center>
+                                    //             <AlphabetLatin size={16} />
+                                    //             <Box ml={10}>Alphabet</Box>
+                                    //         </Center>
+                                    //     ),
+                                    // },
                                     {
                                         value: "Genre",
                                         label: (
@@ -199,38 +233,98 @@ const LibraryList = () => {
                 </Group>
 
                 {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
-
-                <div className="card-list" role="list">
-                    {hasBooks ? (
-                        <>
-                            {files.map((file) => {
-                                const toLocation = {
-                                    pathname: ROUTES.READ,
-                                    state: {
-                                        bookFile: file,
-                                    },
-                                };
-                                return (
-                                    <Link
-                                        to={toLocation}
-                                        className=""
-                                        role="listitem"
-                                        key={file.name}>
-                                        <LibraryListCard file={file} to={toLocation} />
-                                    </Link>
-                                );
-                            })}
-                            {[...Array(skeletontFileCount)].map((e, index) => (
-                                <div role="listitem" key={"skeleton" + index}>
-                                    <LibraryListCard file={skeletonFile} />
-                                </div>
-                            ))}
-                        </>
-                    ) : (
-                        // TODO this dropzone has different explorer uploader onClick
-                        <Dropzone onDrop={handleDrop}></Dropzone>
-                    )}
-                </div>
+                {grouping !== "Author" ? (
+                    <div className="card-list" role="list">
+                        {hasBooks ? (
+                            <>
+                                {files.map((file) => {
+                                    const toLocation = {
+                                        pathname: ROUTES.READ,
+                                        state: {
+                                            bookFile: file,
+                                        },
+                                    };
+                                    return (
+                                        <Link
+                                            to={toLocation}
+                                            className=""
+                                            role="listitem"
+                                            key={file.name}>
+                                            <LibraryListCard
+                                                file={file}
+                                                to={toLocation}
+                                            />
+                                        </Link>
+                                    );
+                                })}
+                                {[...Array(skeletontFileCount)].map((e, index) => (
+                                    <div role="listitem" key={"skeleton" + index}>
+                                        <LibraryListCard file={skeletonFile} />
+                                    </div>
+                                ))}
+                            </>
+                        ) : (
+                            // TODO this dropzone has different explorer uploader onClick
+                            <Dropzone onDrop={handleDrop}></Dropzone>
+                        )}
+                    </div>
+                ) : (
+                    <Stack align="stretch" className="card-group-list">
+                        {hasBooks ? (
+                            <>
+                                {[...Array(skeletontFileCount)].map((e, index) => (
+                                    <div role="listitem" key={"skeleton" + index}>
+                                        <LibraryListCard file={skeletonFile} />
+                                    </div>
+                                ))}
+                                {files.length &&
+                                    Object.entries(
+                                        files.reduce((groups, file) => {
+                                            const { author } = file.info;
+                                            if (!groups[author]) groups[author] = [];
+                                            groups[author].push(file);
+                                            return groups;
+                                        }, [])
+                                    ).map(([group, files]) => {
+                                        console.log("group", group, files);
+                                        return (
+                                            <React.Fragment key={group}>
+                                                <Text size="lg">{group}</Text>
+                                                <div
+                                                    className="card-list"
+                                                    role="list"
+                                                    key={group}>
+                                                    {files.map((file) => {
+                                                        const toLocation = {
+                                                            pathname: ROUTES.READ,
+                                                            state: {
+                                                                bookFile: file,
+                                                            },
+                                                        };
+                                                        return (
+                                                            <Link
+                                                                to={toLocation}
+                                                                className=""
+                                                                role="listitem"
+                                                                key={file.name}>
+                                                                <LibraryListCard
+                                                                    file={file}
+                                                                    to={toLocation}
+                                                                />
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </React.Fragment>
+                                        );
+                                    })}
+                            </>
+                        ) : (
+                            // TODO this dropzone has different explorer uploader onClick
+                            <Dropzone onDrop={handleDrop}></Dropzone>
+                        )}
+                    </Stack>
+                )}
             </div>
         </>
     );
