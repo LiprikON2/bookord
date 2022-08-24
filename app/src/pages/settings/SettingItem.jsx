@@ -23,8 +23,7 @@ const SettingItem = ({
     return (
         <Group
             className={
-                "setting-item" +
-                (setting.type === "complex" || parentSettingKey ? " has-subsettings" : "")
+                "setting-item" + (setting.type === "complex" ? " has-subsettings" : "")
             }
             spacing="xs"
             style={settingGroupStyle}>

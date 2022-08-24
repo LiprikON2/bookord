@@ -17,7 +17,6 @@ const HoverDescription = ({
     previewComponent = "",
     ...rest
 }) => {
-    console.log("previewComponent", previewComponent, previewComponent && "something");
     return (
         <HoverCard
             // @ts-ignore
