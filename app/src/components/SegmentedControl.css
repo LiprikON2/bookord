@@ -1,0 +1,28 @@
+.mantine-SegmentedControl-control {
+    border-left-color: hsl(var(--clr-secondary-200-hsl) / 0.3);
+}
+
+.mantine-SegmentedControl-root {
+    background-color: var(--clr-secondary-300);
+}
+
+.mantine-SegmentedControl-active {
+    background-color: var(--clr-secondary-100);
+}
+
+.mantine-SegmentedControl-label {
+    color: var(--clr-primary-200);
+}
+
+.mantine-SegmentedControl-label:hover,
+.mantine-SegmentedControl-label:focus-visible,
+.mantine-SegmentedControl-labelActive {
+    color: var(--clr-primary-100);
+}
+
+.mantine-SegmentedControl-label.mantine-SegmentedControl-labelActive {
+    box-shadow: none !important;
+}
+.mantine-SegmentedControl-input:focus-visible + .mantine-SegmentedControl-label {
+    outline: var(--outline) !important;
+}

@@ -18,5 +18,5 @@ li.navbar-item {
 .navbar-item button {
     font-weight: var(--fw-500);
     width: max-content;
-    border-radius: 0;
+    border-radius: 4px;
 }

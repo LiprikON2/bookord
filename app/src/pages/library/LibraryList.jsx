@@ -6,12 +6,23 @@ import {
     useConfigInMainRequest,
     useConfigInMainResponse,
 } from "secure-electron-store";
+import { Box, Center, Group, Stack, Text } from "@mantine/core";
+import {
+    AlphabetLatin,
+    Calendar,
+    Category,
+    Clock,
+    FilePlus,
+    MasksTheater,
+    SortAscending2,
+} from "tabler-icons-react";
 
 import Button from "components/Button";
 import Link from "components/Link";
 import Dropzone from "components/Dropzone";
 import LibraryListCard from "./LibraryListCard";
 import { AppContext } from "Core/Routes";
+import SegmentedControl from "components/SegmentedControl";
 
 // @ts-ignore
 import ROUTES from "Constants/routes";
@@ -118,9 +129,75 @@ const LibraryList = () => {
     return (
         <>
             <div className="library-container" id="uploader">
-                <div>
-                    <Button onClick={handleUpload}>Add a book</Button>
-                </div>
+                <Group
+                    className="card-control"
+                    position="apart"
+                    style={{ alignItems: "flex-end" }}>
+                    <Stack style={{ gap: "0.5rem" }}>
+                        <Group
+                            style={{ gap: "0.25rem", color: "var(--clr-primary-150)" }}>
+                            <Category size={24} />
+
+                            <Text size="md" weight={500}>
+                                Group by
+                            </Text>
+                        </Group>
+
+                        <Group spacing="xs">
+                            <SegmentedControl
+                                data={[
+                                    {
+                                        value: "Recent",
+                                        label: (
+                                            <Center>
+                                                <Clock size={16} />
+                                                <Box ml={10}>Recent</Box>
+                                            </Center>
+                                        ),
+                                    },
+                                    {
+                                        value: "Date Added",
+                                        label: (
+                                            <Center>
+                                                <Calendar size={16} />
+                                                <Box ml={10}>Date Added</Box>
+                                            </Center>
+                                        ),
+                                    },
+                                    {
+                                        value: "Alphabet",
+                                        label: (
+                                            <Center>
+                                                <AlphabetLatin size={16} />
+                                                <Box ml={10}>Alphabet</Box>
+                                            </Center>
+                                        ),
+                                    },
+                                    {
+                                        value: "Genre",
+                                        label: (
+                                            <Center>
+                                                <MasksTheater size={16} />
+                                                <Box ml={10}>Genre</Box>
+                                            </Center>
+                                        ),
+                                    },
+                                ]}
+                            />
+                            {/* TODO */}
+                            <Button isIconOnly={true} isGhost={true}>
+                                <SortAscending2 />
+                            </Button>
+                        </Group>
+                    </Stack>
+                    <Button
+                        leftIcon={<FilePlus />}
+                        onClick={handleUpload}
+                        style={{ height: "2.625rem" }}>
+                        Add
+                    </Button>
+                </Group>
+
                 {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
 
                 <div className="card-list" role="list">

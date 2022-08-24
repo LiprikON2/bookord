@@ -29,7 +29,7 @@ div.card {
     width: 100%;
     object-fit: cover;
     border-radius: 10px;
-    box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-000-hsl) / 0.5);
+    box-shadow: 0 0.75rem 1.25rem hsl(var(--clr-accent-100-hsl) / 0.5);
     transition: all 0.4s ease;
 }
 
@@ -45,7 +45,7 @@ a:focus-visible > .card > .card-cover {
     line-height: 1;
 
     background: var(--grad-card-lin);
-    color: var(--clr-accent-100);
+    color: var(--clr-accent-000);
 }
 
 .no-cover > .clip-path-wrapper {
@@ -81,7 +81,7 @@ a:focus-visible > .card > .card-cover {
 .no-cover:hover .clip-path > h3,
 a:focus-visible .no-cover .clip-path > h3 {
     color: var(--clr-secondary-300);
-    background-color: var(--clr-accent-100);
+    background-color: var(--clr-accent-000);
 }
 
 .card > .card-content {
@@ -103,7 +103,7 @@ a:focus-visible .no-cover .clip-path > h3 {
 .card-content > *:not(.dropdown) {
     color: var(--clr-primary-100);
     background-color: hsl(var(--clr-accent-000-hsl) / 0.9);
-    box-shadow: 0 0.3rem 0.5rem hsl(var(--clr-accent-000-hsl) / 0.25);
+    /* box-shadow: 0 0.3rem 0.5rem hsl(var(--clr-accent-000-hsl) / 0.25); */
     border: none;
 
     transition: all 0.2s ease;

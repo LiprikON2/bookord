@@ -33,7 +33,7 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                             to={ROUTES.LIBRARY}
                             title="Back to Library"
                             isIconOnly={true}>
-                            <ArrowLeft strokeWidth={1.5} color="var(--clr-primary-100)" />
+                            <ArrowLeft strokeWidth={1.5} />
                         </Button>
                     </li>
                     <Divider size="md" orientation="vertical" />
@@ -41,45 +41,28 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                         <Button
                             to={ROUTES.SETTINGS}
                             title="Application Settings"
-                            leftIcon={
-                                <Settings
-                                    strokeWidth={1.5}
-                                    color="var(--clr-primary-100)"
-                                />
-                            }>
+                            leftIcon={<Settings strokeWidth={1.5} />}>
                             Settings
                         </Button>
                     </li>
                     <li className="navbar-item">
                         <Button
                             title="Font Settings"
-                            leftIcon={
-                                <Typography
-                                    strokeWidth={1.5}
-                                    color="var(--clr-primary-100)"
-                                />
-                            }>
+                            leftIcon={<Typography strokeWidth={1.5} />}>
                             Font
                         </Button>
                     </li>
                     <li className="navbar-item">
                         <Button
                             title="Text-To-Speech Settings"
-                            leftIcon={
-                                <Speakerphone
-                                    strokeWidth={1.5}
-                                    color="var(--clr-primary-100)"
-                                />
-                            }>
+                            leftIcon={<Speakerphone strokeWidth={1.5} />}>
                             TTS
                         </Button>
                     </li>
                     <li className="navbar-item" cm-template="textSelectionTemplate">
                         <Button
                             to={ROUTES.CONTEXTMENU}
-                            leftIcon={
-                                <Book strokeWidth={1.5} color="var(--clr-primary-100)" />
-                            }>
+                            leftIcon={<Book strokeWidth={1.5} />}>
                             TEST
                         </Button>
                     </li>
@@ -90,10 +73,8 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                         <Button
                             isVisible={isBtnContinueReadingVisible}
                             to={ROUTES.READ}
-                            title={`Continue Reading "${lastOpenedBookTitle}"`}
-                            leftIcon={
-                                <Book strokeWidth={1.5} color="var(--clr-primary-100)" />
-                            }>
+                            title={`Continue Reading "${lastOpenedBookTitle ?? ""}"`}
+                            leftIcon={<Book strokeWidth={1.5} />}>
                             Continue Reading
                         </Button>
                     </li>

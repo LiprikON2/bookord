@@ -57,7 +57,7 @@ const Dropzone = ({
     onDrop,
     onReject = undefined,
     accept = undefined,
-    multiple = undefined,
+    multiple = true,
     fullscreen = false,
     ...rest
 }) => {
@@ -67,18 +67,18 @@ const Dropzone = ({
         <>
             {!fullscreen ? (
                 <MantineDropzone
-                    onDrop={onDrop ?? (() => {})}
-                    onReject={onReject ?? (() => {})}
+                    onDrop={onDrop}
+                    onReject={onReject}
                     accept={accept ?? MIME_TYPES.EBOOK_MIME_TYPES}
-                    multiple={multiple ?? true}
+                    multiple={multiple}
                     {...rest}>
                     <DropzoneChildren status={status} theme={theme} />
                 </MantineDropzone>
             ) : (
                 <MantineDropzone.FullScreen
-                    onDrop={onDrop ?? (() => {})}
+                    onDrop={onDrop}
                     accept={accept ?? MIME_TYPES.EBOOK_MIME_TYPES}
-                    multiple={multiple ?? true}
+                    multiple={multiple}
                     {...rest}>
                     <DropzoneChildren status={status} theme={theme} />
                 </MantineDropzone.FullScreen>

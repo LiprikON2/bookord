@@ -94,6 +94,8 @@
     --fw-400: 400;
     --fw-500: 500;
     --fw-700: 700;
+
+    --outline: -webkit-focus-ring-color auto 1px;
 }
 
 *,
@@ -103,7 +105,7 @@
 }
 
 :focus-visible {
-    outline: -webkit-focus-ring-color auto 1px !important; /* Consistent tabbing outline */
+    outline: var(--outline) !important; /* Consistent tabbing outline */
 }
 
 @media (prefers-reduced-motion: reduce) {
