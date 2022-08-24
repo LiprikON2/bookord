@@ -1,7 +1,8 @@
-.section.library-list {
+.library-container {
     display: flex;
     flex-direction: column;
     gap: 3rem;
+    padding: 0;
 }
 .spinner {
     margin-top: min(10rem, 10%);
@@ -9,18 +10,14 @@
 
 .card-list {
     display: grid;
-    max-width: min(calc(100% - 2rem), 90rem);
-    margin-inline: auto;
-    grid-template-columns: repeat(
-        auto-fit,
-        minmax(14rem, 1fr)
-    ); /* TODO 14rem as a card size setting */
+    justify-content: center;
+    /* max-width: min(calc(100% - 2rem), 90rem); */
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
     gap: 1.5rem;
     row-gap: 3rem;
 }
 
 .card-list > * {
-    /* For nicely lining up card's tabbing outline */
     padding: 1rem 1rem 0 1rem;
 }
 
@@ -29,7 +26,6 @@
     flex-direction: column;
 
     place-self: center;
-    /* background-color: var(--clr-accent-000); */
     border: 9px dotted var(--clr-accent-000);
     padding-inline: 2rem;
     gap: 0.3rem;
@@ -44,5 +40,4 @@
     line-height: var(--line-height);
     color: var(--clr-accent-000);
     font-weight: 1000;
-    /* font-size: 1rem; */
 }

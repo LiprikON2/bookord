@@ -1,23 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { Edit, ArrowUpRightCircle, Trash } from "tabler-icons-react";
 
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
 import "./LibraryListCard.css";
 
-const LibraryListCard = ({ style = undefined, file }) => {
+const LibraryListCard = ({ file, style = undefined, to = undefined }) => {
     const handleDelete = (e, file) => {
         e.preventDefault();
         window.api.send("app:on-file-delete", file);
         // Chokidar (from `io.js`) then triggers file update
     };
+
+    const [todo, setTodo] = useState("Edit");
     return (
         <>
             <div
                 className="card"
-                style={
-                    file.isSkeleton ? { pointerEvents: "none", ...style } : { ...style }
-                }>
+                style={file.isSkeleton ? { pointerEvents: "none", ...style } : style}>
                 {file.info.cover ? (
                     <span className="card-cover">
                         <img src={file.info.cover} alt="book cover" />
@@ -62,6 +62,7 @@ const LibraryListCard = ({ style = undefined, file }) => {
                     {!file.isSkeleton ? (
                         <Dropdown>
                             <Button
+                                to={to}
                                 compact
                                 leftIcon={
                                     <ArrowUpRightCircle
@@ -78,8 +79,9 @@ const LibraryListCard = ({ style = undefined, file }) => {
                                         strokeWidth={1.25}
                                         color="var(--clr-primary-100)"
                                     />
-                                }>
-                                Edit
+                                }
+                                onClick={() => setTodo("WIP =(")}>
+                                {todo}
                             </Button>
                             <Button
                                 className="btn-danger"

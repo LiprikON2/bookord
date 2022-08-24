@@ -113,37 +113,39 @@ const LibraryList = () => {
     };
     useWindowEvent("beforeunload", stopWatchingFiles);
 
-    const haveBooks = files.length || skeletontFileCount || isInitLoad;
+    const hasBooks = !!files.length || !!skeletontFileCount || isInitLoad;
 
     return (
         <>
-            <section className="section library-list" id="uploader">
+            <div className="library-container" id="uploader">
                 <div>
                     <Button onClick={handleUpload}>Add a book</Button>
                 </div>
-                {haveBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
+                {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
 
                 <div className="card-list" role="list">
-                    {haveBooks ? (
+                    {hasBooks ? (
                         <>
-                            {files.map((file, index) => (
-                                <Link
-                                    to={{
-                                        pathname: ROUTES.READ,
-                                        state: {
-                                            bookFile: file,
-                                        },
-                                    }}
-                                    className=""
-                                    role="listitem"
-                                    key={file.name}>
-                                    <LibraryListCard file={file}></LibraryListCard>
-                                </Link>
-                            ))}
+                            {files.map((file) => {
+                                const toLocation = {
+                                    pathname: ROUTES.READ,
+                                    state: {
+                                        bookFile: file,
+                                    },
+                                };
+                                return (
+                                    <Link
+                                        to={toLocation}
+                                        className=""
+                                        role="listitem"
+                                        key={file.name}>
+                                        <LibraryListCard file={file} to={toLocation} />
+                                    </Link>
+                                );
+                            })}
                             {[...Array(skeletontFileCount)].map((e, index) => (
                                 <div role="listitem" key={"skeleton" + index}>
-                                    <LibraryListCard
-                                        file={skeletonFile}></LibraryListCard>
+                                    <LibraryListCard file={skeletonFile} />
                                 </div>
                             ))}
                         </>
@@ -152,7 +154,7 @@ const LibraryList = () => {
                         <Dropzone onDrop={handleDrop}></Dropzone>
                     )}
                 </div>
-            </section>
+            </div>
         </>
     );
 };

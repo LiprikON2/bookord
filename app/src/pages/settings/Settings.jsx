@@ -42,13 +42,7 @@ const Settings = () => {
 
     return (
         <>
-            <section
-                className="section"
-                style={{
-                    maxWidth: "calc(35rem + 30vw)",
-                    margin: "1em auto",
-                    padding: "0 0.5rem",
-                }}>
+            <section className="section">
                 <Title
                     order={1}
                     description={sectionDetails[currentTab].description}

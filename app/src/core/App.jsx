@@ -23,12 +23,13 @@ const App = ({ history }) => {
 
     return (
         <>
-            <Titlebar history={history}></Titlebar>
-            <Navbar lastOpenedBookTitle={lastOpenedBookTitle}></Navbar>
+            <Titlebar history={history} />
+            <Navbar lastOpenedBookTitle={lastOpenedBookTitle} />
             <Routes
                 initStorage={initStorage}
                 lastOpenedBookTitle={lastOpenedBookTitle}
-                setLastOpenedBookTitle={setLastOpenedBookTitle}></Routes>
+                setLastOpenedBookTitle={setLastOpenedBookTitle}
+            />
         </>
     );
 };

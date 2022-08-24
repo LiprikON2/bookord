@@ -150,6 +150,11 @@ main#main {
     overflow-x: hidden;
     overflow-y: overlay;
 }
+section.section {
+    max-width: calc(35rem + 30vw);
+    margin: 1em auto;
+    padding: 0px 0.5rem;
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar {

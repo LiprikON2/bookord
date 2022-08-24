@@ -1,5 +1,5 @@
 import React from "react";
-import { Title } from "@mantine/core";
+import { Space, Title } from "@mantine/core";
 
 import LibraryList from "./LibraryList";
 
@@ -8,6 +8,7 @@ const Library = () => {
         <>
             <section className="section">
                 <Title order={1}>Library</Title>
+                <Space h="md" />
 
                 <LibraryList />
             </section>
