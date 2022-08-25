@@ -14,7 +14,7 @@ import { AppContext } from "Core/Routes";
 // @ts-ignore
 import "./LibraryList.css";
 import ListGroupingNone from "./ListGroupingNone";
-import ListGroupingAuthor from "./ListGroupingAuthor";
+import ListGroupingGroup from "./ListGroupingGroup";
 import GroupingControl from "./GroupingControl";
 
 const LibraryList = () => {
@@ -114,14 +114,18 @@ const LibraryList = () => {
 
     return (
         <>
+            {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
             <div className="library-container" id="uploader">
                 <GroupingControl
                     handleUpload={handleUpload}
                     grouping={grouping}
                     setGrouping={setGrouping}
                 />
-                {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
-                <Stack align="stretch" className="card-group-list">
+                <Stack
+                    align="stretch"
+                    className={
+                        "card-group-list" + (grouping !== "None" ? " grouped" : "")
+                    }>
                     {hasBooks ? (
                         <>
                             {grouping === "None" ? (
@@ -129,12 +133,13 @@ const LibraryList = () => {
                                     files={files}
                                     skeletontFileCount={skeletontFileCount}
                                 />
-                            ) : grouping === "Author" ? (
-                                <ListGroupingAuthor
+                            ) : (
+                                <ListGroupingGroup
+                                    groupBy={grouping}
                                     files={files}
                                     skeletontFileCount={skeletontFileCount}
                                 />
-                            ) : null}
+                            )}
                         </>
                     ) : (
                         <Dropzone onClick={handleUpload} onDrop={handleDrop}></Dropzone>

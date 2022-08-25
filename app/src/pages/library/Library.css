@@ -1,0 +1,9 @@
+/* section.section.library-section {
+    max-width: unset;
+    margin: unset;
+} */
+/* section.section.library-section > *:not(.library-container),
+section.section.library-section > * > *:not(.card-group-list.grouped) {
+    max-width: calc(35rem + 30vw);
+    margin-inline: auto;
+} */
