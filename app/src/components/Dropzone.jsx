@@ -77,7 +77,7 @@ const Dropzone = ({
 }) => {
     return (
         <>
-            <UnstyledButton onClick={onClick}>
+            <UnstyledButton tabIndex={-1} onClick={onClick}>
                 {!fullscreen ? (
                     <MantineDropzone
                         onDrop={onDrop}

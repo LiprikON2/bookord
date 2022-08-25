@@ -155,7 +155,8 @@ main#main {
 section.section {
     max-width: calc(35rem + 30vw);
     margin: 1em auto;
-    padding: 0px 0.5rem;
+    /* padding: 0px 0.5rem; */
+    padding: 0;
 }
 
 /* Scrollbar */

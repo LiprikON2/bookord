@@ -1,17 +1,21 @@
 .spinner {
-    display: inline-block;
+    /* display: inline-block; */
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    margin: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 .spinner div {
     box-sizing: border-box;
     display: block;
     position: absolute;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border: 8px solid var(--clr-accent-000);
+    width: calc(var(--spinner-size) * 0.8);
+    height: calc(var(--spinner-size) * 0.8);
+    border: calc(var(--spinner-size) * 0.1) solid var(--clr-accent-000);
     border-radius: 50%;
     animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: var(--clr-accent-000) transparent transparent transparent;

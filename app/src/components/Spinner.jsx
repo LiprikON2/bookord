@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 
 import "./Spinner.css";
 
-const Spinner = () => {
+const Spinner = ({ size = "5rem", style = undefined }) => {
+    useLayoutEffect(() => {
+        document.documentElement.style.setProperty("--spinner-size", size);
+    }, []);
     return (
-        <>
-            <div className="spinner">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </>
+        <div style={style} className="spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     );
 };
 

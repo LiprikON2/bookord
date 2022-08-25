@@ -3,7 +3,7 @@ import { Palette, Adjustments, Rocket, Typography, Paint } from "tabler-icons-re
 
 import SettingSections from "./SettingsSections";
 import { AppContext } from "Core/Routes";
-import Title from "components/Title";
+import TitleWithIcon from "components/TitleWithIcon";
 
 const sectionDetails = {
     "App Settings": {
@@ -43,12 +43,12 @@ const Settings = () => {
     return (
         <>
             <section className="section">
-                <Title
+                <TitleWithIcon
                     order={1}
                     description={sectionDetails[currentTab].description}
                     style={{ marginBottom: "0.25rem" }}>
                     Settings
-                </Title>
+                </TitleWithIcon>
 
                 <SettingSections
                     initialTab={firstSection}

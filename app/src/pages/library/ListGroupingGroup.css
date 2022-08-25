@@ -1,6 +1,61 @@
+.library-container {
+    position: relative;
+}
+.limit-width {
+    max-width: calc(35rem + 30vw);
+    width: calc(100% - var(--window-edge-padding) * 2);
+    margin: 0 auto;
+}
+.card-group-list.grouped {
+    --carousel-padding: 2.5rem;
+    position: absolute;
+    left: calc(var(--window-edge-padding) * -1);
+    right: calc(var(--window-edge-padding) * -1);
+}
+
 .mantine-Carousel-root {
-    overflow: visible;
+    background-color: var(--clr-secondary-100);
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+
+    box-shadow: inset 0px 26px 8px -20px rgba(0, 0, 0, 0.027),
+        inset 0px -26px 8px -20px rgba(0, 0, 0, 0.027),
+        inset 0px 36px 18px -30px rgba(0, 0, 0, 0.037),
+        inset 0px -36px 18px -30px rgba(0, 0, 0, 0.037),
+        inset 0px 46px 28px -40px rgba(0, 0, 0, 0.046),
+        inset 0px -46px 28px -40px rgba(0, 0, 0, 0.046),
+        inset 0px 56px 38px -50px rgba(0, 0, 0, 0.056),
+        inset 0px -56px 38px -50px rgba(0, 0, 0, 0.056),
+        inset 0px 66px 48px -60px rgba(0, 0, 0, 0.08),
+        inset 0px -66px 48px -60px rgba(0, 0, 0, 0.08);
 }
 .mantine-Carousel-container {
     gap: 1.5rem;
+}
+
+.mantine-Carousel-controls {
+    inset: 0;
+    padding: 0;
+    bottom: 0.875rem;
+}
+.mantine-Carousel-controls svg {
+    width: 8.5rem;
+    height: 8.5rem;
+}
+
+.mantine-Carousel-controls .mantine-Carousel-control {
+    width: 2.5rem;
+    height: 100%;
+    border-radius: 0;
+    background-color: hsl(var(--clr-secondary-100-hsl) / 0.75);
+    color: var(--clr-primary-100);
+    border-color: transparent;
+    background-color: transparent;
+}
+
+.mantine-Carousel-slide .card,
+.mantine-Carousel-container {
+    max-width: 11rem;
+    max-height: 18rem;
 }

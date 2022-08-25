@@ -90,7 +90,8 @@ a:focus-visible .no-cover .clip-path > h3 {
     min-width: calc(110% + 4% * 2);
     max-width: 100%;
     padding-inline: 4%; /* Prevents clicks on underlying link's padding */
-    padding-block: 7.5%; /* Prevents clicks on underlying link's padding */
+    /* padding-block: 7.5%; Prevents clicks on underlying link's padding */
+    padding-block: 0.875rem;
 
     z-index: 10;
 

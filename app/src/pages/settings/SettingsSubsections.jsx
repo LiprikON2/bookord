@@ -2,7 +2,7 @@ import React from "react";
 import { Divider } from "@mantine/core";
 
 import SettingItem from "./SettingItem";
-import Title from "components/Title";
+import TitleWithIcon from "components/TitleWithIcon";
 import "./SettingsSubsections.css";
 
 const SettingsSubsections = ({
@@ -20,13 +20,13 @@ const SettingsSubsections = ({
 
                 return (
                     <React.Fragment key={subsection}>
-                        <Title
+                        <TitleWithIcon
                             className="subsection-title"
                             order={2}
                             description={description}
                             leftIcon={icon}>
                             {subsection}
-                        </Title>
+                        </TitleWithIcon>
                         {Object.keys(settings).map((settingKey) => {
                             const setting = settings[settingKey];
                             if (

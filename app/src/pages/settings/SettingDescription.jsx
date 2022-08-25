@@ -6,8 +6,9 @@ const SettingDescription = ({ description }) => {
         <>
             {description.split("\n").map((line, index) => (
                 <React.Fragment key={line + index}>
-                    {index !== 0 ? <Space h="xs" /> : null}
-                    <Text size="sm">{line}</Text>
+                    <Text size="sm" mt={index !== 0 ? "xs" : null}>
+                        {line}
+                    </Text>
                 </React.Fragment>
             ))}
         </>

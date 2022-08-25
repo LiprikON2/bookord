@@ -7,3 +7,7 @@ section.section.library-section > * > *:not(.card-group-list.grouped) {
     max-width: calc(35rem + 30vw);
     margin-inline: auto;
 } */
+
+/* .card-group-list.grouped {
+    overflow: hidden;
+} */

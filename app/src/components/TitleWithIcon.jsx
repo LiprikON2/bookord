@@ -1,16 +1,20 @@
 import React from "react";
 import { Title as MantineTitle, Text, Space, Box, Group, Stack } from "@mantine/core";
 
-const Title = ({
+const TitleWithIcon = ({
     className = undefined,
     leftIcon = undefined,
     description = undefined,
     style = {},
+    mb = "md",
     ...rest
 }) => {
     return (
         <>
-            <Group className={className} style={{ alignItems: "flex-start", ...style }}>
+            <Group
+                className={className}
+                style={{ alignItems: "flex-start", ...style }}
+                mb={mb}>
                 {leftIcon && leftIcon}
                 <Stack style={{ gap: 0, maxWidth: "80%" }}>
                     <MantineTitle
@@ -21,9 +25,8 @@ const Title = ({
                     {description && <Text className="description">{description}</Text>}
                 </Stack>
             </Group>
-            <Space h="md" />
         </>
     );
 };
 
-export default Title;
+export default TitleWithIcon;
