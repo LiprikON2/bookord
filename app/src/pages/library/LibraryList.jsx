@@ -6,35 +6,16 @@ import {
     useConfigInMainRequest,
     useConfigInMainResponse,
 } from "secure-electron-store";
-import { Box, Center, Group, Stack, Text } from "@mantine/core";
-import {
-    AlphabetLatin,
-    Calendar,
-    CalendarStats,
-    Category,
-    Clock,
-    FilePlus,
-    MasksTheater,
-    SortAscending2,
-    User,
-    X,
-} from "tabler-icons-react";
+import { Stack } from "@mantine/core";
 
-import Button from "components/Button";
-import Link from "components/Link";
 import Dropzone from "components/Dropzone";
-import LibraryListCard from "./LibraryListCard";
 import { AppContext } from "Core/Routes";
-import SegmentedControl from "components/SegmentedControl";
 
 // @ts-ignore
-import ROUTES from "Constants/routes";
 import "./LibraryList.css";
-
-const skeletonFile = {
-    isSkeleton: true,
-    info: { title: "" },
-};
+import ListGroupingNone from "./ListGroupingNone";
+import ListGroupingAuthor from "./ListGroupingAuthor";
+import GroupingControl from "./GroupingControl";
 
 const LibraryList = () => {
     const {
@@ -134,194 +115,26 @@ const LibraryList = () => {
     return (
         <>
             <div className="library-container" id="uploader">
-                <Group
-                    className="card-control"
-                    position="apart"
-                    style={{ alignItems: "flex-end" }}>
-                    <Stack style={{ gap: "0.5rem" }}>
-                        <Group
-                            style={{ gap: "0.25rem", color: "var(--clr-primary-150)" }}>
-                            <Category size={24} />
-
-                            <Text size="md" weight={500}>
-                                Group by
-                            </Text>
-                        </Group>
-
-                        <Group spacing="xs">
-                            <SegmentedControl
-                                value={grouping}
-                                onChange={setGrouping}
-                                data={[
-                                    {
-                                        value: "None",
-                                        label: (
-                                            <Center>
-                                                <X size={16} />
-                                                <Box ml={10}>None</Box>
-                                            </Center>
-                                        ),
-                                    },
-                                    {
-                                        value: "Recent",
-                                        label: (
-                                            <Center>
-                                                <Clock size={16} />
-                                                <Box ml={10}>Recent</Box>
-                                            </Center>
-                                        ),
-                                    },
-                                    {
-                                        value: "Date Added",
-                                        label: (
-                                            <Center>
-                                                <CalendarStats size={16} />
-                                                <Box ml={10}>Date Added</Box>
-                                            </Center>
-                                        ),
-                                    },
-                                    // {
-                                    //     value: "Date Published",
-                                    //     label: (
-                                    //         <Center>
-                                    //             <Calendar size={16} />
-                                    //             <Box ml={10}>Date Published</Box>
-                                    //         </Center>
-                                    //     ),
-                                    // },
-                                    {
-                                        value: "Author",
-                                        label: (
-                                            <Center>
-                                                <User size={16} />
-                                                <Box ml={10}>Author</Box>
-                                            </Center>
-                                        ),
-                                    },
-                                    // {
-                                    //     value: "Alphabet",
-                                    //     label: (
-                                    //         <Center>
-                                    //             <AlphabetLatin size={16} />
-                                    //             <Box ml={10}>Alphabet</Box>
-                                    //         </Center>
-                                    //     ),
-                                    // },
-                                    {
-                                        value: "Genre",
-                                        label: (
-                                            <Center>
-                                                <MasksTheater size={16} />
-                                                <Box ml={10}>Genre</Box>
-                                            </Center>
-                                        ),
-                                    },
-                                ]}
-                            />
-                            {/* TODO */}
-                            <Button isIconOnly={true} isGhost={true}>
-                                <SortAscending2 />
-                            </Button>
-                        </Group>
-                    </Stack>
-                    <Button
-                        leftIcon={<FilePlus />}
-                        onClick={handleUpload}
-                        style={{ height: "2.625rem" }}>
-                        Add
-                    </Button>
-                </Group>
-
+                <GroupingControl
+                    handleUpload={handleUpload}
+                    grouping={grouping}
+                    setGrouping={setGrouping}
+                />
                 {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
                 <Stack align="stretch" className="card-group-list">
                     {hasBooks ? (
                         <>
                             {grouping === "None" ? (
-                                <div className="card-list" role="list">
-                                    {files.map((file) => {
-                                        const toLocation = {
-                                            pathname: ROUTES.READ,
-                                            state: {
-                                                bookFile: file,
-                                            },
-                                        };
-                                        return (
-                                            <Link
-                                                to={toLocation}
-                                                className=""
-                                                role="listitem"
-                                                key={file.name}>
-                                                <LibraryListCard
-                                                    file={file}
-                                                    to={toLocation}
-                                                />
-                                            </Link>
-                                        );
-                                    })}
-                                    {[...Array(skeletontFileCount)].map((e, index) => (
-                                        <div role="listitem" key={"skeleton" + index}>
-                                            <LibraryListCard file={skeletonFile} />
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <>
-                                    {[...Array(skeletontFileCount)].map((e, index) => (
-                                        <React.Fragment key={"loading-group"}>
-                                            <Text size="lg">Loading</Text>
-                                            <div className="card-list" role="list">
-                                                <div
-                                                    role="listitem"
-                                                    key={"skeleton" + index}>
-                                                    <LibraryListCard
-                                                        file={skeletonFile}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </React.Fragment>
-                                    ))}
-                                    {files.length &&
-                                        Object.entries(
-                                            files.reduce((groups, file) => {
-                                                const { author } = file.info;
-                                                if (!groups[author]) groups[author] = [];
-                                                groups[author].push(file);
-                                                return groups;
-                                            }, [])
-                                        ).map(([group, files]) => {
-                                            return (
-                                                <React.Fragment key={group}>
-                                                    <Text size="lg">{group}</Text>
-                                                    <div
-                                                        className="card-list"
-                                                        role="list"
-                                                        key={group}>
-                                                        {files.map((file) => {
-                                                            const toLocation = {
-                                                                pathname: ROUTES.READ,
-                                                                state: {
-                                                                    bookFile: file,
-                                                                },
-                                                            };
-                                                            return (
-                                                                <Link
-                                                                    to={toLocation}
-                                                                    className=""
-                                                                    role="listitem"
-                                                                    key={file.name}>
-                                                                    <LibraryListCard
-                                                                        file={file}
-                                                                        to={toLocation}
-                                                                    />
-                                                                </Link>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </React.Fragment>
-                                            );
-                                        })}
-                                </>
-                            )}
+                                <ListGroupingNone
+                                    files={files}
+                                    skeletontFileCount={skeletontFileCount}
+                                />
+                            ) : grouping === "Author" ? (
+                                <ListGroupingAuthor
+                                    files={files}
+                                    skeletontFileCount={skeletontFileCount}
+                                />
+                            ) : null}
                         </>
                     ) : (
                         <Dropzone onClick={handleUpload} onDrop={handleDrop}></Dropzone>
