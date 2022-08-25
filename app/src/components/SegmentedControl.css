@@ -1,9 +1,15 @@
-.mantine-SegmentedControl-control {
-    border-left-color: hsl(var(--clr-secondary-200-hsl) / 0.3);
-}
-
 .mantine-SegmentedControl-root {
     background-color: var(--clr-secondary-300);
+}
+.mantine-SegmentedControl-root.vertical {
+    align-items: flex-start;
+}
+
+.mantine-SegmentedControl-root.vertical .mantine-SegmentedControl-active {
+    width: calc(100% - 8px);
+}
+.mantine-SegmentedControl-control {
+    border-left-color: hsl(var(--clr-secondary-200-hsl) / 0.3);
 }
 
 .mantine-SegmentedControl-active {
