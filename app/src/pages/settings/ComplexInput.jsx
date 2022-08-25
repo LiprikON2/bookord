@@ -16,6 +16,7 @@ const ComplexInput = ({ updateSettings, settingKey, setting }) => {
         <>
             <Group style={{ justifyContent: "space-between", width: "100%" }}>
                 <Accordion
+                    className="complexInput-accordion"
                     variant="separated"
                     value={isOpened ? setting.name : null}
                     style={{ width: "100%" }}

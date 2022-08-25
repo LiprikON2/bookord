@@ -5,23 +5,122 @@ import {
     useConfigInMainRequest,
     useConfigInMainResponse,
 } from "secure-electron-store";
+import { Box, Center } from "@mantine/core";
+import {
+    AlphabetLatin,
+    ArrowsSort,
+    Calendar,
+    CalendarStats,
+    Category,
+    Clock,
+    FilePlus,
+    MasksTheater,
+    SortAscending2,
+    SortDescending2,
+    User,
+    X,
+} from "tabler-icons-react";
 
 import LibraryList from "./LibraryList";
-import "./Library.css";
 import TitleWithIcon from "components/TitleWithIcon";
-import GroupingControl from "./GroupingControl";
 import { AppContext } from "Core/Routes";
+import Button from "components/Button";
+import LibraryControl from "./LibraryControl";
+import { useToggle } from "@mantine/hooks";
+
+const groupingData = [
+    {
+        value: "None",
+        label: (
+            <Center>
+                <X size={16} />
+                <Box ml={10}>None</Box>
+            </Center>
+        ),
+    },
+    {
+        value: "Recent",
+        label: (
+            <Center>
+                <Clock size={16} />
+                <Box ml={10}>Recent</Box>
+            </Center>
+        ),
+    },
+    {
+        value: "Date Added",
+        label: (
+            <Center>
+                <CalendarStats size={16} />
+                <Box ml={10}>Date Added</Box>
+            </Center>
+        ),
+    },
+    {
+        value: "Author",
+        label: (
+            <Center>
+                <User size={16} />
+                <Box ml={10}>Author</Box>
+            </Center>
+        ),
+    },
+    {
+        value: "Genre",
+        label: (
+            <Center>
+                <MasksTheater size={16} />
+                <Box ml={10}>Genre</Box>
+            </Center>
+        ),
+    },
+];
+
+const sortingData = [
+    {
+        value: "Title",
+        label: (
+            <Center>
+                <AlphabetLatin size={16} />
+                <Box ml={10}>Title</Box>
+            </Center>
+        ),
+    },
+    {
+        value: "Recent",
+        label: (
+            <Center>
+                <Clock size={16} />
+                <Box ml={10}>Recent</Box>
+            </Center>
+        ),
+    },
+    {
+        value: "Date Added",
+        label: (
+            <Center>
+                <CalendarStats size={16} />
+                <Box ml={10}>Date Added</Box>
+            </Center>
+        ),
+    },
+    {
+        value: "Date Published",
+        label: (
+            <Center>
+                <Calendar size={16} />
+                <Box ml={10}>Date Published</Box>
+            </Center>
+        ),
+    },
+];
 
 const Library = () => {
-    const {
-        files,
-        setFiles,
-        skeletontFileCount,
-        setSkeletontFileCount,
-        isInitLoad,
-        setIsInitLoad,
-    } = useContext(AppContext);
-    const [grouping, setGrouping] = useState("Date Added"); //todo
+    const { setFiles, skeletontFileCount, setSkeletontFileCount, setIsInitLoad } =
+        useContext(AppContext);
+    const [grouping, setGrouping] = useState("None");
+    const [sorting, setSorting] = useState("Title");
+    const [sortingOrder, toggleSortingOrder] = useToggle(["Ascending", "Descending"]);
 
     const [uploading, setUploading] = useState(false);
 
@@ -29,6 +128,8 @@ const Library = () => {
         // Prevets queueing up explorer windows
         if (!uploading) {
             setUploading(true);
+
+            // TODO fix broken sort on clicking 'Add' button
             const promise = window.api.invoke("app:on-fs-dialog-open");
             promise.then((fileCount) => {
                 setSkeletontFileCount(skeletontFileCount + fileCount);
@@ -50,7 +151,6 @@ const Library = () => {
                 const [filesWithMetadata, mergedAllBooks] = await window.api.invoke(
                     "app:get-books"
                 );
-
                 console.timeEnd("updateFiles");
                 setFiles(filesWithMetadata);
 
@@ -71,16 +171,48 @@ const Library = () => {
                     style={{ marginBottom: "1.5rem" }}>
                     Library
                 </TitleWithIcon>
-                <GroupingControl
-                    handleUpload={handleUpload}
-                    grouping={grouping}
-                    setGrouping={setGrouping}
+                <LibraryControl
+                    value={grouping}
+                    onChange={setGrouping}
+                    label="Group by"
+                    labelIcon={Category}
+                    data={groupingData}
+                />
+                <LibraryControl
+                    value={sorting}
+                    onChange={setSorting}
+                    right={
+                        <Button
+                            leftIcon={<FilePlus />}
+                            onClick={handleUpload}
+                            style={{ height: "2.625rem" }}>
+                            Add
+                        </Button>
+                    }
+                    subRight={
+                        <Button
+                            onClick={() => toggleSortingOrder()}
+                            title={`Sorted in ${sortingOrder.toLowerCase()} order`}
+                            isIconOnly={true}
+                            isGhost={true}>
+                            {sortingOrder === "Ascending" ? (
+                                <SortAscending2 />
+                            ) : (
+                                <SortDescending2 />
+                            )}
+                        </Button>
+                    }
+                    label="Sort by"
+                    labelIcon={ArrowsSort}
+                    data={sortingData}
                 />
             </section>
             <LibraryList
                 updateFiles={updateFiles}
                 handleUpload={handleUpload}
                 grouping={grouping}
+                sorting={sorting}
+                sortingOrder={sortingOrder}
             />
         </>
     );

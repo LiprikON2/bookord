@@ -15,9 +15,7 @@
 
 .mantine-Carousel-root {
     background-color: var(--clr-secondary-100);
-    padding-top: 5rem;
-    padding-bottom: 2rem;
-    margin-bottom: 2rem;
+    padding-top: 4rem;
 
     box-shadow: inset 0px 26px 8px -20px rgba(0, 0, 0, 0.027),
         inset 0px -26px 8px -20px rgba(0, 0, 0, 0.027),
@@ -29,6 +27,9 @@
         inset 0px -56px 38px -50px rgba(0, 0, 0, 0.056),
         inset 0px 66px 48px -60px rgba(0, 0, 0, 0.08),
         inset 0px -66px 48px -60px rgba(0, 0, 0, 0.08);
+}
+.carousel-title {
+    justify-content: space-between;
 }
 .mantine-Carousel-container {
     gap: 1.5rem;
@@ -54,8 +55,33 @@
     background-color: transparent;
 }
 
+.mantine-Carousel-slide a {
+    outline-offset: 1rem;
+}
 .mantine-Carousel-slide .card,
 .mantine-Carousel-container {
-    max-width: 11rem;
-    max-height: 18rem;
+    height: 18.5rem;
+    width: 11.3125rem;
+}
+
+.grouping-accordion .mantine-Accordion-panel {
+    height: 400px;
+}
+.grouping-accordion .mantine-Accordion-panel > div,
+.grouping-accordion .mantine-Accordion-content,
+.grouping-accordion .mantine-Carousel-root,
+.grouping-accordion .mantine-Carousel-slide,
+.grouping-accordion .mantine-Carousel-viewport {
+    height: 100%;
+}
+
+.grouping-accordion .mantine-Accordion-chevron {
+    display: none;
+}
+
+.grouping-accordion .mantine-Accordion-content {
+    padding: 0;
+}
+.grouping-accordion .mantine-Accordion-control:hover {
+    background-color: var(--clr-secondary-300);
 }

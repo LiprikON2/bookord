@@ -6,10 +6,10 @@ import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
 import { skeletonFile } from "./ListGroupingLoading";
 
-const ListGroupingNone = ({ files, skeletontFileCount }) => {
+const ListGroupingNone = ({ files, skeletontFileCount, sort }) => {
     return (
         <div className="card-list" role="list">
-            {files.map((file) => {
+            {files.sort(sort ?? (() => {})).map((file) => {
                 const toLocation = {
                     pathname: ROUTES.READ,
                     state: {

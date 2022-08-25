@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect } from "react";
 import { useWindowEvent } from "@mantine/hooks";
-
 import { Stack } from "@mantine/core";
 
 import Dropzone from "components/Dropzone";
@@ -11,7 +10,47 @@ import "./LibraryList.css";
 import ListGroupingNone from "./ListGroupingNone";
 import ListGroupingGroup from "./ListGroupingGroup";
 
-const LibraryList = ({ updateFiles, handleUpload, grouping }) => {
+const sortingSorters = {
+    "Title": {
+        Ascending: (a, b) => (a.info.title > b.info.title ? 1 : -1),
+        Descending: function (a, b) {
+            return this.Ascending(a, b) === 1 ? -1 : 1;
+        },
+    },
+    "Recent": {
+        Ascending: (a, b) => 1,
+        Descending: function (a, b) {
+            return this.Ascending(a, b) === 1 ? -1 : 1;
+        },
+    },
+    "Date Added": {
+        Ascending: (a, b) => {
+            const { dateAdded: dateAddedStringA } = a;
+            const { dateAdded: dateAddedStringB } = b;
+
+            const diffA = Math.abs(
+                new Date().getTime() - new Date(dateAddedStringA).getTime()
+            );
+
+            const diffB = Math.abs(
+                new Date().getTime() - new Date(dateAddedStringB).getTime()
+            );
+
+            return diffA > diffB ? 1 : -1;
+        },
+        Descending: function (a, b) {
+            return this.Ascending(a, b) === 1 ? -1 : 1;
+        },
+    },
+    "Date Published": {
+        Ascending: (a, b) => 1,
+        Descending: function (a, b) {
+            return this.Ascending(a, b) === 1 ? -1 : 1;
+        },
+    },
+};
+
+const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrder }) => {
     const { files, skeletontFileCount, setSkeletontFileCount, isInitLoad } =
         useContext(AppContext);
 
@@ -73,15 +112,23 @@ const LibraryList = ({ updateFiles, handleUpload, grouping }) => {
                     {hasBooks ? (
                         <>
                             {grouping === "None" ? (
-                                <ListGroupingNone
-                                    files={files}
-                                    skeletontFileCount={skeletontFileCount}
-                                />
+                                <div className="limit-width">
+                                    <ListGroupingNone
+                                        files={files}
+                                        sort={sortingSorters[sorting][sortingOrder].bind(
+                                            sortingSorters[sorting]
+                                        )}
+                                        skeletontFileCount={skeletontFileCount}
+                                    />
+                                </div>
                             ) : (
                                 <ListGroupingGroup
-                                    groupBy={grouping}
                                     files={files}
                                     skeletontFileCount={skeletontFileCount}
+                                    grouping={grouping}
+                                    sort={sortingSorters[sorting][sortingOrder].bind(
+                                        sortingSorters[sorting]
+                                    )}
                                 />
                             )}
                         </>

@@ -4,6 +4,7 @@ import { Title as MantineTitle, Text, Space, Box, Group, Stack } from "@mantine/
 const TitleWithIcon = ({
     className = undefined,
     leftIcon = undefined,
+    rightIcon = undefined,
     description = undefined,
     style = {},
     mb = "md",
@@ -24,6 +25,7 @@ const TitleWithIcon = ({
                     />
                     {description && <Text className="description">{description}</Text>}
                 </Stack>
+                {rightIcon && rightIcon}
             </Group>
         </>
     );

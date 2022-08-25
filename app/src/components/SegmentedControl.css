@@ -18,6 +18,11 @@
 
 .mantine-SegmentedControl-label {
     color: var(--clr-primary-200);
+    padding-inline: 0.25rem;
+}
+.mantine-SegmentedControl-label > div > div {
+    margin: 0;
+    padding-inline: 0.25rem;
 }
 
 .mantine-SegmentedControl-label:hover,

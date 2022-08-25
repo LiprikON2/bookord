@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useListState } from "@mantine/hooks";
+import { Accordion } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
+import { ChevronDown } from "tabler-icons-react";
 
 // @ts-ignore
 import ROUTES from "Constants/routes";
 import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
 import ListGroupingLoading from "./ListGroupingLoading";
-import "./ListGroupingGroup.css";
 import TitleWithIcon from "components/TitleWithIcon";
+import "./ListGroupingGroup.css";
 
 const groupingReducers = {
     "Author": (groups, file) => {
@@ -17,12 +20,11 @@ const groupingReducers = {
         return groups;
     },
     "Date Added": (groups, file, index) => {
-        // new Date().toISOString().slice(0, 10);
-
         const { dateAdded: dateAddedString } = file;
 
         const diff = Math.abs(new Date().getTime() - new Date(dateAddedString).getTime());
-        // const diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1;
+        // new Date().toISOString().slice(0, 10);
+        // const diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1; // TODO uncomment
         const diffDays = index;
 
         let daysAgoString;
@@ -46,31 +48,56 @@ const groupingReducers = {
     },
 };
 
-const ListGroupingGroup = ({ groupBy, files, skeletontFileCount }) => {
+const ListGroupingGroup = ({ files, skeletontFileCount, grouping, sort }) => {
+    const isAValidGroup = groupingReducers[grouping];
+    const canGroup = !!files.length;
+
+    const groupedFiles =
+        canGroup && isAValidGroup
+            ? Object.entries(files.reduce(groupingReducers[grouping], []))
+            : [];
+
+    // Make accordio open by default
+    const [groups, setGroups] = useListState([]);
+    const allGroups = groupedFiles.map(([group]) => group);
+    useEffect(() => {
+        if (groupedFiles.length) {
+            setGroups.setState(allGroups);
+        }
+    }, [skeletontFileCount]);
+
     return (
         <>
             <ListGroupingLoading skeletontFileCount={skeletontFileCount} />
-            {!!files.length &&
-                groupingReducers[groupBy] &&
-                Object.entries(files.reduce(groupingReducers[groupBy], [])).map(
-                    ([group, files]) => {
-                        return (
-                            <React.Fragment key={group}>
+            <Accordion
+                value={groups}
+                onChange={setGroups.setState}
+                className="grouping-accordion"
+                chevron={null}
+                multiple={true}>
+                {groupedFiles.map(([group, files]) => {
+                    // setGroups.append(group);
+
+                    return (
+                        <Accordion.Item key={group} value={group}>
+                            <Accordion.Control style={{ paddingInline: 0 }}>
                                 <div className="limit-width">
                                     <TitleWithIcon
                                         mb={null}
                                         className="carousel-title"
+                                        rightIcon={<ChevronDown size={38} />}
                                         order={2}>
                                         {group}
                                     </TitleWithIcon>
                                 </div>
-
+                            </Accordion.Control>
+                            <Accordion.Panel>
                                 <Carousel
                                     slideSize="20%"
                                     slideGap="xl"
                                     align="center"
                                     slidesToScroll={1}>
-                                    {files.map((file) => {
+                                    {files.sort(sort ?? (() => {})).map((file) => {
                                         const toLocation = {
                                             pathname: ROUTES.READ,
                                             state: {
@@ -92,10 +119,11 @@ const ListGroupingGroup = ({ groupBy, files, skeletontFileCount }) => {
                                         );
                                     })}
                                 </Carousel>
-                            </React.Fragment>
-                        );
-                    }
-                )}
+                            </Accordion.Panel>
+                        </Accordion.Item>
+                    );
+                })}
+            </Accordion>
         </>
     );
 };
