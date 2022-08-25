@@ -45,6 +45,7 @@ exports.getFiles = () => {
             name: filename,
             path: filePath,
             size: Number(fileStats.size / 1000).toFixed(1), // kb
+            dateAdded: new Date(),
         };
     });
 };

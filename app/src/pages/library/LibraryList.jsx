@@ -84,7 +84,7 @@ const LibraryList = () => {
         });
     }, 100);
 
-    const handleDrop = (files) => {
+    const handleDrop = (files, xx) => {
         const mappedFiles = files.map((file) => {
             return {
                 name: file.name,
@@ -233,98 +233,100 @@ const LibraryList = () => {
                 </Group>
 
                 {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
-                {grouping !== "Author" ? (
-                    <div className="card-list" role="list">
-                        {hasBooks ? (
-                            <>
-                                {files.map((file) => {
-                                    const toLocation = {
-                                        pathname: ROUTES.READ,
-                                        state: {
-                                            bookFile: file,
-                                        },
-                                    };
-                                    return (
-                                        <Link
-                                            to={toLocation}
-                                            className=""
-                                            role="listitem"
-                                            key={file.name}>
-                                            <LibraryListCard
-                                                file={file}
-                                                to={toLocation}
-                                            />
-                                        </Link>
-                                    );
-                                })}
-                                {[...Array(skeletontFileCount)].map((e, index) => (
-                                    <div role="listitem" key={"skeleton" + index}>
-                                        <LibraryListCard file={skeletonFile} />
-                                    </div>
-                                ))}
-                            </>
-                        ) : (
-                            // TODO this dropzone has different explorer uploader onClick
-                            <Dropzone onDrop={handleDrop}></Dropzone>
-                        )}
-                    </div>
-                ) : (
-                    <Stack align="stretch" className="card-group-list">
-                        {hasBooks ? (
-                            <>
-                                {[...Array(skeletontFileCount)].map((e, index) => (
-                                    <div role="listitem" key={"skeleton" + index}>
-                                        <LibraryListCard file={skeletonFile} />
-                                    </div>
-                                ))}
-                                {files.length &&
-                                    Object.entries(
-                                        files.reduce((groups, file) => {
-                                            const { author } = file.info;
-                                            if (!groups[author]) groups[author] = [];
-                                            groups[author].push(file);
-                                            return groups;
-                                        }, [])
-                                    ).map(([group, files]) => {
-                                        console.log("group", group, files);
+                <Stack align="stretch" className="card-group-list">
+                    {hasBooks ? (
+                        <>
+                            {grouping === "None" ? (
+                                <div className="card-list" role="list">
+                                    {files.map((file) => {
+                                        const toLocation = {
+                                            pathname: ROUTES.READ,
+                                            state: {
+                                                bookFile: file,
+                                            },
+                                        };
                                         return (
-                                            <React.Fragment key={group}>
-                                                <Text size="lg">{group}</Text>
-                                                <div
-                                                    className="card-list"
-                                                    role="list"
-                                                    key={group}>
-                                                    {files.map((file) => {
-                                                        const toLocation = {
-                                                            pathname: ROUTES.READ,
-                                                            state: {
-                                                                bookFile: file,
-                                                            },
-                                                        };
-                                                        return (
-                                                            <Link
-                                                                to={toLocation}
-                                                                className=""
-                                                                role="listitem"
-                                                                key={file.name}>
-                                                                <LibraryListCard
-                                                                    file={file}
-                                                                    to={toLocation}
-                                                                />
-                                                            </Link>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </React.Fragment>
+                                            <Link
+                                                to={toLocation}
+                                                className=""
+                                                role="listitem"
+                                                key={file.name}>
+                                                <LibraryListCard
+                                                    file={file}
+                                                    to={toLocation}
+                                                />
+                                            </Link>
                                         );
                                     })}
-                            </>
-                        ) : (
-                            // TODO this dropzone has different explorer uploader onClick
-                            <Dropzone onDrop={handleDrop}></Dropzone>
-                        )}
-                    </Stack>
-                )}
+                                    {[...Array(skeletontFileCount)].map((e, index) => (
+                                        <div role="listitem" key={"skeleton" + index}>
+                                            <LibraryListCard file={skeletonFile} />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <>
+                                    {[...Array(skeletontFileCount)].map((e, index) => (
+                                        <React.Fragment key={"loading-group"}>
+                                            <Text size="lg">Loading</Text>
+                                            <div className="card-list" role="list">
+                                                <div
+                                                    role="listitem"
+                                                    key={"skeleton" + index}>
+                                                    <LibraryListCard
+                                                        file={skeletonFile}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </React.Fragment>
+                                    ))}
+                                    {files.length &&
+                                        Object.entries(
+                                            files.reduce((groups, file) => {
+                                                const { author } = file.info;
+                                                if (!groups[author]) groups[author] = [];
+                                                groups[author].push(file);
+                                                return groups;
+                                            }, [])
+                                        ).map(([group, files]) => {
+                                            return (
+                                                <React.Fragment key={group}>
+                                                    <Text size="lg">{group}</Text>
+                                                    <div
+                                                        className="card-list"
+                                                        role="list"
+                                                        key={group}>
+                                                        {files.map((file) => {
+                                                            const toLocation = {
+                                                                pathname: ROUTES.READ,
+                                                                state: {
+                                                                    bookFile: file,
+                                                                },
+                                                            };
+                                                            return (
+                                                                <Link
+                                                                    to={toLocation}
+                                                                    className=""
+                                                                    role="listitem"
+                                                                    key={file.name}>
+                                                                    <LibraryListCard
+                                                                        file={file}
+                                                                        to={toLocation}
+                                                                    />
+                                                                </Link>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </React.Fragment>
+                                            );
+                                        })}
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <Dropzone onClick={handleUpload} onDrop={handleDrop}></Dropzone>
+                    )}
+                </Stack>
             </div>
         </>
     );

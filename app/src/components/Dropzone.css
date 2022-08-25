@@ -1,0 +1,4 @@
+.mantine-Dropzone-root[data-accept],
+.mantine-Dropzone-root[data-accept]:hover {
+    background-color: hsl(var(--clr-accent-000-hsl) / 0.3);
+}
