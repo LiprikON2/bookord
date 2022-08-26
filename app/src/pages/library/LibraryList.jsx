@@ -87,12 +87,10 @@ const LibraryList = ({
                     {hasBooks ? (
                         <>
                             {grouping === "None" ? (
-                                <div className="limit-width">
-                                    <ListGroupingNone
-                                        files={files}
-                                        skeletontFileCount={skeletontFileCount}
-                                    />
-                                </div>
+                                <ListGroupingNone
+                                    files={files}
+                                    skeletontFileCount={skeletontFileCount}
+                                />
                             ) : (
                                 <ListGroupingGroup
                                     files={files}

@@ -96,6 +96,17 @@
     --fw-700: 700;
 
     --outline: -webkit-focus-ring-color auto 1px;
+
+    --shadow-inset-000: inset 0px 26px 8px -20px rgba(0, 0, 0, 0.027),
+        inset 0px -26px 8px -20px rgba(0, 0, 0, 0.027),
+        inset 0px 36px 18px -30px rgba(0, 0, 0, 0.037),
+        inset 0px -36px 18px -30px rgba(0, 0, 0, 0.037),
+        inset 0px 46px 28px -40px rgba(0, 0, 0, 0.046),
+        inset 0px -46px 28px -40px rgba(0, 0, 0, 0.046),
+        inset 0px 56px 38px -50px rgba(0, 0, 0, 0.056),
+        inset 0px -56px 38px -50px rgba(0, 0, 0, 0.056),
+        inset 0px 66px 48px -60px rgba(0, 0, 0, 0.08),
+        inset 0px -66px 48px -60px rgba(0, 0, 0, 0.08);
 }
 
 *,
