@@ -50,7 +50,9 @@ export const sortingSorters = {
         },
     },
     "Recent": {
-        Ascending: (a, b) => 1,
+        Ascending: (a, b) => {
+            return 0 || sortingSorters.Title.Ascending(a, b);
+        },
         Descending: function (a, b) {
             return this.Ascending(a, b) * -1;
         },
@@ -67,7 +69,7 @@ export const sortingSorters = {
             const diffB = Math.abs(
                 new Date().getTime() - new Date(dateAddedStringB).getTime()
             );
-            return diffA - diffB;
+            return diffA - diffB || sortingSorters.Title.Ascending(a, b);
         },
         Descending: function (a, b) {
             return this.Ascending(a, b) * -1;
@@ -86,10 +88,13 @@ export const sortingSorters = {
             const publishDateA = new Date(publishDateStringA).getTime();
             const publishDateB = new Date(publishDateStringB).getTime();
 
-            return publishDateA - publishDateB;
+            return publishDateA - publishDateB || sortingSorters.Title.Ascending(a, b);
         },
         Descending: function (a, b) {
             return this.Ascending(a, b) * -1;
         },
     },
 };
+
+export const getSort = (sorting, sortingOrder) =>
+    sortingSorters[sorting][sortingOrder].bind(sortingSorters[sorting]);

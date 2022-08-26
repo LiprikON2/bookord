@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useLayoutEffect } from "react";
-import { useDidUpdate, useWindowEvent } from "@mantine/hooks";
+import React, { useCallback, useContext, useEffect, useLayoutEffect } from "react";
+import { useWindowEvent } from "@mantine/hooks";
 import { Stack } from "@mantine/core";
 
 import Dropzone from "components/Dropzone";
@@ -9,9 +9,17 @@ import { AppContext } from "Core/Routes";
 import "./LibraryList.css";
 import ListGroupingNone from "./ListGroupingNone";
 import ListGroupingGroup from "./ListGroupingGroup";
-import { sortingSorters } from "Utils/sort";
+import useSort from "Hooks/useSort";
+import { getSort } from "Utils/bookSort";
 
-const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrder }) => {
+const LibraryList = ({
+    updateFiles,
+    handleUpload,
+    grouping,
+    sorting,
+    sortingOrder,
+    uploading,
+}) => {
     const { files, setFiles, skeletontFileCount, setSkeletontFileCount, isInitLoad } =
         useContext(AppContext);
 
@@ -52,12 +60,11 @@ const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrde
         };
     }, []);
 
-    // Sorting
-    const sorter = sortingSorters[sorting][sortingOrder].bind(sortingSorters[sorting]);
-    const defaultSorter = sortingSorters.Title.Ascending.bind(sortingSorters[sorting]);
-    useDidUpdate(() => {
-        setFiles([...files].sort(defaultSorter).sort(sorter));
-    }, [sorting, sortingOrder]);
+    useSort(files, setFiles, getSort(sorting, sortingOrder), [
+        sorting,
+        sortingOrder,
+        uploading,
+    ]);
 
     // Exit chokidar watcher on reload
     const stopWatchingFiles = () => {

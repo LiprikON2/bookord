@@ -19,8 +19,8 @@ import { AppContext } from "Core/Routes";
 import Button from "components/Button";
 import LibraryControl from "./LibraryControl";
 import { useToggle } from "@mantine/hooks";
-import { groupingData } from "Utils/group";
-import { sortingData } from "Utils/sort";
+import { groupingData } from "Utils/bookGroup";
+import { sortingData } from "Utils/bookSort";
 
 const Library = () => {
     const { setFiles, skeletontFileCount, setSkeletontFileCount, setIsInitLoad } =
@@ -120,6 +120,7 @@ const Library = () => {
                 grouping={grouping}
                 sorting={sorting}
                 sortingOrder={sortingOrder}
+                uploading={uploading}
             />
         </>
     );

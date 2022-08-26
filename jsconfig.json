@@ -10,6 +10,7 @@
             "resources/*": ["./resources/*"],
             "components/*": ["./app/src/components/*"],
             "Utils/*": ["./app/src/utils/*"],
+            "Hooks/*": ["./app/src/hooks/*"],
             "Pages/*": ["./app/src/pages/*"],
             "Core/*": ["./app/src/core/*"],
             "Redux/*": ["./app/src/redux/*"],

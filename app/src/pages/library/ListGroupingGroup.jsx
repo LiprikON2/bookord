@@ -10,7 +10,7 @@ import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
 import ListGroupingLoading from "./ListGroupingLoading";
 import TitleWithIcon from "components/TitleWithIcon";
-import { groupingReducers } from "Utils/group";
+import { groupingReducers } from "Utils/bookGroup";
 import "./ListGroupingGroup.css";
 
 const ListGroupingGroup = ({ files, skeletontFileCount, grouping }) => {

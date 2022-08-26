@@ -8,6 +8,7 @@
                     "Constants": "./app/src/constants",
                     "Components": "./app/src/components",
                     "Utils": "./app/src/utils",
+                    "Hooks": "./app/src/hooks",
                     "Core": "./app/src/core",
                     "Pages": "./app/src/pages",
                     "Redux": "./app/src/redux",
