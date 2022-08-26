@@ -4,6 +4,9 @@
 .complexInput-accordion .mantine-Accordion-item {
     background-color: transparent;
 }
+.complexInput-accordion .mantine-Accordion-chevron {
+    display: none;
+}
 
 .complexInput-accordion .mantine-Accordion-item[data-active] {
     background-color: var(--clr-secondary-100);
@@ -23,7 +26,6 @@
 }
 .complexInput-accordion .mantine-Accordion-item .mantine-Switch-root {
     gap: 0.5rem;
-    /* TODO from 5 to 12 px too high */
     margin-top: 2rem;
     margin-right: 2rem;
     height: 100%;
@@ -31,6 +33,12 @@
 }
 .complexInput-accordion .mantine-Accordion-item .mantine-Switch-label {
     padding: 0;
+    padding-top: 0.2rem;
+}
+.complexInput-accordion.complexInput-with-checkbox
+    .mantine-Accordion-item
+    .mantine-Switch-label {
+    padding-top: 0.5rem;
 }
 
 .complexInput-accordion .mantine-Accordion-label > .mantine-Group-root,

@@ -613,7 +613,7 @@ export default class BookComponent extends HTMLElement {
             detail: { parsedBook: await this.book },
         });
 
-        // this.dispatchEvent(saveParsedBookEvent); // todo uncomment
+        this.dispatchEvent(saveParsedBookEvent); // todo uncomment
     }
 
     /**

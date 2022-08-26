@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect } from "react";
-import { useWindowEvent } from "@mantine/hooks";
+import { useDidUpdate, useWindowEvent } from "@mantine/hooks";
 import { Stack } from "@mantine/core";
 
 import Dropzone from "components/Dropzone";
@@ -9,52 +9,13 @@ import { AppContext } from "Core/Routes";
 import "./LibraryList.css";
 import ListGroupingNone from "./ListGroupingNone";
 import ListGroupingGroup from "./ListGroupingGroup";
-
-const sortingSorters = {
-    "Title": {
-        Ascending: (a, b) => (a.info.title > b.info.title ? 1 : -1),
-        Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? -1 : 1;
-        },
-    },
-    "Recent": {
-        Ascending: (a, b) => 1,
-        Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? -1 : 1;
-        },
-    },
-    "Date Added": {
-        Ascending: (a, b) => {
-            const { dateAdded: dateAddedStringA } = a;
-            const { dateAdded: dateAddedStringB } = b;
-
-            const diffA = Math.abs(
-                new Date().getTime() - new Date(dateAddedStringA).getTime()
-            );
-
-            const diffB = Math.abs(
-                new Date().getTime() - new Date(dateAddedStringB).getTime()
-            );
-
-            return diffA > diffB ? 1 : -1;
-        },
-        Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? -1 : 1;
-        },
-    },
-    "Date Published": {
-        Ascending: (a, b) => 1,
-        Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? -1 : 1;
-        },
-    },
-};
+import { sortingSorters } from "Utils/sort";
 
 const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrder }) => {
-    const { files, skeletontFileCount, setSkeletontFileCount, isInitLoad } =
+    const { files, setFiles, skeletontFileCount, setSkeletontFileCount, isInitLoad } =
         useContext(AppContext);
 
-    const handleDrop = (files, xx) => {
+    const handleDrop = (files) => {
         const mappedFiles = files.map((file) => {
             return {
                 name: file.name,
@@ -91,6 +52,12 @@ const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrde
         };
     }, []);
 
+    // Sorting
+    const sorter = sortingSorters[sorting][sortingOrder].bind(sortingSorters[sorting]);
+    useDidUpdate(() => {
+        setFiles([...files].sort(sorter));
+    }, [sorting, sortingOrder]);
+
     // Exit chokidar watcher on reload
     const stopWatchingFiles = () => {
         window.api.send("app:stop-watching-files");
@@ -115,9 +82,6 @@ const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrde
                                 <div className="limit-width">
                                     <ListGroupingNone
                                         files={files}
-                                        sort={sortingSorters[sorting][sortingOrder].bind(
-                                            sortingSorters[sorting]
-                                        )}
                                         skeletontFileCount={skeletontFileCount}
                                     />
                                 </div>
@@ -126,9 +90,6 @@ const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrde
                                     files={files}
                                     skeletontFileCount={skeletontFileCount}
                                     grouping={grouping}
-                                    sort={sortingSorters[sorting][sortingOrder].bind(
-                                        sortingSorters[sorting]
-                                    )}
                                 />
                             )}
                         </>

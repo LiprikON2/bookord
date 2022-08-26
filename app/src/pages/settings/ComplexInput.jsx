@@ -16,7 +16,12 @@ const ComplexInput = ({ updateSettings, settingKey, setting }) => {
         <>
             <Group style={{ justifyContent: "space-between", width: "100%" }}>
                 <Accordion
-                    className="complexInput-accordion"
+                    className={
+                        "complexInput-accordion" +
+                        (mainSubsetting.canBeDisabled
+                            ? " complexInput-with-checkbox"
+                            : "")
+                    }
                     variant="separated"
                     value={isOpened ? setting.name : null}
                     style={{ width: "100%" }}

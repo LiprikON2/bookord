@@ -5,20 +5,12 @@ import {
     useConfigInMainRequest,
     useConfigInMainResponse,
 } from "secure-electron-store";
-import { Box, Center } from "@mantine/core";
 import {
-    AlphabetLatin,
     ArrowsSort,
-    Calendar,
-    CalendarStats,
     Category,
-    Clock,
     FilePlus,
-    MasksTheater,
     SortAscending2,
     SortDescending2,
-    User,
-    X,
 } from "tabler-icons-react";
 
 import LibraryList from "./LibraryList";
@@ -27,93 +19,8 @@ import { AppContext } from "Core/Routes";
 import Button from "components/Button";
 import LibraryControl from "./LibraryControl";
 import { useToggle } from "@mantine/hooks";
-
-const groupingData = [
-    {
-        value: "None",
-        label: (
-            <Center>
-                <X size={16} />
-                <Box ml={10}>None</Box>
-            </Center>
-        ),
-    },
-    {
-        value: "Recent",
-        label: (
-            <Center>
-                <Clock size={16} />
-                <Box ml={10}>Recent</Box>
-            </Center>
-        ),
-    },
-    {
-        value: "Date Added",
-        label: (
-            <Center>
-                <CalendarStats size={16} />
-                <Box ml={10}>Date Added</Box>
-            </Center>
-        ),
-    },
-    {
-        value: "Author",
-        label: (
-            <Center>
-                <User size={16} />
-                <Box ml={10}>Author</Box>
-            </Center>
-        ),
-    },
-    {
-        value: "Genre",
-        label: (
-            <Center>
-                <MasksTheater size={16} />
-                <Box ml={10}>Genre</Box>
-            </Center>
-        ),
-    },
-];
-
-const sortingData = [
-    {
-        value: "Title",
-        label: (
-            <Center>
-                <AlphabetLatin size={16} />
-                <Box ml={10}>Title</Box>
-            </Center>
-        ),
-    },
-    {
-        value: "Recent",
-        label: (
-            <Center>
-                <Clock size={16} />
-                <Box ml={10}>Recent</Box>
-            </Center>
-        ),
-    },
-    {
-        value: "Date Added",
-        label: (
-            <Center>
-                <CalendarStats size={16} />
-                <Box ml={10}>Date Added</Box>
-            </Center>
-        ),
-    },
-    {
-        value: "Date Published",
-        label: (
-            <Center>
-                <Calendar size={16} />
-                <Box ml={10}>Date Published</Box>
-            </Center>
-        ),
-    },
-];
+import { groupingData } from "Utils/group";
+import { sortingData } from "Utils/sort";
 
 const Library = () => {
     const { setFiles, skeletontFileCount, setSkeletontFileCount, setIsInitLoad } =

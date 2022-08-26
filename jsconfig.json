@@ -9,6 +9,7 @@
         "paths": {
             "resources/*": ["./resources/*"],
             "components/*": ["./app/src/components/*"],
+            "Utils/*": ["./app/src/utils/*"],
             "Pages/*": ["./app/src/pages/*"],
             "Core/*": ["./app/src/core/*"],
             "Redux/*": ["./app/src/redux/*"],
