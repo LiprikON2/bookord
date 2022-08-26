@@ -44,15 +44,15 @@ export const sortingData = [
 export const sortingSorters = {
     // ref: https://bobbyhadz.com/blog/react-sort-array-of-objects
     "Title": {
-        Ascending: (a, b) => (a.info.title > b.info.title ? 1 : -1),
+        Ascending: (a, b) => a.info.title.localeCompare(b.info.title),
         Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? -1 : 1;
+            return this.Ascending(a, b) * -1;
         },
     },
     "Recent": {
         Ascending: (a, b) => 1,
         Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? -1 : 1;
+            return this.Ascending(a, b) * -1;
         },
     },
     "Date Added": {
@@ -67,11 +67,10 @@ export const sortingSorters = {
             const diffB = Math.abs(
                 new Date().getTime() - new Date(dateAddedStringB).getTime()
             );
-
-            return diffA - diffB ? 1 : -1;
+            return diffA - diffB;
         },
         Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? -1 : 1;
+            return this.Ascending(a, b) * -1;
         },
     },
     "Publish date": {
@@ -80,20 +79,17 @@ export const sortingSorters = {
             const { date: dateB } = b.info;
 
             const publishDateStringA =
-                typeof dateA === "object" && "_" in dateA ? dateA._ : dateA;
+                (typeof dateA === "object" && "_" in dateA ? dateA._ : dateA) ?? "0";
             const publishDateStringB =
-                typeof dateB === "object" && "_" in dateB ? dateB._ : dateB;
+                (typeof dateB === "object" && "_" in dateB ? dateB._ : dateB) ?? "0";
 
             const publishDateA = new Date(publishDateStringA).getTime();
             const publishDateB = new Date(publishDateStringB).getTime();
 
-            return (
-                (publishDateA - publishDateB ? 1 : -1) ||
-                sortingSorters.Title.Ascending(a, b)
-            );
+            return publishDateA - publishDateB;
         },
         Descending: function (a, b) {
-            return this.Ascending(a, b) === 1 ? 1 : -1;
+            return this.Ascending(a, b) * -1;
         },
     },
 };

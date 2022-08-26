@@ -56,10 +56,7 @@ const LibraryListCard = ({ file, style = undefined, to = undefined }) => {
                     }}>
                     <h3 className="card-content-title" title={file.info.title}>
                         <span className={file.isSkeleton ? "skeleton-text" : ""}>
-                            {/* {file.info.title} */}
-                            {typeof file.info.date === "object" && "_" in file.info.date
-                                ? file.info.date._
-                                : file.info.date}
+                            {file.info.title}
                         </span>
                     </h3>
                     {!file.isSkeleton ? (

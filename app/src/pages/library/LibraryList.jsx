@@ -54,8 +54,9 @@ const LibraryList = ({ updateFiles, handleUpload, grouping, sorting, sortingOrde
 
     // Sorting
     const sorter = sortingSorters[sorting][sortingOrder].bind(sortingSorters[sorting]);
+    const defaultSorter = sortingSorters.Title.Ascending.bind(sortingSorters[sorting]);
     useDidUpdate(() => {
-        setFiles([...files].sort(sorter));
+        setFiles([...files].sort(defaultSorter).sort(sorter));
     }, [sorting, sortingOrder]);
 
     // Exit chokidar watcher on reload

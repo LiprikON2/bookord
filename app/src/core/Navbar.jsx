@@ -59,13 +59,6 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                             TTS
                         </Button>
                     </li>
-                    <li className="navbar-item" cm-template="textSelectionTemplate">
-                        <Button
-                            to={ROUTES.CONTEXTMENU}
-                            leftIcon={<Book strokeWidth={1.5} />}>
-                            TEST
-                        </Button>
-                    </li>
                     <li
                         className="navbar-item"
                         // @ts-ignore
