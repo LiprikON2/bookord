@@ -67,6 +67,11 @@ export const groupingData = [
 ];
 
 export const groupingReducers = {
+    "None": (groups, file) => {
+        if (!groups["All books"]) groups["All books"] = [];
+        groups["All books"].push(file);
+        return groups;
+    },
     "Author": (groups, file) => {
         const { author } = file.info;
 

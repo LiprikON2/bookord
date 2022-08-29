@@ -1,0 +1,48 @@
+.mantine-Accordion-panel {
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+    background-color: var(--clr-secondary-100);
+    box-shadow: var(--shadow-inset-000);
+}
+
+.card-group-list {
+    position: relative;
+}
+.card-group-list > .grouping-accordion {
+    position: absolute;
+    left: calc(var(--window-edge-padding) * -1);
+    right: calc(var(--window-edge-padding) * -1);
+}
+
+.limit-width {
+    max-width: calc(35rem + 30vw);
+    width: calc(100% - var(--window-edge-padding) * 2);
+    margin: 0 auto;
+}
+
+.grouping-accordion .accordion-item-title {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grouping-accordion .mantine-Accordion-panel > div,
+.grouping-accordion .mantine-Accordion-content {
+    height: 100%;
+}
+
+.grouping-accordion .mantine-Accordion-chevron {
+    display: none;
+}
+
+.grouping-accordion .mantine-Accordion-control .accordion-chevron {
+    transition: transform 200ms ease;
+}
+.grouping-accordion .mantine-Accordion-control[data-active="true"] .accordion-chevron {
+    transform: rotate(180deg);
+}
+.grouping-accordion .mantine-Accordion-content {
+    padding: 0;
+}
+.grouping-accordion .mantine-Accordion-control:hover {
+    background-color: var(--clr-secondary-300);
+}

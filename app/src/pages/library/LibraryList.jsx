@@ -1,16 +1,13 @@
-import React, { useCallback, useContext, useEffect, useLayoutEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect } from "react";
 import { useWindowEvent } from "@mantine/hooks";
 import { Stack } from "@mantine/core";
-
 import Dropzone from "components/Dropzone";
-import { AppContext } from "Core/Routes";
 
-// @ts-ignore
-import "./LibraryList.css";
-import ListGroupingNone from "./ListGroupingNone";
-import ListGroupingGroup from "./ListGroupingGroup";
+import { AppContext } from "Core/Routes";
 import useSort from "Hooks/useSort";
 import { getSort } from "Utils/bookSort";
+import LibraryListGroups from "./LibraryListGroups";
+import "./LibraryList.css";
 
 const LibraryList = ({
     updateFiles,
@@ -78,27 +75,9 @@ const LibraryList = ({
         <>
             {hasBooks && <Dropzone fullscreen={true} onDrop={handleDrop}></Dropzone>}
             <div className="library-container" id="uploader">
-                <Stack
-                    spacing="xs"
-                    align="stretch"
-                    className={
-                        "card-group-list" + (grouping !== "None" ? " grouped" : "")
-                    }>
+                <Stack spacing="xs" align="stretch" className="card-group-list">
                     {hasBooks ? (
-                        <>
-                            {grouping === "None" ? (
-                                <ListGroupingNone
-                                    files={files}
-                                    skeletontFileCount={skeletontFileCount}
-                                />
-                            ) : (
-                                <ListGroupingGroup
-                                    files={files}
-                                    skeletontFileCount={skeletontFileCount}
-                                    grouping={grouping}
-                                />
-                            )}
-                        </>
+                        <LibraryListGroups files={files} grouping={grouping} />
                     ) : (
                         <Dropzone onClick={handleUpload} onDrop={handleDrop}></Dropzone>
                     )}

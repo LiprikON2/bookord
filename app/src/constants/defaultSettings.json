@@ -245,7 +245,7 @@
             },
             "accentColor000": {
                 "name": "Accent 000",
-                "description": "TODO123",
+                "description": "TODO123.",
                 "hoverDescription": "Accent colors are used for emphasis, to enhance a color scheme, or to liven up an otherwise monochromatic space.",
                 "previewComponent": "LibraryListCard",
                 "section": "Theme",
@@ -347,7 +347,7 @@
             },
             "primaryColor100": {
                 "name": "Primary 100",
-                "description": "",
+                "description": "This setting controls the color of the text of titles, buttons, and text of the book.",
                 "hoverDescription": "TODO",
                 "section": "Theme",
                 "type": "colorInput",

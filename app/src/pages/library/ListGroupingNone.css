@@ -1,9 +1,0 @@
-.ungrouped {
-    position: absolute;
-    left: calc(var(--window-edge-padding) * -1);
-    right: calc(var(--window-edge-padding) * -1);
-    padding: 4rem;
-
-    background-color: var(--clr-secondary-100);
-    box-shadow: var(--shadow-inset-000);
-}

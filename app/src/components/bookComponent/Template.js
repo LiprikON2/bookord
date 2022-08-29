@@ -60,22 +60,12 @@ export const style = /*css*/ `
 
     .book-container img {
         cursor: zoom-in;
-        /* display: block !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-        object-fit: contain; */
 
         display: block !important;
         width: auto !important;
         max-height: 100vh !important;
         max-width: 100% !important;
     }
-    /* .book-container *:has(img) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    } */
 `;
 
 export const template = document.createElement("template");
