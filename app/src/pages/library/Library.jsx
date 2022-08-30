@@ -18,7 +18,7 @@ import TitleWithIcon from "components/TitleWithIcon";
 import { AppContext } from "Core/Routes";
 import Button from "components/Button";
 import LibraryControl from "./LibraryControl";
-import { useToggle } from "@mantine/hooks";
+import { useLocalStorage, useToggle } from "@mantine/hooks";
 import { groupingData } from "Utils/bookGroup";
 import { getSort, sortingData } from "Utils/bookSort";
 import useSort from "Hooks/useSort";
@@ -38,8 +38,14 @@ const SortButton = ({ onClick, value }) => {
 const Library = () => {
     const { files, setFiles, skeletontFileCount, setSkeletontFileCount, setIsInitLoad } =
         useContext(AppContext);
-    const [grouping, setGrouping] = useState("None");
-    const [sorting, setSorting] = useState("Title");
+    const [grouping, setGrouping] = useLocalStorage({
+        key: "grouping",
+        defaultValue: "None",
+    });
+    const [sorting, setSorting] = useLocalStorage({
+        key: "sorting",
+        defaultValue: "Title",
+    });
     const [sortingOrder, toggleSortingOrder] = useToggle(["Ascending", "Descending"]);
     const [groupingOrder, toggleGroupingOrder] = useToggle(["Ascending", "Descending"]);
 

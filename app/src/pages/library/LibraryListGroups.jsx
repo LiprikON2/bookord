@@ -17,13 +17,13 @@ const LibraryListGroups = ({ files, grouping, groupingOrder, skeletontFileCount 
 
     const groupingSort = getGroupingSort(grouping, groupingOrder);
 
+    // TODO storing images inside state makes grouping slow
     const groupedFiles =
         canGroup && isAValidGroup
             ? Object.entries(files.reduce(groupingReducers[grouping], [])).sort(
                   groupingSort
               )
             : [];
-
     // Make accordion open by default
     const defaultGroups = ["Loading", "All books"];
     const [groups, setGroups] = useListState(defaultGroups);
@@ -43,7 +43,7 @@ const LibraryListGroups = ({ files, grouping, groupingOrder, skeletontFileCount 
                 transitionDuration={100}
                 chevron={null}
                 multiple>
-                <AnimateMap>
+                <AnimateMap enterAnimation="fade">
                     {grouping !== "None" && skeletontFileCount !== 0 && (
                         // @ts-ignore
                         <AnimateMap.ItemWithRef
@@ -87,7 +87,9 @@ const LibraryListGroups = ({ files, grouping, groupingOrder, skeletontFileCount 
                                     <div
                                         className="card-list card-group-list limit-width"
                                         role="list">
-                                        <AnimateMap>
+                                        <AnimateMap
+                                            staggerDelayBy={30}
+                                            enterAnimation="fade">
                                             {files.map((file) => (
                                                 <AnimateMap.ItemWithInnerRef
                                                     key={file.name}

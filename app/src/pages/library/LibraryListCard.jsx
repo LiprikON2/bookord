@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Edit, ArrowUpRightCircle, Trash } from "tabler-icons-react";
+import { Edit, ArrowUpRightCircle, Trash, Photo } from "tabler-icons-react";
 
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
@@ -120,7 +120,7 @@ const Card = ({ file, style = undefined, to = undefined }) => {
                                 )
                             }
                             leftIcon={
-                                <ArrowUpRightCircle
+                                <Photo
                                     strokeWidth={1.25}
                                     color="var(--clr-primary-100)"
                                 />
