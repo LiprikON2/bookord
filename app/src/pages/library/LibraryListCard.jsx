@@ -14,6 +14,7 @@ const LibraryListCard = ({
     withoutLink = false,
     style = undefined,
     to = undefined,
+    innerRef = undefined,
     ...rest
 }) => {
     const toLocation = {
@@ -27,7 +28,7 @@ const LibraryListCard = ({
 
     if (!withoutLink) {
         return (
-            <Link to={toLocation} className="" role="listitem">
+            <Link to={toLocation} className="" role="listitem" innerRef={innerRef}>
                 <Card file={file} to={toLocation} style={style} {...rest} />
             </Link>
         );
