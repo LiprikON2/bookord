@@ -6,6 +6,8 @@
 }
 
 .modal {
+    --height-modal-save: 2.5rem;
+
     inset: calc(var(--border-width) * 2);
     top: calc(var(--border-width) + var(--titlebar-height));
     left: var(--border-width);
@@ -33,7 +35,6 @@
 }
 
 .btn.modal-save {
-    --height-modal-save: 2.5rem;
     --inline-padding-modal-save: 0.5rem;
 
     padding-block: 0;

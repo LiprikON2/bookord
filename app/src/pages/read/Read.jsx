@@ -207,7 +207,8 @@ const Read = ({ setLastOpenedBookTitle }) => {
                     </div>
                 </BookUI>
                 <ImageModal
-                    bookTitle={uiState?.bookTitle}
+                    // @ts-ignore
+                    name={uiState?.bookTitle}
                     src={imageModalSrc}
                     setSrc={setImageModalSrc}></ImageModal>
                 <ReadContextMenu />

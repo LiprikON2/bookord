@@ -1,35 +1,15 @@
-import React, { forwardRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useListState } from "@mantine/hooks";
 import { Accordion, Group } from "@mantine/core";
 import { ChevronDown } from "tabler-icons-react";
 
-// @ts-ignore
-import ROUTES from "Constants/routes";
-import Link from "components/Link";
 import LibraryListCard from "./LibraryListCard";
 import LoadingGroup from "./LoadingGroup";
 import { groupingReducers } from "Utils/bookGroup";
-import "./LibraryListGroups.css";
 import GroupTitle from "./GroupTitle";
-import FlipMove from "react-flip-move";
 import LoadingCards from "./LoadingCards";
-
-// @ts-ignore
-const Card = forwardRef(({ file }, ref) => {
-    const toLocation = {
-        pathname: ROUTES.READ,
-        state: {
-            bookFile: {
-                ...file,
-            },
-        },
-    };
-    return (
-        <Link innerRef={ref} key={file.name} to={toLocation} className="" role="listitem">
-            <LibraryListCard file={file} to={toLocation} />
-        </Link>
-    );
-});
+import AnimateMap from "components/AnimateMap";
+import "./LibraryListGroups.css";
 
 const LibraryListGroups = ({ files, grouping }) => {
     const isAValidGroup = groupingReducers[grouping];
@@ -78,15 +58,16 @@ const LibraryListGroups = ({ files, grouping }) => {
                             <div
                                 className="card-list card-group-list limit-width"
                                 role="list">
-                                {(() => (
-                                    // @ts-ignore
-                                    <FlipMove typeName={null}>
-                                        {files.map((file) => (
+                                <AnimateMap>
+                                    {files.map((file) => (
+                                        <AnimateMap.Item
+                                            key={file.name}
                                             // @ts-ignore
-                                            <Card key={file.name} file={file} />
-                                        ))}
-                                    </FlipMove>
-                                ))()}
+                                            file={file}
+                                            component={LibraryListCard}
+                                        />
+                                    ))}
+                                </AnimateMap>
                                 <LoadingCards active={grouping === "None"} />
                             </div>
                         </Accordion.Panel>

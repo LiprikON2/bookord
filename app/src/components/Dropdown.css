@@ -1,5 +1,5 @@
 .dropdown {
-    opacity: 0.9;
+    opacity: 0.95;
 }
 .dropdown > .dropdown-menu {
     min-width: initial;
@@ -31,7 +31,6 @@
     gap: 0.2rem;
 
     background-color: var(--clr-secondary-300);
-    opacity: 0.95;
     padding: 0.25rem;
 }
 

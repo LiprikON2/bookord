@@ -5,8 +5,38 @@ import Button from "components/Button";
 import Dropdown from "components/Dropdown";
 import "./LibraryListCard.css";
 import { downloadImage } from "Utils/downloadImage";
+// @ts-ignore
+import ROUTES from "Constants/routes";
+import Link from "components/Link";
 
-const LibraryListCard = ({ file, style = undefined, to = undefined }) => {
+const LibraryListCard = ({
+    file,
+    withoutLink = false,
+    style = undefined,
+    to = undefined,
+    ...rest
+}) => {
+    const toLocation = {
+        pathname: ROUTES.READ,
+        state: {
+            bookFile: {
+                ...file,
+            },
+        },
+    };
+
+    if (!withoutLink) {
+        return (
+            <Link to={toLocation} className="" role="listitem">
+                <Card file={file} to={toLocation} style={style} {...rest} />
+            </Link>
+        );
+    } else {
+        return <Card file={file} to={toLocation} style={style} {...rest} />;
+    }
+};
+
+const Card = ({ file, style = undefined, to = undefined }) => {
     const handleDelete = (e, file) => {
         e.preventDefault();
         window.api.send("app:on-file-delete", file);

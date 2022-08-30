@@ -5,13 +5,7 @@ import Button from "components/Button";
 import "./ImageModal.css";
 import { downloadImage } from "Utils/downloadImage";
 
-const ImageModal = ({
-    src,
-    setSrc,
-    toggle = true,
-    showButton = true,
-    bookTitle = "",
-}) => {
+const ImageModal = ({ src, setSrc, toggle = true, showButton = true, name = "" }) => {
     const modalRef = useRef(null);
 
     useEffect(() => {
@@ -28,10 +22,16 @@ const ImageModal = ({
         modalRef.current.classList.remove("is-active");
         if (setSrc) setSrc(null);
     };
-    const imageName =
-        bookTitle && bookTitle.length ? bookTitle + " ― illustration" : "Illustration";
 
-    useHotkeys([["Escape", closeModal]]);
+    const imageName = name && name.length ? name + " ― illustration" : "Illustration";
+    const handleSaveImage = () => {
+        downloadImage(src, imageName);
+    };
+
+    useHotkeys([
+        ["Escape", closeModal],
+        ["Ctrl + s", handleSaveImage],
+    ]);
     return (
         <>
             <div ref={modalRef} className="modal">
@@ -43,7 +43,7 @@ const ImageModal = ({
                             className="modal-save"
                             compact
                             isGhost={true}
-                            onClick={() => downloadImage(src, imageName)}>
+                            onClick={handleSaveImage}>
                             Save image
                         </Button>
                     </p>

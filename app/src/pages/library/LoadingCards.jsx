@@ -16,7 +16,7 @@ const LoadingCards = ({ active = true }) => {
             <>
                 {[...Array(skeletontFileCount)].map((e, index) => (
                     <div role="listitem" key={"skeleton" + index}>
-                        <LibraryListCard file={skeletonFile} />
+                        <LibraryListCard file={skeletonFile} withoutLink />
                     </div>
                 ))}
             </>

@@ -16,6 +16,7 @@ const PreviewComponents = {
                 isSkeleton: false,
                 info: { title: "Sample Book" },
             }}
+            withoutLink
         />
     ),
 };
