@@ -111,8 +111,8 @@ export const groupingReducers = {
 
         const diff = Math.abs(new Date().getTime() - new Date(dateAddedString).getTime());
         // new Date().toISOString().slice(0, 10);
-        // const diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1; // TODO uncomment
-        const diffDays = index;
+        const diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1; // TODO uncomment
+        // const diffDays = index;
 
         let daysAgoString;
         if (diffDays <= 1) {

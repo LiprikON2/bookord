@@ -17,8 +17,6 @@ import ROUTES from "Constants/routes";
 import "../../components/bookComponent/BookComponent";
 import "./Read.css";
 
-// TODO use useContext hook https://youtu.be/TNhaISOUy6Q?t=355
-
 const Read = ({ setLastOpenedBookTitle }) => {
     const location = useLocation();
 
@@ -216,7 +214,6 @@ const Read = ({ setLastOpenedBookTitle }) => {
         </>
     );
 };
-// TODO check tf visibilty is for
 // TODO add skeleton loading animation
 // TODO add page counting loading animation
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useListState } from "@mantine/hooks";
 import { Accordion, Group } from "@mantine/core";
 import { ChevronDown } from "tabler-icons-react";
@@ -10,9 +10,8 @@ import LoadingCards from "./LoadingCards";
 import AnimateMap from "components/AnimateMap";
 import "./LibraryListGroups.css";
 import Spinner from "components/Spinner";
-import { AppContext } from "Core/Routes";
 
-const LibraryListGroups = ({ files, grouping }) => {
+const LibraryListGroups = ({ files, grouping, skeletontFileCount }) => {
     const isAValidGroup = groupingReducers[grouping];
     const canGroup = !!files.length;
 
@@ -31,8 +30,6 @@ const LibraryListGroups = ({ files, grouping }) => {
             setGroups.setState(allGroups);
         }
     }, [grouping]);
-
-    const { skeletontFileCount } = useContext(AppContext);
 
     return (
         <>

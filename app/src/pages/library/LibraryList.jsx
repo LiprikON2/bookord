@@ -62,7 +62,11 @@ const LibraryList = ({ updateFiles, handleUpload, grouping }) => {
             <div className="library-container" id="uploader">
                 <Stack spacing="xs" align="stretch" className="card-group-list">
                     {hasBooks ? (
-                        <LibraryListGroups files={files} grouping={grouping} />
+                        <LibraryListGroups
+                            files={files}
+                            grouping={grouping}
+                            skeletontFileCount={skeletontFileCount}
+                        />
                     ) : (
                         <Dropzone
                             className="limit-width"
@@ -75,5 +79,4 @@ const LibraryList = ({ updateFiles, handleUpload, grouping }) => {
     );
 };
 
-// TODO prevent click on skeleton
 export default LibraryList;

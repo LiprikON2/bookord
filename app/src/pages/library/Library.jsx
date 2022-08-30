@@ -63,7 +63,7 @@ const Library = () => {
                 const sortedFiles = filesWithMetadata.sort(
                     getSort(sorting, sortingOrder)
                 );
-                setFiles(sortedFiles);
+                setFiles.setState(sortedFiles);
 
                 // TODO delete relevant recent book as well
                 window.api.store.send(writeConfigRequest, "allBooks", mergedAllBooks);
@@ -73,7 +73,10 @@ const Library = () => {
         });
     }, 100);
 
-    useSort(files, setFiles, getSort(sorting, sortingOrder), [sorting, sortingOrder]);
+    useSort(files, setFiles.setState, getSort(sorting, sortingOrder), [
+        sorting,
+        sortingOrder,
+    ]);
 
     return (
         <>

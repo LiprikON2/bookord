@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Edit, ArrowUpRightCircle, Trash } from "tabler-icons-react";
 
 import Button from "components/Button";
@@ -8,6 +8,7 @@ import { downloadImage } from "Utils/downloadImage";
 // @ts-ignore
 import ROUTES from "Constants/routes";
 import Link from "components/Link";
+import { AppContext } from "Core/Routes";
 
 const LibraryListCard = ({
     file,
@@ -38,10 +39,15 @@ const LibraryListCard = ({
 };
 
 const Card = ({ file, style = undefined, to = undefined }) => {
+    const { files, setFiles } = useContext(AppContext);
+
     const handleDelete = (e, file) => {
         e.preventDefault();
-        window.api.send("app:on-file-delete", file);
 
+        const fileIndex = files.findIndex((fileItem) => fileItem === file);
+        setFiles.remove(fileIndex);
+
+        window.api.send("app:on-file-delete", file);
         // Chokidar (from `io.js`) then triggers file update
     };
 

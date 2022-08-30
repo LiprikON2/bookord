@@ -7,6 +7,7 @@ import loadable from "@loadable/component";
 import ROUTES from "Constants/routes";
 // @ts-ignore
 import DEFAULT_SETTINGS from "Constants/defaultSettings";
+import { useListState } from "@mantine/hooks";
 
 // Load bundles asynchronously so that the initial render happens faster
 const Library = loadable(() =>
@@ -67,13 +68,8 @@ const reloadTheme = (settings) => {
     });
 };
 
-const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) => {
-    const toContinueReading = () => {
-        const continueReadingSetting = initStorage.settings?.continueReading?.value;
-
-        return lastOpenedBookTitle && continueReadingSetting;
-    };
-
+// ref: https://dev.to/romaintrotard/react-context-performance-5832
+const AppContextProvider = ({ initStorage, children }) => {
     const getInitSettings = () => {
         const initSettings = initStorage?.settings;
         const mergedSettings = { ...DEFAULT_SETTINGS, ...initSettings };
@@ -86,7 +82,7 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
         reloadTheme(settings);
     }, []);
 
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useListState([]);
     const [skeletontFileCount, setSkeletontFileCount] = useState(0);
     const [isInitLoad, setIsInitLoad] = useState(true);
 
@@ -103,6 +99,20 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
                 setIsInitLoad,
                 reloadTheme,
             }}>
+            {children}
+        </AppContext.Provider>
+    );
+};
+
+const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) => {
+    const toContinueReading = () => {
+        const continueReadingSetting = initStorage.settings?.continueReading?.value;
+
+        return lastOpenedBookTitle && continueReadingSetting;
+    };
+
+    return (
+        <AppContextProvider initStorage={initStorage}>
             <main id="main">
                 <Switch>
                     <Route exact path="/">
@@ -122,7 +132,7 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
                     </Route>
                 </Switch>
             </main>
-        </AppContext.Provider>
+        </AppContextProvider>
     );
 };
 
