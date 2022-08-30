@@ -7,7 +7,7 @@ import { AppContext } from "Core/Routes";
 import LibraryListGroups from "./LibraryListGroups";
 import "./LibraryList.css";
 
-const LibraryList = ({ updateFiles, handleUpload, grouping }) => {
+const LibraryList = ({ updateFiles, handleUpload, grouping, groupingOrder }) => {
     const { files, skeletontFileCount, setSkeletontFileCount, isInitLoad } =
         useContext(AppContext);
 
@@ -65,6 +65,7 @@ const LibraryList = ({ updateFiles, handleUpload, grouping }) => {
                         <LibraryListGroups
                             files={files}
                             grouping={grouping}
+                            groupingOrder={groupingOrder}
                             skeletontFileCount={skeletontFileCount}
                         />
                     ) : (

@@ -23,12 +23,25 @@ import { groupingData } from "Utils/bookGroup";
 import { getSort, sortingData } from "Utils/bookSort";
 import useSort from "Hooks/useSort";
 
+const SortButton = ({ onClick, value }) => {
+    return (
+        <Button
+            onClick={onClick}
+            title={`Sorted in ${value.toLowerCase()} order`}
+            isIconOnly={true}
+            isGhost={true}>
+            {value === "Ascending" ? <SortAscending2 /> : <SortDescending2 />}
+        </Button>
+    );
+};
+
 const Library = () => {
     const { files, setFiles, skeletontFileCount, setSkeletontFileCount, setIsInitLoad } =
         useContext(AppContext);
     const [grouping, setGrouping] = useState("None");
     const [sorting, setSorting] = useState("Title");
     const [sortingOrder, toggleSortingOrder] = useToggle(["Ascending", "Descending"]);
+    const [groupingOrder, toggleGroupingOrder] = useToggle(["Ascending", "Descending"]);
 
     const [uploading, setUploading] = useState(false);
 
@@ -90,6 +103,12 @@ const Library = () => {
                 <LibraryControl
                     value={grouping}
                     onChange={setGrouping}
+                    subRight={
+                        <SortButton
+                            onClick={() => toggleGroupingOrder()}
+                            value={groupingOrder}
+                        />
+                    }
                     label="Group by"
                     labelIcon={Category}
                     data={groupingData}
@@ -106,17 +125,10 @@ const Library = () => {
                         </Button>
                     }
                     subRight={
-                        <Button
+                        <SortButton
                             onClick={() => toggleSortingOrder()}
-                            title={`Sorted in ${sortingOrder.toLowerCase()} order`}
-                            isIconOnly={true}
-                            isGhost={true}>
-                            {sortingOrder === "Ascending" ? (
-                                <SortAscending2 />
-                            ) : (
-                                <SortDescending2 />
-                            )}
-                        </Button>
+                            value={sortingOrder}
+                        />
                     }
                     label="Sort by"
                     labelIcon={ArrowsSort}
@@ -127,6 +139,7 @@ const Library = () => {
                 updateFiles={updateFiles}
                 handleUpload={handleUpload}
                 grouping={grouping}
+                groupingOrder={groupingOrder}
             />
         </>
     );

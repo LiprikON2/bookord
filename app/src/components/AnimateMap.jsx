@@ -2,12 +2,14 @@ import React, { forwardRef } from "react";
 import FlipMove from "react-flip-move";
 
 // https://github.com/joshwcomeau/react-flip-move
-const AnimateMap = ({ typeName = null, children }) => {
+const AnimateMap = ({ typeName = null, children, ...rest }) => {
     return (
         <>
             {(() => (
                 // @ts-ignore
-                <FlipMove typeName={typeName}>{children}</FlipMove>
+                <FlipMove typeName={typeName} {...rest}>
+                    {children}
+                </FlipMove>
             ))()}
         </>
     );

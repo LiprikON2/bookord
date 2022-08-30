@@ -112,10 +112,10 @@ export const groupingReducers = {
         const diff = Math.abs(new Date().getTime() - new Date(dateAddedString).getTime());
         // new Date().toISOString().slice(0, 10);
         const diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1; // TODO uncomment
-        // const diffDays = index;
+        // const diffDays = index * 100;
 
         let daysAgoString;
-        if (diffDays <= 1) {
+        if (diffDays <= 1 && file.info.title.length < 16) {
             daysAgoString = "Today";
         } else if (diffDays <= 7) {
             daysAgoString = "Last week";
@@ -162,5 +162,66 @@ export const groupingReducers = {
         groups[publishYear].push(file);
 
         return groups;
+    },
+};
+
+export const groupingSorters = {
+    "None": {
+        Ascending: () => {},
+        Descending: () => {},
+    },
+    "Author": {
+        Ascending: ([a], [b]) => a.localeCompare(b),
+        Descending: function (a, b) {
+            return this.Ascending(a, b) * -1;
+        },
+    },
+    "Recent": {
+        Ascending: ([a], [b]) => groupingOrder["Recent"][a] - groupingOrder["Recent"][b],
+        Descending: function (a, b) {
+            return this.Ascending(a, b) * -1;
+        },
+    },
+    "Date Added": {
+        Ascending: ([a], [b]) =>
+            groupingOrder["Date Added"][a] - groupingOrder["Date Added"][b],
+        Descending: function (a, b) {
+            return this.Ascending(a, b) * -1;
+        },
+    },
+    "Genre": {
+        Ascending: ([a], [b]) => a.localeCompare(b),
+        Descending: function (a, b) {
+            return this.Ascending(a, b) * -1;
+        },
+    },
+    "Publish date": {
+        Ascending: ([a], [b]) => a.localeCompare(b),
+        Descending: function (a, b) {
+            return this.Ascending(a, b) * -1;
+        },
+    },
+};
+
+export const getGroupingSort = (grouping, groupingOrder = "Ascending") =>
+    groupingSorters[grouping][groupingOrder].bind(groupingSorters[grouping]);
+
+// ref: https://stackoverflow.com/a/43967177
+const groupingOrder = {
+    "Recent": {
+        "Today": 1,
+        "Last week": 2,
+        "Earlier this month": 3,
+        "Last month": 4,
+        "Earlier this year": 5,
+        "A long time ago": 6,
+    },
+    "Date Added": {
+        "Today": 1,
+        "Last week": 2,
+        "Earlier this month": 3,
+        "Last month": 4,
+        "Earlier this year": 5,
+        "A long time ago": 6,
     },
 };

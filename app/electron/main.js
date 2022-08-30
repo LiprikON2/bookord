@@ -451,7 +451,7 @@ ipcMain.handle("app:on-fs-dialog-open", (event) => {
                 { name: "Portable Document Format Files", extensions: ["pdf"] },
             ],
         }) ?? [];
-    console.log("files in buton", files);
+
     const fileCount = io.addFiles(
         files.map((filepath) => {
             return {

@@ -4,32 +4,35 @@ import { Accordion, Group } from "@mantine/core";
 import { ChevronDown } from "tabler-icons-react";
 
 import LibraryListCard from "./LibraryListCard";
-import { groupingReducers } from "Utils/bookGroup";
+import { getGroupingSort, groupingReducers } from "Utils/bookGroup";
 import GroupTitle from "./GroupTitle";
 import LoadingCards from "./LoadingCards";
 import AnimateMap from "components/AnimateMap";
 import "./LibraryListGroups.css";
 import Spinner from "components/Spinner";
 
-const LibraryListGroups = ({ files, grouping, skeletontFileCount }) => {
+const LibraryListGroups = ({ files, grouping, groupingOrder, skeletontFileCount }) => {
     const isAValidGroup = groupingReducers[grouping];
     const canGroup = !!files.length;
+
+    const groupingSort = getGroupingSort(grouping, groupingOrder);
 
     const groupedFiles =
         canGroup && isAValidGroup
             ? Object.entries(files.reduce(groupingReducers[grouping], [])).sort(
-                  ([a], [b]) => a.localeCompare(b)
+                  groupingSort
               )
             : [];
 
     // Make accordion open by default
-    const [groups, setGroups] = useListState(["Loading", "None"]);
-    const allGroups = groupedFiles.map(([group]) => group);
+    const defaultGroups = ["Loading", "All books"];
+    const [groups, setGroups] = useListState(defaultGroups);
+    const allGroups = [...defaultGroups, ...groupedFiles.map(([group]) => group)];
     useEffect(() => {
         if (groupedFiles.length) {
             setGroups.setState(allGroups);
         }
-    }, [grouping]);
+    }, [grouping, skeletontFileCount]);
 
     return (
         <>
