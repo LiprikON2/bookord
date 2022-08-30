@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useListState } from "@mantine/hooks";
 import { Accordion, Group } from "@mantine/core";
 import { ChevronDown } from "tabler-icons-react";
 
 import LibraryListCard from "./LibraryListCard";
-import LoadingGroup from "./LoadingGroup";
 import { groupingReducers } from "Utils/bookGroup";
 import GroupTitle from "./GroupTitle";
 import LoadingCards from "./LoadingCards";
 import AnimateMap from "components/AnimateMap";
 import "./LibraryListGroups.css";
+import Spinner from "components/Spinner";
+import { AppContext } from "Core/Routes";
 
 const LibraryListGroups = ({ files, grouping }) => {
     const isAValidGroup = groupingReducers[grouping];
@@ -31,6 +32,8 @@ const LibraryListGroups = ({ files, grouping }) => {
         }
     }, [grouping]);
 
+    const { skeletontFileCount } = useContext(AppContext);
+
     return (
         <>
             <Accordion
@@ -38,41 +41,69 @@ const LibraryListGroups = ({ files, grouping }) => {
                 onChange={setGroups.setState}
                 className="grouping-accordion"
                 transitionDuration={100}
-                multiple={true}
-                chevron={null}>
-                <LoadingGroup active={grouping !== "None"} />
-                {groupedFiles.map(([group, files]) => (
-                    <Accordion.Item key={group} value={group}>
-                        <Accordion.Control style={{ paddingInline: 0 }}>
-                            <GroupTitle
-                                icon={
-                                    <ChevronDown
-                                        className="accordion-chevron"
-                                        size={32}
-                                    />
-                                }>
-                                <Group>{`${group} – (${files.length})`}</Group>
-                            </GroupTitle>
-                        </Accordion.Control>
-                        <Accordion.Panel>
-                            <div
-                                className="card-list card-group-list limit-width"
-                                role="list">
-                                <AnimateMap>
-                                    {files.map((file) => (
-                                        <AnimateMap.Item
-                                            key={file.name}
-                                            // @ts-ignore
-                                            file={file}
-                                            component={LibraryListCard}
-                                        />
-                                    ))}
-                                </AnimateMap>
-                                <LoadingCards active={grouping === "None"} />
-                            </div>
-                        </Accordion.Panel>
-                    </Accordion.Item>
-                ))}
+                chevron={null}
+                multiple>
+                <AnimateMap>
+                    {grouping !== "None" && skeletontFileCount !== 0 && (
+                        // @ts-ignore
+                        <AnimateMap.ItemWithRef
+                            component={Accordion.Item}
+                            key={"Loading"}
+                            value={"Loading"}>
+                            <>
+                                <Accordion.Control style={{ paddingInline: 0 }}>
+                                    <GroupTitle icon={<Spinner size="2rem" />}>
+                                        Loading...
+                                    </GroupTitle>
+                                </Accordion.Control>
+                                <Accordion.Panel>
+                                    <div className="card-list limit-width" role="list">
+                                        <LoadingCards />
+                                    </div>
+                                </Accordion.Panel>
+                            </>
+                        </AnimateMap.ItemWithRef>
+                    )}
+
+                    {groupedFiles.map(([group, files]) => (
+                        // @ts-ignore
+                        <AnimateMap.ItemWithRef
+                            component={Accordion.Item}
+                            key={group}
+                            value={group}>
+                            <>
+                                <Accordion.Control style={{ paddingInline: 0 }}>
+                                    <GroupTitle
+                                        icon={
+                                            <ChevronDown
+                                                className="accordion-chevron"
+                                                size={32}
+                                            />
+                                        }>
+                                        <Group>{`${group} – (${files.length})`}</Group>
+                                    </GroupTitle>
+                                </Accordion.Control>
+                                <Accordion.Panel>
+                                    <div
+                                        className="card-list card-group-list limit-width"
+                                        role="list">
+                                        <AnimateMap>
+                                            {files.map((file) => (
+                                                <AnimateMap.ItemWithInnerRef
+                                                    key={file.name}
+                                                    // @ts-ignore
+                                                    file={file}
+                                                    component={LibraryListCard}
+                                                />
+                                            ))}
+                                        </AnimateMap>
+                                        <LoadingCards active={grouping === "None"} />
+                                    </div>
+                                </Accordion.Panel>
+                            </>
+                        </AnimateMap.ItemWithRef>
+                    ))}
+                </AnimateMap>
             </Accordion>
         </>
     );

@@ -101,9 +101,6 @@ export default class BookComponent extends HTMLElement {
      * @param {Object} [position] - TODO
      * @returns {Promise<void>}
      */
-    // * @param {number} sectionPage - page within section
-    // * @param {string} [offsetSelector] - shift to marker instead of specific page
-    // * @param {number} [elementIndex] - shift to element by index of content elements instead of specific page
     async loadSection(sectionIndex, position) {
         const defaults = {
             sectionPage: { value: 0, isFromBack: false },
@@ -112,7 +109,6 @@ export default class BookComponent extends HTMLElement {
         };
         const pos = { ...defaults, ...position };
 
-        // TODO refactor
         let book, section;
         if (this.status === "loading") {
             book = await this.initBook;
@@ -400,7 +396,6 @@ export default class BookComponent extends HTMLElement {
      * @returns {number}
      */
     _getCurrentOffset() {
-        // TODO make positive
         // Strips all non-numeric characters from a string
         const currentOffset = parseInt(
             this.contentElem.style.transform.replace(/[^\d.-]/g, "")
@@ -527,7 +522,7 @@ export default class BookComponent extends HTMLElement {
     }
 
     /**
-     * Flips N pages of a book if they are within the section TODO
+     * Flips N pages of a book if they are within the section
      * @param {number} page
      * @returns {void}
      */
@@ -539,7 +534,7 @@ export default class BookComponent extends HTMLElement {
     }
 
     /**
-     * Jumps straight to the particular book page
+     * TODO implement: Jumps straight to the particular book page
      * @param {number} page - book page
      * @returns {void}
      */

@@ -15,7 +15,6 @@ const NumberInput = ({
     const isBigValue = value && value > 5;
     const decimalStepForSmallNumbers = step ?? ((isBigValue ? 1 : 0.1) || 1);
 
-    // todo make this as onChangeEnd
     const [inputValue, setInputValue] = useState(value);
     const [debouncedFontValue] = useDebouncedValue(inputValue, 300);
 

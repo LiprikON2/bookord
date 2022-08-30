@@ -46,7 +46,7 @@ export default class PageCounter {
 
     /**
      * Asynchronously and non-blockingly counts pages of a book with a help of a parent web component
-     * @param {BookComponent} childComponent - TODO instance of a parent web component which created this counter web component
+     * @param {BookComponent} childComponent - instance of a parent web component which created this counter web component
      * @returns {Promise<void>}
      */
     async #countBookPages(childComponent) {

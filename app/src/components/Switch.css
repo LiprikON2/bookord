@@ -19,10 +19,3 @@
 .mantine-Switch-label {
     color: var(--clr-primary-150);
 }
-
-/* TODO think about styling checkboxes' and switches' inner parts */
-/* .mantine-Switch-input::before,
-.mantine-Switch-input::before {
-    background-color: var(--clr-primary-000);
-    border-color: var(--clr-primary-000);
-} */

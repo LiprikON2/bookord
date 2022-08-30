@@ -20,10 +20,11 @@ import Button from "components/Button";
 import LibraryControl from "./LibraryControl";
 import { useToggle } from "@mantine/hooks";
 import { groupingData } from "Utils/bookGroup";
-import { sortingData } from "Utils/bookSort";
+import { getSort, sortingData } from "Utils/bookSort";
+import useSort from "Hooks/useSort";
 
 const Library = () => {
-    const { setFiles, skeletontFileCount, setSkeletontFileCount, setIsInitLoad } =
+    const { files, setFiles, skeletontFileCount, setSkeletontFileCount, setIsInitLoad } =
         useContext(AppContext);
     const [grouping, setGrouping] = useState("None");
     const [sorting, setSorting] = useState("Title");
@@ -36,7 +37,6 @@ const Library = () => {
         if (!uploading) {
             setUploading(true);
 
-            // TODO fix broken sort on clicking 'Add' button
             const promise = window.api.invoke("app:on-fs-dialog-open");
             promise.then((fileCount) => {
                 setSkeletontFileCount(skeletontFileCount + fileCount);
@@ -59,7 +59,11 @@ const Library = () => {
                     "app:get-books"
                 );
                 console.timeEnd("updateFiles");
-                setFiles(filesWithMetadata);
+
+                const sortedFiles = filesWithMetadata.sort(
+                    getSort(sorting, sortingOrder)
+                );
+                setFiles(sortedFiles);
 
                 // TODO delete relevant recent book as well
                 window.api.store.send(writeConfigRequest, "allBooks", mergedAllBooks);
@@ -68,6 +72,8 @@ const Library = () => {
             setSkeletontFileCount(0);
         });
     }, 100);
+
+    useSort(files, setFiles, getSort(sorting, sortingOrder), [sorting, sortingOrder]);
 
     return (
         <>
@@ -118,9 +124,6 @@ const Library = () => {
                 updateFiles={updateFiles}
                 handleUpload={handleUpload}
                 grouping={grouping}
-                sorting={sorting}
-                sortingOrder={sortingOrder}
-                uploading={uploading}
             />
         </>
     );

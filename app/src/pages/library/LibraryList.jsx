@@ -4,20 +4,11 @@ import { Stack } from "@mantine/core";
 import Dropzone from "components/Dropzone";
 
 import { AppContext } from "Core/Routes";
-import useSort from "Hooks/useSort";
-import { getSort } from "Utils/bookSort";
 import LibraryListGroups from "./LibraryListGroups";
 import "./LibraryList.css";
 
-const LibraryList = ({
-    updateFiles,
-    handleUpload,
-    grouping,
-    sorting,
-    sortingOrder,
-    uploading,
-}) => {
-    const { files, setFiles, skeletontFileCount, setSkeletontFileCount, isInitLoad } =
+const LibraryList = ({ updateFiles, handleUpload, grouping }) => {
+    const { files, skeletontFileCount, setSkeletontFileCount, isInitLoad } =
         useContext(AppContext);
 
     const handleDrop = (files) => {
@@ -56,12 +47,6 @@ const LibraryList = ({
             unlisten();
         };
     }, []);
-
-    useSort(files, setFiles, getSort(sorting, sortingOrder), [
-        sorting,
-        sortingOrder,
-        uploading,
-    ]);
 
     // Exit chokidar watcher on reload
     const stopWatchingFiles = () => {
