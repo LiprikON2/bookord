@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { forwardRef, useEffect } from "react";
 import { useListState } from "@mantine/hooks";
 import { Accordion, Group } from "@mantine/core";
-import { ChevronDown, Number1 } from "tabler-icons-react";
+import { ChevronDown } from "tabler-icons-react";
 
 // @ts-ignore
 import ROUTES from "Constants/routes";
@@ -11,6 +11,25 @@ import LoadingGroup from "./LoadingGroup";
 import { groupingReducers } from "Utils/bookGroup";
 import "./LibraryListGroups.css";
 import GroupTitle from "./GroupTitle";
+import FlipMove from "react-flip-move";
+import LoadingCards from "./LoadingCards";
+
+// @ts-ignore
+const Card = forwardRef(({ file }, ref) => {
+    const toLocation = {
+        pathname: ROUTES.READ,
+        state: {
+            bookFile: {
+                ...file,
+            },
+        },
+    };
+    return (
+        <Link innerRef={ref} key={file.name} to={toLocation} className="" role="listitem">
+            <LibraryListCard file={file} to={toLocation} />
+        </Link>
+    );
+});
 
 const LibraryListGroups = ({ files, grouping }) => {
     const isAValidGroup = groupingReducers[grouping];
@@ -18,11 +37,13 @@ const LibraryListGroups = ({ files, grouping }) => {
 
     const groupedFiles =
         canGroup && isAValidGroup
-            ? Object.entries(files.reduce(groupingReducers[grouping], []))
+            ? Object.entries(files.reduce(groupingReducers[grouping], [])).sort(
+                  ([a], [b]) => a.localeCompare(b)
+              )
             : [];
 
     // Make accordion open by default
-    const [groups, setGroups] = useListState(["Loading"]);
+    const [groups, setGroups] = useListState(["Loading", "None"]);
     const allGroups = groupedFiles.map(([group]) => group);
     useEffect(() => {
         if (groupedFiles.length) {
@@ -39,7 +60,7 @@ const LibraryListGroups = ({ files, grouping }) => {
                 transitionDuration={100}
                 multiple={true}
                 chevron={null}>
-                <LoadingGroup />
+                <LoadingGroup active={grouping !== "None"} />
                 {groupedFiles.map(([group, files]) => (
                     <Accordion.Item key={group} value={group}>
                         <Accordion.Control style={{ paddingInline: 0 }}>
@@ -50,35 +71,23 @@ const LibraryListGroups = ({ files, grouping }) => {
                                         size={32}
                                     />
                                 }>
-                                <Group>{`${group} - (${files.length})`}</Group>
+                                <Group>{`${group} – (${files.length})`}</Group>
                             </GroupTitle>
                         </Accordion.Control>
                         <Accordion.Panel>
                             <div
                                 className="card-list card-group-list limit-width"
                                 role="list">
-                                {files.map((file) => {
-                                    const toLocation = {
-                                        pathname: ROUTES.READ,
-                                        state: {
-                                            bookFile: {
-                                                ...file,
-                                            },
-                                        },
-                                    };
-                                    return (
-                                        <Link
-                                            key={file.name}
-                                            to={toLocation}
-                                            className=""
-                                            role="listitem">
-                                            <LibraryListCard
-                                                file={file}
-                                                to={toLocation}
-                                            />
-                                        </Link>
-                                    );
-                                })}
+                                {(() => (
+                                    // @ts-ignore
+                                    <FlipMove typeName={null}>
+                                        {files.map((file) => (
+                                            // @ts-ignore
+                                            <Card key={file.name} file={file} />
+                                        ))}
+                                    </FlipMove>
+                                ))()}
+                                <LoadingCards active={grouping === "None"} />
                             </div>
                         </Accordion.Panel>
                     </Accordion.Item>

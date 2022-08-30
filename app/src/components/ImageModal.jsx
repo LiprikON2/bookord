@@ -3,8 +3,15 @@ import { useHotkeys } from "@mantine/hooks";
 
 import Button from "components/Button";
 import "./ImageModal.css";
+import { downloadImage } from "Utils/downloadImage";
 
-const ImageModal = ({ src, setSrc, toggle = true, showButton = true }) => {
+const ImageModal = ({
+    src,
+    setSrc,
+    toggle = true,
+    showButton = true,
+    bookTitle = "",
+}) => {
     const modalRef = useRef(null);
 
     useEffect(() => {
@@ -21,6 +28,8 @@ const ImageModal = ({ src, setSrc, toggle = true, showButton = true }) => {
         modalRef.current.classList.remove("is-active");
         if (setSrc) setSrc(null);
     };
+    const imageName =
+        bookTitle && bookTitle.length ? bookTitle + " ― illustration" : "Illustration";
 
     useHotkeys([["Escape", closeModal]]);
     return (
@@ -28,8 +37,15 @@ const ImageModal = ({ src, setSrc, toggle = true, showButton = true }) => {
             <div ref={modalRef} className="modal">
                 <div className="modal-background" />
                 <div className="modal-content">
-                    <p className="image">
-                        <img src={src} alt="" />
+                    <p className="modal-image">
+                        <img src={src} alt={imageName} />
+                        <Button
+                            className="modal-save"
+                            compact
+                            isGhost={true}
+                            onClick={() => downloadImage(src, imageName)}>
+                            Save image
+                        </Button>
                     </p>
                 </div>
                 {showButton && (

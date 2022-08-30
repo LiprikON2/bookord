@@ -1,20 +1,15 @@
 import React, { useContext } from "react";
 
-import LibraryListCard from "./LibraryListCard";
 import Spinner from "components/Spinner";
 import { Accordion } from "@mantine/core";
 import { AppContext } from "Core/Routes";
 import GroupTitle from "./GroupTitle";
+import LoadingCards from "./LoadingCards";
 
-export const skeletonFile = {
-    isSkeleton: true,
-    info: { title: "" },
-};
-
-const LoadingGroup = () => {
+const LoadingGroup = ({ active = true }) => {
     const { skeletontFileCount } = useContext(AppContext);
 
-    if (skeletontFileCount !== 0) {
+    if (active && skeletontFileCount !== 0) {
         return (
             <Accordion.Item value={"Loading"}>
                 <Accordion.Control style={{ paddingInline: 0 }}>
@@ -22,11 +17,7 @@ const LoadingGroup = () => {
                 </Accordion.Control>
                 <Accordion.Panel>
                     <div className="card-list limit-width" role="list">
-                        {[...Array(skeletontFileCount)].map((e, index) => (
-                            <div role="listitem" key={"skeleton" + index}>
-                                <LibraryListCard file={skeletonFile} />
-                            </div>
-                        ))}
+                        <LoadingCards />
                     </div>
                 </Accordion.Panel>
             </Accordion.Item>

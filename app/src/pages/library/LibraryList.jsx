@@ -79,7 +79,10 @@ const LibraryList = ({
                     {hasBooks ? (
                         <LibraryListGroups files={files} grouping={grouping} />
                     ) : (
-                        <Dropzone onClick={handleUpload} onDrop={handleDrop}></Dropzone>
+                        <Dropzone
+                            className="limit-width"
+                            onClick={handleUpload}
+                            onDrop={handleDrop}></Dropzone>
                     )}
                 </Stack>
             </div>

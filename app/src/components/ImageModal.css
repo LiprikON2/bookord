@@ -1,3 +1,10 @@
+.modal-image {
+    display: block;
+    max-width: fit-content;
+    position: relative;
+    margin: auto;
+}
+
 .modal {
     inset: calc(var(--border-width) * 2);
     top: calc(var(--border-width) + var(--titlebar-height));
@@ -19,7 +26,19 @@
 }
 
 .modal img {
+    margin-top: var(--height-modal-save);
     display: block;
-    height: 80vh;
+    height: 85vh;
     object-fit: contain;
+}
+
+.btn.modal-save {
+    --height-modal-save: 2.5rem;
+    --inline-padding-modal-save: 0.5rem;
+
+    padding-block: 0;
+    padding-inline: var(--inline-padding-modal-save);
+    height: var(--height-modal-save);
+    margin-left: calc(var(--inline-padding-modal-save) * -1);
+    outline-offset: -5px;
 }

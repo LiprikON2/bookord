@@ -206,7 +206,10 @@ const Read = ({ setLastOpenedBookTitle }) => {
                         <book-component ref={setBookComponentRef} book-page={10} />
                     </div>
                 </BookUI>
-                <ImageModal src={imageModalSrc} setSrc={setImageModalSrc}></ImageModal>
+                <ImageModal
+                    bookTitle={uiState?.bookTitle}
+                    src={imageModalSrc}
+                    setSrc={setImageModalSrc}></ImageModal>
                 <ReadContextMenu />
             </section>
         </>

@@ -96,5 +96,5 @@ export const sortingSorters = {
     },
 };
 
-export const getSort = (sorting, sortingOrder) =>
+export const getSort = (sorting = "Title", sortingOrder = "Ascending") =>
     sortingSorters[sorting][sortingOrder].bind(sortingSorters[sorting]);
