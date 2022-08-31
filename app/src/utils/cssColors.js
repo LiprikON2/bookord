@@ -8,7 +8,9 @@ const toColorsObj = {
     "300": ["--clr-primary-300", "--clr-secondary-300"],
 };
 
-export const createContrastVersions = (fromColor, cssVar, toColors = toColorsObj) => {
+export const createContrastVersions = (setting, toColors = toColorsObj) => {
+    const fromColor = setting.value;
+    const cssVar = setting.theme.cssVar;
     // Contast color generation
     Object.entries(toColors).forEach(([key, colors]) => {
         const contrastColors = colors.map((color) =>

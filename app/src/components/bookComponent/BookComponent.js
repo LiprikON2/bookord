@@ -468,6 +468,22 @@ export default class BookComponent extends HTMLElement {
     }
 
     /**
+     * Flips one section forward
+     * @returns {void}
+     */
+    sectionForward() {
+        this.flipNSections(1);
+    }
+
+    /**
+     * Flips one section backward
+     * @returns {void}
+     */
+    sectionBackward() {
+        this.flipNSections(-1);
+    }
+
+    /**
      * Flips specified amout of pages forward or backwards
      * @param {number} n - book page
      * @returns {Promise<void>}
@@ -531,6 +547,30 @@ export default class BookComponent extends HTMLElement {
         const newOffset = (page - 1) * displayWidth;
 
         this.#setOffset(newOffset);
+    }
+
+    /**
+     * TODO
+     * @param {*} sectionNum
+     * @returns
+     */
+    #shiftToSection(sectionNum) {
+        const { totalSections } = this.stateManager;
+        const { currentSection } = this.stateManager.book;
+
+        const targetSection = Math.max(0, Math.min(sectionNum, totalSections));
+        const isFromBack = currentSection > targetSection;
+
+        this.loadSection(targetSection, { sectionPage: { value: 0, isFromBack } });
+    }
+
+    /**
+     * Flips specified amout of sections forward or backward
+     * @param {number} n - book section
+     */
+    flipNSections(n) {
+        const { currentSection } = this.stateManager.book;
+        this.#shiftToSection(currentSection + n);
     }
 
     /**

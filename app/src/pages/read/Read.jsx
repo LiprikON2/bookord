@@ -149,11 +149,17 @@ const Read = ({ setLastOpenedBookTitle }) => {
     const flipNPages = (n) => {
         bookComponentRef.current.flipNPages(n);
     };
-    const goNext = () => {
+    const pageForward = () => {
         bookComponentRef.current.pageForward();
     };
-    const goBack = () => {
+    const pageBackward = () => {
         bookComponentRef.current.pageBackward();
+    };
+    const sectionForward = () => {
+        bookComponentRef.current.sectionForward();
+    };
+    const sectionBackward = () => {
+        bookComponentRef.current.sectionBackward();
     };
 
     useDidUpdate(() => {
@@ -177,10 +183,12 @@ const Read = ({ setLastOpenedBookTitle }) => {
 
     const history = useHistory();
     useHotkeys([
-        ["ArrowRight", () => goNext()],
-        ["ArrowLeft", () => goBack()],
-        ["ctrl + ArrowRight", () => flipNPages(5)],
-        ["ctrl + ArrowLeft", () => flipNPages(-5)],
+        ["ArrowRight", () => pageForward()],
+        ["ArrowLeft", () => pageBackward()],
+        ["Ctrl + ArrowRight", () => flipNPages(5)],
+        ["Ctrl + ArrowLeft", () => flipNPages(-5)],
+        ["Ctrl + Shift + ArrowRight", () => sectionForward()],
+        ["Ctrl + Shift + ArrowLeft", () => sectionBackward()],
         ["Backspace", () => history.push(ROUTES.LIBRARY)],
     ]);
 

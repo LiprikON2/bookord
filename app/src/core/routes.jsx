@@ -33,12 +33,12 @@ const reloadTheme = (settings) => {
     });
     Object.values(settings).forEach((setting) => {
         if (setting.type === "colorInput") {
-            createContrastVersions(setting.value, setting.theme.cssVar);
+            createContrastVersions(setting);
         }
         if ("subsettings" in setting) {
             Object.values(setting.subsettings).forEach((subsetting) => {
                 if (subsetting.type === "colorInput") {
-                    createContrastVersions(subsetting.value, subsetting.theme.cssVar);
+                    createContrastVersions(subsetting);
                 }
             });
         }
