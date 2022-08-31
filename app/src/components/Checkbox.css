@@ -16,6 +16,14 @@
     background-color: var(--clr-accent-100);
     border-color: var(--clr-accent-100);
 }
+.mantine-Checkbox-input:checked:hover + svg,
+.mantine-Checkbox-input:checked:focus-visible + svg {
+    color: var(--clr-accent-100-contrast-000);
+}
 .mantine-Checkbox-label {
     color: var(--clr-primary-150);
+}
+
+.mantine-Checkbox-input + svg {
+    color: var(--clr-accent-000-contrast-000);
 }

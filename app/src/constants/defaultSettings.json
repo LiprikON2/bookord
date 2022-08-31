@@ -220,8 +220,8 @@
                 "previewComponent": "LibraryListCard",
                 "section": "Theme",
                 "type": "colorInput",
-                "value": "#4f929e",
-                "defaultValue": "#4f929e",
+                "value": "#277b8a",
+                "defaultValue": "#277b8a",
                 "disabled": false,
                 "canBeDisabled": false,
                 "theme": {
@@ -250,8 +250,8 @@
                 "previewComponent": "LibraryListCard",
                 "section": "Theme",
                 "type": "colorInput",
-                "value": "#4f929e",
-                "defaultValue": "#4f929e",
+                "value": "#277b8a",
+                "defaultValue": "#277b8a",
                 "disabled": false,
                 "canBeDisabled": false,
                 "theme": {
@@ -265,8 +265,8 @@
                 "previewComponent": "LibraryListCard",
                 "section": "Theme",
                 "type": "colorInput",
-                "value": "#43c59e",
-                "defaultValue": "#43c59e",
+                "value": "#4bb9cc",
+                "defaultValue": "#4bb9cc",
                 "disabled": false,
                 "canBeDisabled": false,
                 "theme": {

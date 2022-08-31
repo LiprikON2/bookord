@@ -65,32 +65,37 @@ const Library = () => {
         }
     };
 
-    const updateFiles = debounce(() => {
-        console.time("updateFiles");
-        // Updates store in main
-        window.api.store.send(useConfigInMainRequest);
+    // TODO subsequent calls while it runs will not refresh last added book
+    const updateFiles = debounce(
+        () => {
+            console.time("updateFiles");
+            // Updates store in main
+            window.api.store.send(useConfigInMainRequest);
 
-        window.api.store.onReceive(useConfigInMainResponse, async (args) => {
-            if (args.success) {
-                window.api.store.clearRendererBindings();
+            window.api.store.onReceive(useConfigInMainResponse, async (args) => {
+                if (args.success) {
+                    window.api.store.clearRendererBindings();
 
-                const [filesWithMetadata, mergedAllBooks] = await window.api.invoke(
-                    "app:get-books"
-                );
-                console.timeEnd("updateFiles");
+                    const [filesWithMetadata, mergedAllBooks] = await window.api.invoke(
+                        "app:get-books"
+                    );
+                    console.timeEnd("updateFiles");
 
-                const sortedFiles = filesWithMetadata.sort(
-                    getSort(sorting, sortingOrder)
-                );
-                setFiles.setState(sortedFiles);
+                    const sortedFiles = filesWithMetadata.sort(
+                        getSort(sorting, sortingOrder)
+                    );
+                    setFiles.setState(sortedFiles);
 
-                // TODO delete relevant recent book as well
-                window.api.store.send(writeConfigRequest, "allBooks", mergedAllBooks);
-            }
-            setIsInitLoad(false);
-            setSkeletontFileCount(0);
-        });
-    }, 100);
+                    // TODO delete relevant recent book as well
+                    window.api.store.send(writeConfigRequest, "allBooks", mergedAllBooks);
+                }
+                setIsInitLoad(false);
+                setSkeletontFileCount(0);
+            });
+        },
+        100,
+        { trailing: true }
+    );
 
     useSort(files, setFiles.setState, getSort(sorting, sortingOrder), [
         sorting,

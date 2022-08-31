@@ -16,6 +16,15 @@
     background-color: var(--clr-accent-100);
     border-color: var(--clr-accent-100);
 }
+.mantine-Switch-input:checked:hover::before,
+.mantine-Switch-input:checked:focus-visible::before {
+    background-color: var(--clr-accent-100-contrast-000);
+    border-color: var(--clr-accent-100-contrast-000);
+}
 .mantine-Switch-label {
     color: var(--clr-primary-150);
+}
+.mantine-Switch-input:checked::before {
+    background-color: var(--clr-accent-000-contrast-000);
+    border-color: var(--clr-accent-000-contrast-000);
 }

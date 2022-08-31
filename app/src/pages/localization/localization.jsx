@@ -7,6 +7,7 @@ class Localization extends React.Component {
         const { t } = this.props;
         return (
             <>
+                {/* TODO */}
                 <section className="section">
                     <div className="container has-text-centered">
                         <h1 className="title is-1">{t("Hello")}</h1>

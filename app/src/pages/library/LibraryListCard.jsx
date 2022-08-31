@@ -34,7 +34,11 @@ const LibraryListCard = ({
             </Link>
         );
     } else {
-        return <Card file={file} to={toLocation} style={style} {...rest} />;
+        return (
+            <div ref={innerRef} role="listitem">
+                <Card file={file} to={toLocation} style={style} {...rest} />
+            </div>
+        );
     }
 };
 
