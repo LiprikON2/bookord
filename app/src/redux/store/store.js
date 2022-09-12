@@ -5,11 +5,19 @@ import rootReducer from "../reducers/rootReducer";
 
 export const history = createHashHistory();
 
+// const store = configureStore({
+//     reducer: rootReducer(history),
+//     middleware: [
+//         ...getDefaultMiddleware({
+//             serializableCheck: false,
+//         }),
+//         routerMiddleware(history),
+//     ],
+// });
 const store = configureStore({
-  reducer: rootReducer(history),
-  middleware: [...getDefaultMiddleware({
-    serializableCheck: false
-  }), routerMiddleware(history)]
+    reducer: rootReducer(history),
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(routerMiddleware(history)),
 });
 
 export default store;

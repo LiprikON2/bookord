@@ -1,5 +1,5 @@
-import React, { useState, createContext, useLayoutEffect } from "react";
-import { Switch, Route, Redirect } from "react-router";
+import React, { useState, createContext, useLayoutEffect, useContext } from "react";
+import { Switch, Route, Redirect, __RouterContext, useLocation } from "react-router";
 import loadable from "@loadable/component";
 
 // @ts-ignore
@@ -8,6 +8,8 @@ import ROUTES from "Constants/routes";
 import DEFAULT_SETTINGS from "Constants/defaultSettings";
 import { useListState } from "@mantine/hooks";
 import { createContrastVersions, updateCssVar } from "Utils/cssColors";
+import "./routes.css";
+import { animated, useTransition } from "react-spring";
 
 // Load bundles asynchronously so that the initial render happens faster
 const Library = loadable(() =>
@@ -87,27 +89,46 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
 
         return lastOpenedBookTitle && continueReadingSetting;
     };
+    const { location } = useContext(__RouterContext);
+    // const location = useLocation();
+
+    const transition = useTransition(location, {
+        key: location.pathname,
+        from: { opacity: 0, transform: "translate(100%, 0)" },
+        enter: { opacity: 1, transform: "translate(0%, 0)" },
+        leave: { opacity: 0, transform: "translate(-50%, 0)" },
+    });
 
     return (
         <AppContextProvider initStorage={initStorage}>
             <main id="main">
-                <Switch>
-                    <Route exact path="/">
-                        <Redirect
-                            push
-                            to={toContinueReading() ? ROUTES.READ : ROUTES.LIBRARY}
-                        />
-                    </Route>
-                    <Route path={ROUTES.SETTINGS}>
-                        <Settings />
-                    </Route>
-                    <Route path={ROUTES.LIBRARY}>
-                        <Library />
-                    </Route>
-                    <Route path={ROUTES.READ}>
-                        <Read setLastOpenedBookTitle={setLastOpenedBookTitle} />
-                    </Route>
-                </Switch>
+                {transition((style, item) => (
+                    <animated.div
+                        key={item.key}
+                        style={{ position: "absolute", width: "100%", ...style }}>
+                        <Switch
+                            // @ts-ignore
+                            location={item}>
+                            <Route exact path="/">
+                                <Redirect
+                                    push
+                                    to={
+                                        toContinueReading() ? ROUTES.READ : ROUTES.LIBRARY
+                                    }
+                                />
+                            </Route>
+                            <Route path={ROUTES.SETTINGS}>
+                                <Settings />
+                            </Route>
+                            <Route path={ROUTES.LIBRARY}>
+                                <Library />
+                            </Route>
+                            <Route path={ROUTES.READ}>
+                                <Read setLastOpenedBookTitle={setLastOpenedBookTitle} />
+                            </Route>
+                        </Switch>
+                    </animated.div>
+                ))}
             </main>
         </AppContextProvider>
     );
