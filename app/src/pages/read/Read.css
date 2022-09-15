@@ -1,10 +1,13 @@
-.read-section {
+section.section.read-section {
     width: 100%;
     height: 100%;
     display: flex;
     place-items: center;
     padding: 0;
+    margin-inline: auto;
+    margin-block: 0;
 }
+
 .button-group {
     display: flex;
     gap: 0.5em;

@@ -7,8 +7,9 @@ import Navbar from "./Navbar";
 
 import "bulma/css/bulma.css";
 import "./Root.css";
+import { getInitStore } from "Utils/getInitialStore";
 
-const initStorage = window.api.store.initial();
+const initStorage = getInitStore();
 
 const getInitBookTitle = () => {
     const recentBooks = initStorage.recentBooks;

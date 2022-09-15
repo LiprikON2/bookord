@@ -109,6 +109,7 @@ export default class StateManager {
             this.sectionPagesArr,
             this.book.currentSection
         );
+        // todo
         const totalSectionPages = this.getTotalSectionPages(this.book.currentSection);
         const totalSectionPages2 = this.#parentComponent.countSectionPages();
         const currentSectionPage = this.getCurrentSectionPage();

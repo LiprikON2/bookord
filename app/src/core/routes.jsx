@@ -101,34 +101,36 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
 
     return (
         <AppContextProvider initStorage={initStorage}>
-            <main id="main">
-                {transition((style, item) => (
+            <main
+                id="main"
+                className={location.pathname === ROUTES.READ ? "no-scroll" : ""}>
+                {/* {transition((style, item) => (
                     <animated.div
                         key={item.key}
-                        style={{ position: "absolute", width: "100%", ...style }}>
-                        <Switch
-                            // @ts-ignore
-                            location={item}>
-                            <Route exact path="/">
-                                <Redirect
-                                    push
-                                    to={
-                                        toContinueReading() ? ROUTES.READ : ROUTES.LIBRARY
-                                    }
-                                />
-                            </Route>
-                            <Route path={ROUTES.SETTINGS}>
-                                <Settings />
-                            </Route>
-                            <Route path={ROUTES.LIBRARY}>
-                                <Library />
-                            </Route>
-                            <Route path={ROUTES.READ}>
-                                <Read setLastOpenedBookTitle={setLastOpenedBookTitle} />
-                            </Route>
-                        </Switch>
-                    </animated.div>
-                ))}
+                        // style={{ position: "absolute", width: "100%", ...style }}>
+                    > */}
+                <Switch
+                // @ts-ignore
+                // location={item}>
+                >
+                    <Route exact path="/">
+                        <Redirect
+                            push
+                            to={toContinueReading() ? ROUTES.READ : ROUTES.LIBRARY}
+                        />
+                    </Route>
+                    <Route path={ROUTES.SETTINGS}>
+                        <Settings />
+                    </Route>
+                    <Route path={ROUTES.LIBRARY}>
+                        <Library />
+                    </Route>
+                    <Route path={ROUTES.READ}>
+                        <Read setLastOpenedBookTitle={setLastOpenedBookTitle} />
+                    </Route>
+                </Switch>
+                {/* </animated.div>
+                ))} */}
             </main>
         </AppContextProvider>
     );

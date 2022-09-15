@@ -61,32 +61,13 @@ export default class BookmarkManager {
      * @returns {void}
      */
     updateAutoBookmark() {
-        const element = this.getVisibleElement();
+        const element = this.#parentComponent.getVisibleElement();
         if (!element) return;
 
         const elementIndex = this.#getElementIndex(element);
         const sectionIndex = this.#parentComponent.stateManager.book.currentSection;
 
         this.setAutoBookmark({ sectionIndex, elementIndex });
-    }
-
-    /**
-     * Returns currently fully visible or partially visible element
-     * @returns {HTMLElement}
-     */
-    getVisibleElement() {
-        const fullyVisibleElement = this.#recGetVisibleElement();
-
-        if (!fullyVisibleElement) {
-            const partiallyVisibleElement = this.#recGetVisibleElement(null, false);
-
-            if (!partiallyVisibleElement) {
-                throw new Error("Couldn't find visible element");
-            }
-
-            return partiallyVisibleElement;
-        }
-        return fullyVisibleElement;
     }
 
     /**
@@ -130,38 +111,6 @@ export default class BookmarkManager {
             throw new Error("The format of a bookmark is wrong.");
         }
         return hasKeys;
-    }
-
-    // TODO use binary search
-    /**
-     * Recursively searches for elements that are fully visible to act as an anchor for the bookmark
-     * @param {HTMLCollection} [elements]
-     * @returns {HTMLElement | any}
-     */
-    #recGetVisibleElement(elements, strict = true) {
-        if (!elements) {
-            elements = this.#parentComponent.contentElem.children;
-        }
-
-        for (let element of elements) {
-            const [isFullyVis, isAtLeastPartVis] =
-                this.#parentComponent.checkVisibility(element);
-            const requiredVisibility = strict ? isFullyVis : isAtLeastPartVis;
-            const hasChildren = element.children.length;
-
-            if (requiredVisibility && !hasChildren) {
-                return element;
-            } else if (hasChildren) {
-                const descendantElem = this.#recGetVisibleElement(
-                    element.children,
-                    strict
-                );
-                if (descendantElem) {
-                    return descendantElem;
-                }
-            }
-        }
-        return null;
     }
 
     /**

@@ -43,6 +43,47 @@ export default class BookComponent extends HTMLElement {
         this.settings = {
             enlargeImages: true,
         };
+        this.pageTopMostElem = null;
+
+        this.intersectionObserver = new IntersectionObserver(
+            // Iterates from back over direct content children and picks out the child
+            // which is the most visible and is close to the beginning of the page
+            (entries, observer) => {
+                let newTopMostElem;
+                const prevTopMostRatio = this.pageTopMostElem?.intersectionRatio ?? 0;
+                // forEach-like iteration in reverse order
+                entries.reduceRight((_, entry, i) => {
+                    if (entry.intersectionRatio >= 0.01 && prevTopMostRatio !== 0.25) {
+                        newTopMostElem = entry;
+                    } else if (
+                        entry.intersectionRatio >= 0.25 &&
+                        prevTopMostRatio !== 0.5
+                    ) {
+                        newTopMostElem = entry;
+                    } else if (
+                        entry.intersectionRatio >= 0.5 &&
+                        prevTopMostRatio !== 0.75
+                    ) {
+                        newTopMostElem = entry;
+                    } else if (
+                        entry.intersectionRatio >= 0.75 &&
+                        prevTopMostRatio !== 1
+                    ) {
+                        newTopMostElem = entry;
+                    } else if (entry.intersectionRatio >= 1) {
+                        newTopMostElem = entry;
+                    }
+                    console.log("newTopMostElem", newTopMostElem?.target);
+                    return null;
+                }, null);
+                if (newTopMostElem) this.pageTopMostElem = newTopMostElem;
+            },
+            {
+                threshold: 0.01,
+            }
+        );
+        // Recount book pages every time bookComponent's viewport changes
+        new ResizeObserver(() => this.resize()).observe(this.rootElem);
     }
 
     /**
@@ -91,8 +132,6 @@ export default class BookComponent extends HTMLElement {
             elementIndex: initElementIndex,
         };
         await this.loadSection(initSectionIndex, position);
-        // Recount book pages every time bookComponent's viewport changes
-        new ResizeObserver(() => this.recount()).observe(this.rootElem);
     }
 
     /**
@@ -131,11 +170,33 @@ export default class BookComponent extends HTMLElement {
 
         this.attachLinkHandlers(book);
         this.attachImgEventEmitters();
+        this.updateObserver();
+    }
+    /**
+     * TODO
+     * @returns {void}
+     */
+    updateObserver() {
+        this.intersectionObserver.disconnect();
+
+        const elements = this.contentElem.children;
+        [...elements].forEach((element) => {
+            this.intersectionObserver.observe(element);
+        });
+    }
+
+    /**
+     * Returns currently fully visible or at least partially visible element
+     * @returns {HTMLElement}
+     */
+    getVisibleElement() {
+        return this.pageTopMostElem.target;
     }
 
     /**
      * TODO
      * @param {Object} position
+     * @returns {void}
      */
     #navigateToPosition({ sectionPage, elementIndex, elementSelector }) {
         if (elementSelector || elementIndex) {
@@ -163,6 +224,7 @@ export default class BookComponent extends HTMLElement {
      * The `elementIndex` is given precedence over `elementSelector`,
      * and `elementSelector` is given precedence over `element`.
      * @param {Object} elementPosition
+     * @returns {void}
      */
     #shiftToElement({ element, elementIndex, elementSelector }) {
         if (elementIndex) {
@@ -720,19 +782,25 @@ export default class BookComponent extends HTMLElement {
         () => {
             if (this.isQuitting) return;
 
-            if (!this.pageCounter.isCounting) {
-                // Get a reference to a visible element
-                const element = this.bookmarkManager.getVisibleElement();
-                this.#shiftToElement({ element });
-
-                this.pageCounter.start();
-            } else {
+            if (this.pageCounter.isCounting) {
                 this.recount();
+            } else {
+                // Get a reference to a visible element
+                const element = this.getVisibleElement();
+                this.#shiftToElement({ element });
+                console.log("element", element, this.pageTopMostElem.target);
+                this.pageCounter.start();
             }
         },
-        1000,
+        500,
         { trailing: true }
     );
+    /**
+     * Recalculates content translate position and total pages
+     */
+    resize() {
+        this.recount();
+    }
 
     disconnectedCallback() {
         if (this.unlisten) this.unlisten();
