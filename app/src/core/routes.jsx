@@ -91,7 +91,6 @@ const Routes = ({ initStorage, lastOpenedBookTitle, setLastOpenedBookTitle }) =>
     };
     const { location } = useContext(__RouterContext);
     // const location = useLocation();
-
     const transition = useTransition(location, {
         key: location.pathname,
         from: { opacity: 0, transform: "translate(100%, 0)" },

@@ -1,13 +1,25 @@
 import React, { useState } from "react";
 
 // @ts-ignore
-import Routes from "Core/Routes";
-import Titlebar from "./Titlebar";
-import Navbar from "./Navbar";
+// import Routes from "Core/Routes";
+// import Titlebar from "./Titlebar";
+// import Navbar from "./Navbar";
 
 import "bulma/css/bulma.css";
 import "./Root.css";
 import { getInitStore } from "Utils/getInitialStore";
+import loadable from "@loadable/component";
+
+// Load bundles asynchronously so that the initial render happens faster
+const Routes = loadable(() =>
+    import(/* webpackChunkName: "RoutesChunk" */ "Core/Routes")
+);
+const Titlebar = loadable(() =>
+    import(/* webpackChunkName: "TitlebarChunk" */ "Core/Titlebar")
+);
+const Navbar = loadable(() =>
+    import(/* webpackChunkName: "NavbarChunk" */ "Core/Navbar")
+);
 
 const initStorage = getInitStore();
 

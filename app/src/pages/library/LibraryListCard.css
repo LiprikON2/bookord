@@ -79,6 +79,8 @@ a:focus-visible > .card > .card-cover {
     text-align: right;
     word-break: break-word;
 
+    transition-delay: 75ms;
+    transition: all 150ms ease;
     border-radius: 10px 0 0 10px;
 }
 .no-cover:hover .clip-path > h3,

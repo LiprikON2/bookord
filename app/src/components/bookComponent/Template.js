@@ -1,9 +1,11 @@
 export const style = /*css*/ `
     :host {
-        --book-component-width: 400px;
-        --book-component-height: 600px;
-        --column-gap: 100px;
-        // --column-gap: 0px;
+        
+        --columns-count: 2; /* todo */
+        --columns-count: 1;
+        --book-component-width: calc(30rem * var(--columns-count));
+
+        --column-gap: 50px;
 
     }
 
@@ -42,9 +44,7 @@ export const style = /*css*/ `
     }
 
     .book-container {
-        max-width: 30rem;
-        height: 85vh;
-        height: 80vh;
+        max-width: var(--book-component-width);
         height: 100%;
 
         margin: auto;
@@ -54,7 +54,7 @@ export const style = /*css*/ `
         width: 100%;
         height: 100%;
 
-        columns: 1;
+        columns: var(--columns-count);
         column-gap: var(--column-gap);
     }
 
@@ -65,6 +65,11 @@ export const style = /*css*/ `
         width: auto !important;
         max-height: 100vh !important;
         max-width: 100% !important;
+
+
+        /* To prevent images from spanning multiple columns when they are enabled */
+        /* height: 100%;
+        object-fit: contain; */
     }
 `;
 
