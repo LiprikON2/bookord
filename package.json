@@ -1,6 +1,6 @@
 {
     "name": "bookord",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "The book reading app",
     "private": true,
     "main": "app/electron/main.js",

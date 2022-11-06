@@ -45,20 +45,21 @@ const Navbar = ({ lastOpenedBookTitle }) => {
                             Settings
                         </Button>
                     </li>
-                    <li className="navbar-item">
+                    {/* TODO make real buttons */}
+                    {/* <li className="navbar-item">
                         <Button
                             title="Font Settings"
                             leftIcon={<Typography strokeWidth={1.5} />}>
                             Font
                         </Button>
-                    </li>
-                    <li className="navbar-item">
+                    </li> */}
+                    {/* <li className="navbar-item">
                         <Button
                             title="Text-To-Speech Settings"
                             leftIcon={<Speakerphone strokeWidth={1.5} />}>
                             TTS
                         </Button>
-                    </li>
+                    </li> */}
                     <li
                         className="navbar-item"
                         // @ts-ignore

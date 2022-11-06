@@ -25,8 +25,9 @@ const PortalTooltip = ({ opened, toTooltip }) => {
     }, [opened]);
 
     useDidUpdate(() => {
-        console.log("useDidUpdate");
-        console.log(target, ":", sourceLang + "->" + targetLang, translatedText);
+        // TODO
+        // console.log("useDidUpdate");
+        // console.log(target, ":", sourceLang + "->" + targetLang, translatedText);
         try {
             const index = target.textContent.indexOf(originalText);
 
@@ -65,7 +66,7 @@ const PortalTooltip = ({ opened, toTooltip }) => {
             setTooltipWrapper(TooltipWrapper);
             //
         } catch (error) {
-            console.log("error", error);
+            console.log("error useDidUpdate", error);
         }
     }, [portalContainer]);
 
@@ -133,6 +134,7 @@ const ReadContext = () => {
                     selection,
                 }));
                 setOpenedTooltip(true);
+                console.log(sourceLang + "->" + targetLang, translatedText);
             })
             .catch((error) => {
                 console.log(error);
