@@ -56,7 +56,7 @@ async function createWindow() {
         ); /* eng-disable PROTOCOL_HANDLER_JS_CHECK */
     }
     const store = new Store({
-        debug: isDev,
+        debug: isDev || true, // TODO remove all "|| true"
         reset: isDev,
         path: app.getPath("userData"),
     });
@@ -86,7 +86,7 @@ async function createWindow() {
         title: "Bookord is initializing...",
         frame: false,
         webPreferences: {
-            devTools: isDev,
+            devTools: isDev || true, // TODO remove
             nodeIntegration: false,
             nodeIntegrationInWorker: false,
             nodeIntegrationInSubFrames: false,
@@ -132,7 +132,7 @@ async function createWindow() {
     store.mainBindings(ipcMain, win, fs, callback);
 
     // Sets up bindings for our custom context menu
-    ContextMenu.mainBindings(ipcMain, win, Menu, isDev, {
+    ContextMenu.mainBindings(ipcMain, win, Menu, isDev || true, {
         loudAlertTemplate: [
             {
                 id: "loudAlert",
@@ -196,7 +196,8 @@ async function createWindow() {
     }
 
     // Only do these things when in development
-    if (isDev) {
+    // TODO remove
+    if (isDev || true) {
         // Errors are thrown if the dev tools are opened
         // before the DOM is ready
         win.webContents.once("dom-ready", async () => {
