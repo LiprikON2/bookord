@@ -1,21 +1,37 @@
 const io = require("../io");
 
-process.on("message", async (/**@type any*/ message) => {
-    if ("parseMetadata" in message) {
-        const { files, allBooks } = message.parseMetadata;
-        const [filesWithMetadata, mergedAllbooks] = await io.getBooks(files, allBooks);
+// Setup file logging
+const log = require("electron-log");
+log.transports.file.level = "info";
+log.transports.file.resolvePath = () => __dirname + "/log.log";
 
-        process.send({ filesWithMetadata, mergedAllbooks });
-    } else if ("parse" in message) {
-        const { filePath, initSectionIndex } = message.parse;
-        const [initBook, parsedEpub] = await io.parseBook(filePath, initSectionIndex);
+// Log a message
+log.info("log message");
 
-        // Sending init book
-        process.send({ initBook });
+try {
+    process.on("message", async (/**@type any*/ message) => {
+        if ("parseMetadata" in message) {
+            const { files, allBooks } = message.parseMetadata;
+            const [filesWithMetadata, mergedAllbooks] = await io.getBooks(
+                files,
+                allBooks
+            );
 
-        const book = await io.parseSections(initBook, parsedEpub);
+            process.send({ filesWithMetadata, mergedAllbooks });
+        } else if ("parse" in message) {
+            const { filePath, initSectionIndex } = message.parse;
+            const [initBook, parsedEpub] = await io.parseBook(filePath, initSectionIndex);
 
-        // Sending fully parsed book
-        process.send({ book });
-    }
-});
+            // Sending init book
+            process.send({ initBook });
+
+            const book = await io.parseSections(initBook, parsedEpub);
+
+            // Sending fully parsed book
+            process.send({ book });
+        }
+    });
+} catch (error) {
+    log.info("ERROR:", error);
+}
+log.info("log message complete");

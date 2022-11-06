@@ -105,7 +105,29 @@ exports.watchFiles = (win) => {
 };
 
 const parseMetadata = async (filePath) => {
-    const parsedEpub = await parseEpub(filePath);
+    let parsedEpub = {
+        info: {
+            title: getFilenameFromPath(filePath),
+            indentifiers: "",
+            languages: "",
+            relations: "",
+            subjects: "",
+            publishers: "",
+            contributors: "",
+            coverages: "",
+            rights: "",
+            sources: "",
+            description: "",
+            date: "",
+            cover: "",
+            author: "",
+        },
+    };
+    try {
+        parsedEpub = await parseEpub(filePath);
+    } catch (error) {
+        console.log("Error while parsing epub:", error);
+    }
     return parsedEpub.info;
 };
 

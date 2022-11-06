@@ -490,6 +490,12 @@ const getChildResponse = async (child) => {
 // Forked child process for parsing book file.
 // It is needed to offload parsing from main thread and, consequently, not to block UI
 const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
+const log = require("electron-log");
+log.transports.file.level = "info";
+log.transports.file.resolvePath = () => __dirname + "/log.log";
+
+// Log a message
+log.info("log message: child created", path.join(__dirname, "forks/child.js"));
 
 ipcMain.handle("app:get-books", async () => {
     const allBooks = storeData?.["allBooks"];
@@ -510,6 +516,7 @@ ipcMain.handle("app:get-books", async () => {
     const { filesWithMetadata, mergedAllbooks } = await getChildResponse(
         metadataParseChild
     );
+    log.info("log message: got metadata", filesWithMetadata);
 
     return [filesWithMetadata, mergedAllbooks];
 });
