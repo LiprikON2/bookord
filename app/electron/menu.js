@@ -96,9 +96,7 @@ const MenuBuilder = function (mainWindow, appName) {
                         ? [
                               {
                                   role: "pasteAndMatchStyle",
-                                  label: i18nextMainBackend.t(
-                                      "Paste and Match Style"
-                                  ),
+                                  label: i18nextMainBackend.t("Paste and Match Style"),
                               },
                               {
                                   role: "delete",
@@ -116,15 +114,11 @@ const MenuBuilder = function (mainWindow, appName) {
                                   submenu: [
                                       {
                                           role: "startspeaking",
-                                          label: i18nextMainBackend.t(
-                                              "Start Speaking"
-                                          ),
+                                          label: i18nextMainBackend.t("Start Speaking"),
                                       },
                                       {
                                           role: "stopspeaking",
-                                          label: i18nextMainBackend.t(
-                                              "Stop Speaking"
-                                          ),
+                                          label: i18nextMainBackend.t("Stop Speaking"),
                                       },
                                   ],
                               },
@@ -247,9 +241,7 @@ const MenuBuilder = function (mainWindow, appName) {
 
     return {
         buildMenu: function (i18nextMainBackend) {
-            const menu = Menu.buildFromTemplate(
-                defaultTemplate(i18nextMainBackend)
-            );
+            const menu = Menu.buildFromTemplate(defaultTemplate(i18nextMainBackend));
             Menu.setApplicationMenu(menu);
 
             return menu;

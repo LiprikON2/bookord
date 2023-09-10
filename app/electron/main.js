@@ -194,15 +194,14 @@ async function createWindow() {
     if (process.platform === "win32") {
         app.setAppUserModelId(productName);
     }
+    // Enable pinch-to-zoom
+    win.webContents.setVisualZoomLevelLimits(1, 3);
 
     // Only do these things when in development
     if (isDev) {
         // Errors are thrown if the dev tools are opened
         // before the DOM is ready
         win.webContents.once("dom-ready", async () => {
-            // Enable pinch-to-zoom
-            win.webContents.setVisualZoomLevelLimits(1, 3);
-
             await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
                 .then((name) => console.log(`Added Extension: ${name}`))
                 .catch((err) => console.log("An error occurred: ", err))
@@ -367,30 +366,6 @@ app.on("web-contents-created", (event, contents) => {
             action: "allow",
         };
     });
-});
-
-// Filter loading any module via remote;
-// you shouldn't be using remote at all, though
-// https://electronjs.org/docs/tutorial/security#16-filter-the-remote-module
-app.on("remote-require", (event, webContents, moduleName) => {
-    event.preventDefault();
-});
-
-// built-ins are modules such as "app"
-app.on("remote-get-builtin", (event, webContents, moduleName) => {
-    event.preventDefault();
-});
-
-app.on("remote-get-global", (event, webContents, globalName) => {
-    event.preventDefault();
-});
-
-app.on("remote-get-current-window", (event, webContents) => {
-    event.preventDefault();
-});
-
-app.on("remote-get-current-web-contents", (event, webContents) => {
-    event.preventDefault();
 });
 
 // TITLEBAR WINDOW CONTROLS

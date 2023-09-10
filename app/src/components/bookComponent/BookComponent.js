@@ -48,34 +48,38 @@ export default class BookComponent extends HTMLElement {
             // Iterates from back over direct content children and picks out the child
             // which is the most visible and is close to the beginning of the page
             (entries, observer) => {
-                let newTopMostElem;
-                const prevTopMostRatio = this.pageTopMostElem?.intersectionRatio ?? 0;
-                // forEach-like iteration in reverse order
-                entries.reduceRight((_, entry, i) => {
-                    if (entry.intersectionRatio >= 0.01 && prevTopMostRatio !== 0.25) {
-                        newTopMostElem = entry;
-                    } else if (
-                        entry.intersectionRatio >= 0.25 &&
-                        prevTopMostRatio !== 0.5
-                    ) {
-                        newTopMostElem = entry;
-                    } else if (
-                        entry.intersectionRatio >= 0.5 &&
-                        prevTopMostRatio !== 0.75
-                    ) {
-                        newTopMostElem = entry;
-                    } else if (
-                        entry.intersectionRatio >= 0.75 &&
-                        prevTopMostRatio !== 1
-                    ) {
-                        newTopMostElem = entry;
-                    } else if (entry.intersectionRatio >= 1) {
-                        newTopMostElem = entry;
-                    }
-                    console.log("newTopMostElem", newTopMostElem?.target);
-                    return null;
-                }, null);
-                if (newTopMostElem) this.pageTopMostElem = newTopMostElem;
+                if (entries?.[0]?.target) {
+                    this.pageTopMostElem = entries[0].target;
+                }
+
+                // let newTopMostElem = null;
+                // // const prevTopMostRatio = this.pageTopMostElem?.intersectionRatio ?? 0;
+                // // forEach-like iteration in reverse order
+
+                //     entries.reduceRight((_, entry, i) => {
+                //         // if (entry.intersectionRatio >= 0.01 && prevTopMostRatio !== 0.25) {
+                //         //     newTopMostElem = entry;
+                //         // } else if (
+                //         //     entry.intersectionRatio >= 0.25 &&
+                //         //     prevTopMostRatio !== 0.5
+                //         // ) {
+                //         //     newTopMostElem = entry;
+                //         // } else if (
+                //         //     entry.intersectionRatio >= 0.5 &&
+                //         //     prevTopMostRatio !== 0.75
+                //         // ) {
+                //         //     newTopMostElem = entry;
+                //         // } else if (
+                //         //     entry.intersectionRatio >= 0.75 &&
+                //         //     prevTopMostRatio !== 1
+                //         // ) {
+                //         //     newTopMostElem = entry;
+                //         // } else if (entry.intersectionRatio >= 1) {
+                //         //     newTopMostElem = entry;
+                //         // }
+                //         return null;
+                //     }, null);
+                // if (newTopMostElem) this.pageTopMostElem = newTopMostElem;
             },
             {
                 threshold: 0.01,
@@ -186,10 +190,10 @@ export default class BookComponent extends HTMLElement {
 
     /**
      * Returns currently fully visible or at least partially visible element
-     * @returns {HTMLElement}
+     * @returns {Element}
      */
     getVisibleElement() {
-        return this.pageTopMostElem.target;
+        return this.pageTopMostElem;
     }
 
     /**
@@ -786,8 +790,9 @@ export default class BookComponent extends HTMLElement {
             } else {
                 // Get a reference to a visible element
                 const element = this.getVisibleElement();
+                if (!element) return this.recount();
+
                 this.#shiftToElement({ element });
-                console.log("element", element, this.pageTopMostElem.target);
                 this.pageCounter.start();
             }
         },
