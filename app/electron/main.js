@@ -56,7 +56,7 @@ async function createWindow() {
         ); /* eng-disable PROTOCOL_HANDLER_JS_CHECK */
     }
     const store = new Store({
-        debug: isDev || true, // TODO remove all "|| true"
+        debug: isDev,
         reset: isDev,
         path: app.getPath("userData"),
     });
@@ -86,7 +86,7 @@ async function createWindow() {
         title: "Bookord is initializing...",
         frame: false,
         webPreferences: {
-            devTools: isDev || true, // TODO remove
+            devTools: isDev,
             nodeIntegration: false,
             nodeIntegrationInWorker: false,
             nodeIntegrationInSubFrames: false,
@@ -196,8 +196,7 @@ async function createWindow() {
     }
 
     // Only do these things when in development
-    // TODO remove
-    if (isDev || true) {
+    if (isDev) {
         // Errors are thrown if the dev tools are opened
         // before the DOM is ready
         win.webContents.once("dom-ready", async () => {
@@ -516,7 +515,7 @@ ipcMain.handle("app:get-books", async () => {
     const { filesWithMetadata, mergedAllbooks } = await getChildResponse(
         metadataParseChild
     );
-    log.info("log message: got metadata", filesWithMetadata);
+    log.info("log message: got metadata");
 
     return [filesWithMetadata, mergedAllbooks];
 });

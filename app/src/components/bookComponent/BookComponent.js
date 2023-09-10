@@ -1,5 +1,4 @@
 //@ts-check
-///<reference path="typedefs.js" />
 
 import debounce from "lodash/debounce";
 
@@ -264,7 +263,7 @@ export default class BookComponent extends HTMLElement {
         const book = window.api
             .invoke("app:get-parsed-book", [filePath, sectionIndex])
             .catch((error) => {
-                console.log("Exited before could recive book");
+                console.log("Exited before could recieve book");
             });
 
         book.then(() => {
@@ -367,7 +366,7 @@ export default class BookComponent extends HTMLElement {
      * @param {HTMLElement | any} elem
      * @returns {boolean[]} [isFullyVisible, isAtLeastPartiallyVisible]
      */
-    checkVisibility(elem) {
+    checkVisibilities(elem) {
         const currentOffset = this._getCurrentOffset();
         const displayWidth = this._getDisplayWidth();
         const columnGap = this._getColumnGap();
@@ -403,7 +402,7 @@ export default class BookComponent extends HTMLElement {
     #hideInvisibleLinks() {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            const [_, isAtLeastPartiallyVisible] = this.checkVisibility(a);
+            const [_, isAtLeastPartiallyVisible] = this.checkVisibilities(a);
             if (isAtLeastPartiallyVisible) {
                 a.style.visibility = "initial";
                 // a.removeAttribute("tabindex");
