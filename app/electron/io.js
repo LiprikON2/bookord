@@ -24,7 +24,7 @@ const getFilenameFromPath = (filePath) => {
 };
 
 // local dependencies
-const notification = require("./notification");
+// const notification = require("./notification");
 
 // get application directory
 const appDir = path.resolve(os.homedir(), "Bookord Books");
@@ -70,7 +70,7 @@ exports.addFiles = (files = []) => {
     // Don't display notification if all files are duplicates
     if (newFilesCount !== 0) {
         // Display notification
-        notification.filesAdded(newFilesCount);
+        // notification.filesAdded(newFilesCount);
     }
     return newFilesCount;
 };

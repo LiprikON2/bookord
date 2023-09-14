@@ -108,3 +108,5 @@ public.key
 
 # API keys
 secret.json
+
+package-lock.json
