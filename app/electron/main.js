@@ -90,6 +90,7 @@ async function createWindow() {
             nodeIntegration: false,
             nodeIntegrationInWorker: false,
             nodeIntegrationInSubFrames: false,
+            sandbox: false, // TODO comply with new default introduced in electron 20
             contextIsolation: true,
             enableRemoteModule: false,
             additionalArguments: [
