@@ -3,7 +3,7 @@
         [
             "module-resolver",
             {
-                "cwd": "babelrc",                
+                "cwd": "babelrc",
                 "alias": {
                     "Constants": "./app/src/constants",
                     "Components": "./app/src/components",
@@ -18,8 +18,5 @@
             "@babel/plugin-syntax-dynamic-import"
         ]
     ],
-    "presets": [
-        "@babel/preset-env",
-        "@babel/preset-react"
-    ]
+    "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/typescript"]
 }

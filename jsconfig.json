@@ -5,7 +5,7 @@
         "jsx": "preserve",
         "checkJs": true,
         "baseUrl": ".",
-        // Import aliases from Webpack 
+        // Import aliases from Webpack
         "paths": {
             "resources/*": ["./resources/*"],
             "components/*": ["./app/src/components/*"],
@@ -14,17 +14,12 @@
             "Pages/*": ["./app/src/pages/*"],
             "Core/*": ["./app/src/core/*"],
             "Redux/*": ["./app/src/redux/*"],
-            "I18n/*": ["./app/localization/*"],
+            "I18n/*": ["./app/localization/*"]
         },
 
         "target": "es6",
         "module": "commonjs",
-        "lib": [
-            "es5",
-            "es6",
-            "dom",
-            "dom.iterable"
-        ],
+        "lib": ["es5", "es6", "dom", "dom.iterable"],
         "sourceMap": true,
         "outDir": "./script",
         "strict": false,
@@ -35,7 +30,7 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "esModuleInterop": true,
-        "experimentalDecorators": true,
+        "experimentalDecorators": true
     },
     "exclude": [
         // "node_modules",

@@ -1,23 +1,27 @@
 const io = require("../io");
-
-process.on("message", async (/**@type any*/ message) => {
-    if ("parseMetadata" in message) {
-        const { files, allBooks } = message.parseMetadata;
+process.parentPort.on("message", async (/**@type any*/ { data, ports }) => {
+    console.log("message recieved", "parseMetadata" in data, "parse" in data);
+    if ("parseMetadata" in data) {
+        const { files, allBooks } = data.parseMetadata;
         const [filesWithMetadata, mergedAllbooks] = await io.getBooks(files, allBooks);
 
-        process.send({ filesWithMetadata, mergedAllbooks });
-        console.log("parseMetadata: done");
-    } else if ("parse" in message) {
-        const { filePath, initSectionIndex } = message.parse;
+        process.parentPort.postMessage({
+            filesWithMetadata,
+            mergedAllbooks,
+            messageType: "parseMetadata",
+        });
+        console.log("parseMetadata");
+    } else if ("parse" in data) {
+        const { filePath, initSectionIndex } = data.parse;
         const [initBook, parsedEpub] = await io.parseBook(filePath, initSectionIndex);
 
         // Sending init book
-        process.send({ initBook });
+        process.parentPort.postMessage({ initBook, messageType: "parse-init" });
 
         const book = await io.parseSections(initBook, parsedEpub);
 
         // Sending fully parsed book
-        process.send({ book });
-        console.log("parse: done");
+        process.parentPort.postMessage({ book, messageType: "parse" });
+        console.log("parse");
     }
 });

@@ -9,6 +9,7 @@ const {
     Menu,
     dialog,
     shell,
+    utilityProcess,
 } = require("electron");
 const {
     default: installExtension,
@@ -17,7 +18,6 @@ const {
 } = require("electron-devtools-installer");
 const SecureElectronLicenseKeys = require("secure-electron-license-keys");
 const Protocol = require("./protocol");
-const MenuBuilder = require("./menu");
 const i18nextBackend = require("i18next-electron-fs-backend");
 const i18nextMainBackend = require("../localization/i18n.mainconfig");
 const Store = require("secure-electron-store").default;
@@ -30,14 +30,12 @@ const port = 40992; // Hardcoded; needs to match webpack.development.js and pack
 const selfHost = `http://localhost:${port}`;
 const productName = "Bookord";
 
-const { fork } = require("child_process");
 // local dependencies
 const io = require("./io");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
-let menuBuilder;
 let storeData;
 let isInitLoad;
 
@@ -56,7 +54,7 @@ async function createWindow() {
         ); /* eng-disable PROTOCOL_HANDLER_JS_CHECK */
     }
     const store = new Store({
-        debug: isDev,
+        debug: isDev && false,
         reset: isDev,
         path: app.getPath("userData"),
     });
@@ -92,7 +90,6 @@ async function createWindow() {
             nodeIntegrationInSubFrames: false,
             sandbox: false, // TODO comply with new default introduced in electron 20
             contextIsolation: true,
-            enableRemoteModule: false,
             additionalArguments: [
                 `--storePath=${store.sanitizePath(app.getPath("userData"))}`,
             ],
@@ -203,7 +200,8 @@ async function createWindow() {
         // Errors are thrown if the dev tools are opened
         // before the DOM is ready
         win.webContents.once("dom-ready", async () => {
-            await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+            // await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+            await installExtension([])
                 .then((name) => console.log(`Added Extension: ${name}`))
                 .catch((err) => console.log("An error occurred: ", err))
                 .finally(() => {
@@ -250,17 +248,11 @@ async function createWindow() {
     //   }
     // });
 
-    menuBuilder = MenuBuilder(win, app.name);
-
     // Set up necessary bindings to update the menu items
     // based on the current language selected
     i18nextMainBackend.on("loaded", (loaded) => {
         i18nextMainBackend.changeLanguage("en");
         i18nextMainBackend.off("loaded");
-    });
-
-    i18nextMainBackend.on("languageChanged", (lng) => {
-        menuBuilder.buildMenu(i18nextMainBackend);
     });
 }
 
@@ -449,14 +441,15 @@ ipcMain.handle("app:on-file-open", (event, file) => {
     return io.openFile(file.path).buffer;
 });
 
-const getChildResponse = async (child) => {
+const getChildResponse = async (/** @type UtilityProcess */ child, messageType) => {
     let promiseResolve;
     const promise = new Promise((resolve, reject) => {
         promiseResolve = resolve;
     });
 
     child.once("message", (response) => {
-        promiseResolve(response);
+        console.log("incoming from child", response.messageType);
+        if (response.messageType === messageType) promiseResolve(response);
     });
 
     return promise;
@@ -464,9 +457,27 @@ const getChildResponse = async (child) => {
 
 // Forked child process for parsing book file.
 // It is needed to offload parsing from main thread and, consequently, not to block UI
-const metadataParseChild = fork(path.join(__dirname, "forks/child.js"));
+
+const child = utilityProcess.fork(path.join(__dirname, "forks/child.js"), [], {
+    serviceName: "Book Parser",
+    stdio: "pipe",
+});
+child.stdout?.on("data", (data) => {
+    console.log(`[child] ${data}`);
+});
+child.stderr?.on("data", (data) => {
+    // TODO on error restart child
+    console.log(`[child] ${data}`);
+});
+child.on("spawn", () => {
+    console.log(`[child] spawn`);
+});
+child.on("exit", (code) => {
+    console.log(`[child] exit code ${[child]}`);
+});
 
 ipcMain.handle("app:get-books", async () => {
+    console.log("app:get-books");
     const allBooks = storeData?.["allBooks"];
     const files = io.getFiles();
 
@@ -475,52 +486,51 @@ ipcMain.handle("app:get-books", async () => {
         win.webContents.send("app:receive-skeleton-count", files.length);
         isInitLoad = false;
     }
-    metadataParseChild.send(
-        {
-            parseMetadata: {
-                files: files,
-                allBooks: allBooks,
-            },
+    console.log("posting message...");
+    child.postMessage({
+        parseMetadata: {
+            files: files,
+            allBooks: allBooks,
         },
-        (error) => {
-            console.log("metadataParseChild error:", error);
-        }
-    );
+    });
 
+    console.log("before getting files");
     const { filesWithMetadata, mergedAllbooks } = await getChildResponse(
-        metadataParseChild
+        child,
+        "parseMetadata"
     );
-    console.log("metadataParseChild: done!");
+    console.log("parseMetadata: done!");
 
     return [filesWithMetadata, mergedAllbooks];
 });
 
-let parseChild;
-
 ipcMain.handle("app:get-parsed-book", async (event, [filePath, initSectionIndex]) => {
     // Forked child process for parsing book file.
     // It is needed to offload main thread and not to block UI
-    parseChild = fork(path.join(__dirname, "forks/child.js"));
 
-    parseChild.send({
+    console.log("before parsing book");
+    child.postMessage({
         parse: {
             filePath,
             initSectionIndex,
         },
     });
 
+    console.log("before awaiting init book");
     // Send book with single section parsed
-    const { initBook } = await getChildResponse(parseChild);
+    const { initBook } = await getChildResponse(child, "parse-init");
     win.webContents.send("app:receive-init-book", initBook);
+    console.log("got init book");
 
     // Return the fully parsed book
-    const { book } = await getChildResponse(parseChild);
+    const { book } = await getChildResponse(child, "parse");
+    console.log("got the book");
 
-    parseChild.disconnect();
+    // parseChild.disconnect();
     return book;
 });
 
 // Kills parsing child process when user leaves the reading page
-ipcMain.on("app:on-stop-parsing", () => {
-    if (parseChild) parseChild.kill("SIGKILL");
-});
+// ipcMain.on("app:on-stop-parsing", () => {
+//     if (parseChild) parseChild.kill("SIGKILL");
+// });

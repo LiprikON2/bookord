@@ -45,7 +45,7 @@ exports.getFiles = () => {
             name: filename,
             path: filePath,
             size: Number(fileStats.size / 1000).toFixed(1), // kb
-            dateAdded: new Date(),
+            dateAdded: new Date().toISOString(),
         };
     });
 };
@@ -191,7 +191,13 @@ exports.getBooks = async (files, allBooks) => {
 };
 
 exports.parseBook = async (bookPath, initSectionIndex) => {
-    const parsedEpub = await parseEpub(bookPath);
+    let parsedEpub;
+    try {
+        parsedEpub = await parseEpub(bookPath);
+    } catch (error) {
+        console.log("Error while parsing epub:", error);
+        return;
+    }
 
     const sectionNames = parsedEpub.sections.map((section) => section.id);
     const initBook = {

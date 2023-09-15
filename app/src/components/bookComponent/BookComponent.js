@@ -264,6 +264,7 @@ export default class BookComponent extends HTMLElement {
      * @returns {Promise<ParsedBook>}
      */
     importBook(filePath, sectionIndex) {
+        console.log("importing book");
         const book = window.api
             .invoke("app:get-parsed-book", [filePath, sectionIndex])
             .catch((error) => {
